@@ -1,0 +1,13 @@
+Template: NONE
+DangerType: None
+CeilingDrips: 0
+Clouds: 0
+Grime: 0
+BkgDroneVolume: 0
+RandomItemDensity: 0
+Palette: 25
+EffectColorA: 10
+EffectColorB: 25
+Effects: SunBlock-1-14-118, LightBurn-0.3043478-20-20, 
+PlacedObjects: LightSource><417.0693><477.3359><1~EffectColor1~705~-415~-205~-98.39746~0~0, LightSource><249.1937><110.2><1~EffectColor2~-373~100~-147~69.60254~0~0, LightSource><746.9158><271.6119><1~EffectColor2~-37~436~-299~-246.3975~0~0, DeepProcessing><205.1543><540.9257><-3~55~38~98~115~97~0~0~0~1~0.5543478, DeepProcessing><625.9374><60.07004><2~62~149~200~152~5~0~0~0~0.8804348~0.3152174, DeepProcessing><206.0939><258.6251><4~117~71~57~71~-2~-313~-10~0~0.9347826~0.4673913, DeepProcessing><665.551><432.48><-1~209~114~213~109~-113~-122~-103~0~0.7934783~0.173913, ProjectedStars><489.6283><341.0913><-132~81, 
+FadePalette: 23, 0.80

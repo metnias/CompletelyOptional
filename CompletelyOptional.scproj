@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Chm">
+    <PropertyGroup>
+        <Name>CompletelyOptional</Name>
+        <TopicStyle>vs2005</TopicStyle>
+        <LanguageId>1033</LanguageId>
+    </PropertyGroup>
+    <ItemGroup>
+        <Dlls Include="C:\Users\User\source\repos\CompletelyOptional\CompletelyOptional\bin\Debug\CompletelyOptional.dll" />
+        <Comments Include="C:\Users\User\source\repos\CompletelyOptional\CompletelyOptional\bin\Debug\CompletelyOptional.xml" />
+        <Dependents Include="C:\Users\User\source\repos\CompletelyOptional\CompletelyOptional\bin\Debug\UnityEngine.dll" />
+        <Dependents Include="C:\Users\User\source\repos\CompletelyOptional\CompletelyOptional\bin\Debug\Assembly-CSharp.dll" />
+    </ItemGroup>
+    <Import Project="$(DXROOT)\Examples\Generic\generic.targets" />
+</Project>

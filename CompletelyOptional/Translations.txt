@@ -1,0 +1,63 @@
+﻿//Translator Credits: Name
+Translator Name|kor$A토픽(topicular)|spa$Garrakx|fre$Daratrix|rus$Lex
+//Translator Credits: Swap 'English' to your language.
+Translated to English by <TranslatorName>|kor$한국어 번역: <TranslatorName>|spa$Traducido al español by <TranslatorName>|fre$Traduction française par <TranslatorName>|rus$Перевод на русский: <TranslatorName>
+//Essentials
+No Mods Installed|kor$설치된 모드 없음|spa$No hay Mods instalados|fre$Aucun Mod installé|rus$Моды не установлены
+MOD CONFIG|kor$모드 설정|spa$CONFIGURAR MOD|fre$CONFIGURER MOD|rus$НАСТРОЙКА МОДОВ
+APPLY|kor$적용|spa$APLICAR|fre$APPLIQUER|rus$ПРИМЕНИТЬ
+SAVE ALL|kor$모두 적용|spa$GUARDAR TODO|fre$ENREGISTRER TOUT|rus$СОХРАНИТЬ ВСЕ
+BACK|kor$뒤로|spa$VOLVER|fre$RETOUR|rus$НАЗАД
+CANCEL|kor$취소|spa$CANCELAR|fre$ANNULER|rus$ОТМЕНА
+RESET CONFIG|kor$설정 초기화|spa$RESTABLECER|fre$REINITIALISER|rus$СБРОСИТЬ\nНАСТРОЙКИ
+Version: <ModVersion>|kor$버전: <ModVersion>|spa$Versión: <ModVersion>|fre$Version : <ModVersion>|rus$Версия: <ModVersion>
+Author: <ModAuthor>|kor$제작자: <ModAuthor>|spa$Autor: <ModAuthor>|fre$Auteur : <ModAuthor>|rus$Автор: <ModAuthor>
+Configure <ModID> by <ModAuthor>|kor$<ModID> by <ModAuthor> 설정|spa$Configurar <ModID> por <ModAuthor>|fre$Configurer <ModID> par <ModAuthor>|rus$Настроить <ModID> от <ModAuthor>
+Display <ModID> by <ModAuthor>|kor$<ModID> by <ModAuthor> 표시|spa$Mostrar <ModID> por <ModAuthor>|fre$Afficher <ModID> par <ModAuthor>|rus$Отобразить <ModID> от <ModAuthor>
+<ModID> by <ModAuthor>|spa$<ModID> por <ModAuthor>|fre$<ModID> par <ModAuthor>|rus$<ModID> от <ModAuthor>
+Configure <ModID>|kor$<ModID> 설정|spa$Configurar <ModID>|fre$Configurer <ModID>|rus$Настроить <ModID>
+Display <ModID>|kor$<ModID> 표시|spa$Mostrar <ModID>|fre$Afficher <ModID>|rus$Отобразить <ModID>
+Switch to Tab <TabName>|kor$<TabName> 탭으로 전환|spa$Cambiar a la pestaña <TabName>|fre$Aller à l'onglet <TabName>|rus$Перейти на вкладку <TabName>
+Switch to Tab No <TabIndex>|kor$<TabIndex>번 탭 전환|spa$Cambiar a la pestaña No <TabIndex>|fre$Aller à l'onglet n°<TabIndex>|rus$Перейти на вкладку № <TabIndex>
+Hold down to restore original config of <ModID>|kor$꾹 눌러서 <ModID> 모드를 기본 설정으로 초기화|spa$Mantener presionado para restaurar la configuración original de <ModID>|fre$Maintenez enfoncé pour restaurer la configuration originale de <ModID>|rus$Удерживайте, чтобы восстановить исходную конфигурацию <ModID>
+Hold down to restore original config for this mod|kor$꾹 눌러서 이 모드를 기본 설정으로 초기화|spa$Mantener presionado para|fre$ restaurar la configuración original de este Mod|fre$Maintenez enfoncé pour restaurer la configuration originale de ce Mod|rus$Удерживайте, чтобы восстановить исходную конфигурацию этого мода
+Return to vanilla option menu (WITHOUT saving!)|kor$기본 설정메뉴로 돌아가기 (모드 설정 저장 안 됨!)|spa$Volver al menú de opciones (¡SIN guardar!)|fre$Retour au menu d'options (sans sauvergarder !)|rus$Вернуться в оригинальное меню параметров (Без сохранений)
+Return to vanilla option menu|kor$기본 설정메뉴로 돌아가기|spa$Volver al menú de opciones|fre$Retour au menu d'options|rus$Вернуться в оригинальное меню параметров
+Save all changes and exit|kor$모든 변경사항을 저장하고 나가기|spa$Guardar todos los cambios y salir|fre$Enregistrer tous les changements et quitter|rus$Сохранить и выйти
+Save changed config of <ModID>|kor$<ModID> 모드의 바뀐 설정 저장|spa$Guardar configuración modificada de <ModID>|fre$Enregistrer les changements pour <ModID>|rus$Сохранить измененную конфигурацию: <ModID>
+Save changed config of this mod|kor$이 모드의 바뀐 설정 저장|spa$Guardar configuración modificada de este Mod|fre$Enregistrer les changements pour ce mod|rus$Сохранить изменения конфигурации этого мода
+Configure Settings for Partiality Mods|kor$Partiality 모드의 설정 관리|spa$Configurar ajustes para Partiality Mods|fre$Configurer les options pour Mods Partiality|rus$Изменить настройки модов Partiality
+This Partiality Mod cannot be configured.|kor$이 Partiality 모드는 바꿀 수 있는 설정이 없습니다.|spa$Este Partiality Mod no se puede configurar|fre$Ce Mod Partiality ne peut pas être configuré.|rus$Этот мод Partiality не может быть настроен
+There was an issue initializing OptionInterface.|kor$이 모드의 설정을 여는 중 문제가 발생했습니다.|spa$Hubo un problema al inicializar OptionInterface|fre$Une erreur est survenue pendant l'initialisation d'OptionInterface.|rus$При инициализации OptionInterface возникла ошибка
+No Mod can be configured|kor$설정할 수 있는 모드 없음|spa$El Mod no se puede configurar|fre$Aucun Mod ne peut être configuré|rus$Ни один мод не может быть настроен
+This issue might be resolved by downloading the latest Config Machine.|kor$최신 Config Machine으로 업데이트하면 해결될 수 있습니다.|spa$Este problema puede resolverse descargando la última versión de Config Machine.|fre$Cette erreur peut être corrigée en téléchargeant la dernière version de Config Machine.|rus$Эту ошибку можно устранить, загрузив последнюю версию Config Machine.
+Configurable Mod List|kor$모드 설정 목록|spa$Lista de Mods configurables|fre$Liste des Mods configurables|rus$Список настраиваемых модов
+Other Mod List|kor$기타 모드 목록|spa$Lista de otros Mods|fre$Liste des autres Mods|rus$Список других модов
+Configurable Mods|kor$모드 설정|spa$Mods configurables|fre$Mods configurables|rus$Настраиваемые моды
+Other Mods|kor$기타 모드|spa$Otros Mods|fre$Autres Mods|rus$Другие моды
+Scroll Up|kor$위로 이동|spa$Subir|fre$Défiler vers le haut|rus$Прокрутить вверх
+Scroll Down|kor$아래로 이동|spa$Bajar|fre$Défiler vers le bas|rus$Прокрутить вниз
+Click to Display Config Machine ChangeLog|kor$클릭해서 Config Machine의 변경 내역 보기
+Config Machine ChangeLog|spa$Config Machine Lista de cambios|kor$Config Machine 변경 내역
+//Description for provided UIelements
+Click to Check/Uncheck|kor$클릭해서 체크 및 해제|spa$Click para marcar/desmarcar|fre$Cliquez pour cocher/décocher|rus$Нажмите, чтобы отметить/снять отметку
+Type Hex Code for desired Colour|kor$키보드로 색상 Hex 코드를 입력|spa$Escribe el código Hex para Color deseado|fre$Tapez le code hexadécimal de la couleur désirée|rus$Введите HEX код желаемого цвета
+Select Colour with RGB value|kor$RGB 값으로 색상 선택|spa$Selecciona el color con valores RGB|fre$Choisir la couleur via valeur RVB|rus$Выберите цвет со значением RGB
+Select Colour with HSL square|kor$HSL 값으로 색상 선택|spa$Selecciona el color con cuadro HSL|fre$Choisir la couleur via carré TSL|rus$Выберите цвет с помощью квадрата HSL
+Select Colour with Palette|kor$기본 팔레트에서 색상 선택|spa$Selecciona el color con la paleta|fre$Choisir la couleur via la palette|rus$Выберите цвет с помощью палитры
+Hold your mouse button and Drag up/down to adjust value|kor$마우스를 위아래로 드래그해서 조정|spa$Mantén click y arrastra arriba/abajo para ajustar el valor|fre$Maintenez le clic et tirez vers le haut/bas pour ajuster la valeur|rus$Удерживайте мышь и перетащите вверх/вниз, чтобы настроить значение
+Hold your mouse button and Drag left/right to adjust value|kor$마우스를 좌우로 드래그해서 조정|spa$Mantén click y arrastra izquierda/derecha para ajustar el valor|fre$Maintenez le clic et tirez vers la gauche/droite pour ajuster la valeur|rus$Удерживайте мышь и перетащите влево/вправо, чтобы настроить значение
+Click and Type text|kor$클릭해서 키보드로 입력|spa$Haz click y escribe el texto|fre$Cliquez pour taper du texte|rus$Нажмите и введите текст
+Click this and Press any button to bind (Ctrl + No to set controller number)|kor$클릭하고 버튼을 눌러 할당 (Ctrl + 숫자로 컨트롤러 번호 설정)|spa$Haz click y presiona cualquier botón para asignarlo (Ctrl + No para seleccionar el número de mando)|fre$Cliquez ici puis appuyez sur une touche pour la lier|rus$Щелкните здесь и нажмите любую кнопку, чтобы настроить привязку (Ctrl + № для установки номера контроллера)
+Click this and Press any key/button to bind (Esc to unbind)|kor$클릭하고 키/버튼을 눌러 할당 (Esc로 미할당)|spa$Haz click y presiona cualquier botón / tecla para asignarla (Esc para desasignarla)|fre$Cliquez ici puis appuyez sur une touche/un bouton pour le lier|rus$Щелкните здесь и нажмите любую кнопку, чтобы настроить привязку (Esc, чтобы отменить привязку)
+Conflicting button with Vanilla Options|kor$기본 버튼과 충돌함|spa$Conflicto con botón / tecla del juego base|fre$Conflit du bouton avec une option officielle|rus$Кнопка конфликтует с оригинальными настройками
+Conflicting button with Mod named <AnotherModID>|kor$<AnotherModID> 모드와 버튼 충돌|spa$Conflicto con botón / tecla del juego Mod <AnotherModID>|fre$Conflit du bouton avec une option du Mod <AnotherModID>|rus$Кнопка конфликтует с модом <AnotherModID>
+<ConflictButton> button is already in use|kor$<ConflictButton> 버튼은 이미 사용중|spa$El botón <ConflictButton> ya está en uso|fre$Le bouton <ConflictButton> est déjà utilisé|rus$<ConflictButton> уже используется
+Click to choose this option|kor$클릭해서 이 옵션 선택|spa$Haz click para seleccionar esta opción|fre$Cliquez pour choisir cette option|rus$Нажмите, чтобы выбрать эту настройку 
+Use Scroll Wheel or Scrollbar to see more|kor$스크롤휠 또는 스크롤바를 사용해서 더 보기|spa$Usa la rueda del ratón o la barra de desplazamiento para ver más|fre$Utilisez la molette de la souris ou la barre de défilement pour voir plus d'options|rus$Используйте колесо мыши или полосу прокрутки, чтобы увидеть больше
+Use Scroll Wheel to see more|kor$스크롤휠을 사용해서 더 보기|spa$Usa le rueda del ratón para ver mas|fre$Utilisez la molette de la souris pour voir plus d'options|rus$Используйте полосу прокрутки, чтобы увидеть больше
+Click to open the list, Double Click to search|kor$클릭해서 목록을 펼치고, 더블클릭으로 검색|spa$Haz click para abrir la lista, doble click para buscar|fre$Cliquez pour ouvrir la liste, doucle-clic pour chercher|rus$Нажмите, чтобы открыть список, нажмите дважды для поиска
+//Hidden Comments
+also shoutout to RW Discord for helping me out|kor$제작을 도와준 레인월드 디스코드에게도 감사를.|spa$Gracias al Discord de RW por ayudarme.|fre$merci également au Discord Rain World pour m'avoir aidé|rus$также благодарю RW Discord за помощь
+check out pinned tutorial in modding-support|kor$레인월드 디스코드 modding-support 채널에 고정된|spa$Mira el tutorial que está pineado en modding-support|fre$consultez le tutoriel épinglé dans #modding-support|rus$посмотрите закрепленное руководство в #modding-support
+and create your own config screen!|kor$튜토리얼을 보시고 자작모드의 설정 메뉴를 만드세요!|spa$y crea tu propia pantalla de configuración!|fre$et créez votre propre écran de configuration!|rus$и создавайте свое собственное окно конфигурации!

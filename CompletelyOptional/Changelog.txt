@@ -1,0 +1,168 @@
+﻿###1.4.4.2#!#20200928#!#
+- Minor clean-up in old codes regarding string.Concat
+- When you mod have invalid ModID, CM will try with Mod Type name, then assembly name, then throw exception if all three have failed
+ + CM will still report that your mod has invalid ModID, though
+1.4.4.1
+- Fixed the new feature breaking when the mod does not support translation
+1.4.4.0
+- The translators for mods can now test their translation real time
+ + Having the translation txt file in Rain World / ModConfigs / <ModID> folder will load that instead
+ + Pressing Reset Config button (or leaving the Mod Config screen and returning) will reload the external translation txt file
+- Made OpScrollBox's back rectangular 2 px larger so the contents won't overlap with the bounding box
+###1.4.3.A#!#20200923#!#
+1.4.3.A
+- LabelTest.GetWidth no longer breaks in Initialize
+1.4.3.9
+- Fixed non-pixel perfect visual glitch with OpScrollBox
+ + Thanks to Slime_Cubed's help
+- Default offset for UIelements is moved by 0.01 px upwards
+ + This would not affect users or modders, other than fixing visual glitches
+1.4.3.8
+- Fixed OpLongLabel's verticalAlignment
+ + Texts were one line above where they're supposed to be, which is now fixed.
+1.4.3.7
+- Add LabelTest static class to test FLabel's width internally
+ + Using FLabel.textRect from Slime_Cubed's suggestion
+ + Rewrote OpLabel's autoWrap function again
+  x OpLabel and OpLabelLong's autoWrap are much more visually pleasing!
+  x Even works with CommunicationModule's custom fonts
+  x This did add noticeable performance cost with OpLabel.autoWrap, though, albeit I added some optimization
+ + Made FCursor(Cursor appears for text input)'s position more accurately
+1.4.3.6
+- Removed leftover debug logging of OpLabelLong
+1.4.3.5
+- OpLabel now has a new property: verticalAlignment
+ + You can set its content's vertical alignment inside the rectangular defined by its size
+ + Available options are: Top(OpLabelLong's default), Center(OpLabel's default), Bottom
+ + Changed OpLabel.GetLineCount() from public to internal since it won't be needed anymore
+- OptionalUI.LoremIpsum static class is available
+ + OpLabel that's constructed with text: "TEXT"(default) will call LoremIpsum to fill itself
+- Fixed OpSliderSubtle's Nobs being visible even when it shouldn't; when the user is calling Show() every frame
+###1.4.3.4#!#20200915#!#
+1.4.3.4
+- Cleaned up some leftover debug codes
+- OpSlider will not bump when it's greyedOut
+1.4.3.3
+- Changed the layout of unconfigurable/errored mod screen
+- Reworked OpSlider's graphics
+ + Now the line is properly separated by the knob.
+- Config Machine now loads font size from CommunicationModule
+ + Also changed some variables with OpLabel.autoWrap to make it fill OpLabel's width without going overboard.
+- Config Machine will warn NullModException when that happens, instead of breaking completely
+1.4.3.2
+- Reverted the last change with bounding rectangular and moved OpTab to the right by 10 px instead.
+ + which means UIelement._offset is changed. This won't matter as long as you aren't using MenuObject directly.
+ + Because the last fix broke symmetry with the game screen.
+ + Also moved Mod List 8 px to the right to fix symmetry.
+- Fixed OpScrollBox not working properly with non-default(1366x768) Screen Size.
+- Added date description for each update of ChangeLog (hover your mouse to Update names), and logged all the update from 1.0: Slippery Slider Update
+- OptionInterface now has new static method: GetCultureInfo()
+ + Useful for formatting DateTime, as it is being used with this ChangeLog.
+###1.4.3.1#!#20200913#!#
+1.4.3.1
+- Fixed the symmetry of the bounding rectangular of OpTab
+ + Moved the bounding box 10 px left. Its size is still 630x630, but its offset is now equally 15 px from every side.
+- UIelement has new public property: 'IsHidden'
+ => this.hidden || this.tab?.isHidden == true || this.scrollBox?.isHidden == true;
+ + Whether this is actually hidden/invisible.
+ + this.hidden indicates whether it's Hide() is called manually. Sorry for the confusion.
+- You can add English 'translation' for OptionInterface.Translate to make unique keys for the same English phrase
+ + If there is no translation, English translation will be used instead of the key.
+ + Useful for adding translation for short phrases with homonym.
+1.4.3.0
+- Added Config Machine ChangeLog in-game
+ + Also moved translator credits to here.
+- Added new UIelement: OpLabelLong
+ + Special kind of OpLabel that can support more than 600 characters.
+ + Which is being used right here! Very useful for logs or instructions.
+ + It fills its text from the top of rectangular defined by pos and size.
+ + If 'allowOverflow' is false, the text won't overflow below the defined height and be cut.
+- OpScrollBox got one new public field.
+ + doesBackBump (default: true): If this is false, Back Rectangular stops reacting with MouseOver.
+- Creating new UIelement in runtime(after Initialize) should work properly now.
+- When you stay in Mod Config Screen for a long time, the next music will be played correctly after the initial one.
+###1.4.2.x#!#20200912#!#
+- Added new UItrigger: OpSimpleImageButton
+ + Basically, it's an OpSimpleButton but with FAtlasElement/Texture2D
+- Fixed the bug which OpSimpleButton's DyeableRects aren't moving when its pos is changed
+###1.4.1.x#!#20200907#!#
+- Finally fixed Tab Controller's graphic to be intended way.
+ + Displays Tab name, and has a highlight outline to make selected one much more noticeable.
+- OpRadioButtonGroup.Hide/Show now calls its children's Hide/Show instead of doing nothing.
+- UItrigger now also has 'held' property.
+- UIelement.Unload() now clears all the sprites for subObjects by default.
+- OpSimpleButton uses BumpBehaviour now.
+- Added more translations and updated old ones
+ + Spanish Translation by Garrakx
+ + French Translation by Daratrix
+ + Russian Translation by Lex
+  x For Russian and Korean, you'll need Language Patch from RainDB and AutoUpdate.
+###1.4: Bumpy Scroll Update#!#20200905#!#
+- Improved XML documents for modders. (Download XML from RainDB Link)
+- OpScrollBox is added as one of the provided UIelement
+ + Thanks to the contribution by Slime_Cubed
+ + Initialize OpScrollBox, and append other UIelements with AddItems as you do with OpTab.
+ + Check Partiality Tutorial pinned in modding-gallery/support to learn more.
+- Fixed and improved provided UIelements
+ + Clicking outside while typing HEX code with OpColorPicker will cancel typing mode.
+ + OpKeyBinder is improved in several ways.
+  x You can now bind it to nothing. (Click the OpKeyBinder and press Esc)
+  x After you bound a controller button, click it again and press Control + 1/2/3/4 to change controller number. (Ctrl+0/Esc for any controller)
+- Added 'lazier' version of constructors for some of commonly used UIelements
+ + OpLabel(float posX, float posY, string text, bool bigText = false)
+ + OpCheckBox(float posX, float posY, string key, bool defaultBool = false)
+ + OpRadioButton(float posX, float posY) (also OpRadioButtonGroup.SetButtons calls AddItems automatically as long as you added Group to OpTab first.)
+- UIconfig and UItrigger (and some UIelement) use a custom class called BumpBehaviour to calculate its visual effects reactive to the mouse cursor.
+ + This unified visuals of default UIconfigs', and makes it easier to write GrafUpdate for custom UIconfig/UItrigger.
+ + Append other element's BumpBehaviour to OpLabel.bumpBehav to make it react with that element.
+ + There are many visual changes to provided UIelements
+###1.3: Leaked List Update#!#20200726#!#
+1.3.1
+- Implemented make-shift scroll for configurable mods
+ + Mod List button will be made on top, and you can click Configurable Mod's button to navigate quickly.
+1.3.0
+- Having more than 16 mods no longer breaks Config Machine's Mod List
+ + Hides unconfigurable mods from the list when there are many mods.
+- Mods are now sorted by configurability, then ModID alphabetically.
+ + Configurable > Unconfigurable but has OptionInterface > Mods that don't support Config Machine
+###1.2: Triggered Colour Update#!#20200408#!#
+- UItrigger subcategory is added
+ + Override OptionInterface.Signal to create events in Config Screen.
+ + OpSimpleButton is the only UItrigger provided currently.
+- UIelements that's hidden manually(Hide) no longer reappear when the user switch Tab/Mod
+ + Manually hidden elements no longer function.
+- The most provided UIelements now can be coloured.
+ + Check colorEdge/colorFill/colorText
+ + Also OpTab.color has added to dye the tab button.
+###1.1: Translation Translate Update#!#20200405#!#
+1.1.1.1 a.k.a. Major Fix(TM)
+- UIelement's size and pos can be manipulated after Initialize
+ + You could say that UIelements now support... Translating.
+1.1.0
+- OptionInterface.Translate is added
+ + Allows other mods translating UI / In-Game Message / any text.
+ + Create a UTF-8 txt file, mark it Embedded Resource to create translation file.
+ + The format is: Original Text|langID$Translation
+ + Allowed Language IDs are: eng, fre, ita, ger, spa, por, (kor, jpn, rus)
+ + Check Partiality Tutorial pinned in modding-gallery/support to learn more.
+- Config Machine also has translations
+ + Korean, which requires Korean Language Patch on RainDB and Autoupdate.
+ + Spanish Translation by Garrakx
+###1.0: Slippery Slider Update#!#20200208#!#
+- Supports AutoUpdate by bee
+- Default Config is now properly loaded when the user installed the mod for the first time
+- Putting '_' in front of UIconfig makes it 'cosmetic', which won't be saved
+ + Useful for creating sub-tabs with OpRadioButtonGroup.
+- OpSlider is added, it's like OpDragger but bigger and better
+ + OpSliderSubtle is also added, which is shorter ranged but more precise slider.
+- OpTab.AddItems method is added, allowing the modder to add multiple items in a single line
+ + As such, OpTab.AddItem is now Obsolete.
+- OpColorPicker is improved
+ + You can double click it and type HEX code directly.
+ + It now has public PaletteName/PaletteHex string array. You can change Palette for certain OpColorPicker with this.
+- Tab Buttons are now ordered from the top as intended, instead of the bottom
+ + It took me *half a year* to add labels to them, though. xC
+- Exceptions thrown in OptionInterface are more categorized to make debugging easier
+- Removed Herobrine
+ + Actually, what's removed was Slugterator, which took over 70 kB. Bye-bye, Slugterator.
+- I totally did not have fun with naming old updates

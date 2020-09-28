@@ -1,0 +1,57 @@
+//Dream Big, Do Nothing
+
+This Mod allows mods to have own option screen
+Rain World in default : 1368f*770f resolution
+
+
+add a button in Option <==hook ProcessManager and see if ProcessID == ~.OptionsMenu //Checkout HUD.OptionsMenu
+List Partiality Mod (Get the list OnLoad) and show those sorted in ModID alphabetically
+[ModA] <- [             ModA               ] 
+[ModB]    [Version: 1000   Author: SomeDude]
+[ModC]    [  This Mod Cannot be Configured ]
+		      [Back]
+
+and The Mod can create own Config screen in similar fassion of Visual Basic
+[ModA]>[info] [             ]
+       [tab1]>[ canvas size ]
+	   [tab2] [  800f*600f  ] <==Label, TextBox, RadioButtons, ColorPicker...
+	   
+Data for this is saved at ModConfig/<ModID>.txt
+this Mods/Option directory must be flexible
+	to accommodate farther Partiality Update.
+
+
+
+This Game really needs SoundTest Feature.
+
+UI Design
+	BG of Mod List will be clouds at the wall
+	Option Music will be random, carefully selected by me :D
+
+
+
+Toolbox:
+	vLabel: Allows you to have text that you do not want the user to change, such as a caption under a graphic.
+	vTextBox: Holds text that the user can either enter or change.
+			//ComboBox: Allows you to draw a combination list box and text box. The user can either choose an item from the list or enter a value in the text box.
+			ListBox: Use to display a list of items from which the user can choose.
+				The list can be scrolled if it has more items than can be displayed at one time.
+				^(if someone really needs this, they can create own config object using UIconfig)
+	vCheckBox: Creates a box that the user can easily choose to indicate if something is true or false,
+		or to display multiple choices when the user can choose more than one.
+	vOptionButton: Allows you to display multiple choices from which the user can choose only one.
+	vRect <== Frame: Allows you to create a graphical or functional grouping for controls.
+				To group controls, draw the frame first, and then draw controls inside the frame.
+	(can be simulated w/ OpRect) CommandButton: Creates a button the user can choose to carry out a command.
+			//TabStrip: Allows you to define multiple pages for the same area of a window or dialog box in your application.
+	vMultiPage: Presents multiple screens of information as a single set.
+			//ScrollBar: Provides a graphical tool for quickly navigating through a long list of items or a large amount of information,
+			for indicating the current position on a scale, or as an input device or indicator of speed or quantity.
+			//SpinButton: A spinner control you can use with another control to increment and decrement numbers.
+				You can also use it to scroll back and forth through a range of values or a list of items.
+	vImage: Displays a graphical image from a bitmap, icon, or metafile on your form.
+		Images displayed in an Image control can only be decorative and use fewer resources than a PictureBox.
+
+	vColorPicker: Allows you to choose color.
+
+
