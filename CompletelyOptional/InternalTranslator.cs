@@ -17,7 +17,7 @@ namespace CompletelyOptional
 
         private static string curLang => OptionScript.curLang;
         private static Dictionary<string, string> converter;
-        public const string allowedCodes = "eng, fre, ita, ger, spa, por, (kor, jpn, rus)";
+        public const string allowedCodes = "eng, fre, ita, ger, spa, por, (kor, jap, rus)";
 
         private static Dictionary<string, string> Code2Culture;
 
@@ -33,7 +33,7 @@ namespace CompletelyOptional
                     { "ger", "de-DE" },
                     { "spa", "es-ES" },
                     { "por", "pt-PT" },
-                    { "jpn", "ja-JP" },
+                    { "jap", "ja-JP" },
                     { "kor", "ko-KR" },
                     { "rus", "ru-RU" }
                 };

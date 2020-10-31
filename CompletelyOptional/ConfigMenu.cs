@@ -430,9 +430,22 @@ namespace CompletelyOptional
             currentInterface.SaveConfig(newConfig);
         }
 
-        public void ResetCurrentConfig()
+        private bool reset = false;
+
+        /// <summary>
+        /// Call this manually if you really need to. This is what Reset Config Button does.
+        /// </summary>
+        public static void ResetCurrentConfig()
         {
-            if (!currentInterface.Configuable()) { return; }
+            instance.reset = true;
+            instance.opened = false;
+            instance.OpenMenu();
+        }
+
+        private void ResetCurrentConfigForReal()
+        {
+            reset = false;
+            // if (!currentInterface.Configuable()) { return; }
 
             foreach (OpTab tab in currentInterface.Tabs)
             {
@@ -453,10 +466,7 @@ namespace CompletelyOptional
             {
                 string key = string.Concat(selectedModIndex.ToString("D3") + "_" + i.ToString("D2"));
                 if (OptionScript.tabs.ContainsKey(key)) { OptionScript.tabs.Remove(key); }
-                else
-                {
-                    break;
-                }
+                else { break; }
                 i++;
             } while (i < 100);
 
@@ -468,9 +478,7 @@ namespace CompletelyOptional
                 foreach (UIelement element in currentInterface.Tabs[i].items)
                 {
                     foreach (RectangularMenuObject obj in element.subObjects)
-                    {
-                        this.pages[0].subObjects.Add(obj);
-                    }
+                    { this.pages[0].subObjects.Add(obj); }
                     this.pages[0].Container.AddChild(element.myContainer);
                 }
                 currentInterface.Tabs[i].Hide();
@@ -479,8 +487,12 @@ namespace CompletelyOptional
             selectedTabIndex = 0;
             currentTab = currentInterface.Tabs[0];
             currentTab.Show();
-            currentInterface.SaveConfig(currentInterface.GrabConfig());
-            currentInterface.ConfigOnChange();
+
+            if (currentInterface.Configuable())
+            {
+                currentInterface.SaveConfig(currentInterface.GrabConfig());
+                currentInterface.ConfigOnChange();
+            }
 
             //OptionScript.configChanged = false;
         }
@@ -518,10 +530,8 @@ namespace CompletelyOptional
                         //if not loaded yet ==> this.fadeoutFrame = 30; return;
                         this.fadeoutFrame = 20;
                         this.fadein = true;
-                        if (currentInterface == null)
-                        {
-                            this.Initialize();
-                        }
+                        if (currentInterface == null) { this.Initialize(); }
+                        if (reset) { ResetCurrentConfigForReal(); }
                     }
                 }
                 else
@@ -611,8 +621,6 @@ namespace CompletelyOptional
                         case 2:
                             ResetCurrentConfig();
                             base.PlaySound(SoundID.MENU_Switch_Page_In);
-                            opened = false;
-                            OpenMenu();
                             break;
 
                         case 3:

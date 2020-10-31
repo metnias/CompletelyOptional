@@ -629,6 +629,12 @@ namespace OptionalUI
         /// <remarks>Example: <c>DateTime.ParseExact("20200123", "yyyyMMdd", null).ToString("D", GetCultureInfo());</c></remarks>
         public static CultureInfo GetCultureInfo() => InternalTranslator.GetCultureInfo();
 
+        /// <summary>
+        /// Returns 3-lettered
+        /// </summary>
+        /// <returns></returns>
+        public static string GetLanguageID() => OptionScript.curLang;
+
         private void LoadTranslation()
         {
             transConverter = new Dictionary<string, string>();

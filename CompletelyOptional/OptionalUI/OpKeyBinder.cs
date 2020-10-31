@@ -221,7 +221,7 @@ namespace OptionalUI
         /// <param name="controller">New <see cref="BindController"/></param>
         public void SetController(BindController controller)
         {
-            if (this.bind == controller) { return; }
+            // if (this.bind == controller) { return; }
             string newValue = ChangeBind(this.value, this.bind, controller);
             this.bind = controller;
             this.value = newValue;

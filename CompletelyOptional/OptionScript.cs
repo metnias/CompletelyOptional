@@ -129,7 +129,7 @@ namespace CompletelyOptional
                 { 3 , "ger" },
                 { 4 , "spa" },
                 { 5 , "por" },
-                { 6 , "jpn" },
+                { 6 , "jap" },
                 { 7 , "kor" }
             };
             if (ID2Code.TryGetValue(rw.options.language, out string code)) { curLang = code; }
@@ -374,6 +374,8 @@ namespace CompletelyOptional
                 ConfigMenu.instance.resetButton.buttonBehav.greyedOut = true;
                 return;
             }
+            bool fade = ConfigMenu.instance.fadeSprite != null;
+            ConfigMenu.instance.backButton.buttonBehav.greyedOut = fade;
             if (ConfigMenu.currentTab != null)
             {
                 try
@@ -381,10 +383,10 @@ namespace CompletelyOptional
                     if (!ConfigMenu.freezeMenu)
                     {
                         ConfigMenu.currentTab.Update(Time.deltaTime);
-                        ConfigMenu.instance.saveButton.buttonBehav.greyedOut = false;
+                        ConfigMenu.instance.saveButton.buttonBehav.greyedOut = fade || false;
                         for (int m = 0; m < ConfigMenu.instance.modButtons.Length; m++)
-                        { ConfigMenu.instance.modButtons[m].buttonBehav.greyedOut = false; }
-                        ConfigMenu.tabCtrler.greyedOut = false;
+                        { ConfigMenu.instance.modButtons[m].buttonBehav.greyedOut = fade || false; }
+                        ConfigMenu.tabCtrler.greyedOut = fade || false;
                     }
                     else
                     {
@@ -401,9 +403,9 @@ namespace CompletelyOptional
                             foreach (UIelement element in ConfigMenu.currentTab.items)
                             { element.Update(Time.deltaTime); }
                         }
-                        ConfigMenu.instance.saveButton.buttonBehav.greyedOut = h;
+                        ConfigMenu.instance.saveButton.buttonBehav.greyedOut = fade || h;
                         for (int m = 0; m < ConfigMenu.instance.modButtons.Length; m++)
-                        { ConfigMenu.instance.modButtons[m].buttonBehav.greyedOut = h; }
+                        { ConfigMenu.instance.modButtons[m].buttonBehav.greyedOut = fade || h; }
                         ConfigMenu.tabCtrler.greyedOut = h;
                     }
                     ConfigMenu.currentInterface.Update(Time.deltaTime);
@@ -457,10 +459,7 @@ namespace CompletelyOptional
 
                     foreach (UIelement element in newItf.Tabs[0].items)
                     {
-                        foreach (MenuObject obj in element.subObjects)
-                        {
-                            menu.pages[0].subObjects.Add(obj);
-                        }
+                        foreach (MenuObject obj in element.subObjects) { menu.pages[0].subObjects.Add(obj); }
                         menu.pages[0].Container.AddChild(element.myContainer);
                     }
                     newItf.Tabs[0].Show();

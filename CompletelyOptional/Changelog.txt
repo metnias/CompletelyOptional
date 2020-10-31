@@ -1,7 +1,12 @@
-﻿###1.4.4.2#!#20200928#!#
+﻿###1.4.4.2#!#20201031#!#
+1.4.4.2
 - Minor clean-up in old codes regarding string.Concat
-- When you mod have invalid ModID, CM will try with Mod Type name, then assembly name, then throw exception if all three have failed
- + CM will still report that your mod has invalid ModID, though
+- Removed arbitrary minimum size limit for OpSlider
+- When you mod have invalid (for folder name) ModID, CM will try with Mod Type name, assembly name, then throw an exception if all three have failed
+ + CM will still log that your mod has invalid ModID, though
+- Changed Japanese's language code from jpn to jap (first three letters)
+- Mods can manually call ConfigMenu.ResetCurrentConfig() to reset own OptionInterface
+ + Reset now happens when the screen has faded out, making the visual more pleasing
 1.4.4.1
 - Fixed the new feature breaking when the mod does not support translation
 1.4.4.0

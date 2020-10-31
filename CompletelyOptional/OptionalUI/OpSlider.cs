@@ -29,9 +29,8 @@ namespace OptionalUI
             this.min = range.x; this.max = range.y;
             int r = this.max - this.min + 1;
             this.wheelTick = r > 5 ? Math.Max(Mathf.CeilToInt(r / 12f), 4) : 1;
-            float m = Mathf.Max(multi, 1.0f);
-            this.mul = m;
-            this._size = this.vertical ? new Vector2(30f, Mathf.Max(32f, (r - 1) * m)) : new Vector2(Mathf.Max(32f, (r - 1) * m), 30f);
+            this.mul = Mathf.Max(multi, 1.0f);
+            this._size = this.vertical ? new Vector2(30f, (r - 1) * this.mul) : new Vector2((r - 1) * this.mul, 30f);
             this.fixedSize = this._size;
             this.ForceValue(Custom.IntClamp(defaultValue, min, max).ToString());
             if (!_init) { return; }
@@ -44,7 +43,7 @@ namespace OptionalUI
         /// <param name="pos">left-bottom corner coordinate (excluding extra length in the end of slider line)</param>
         /// <param name="key">unique keyword for this UIconfig</param>
         /// <param name="range">x = min, y = max</param>
-        /// <param name="length">Length of this slider will be this (min 32; and the width is 24 pxl)</param>
+        /// <param name="length">Length of this slider will be this (minimum is the range; and the width is 30 pxl)</param>
         /// <param name="vertical">if true, the slider will go vertical and the length will be used as height</param>
         /// <param name="defaultValue">default integer value</param>
         public OpSlider(Vector2 pos, string key, IntVector2 range, int length, bool vertical = false, int defaultValue = 0) : base(pos, new Vector2(), key, defaultValue.ToString())
@@ -55,9 +54,9 @@ namespace OptionalUI
             this.min = range.x; this.max = range.y;
             int r = this.max - this.min + 1;
             this.wheelTick = r > 5 ? Math.Max(Mathf.CeilToInt(r / 12f), 4) : 1;
-            float l = Mathf.Max((float)r, 32f, (float)length);
-            this.mul = l / (r - 1);
-            this._size = this.vertical ? new Vector2(24f, Mathf.Max(32f, l)) : new Vector2(Mathf.Max(32f, l), 24f);
+            float l = Mathf.Max((float)(r - 1), (float)length);
+            this.mul = l / (float)(r - 1);
+            this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
             this.ForceValue(Custom.IntClamp(defaultValue, min, max).ToString());
             this.defaultValue = this.value;
             if (!_init) { return; }
@@ -341,9 +340,9 @@ namespace OptionalUI
 
             /*
             int r = this.max - this.min + 1;
-            float l = Mathf.Max((float)r, 32f, (float)(!vertical ? this._size.x : this._size.y));
+            float l = Mathf.Max((float)(r - 1), (float)(!vertical ? this._size.x : this._size.y));
             this.mul = l / (r - 1);
-            this._size = this.vertical ? new Vector2(24f, Mathf.Max(32f, l)) : new Vector2(Mathf.Max(32f, l), 24f);
+            this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
             */
         }
 
