@@ -22,7 +22,7 @@ namespace CompletelyOptional
             Debug.LogError(string.Concat("CompletelyOptional: ", this.mod.ModID, " had issue in OptionInterface:"));
             this.reason = Reason.InitError;
             this.exception = exception.ToString();
-            Debug.LogError(this.exception);
+            Debug.LogException(exception);
         }
 
         public Reason reason;

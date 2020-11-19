@@ -136,6 +136,7 @@ namespace CompletelyOptional
             else { curLang = "eng"; }
             foreach (PartialityMod mod in loadedMods)
             {
+                if (string.IsNullOrEmpty(mod.ModID)) { goto invaildID; }
                 if (blackList.Contains<string>(mod.ModID)) //No Config for this :P
                 {
                     if (mod.ModID == "CommunicationModule")
@@ -153,9 +154,9 @@ namespace CompletelyOptional
                 { Debug.LogError($"Duplicate ModID detected! (dupe ID: {mod.ModID})"); }
                 else if (Regex.IsMatch(mod.ModID, "^[^\\/?%*:|\"<>/.]+$"))
                 { loadedModsDictionary.Add(mod.ModID, mod); continue; }
-                else { Debug.Log($"{mod.ModID} does not support CompletelyOptional: Invalid Mod ID! Using Mod Type name instead."); }
 
-                string InvalidID = mod.ModID;
+            invaildID:
+                string InvalidID = string.IsNullOrEmpty(mod.ModID) ? "No ModID" : mod.ModID;
                 Debug.Log($"{InvalidID} does not support CompletelyOptional: Invalid Mod ID! Using Mod Type name instead.");
                 mod.ModID = mod.GetType().Name;
                 //Assembly.GetAssembly(this.mod.GetType());
@@ -172,6 +173,7 @@ namespace CompletelyOptional
             //Debug.Log(string.Concat("curLang: ", curLang));
             InternalTranslator.LoadTranslation();
 
+            isOptionMenu = false;
             loadedInterfaceDict = new Dictionary<string, OptionInterface>();
             loadedInterfaces = new List<OptionInterface>();
 
@@ -195,7 +197,6 @@ namespace CompletelyOptional
             }
 
             //Load Mod Interfaces!
-            isOptionMenu = false;
             foreach (KeyValuePair<string, PartialityMod> item in loadedModsDictionary)
             {
                 PartialityMod mod = loadedModsDictionary[item.Key];
@@ -367,17 +368,17 @@ namespace CompletelyOptional
 
             if (soundFill > 0) { soundFill--; }
             ConfigMenu.description = "";
-            ConfigMenu.menuTab.Update(Time.deltaTime);
-            if (MenuTab.logMode)
-            {
-                ConfigMenu.instance.saveButton.buttonBehav.greyedOut = true;
-                ConfigMenu.instance.resetButton.buttonBehav.greyedOut = true;
-                return;
-            }
-            bool fade = ConfigMenu.instance.fadeSprite != null;
-            ConfigMenu.instance.backButton.buttonBehav.greyedOut = fade;
             if (ConfigMenu.currentTab != null)
             {
+                bool fade = ConfigMenu.instance.fadeSprite != null;
+                ConfigMenu.menuTab.Update(Time.deltaTime);
+                if (MenuTab.logMode)
+                {
+                    ConfigMenu.instance.saveButton.buttonBehav.greyedOut = true;
+                    ConfigMenu.instance.resetButton.buttonBehav.greyedOut = true;
+                    return;
+                }
+                ConfigMenu.instance.backButton.buttonBehav.greyedOut = fade;
                 try
                 {
                     if (!ConfigMenu.freezeMenu)
@@ -476,6 +477,7 @@ namespace CompletelyOptional
             return;
 
         BackgroundUpdate:
+            isOptionMenu = false;
             //Background running
             if (pm.currentMainLoop?.ID == ProcessManager.ProcessID.IntroRoll) { return; }
             /*

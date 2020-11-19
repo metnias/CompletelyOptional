@@ -1,8 +1,6 @@
-﻿using Menu;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using CompletelyOptional;
+using Menu;
+using System.Reflection;
 using UnityEngine;
 
 namespace OptionalUI
@@ -16,8 +14,16 @@ namespace OptionalUI
         {
             tester = new MenuLabel(menu, menu.pages[0], "A", new Vector2(10000f, 10000f), new Vector2(10000f, 100f), false);
             tester.label.alpha = 0f; tester.label.RemoveFromContainer();
-            testerB = new MenuLabel(menu, menu.pages[0], "A", new Vector2(10000f, 10500f), new Vector2(10000f, 300f), true);
+            testerB = new MenuLabel(menu, menu.pages[0], "B", new Vector2(10000f, 10500f), new Vector2(10000f, 300f), true);
             testerB.label.alpha = 0f; testerB.label.RemoveFromContainer();
+            if (OptionScript.ComModExists)
+            {
+                float s = 1f / (int)OptionScript.ComMod.GetType().GetField("pMulti", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(OptionScript.ComMod);
+                tester.label.scale = s;
+                s = 1f / (int)OptionScript.ComMod.GetType().GetField("pdMulti", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(OptionScript.ComMod);
+                testerB.label.scale = s;
+            }
+
             if (!hasChecked)
             {
                 hasChecked = true;
