@@ -1,5 +1,6 @@
 ﻿###1.4.4.4#!#20201210#!#
 1.4.4.4
+- ConfigMachine's InternalTranslator is less likely to break
 - Fixed OpSimpleButton's label's position is not updating
 - Fixed Real-time translation function for mod translators
 1.4.4.3
