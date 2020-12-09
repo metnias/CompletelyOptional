@@ -36,6 +36,7 @@ namespace OptionalUI
         public OptionInterface(PartialityMod mod)
         {
             this.mod = mod;
+            if (mod != null) { this._mod = new RainWorldMod(mod); }
             this.rawConfig = "Unconfiguable";
             instance = this;
         }
@@ -129,6 +130,8 @@ namespace OptionalUI
         /// The <see cref="PartialityMod"/> using this <see cref="OptionInterface"/>.
         /// </summary>
         public PartialityMod mod;
+
+        private RainWorldMod _mod;
 
         /// <summary>
         /// OpTab that contains UIelements for your config screen.
@@ -643,7 +646,6 @@ namespace OptionalUI
             for (int i = 0; i < transData.Length; i++)
             {
                 if (transData[i].StartsWith("//") || transData[i].Length < 5) { continue; }
-                //Debug.Log(data[i]);
                 string[] langs = transData[i].Split('|'); //Regex.Split(data[i], "/\|/");
                 if (langs.Length < 2) { continue; }
                 bool hasDefault = false;
@@ -663,6 +665,7 @@ namespace OptionalUI
                             transConverter.Remove(langs[0]);
                         }
                         transConverter.Add(langs[0], piece[1]);
+                        //Debug.Log($"{transConverter.Count}: {langs[0]}|{piece[1]}");
                     }
                     else if (InternalTranslator.LangToCode(piece[0]) == "eng")
                     {
@@ -683,7 +686,9 @@ namespace OptionalUI
             if (File.Exists(test))
             {
                 Debug.Log($"{this.mod.ModID} reloaded external translation: {test}");
-                transData = Regex.Split(File.ReadAllText(test), Environment.NewLine);
+                string d = File.ReadAllText(test);
+                if (d.Contains(Environment.NewLine)) { transData = Regex.Split(d, Environment.NewLine); }
+                else { transData = Regex.Split(d, "\n"); }
                 LoadTranslation();
             }
         }
@@ -717,7 +722,8 @@ namespace OptionalUI
                 return false;
             }
 
-            transData = Regex.Split(result, Environment.NewLine);
+            if (result.Contains(Environment.NewLine)) { transData = Regex.Split(result, Environment.NewLine); }
+            else { transData = Regex.Split(result, "\n"); }
             return true;
         }
 

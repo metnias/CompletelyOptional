@@ -15,7 +15,7 @@ namespace CompletelyOptional
         public OptionMod()
         {
             ModID = "ConfigMachine";
-            Version = "1443"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
+            Version = "1500"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
             author = "topicular";
             instance = this;
         }
