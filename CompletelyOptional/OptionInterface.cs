@@ -683,7 +683,9 @@ namespace OptionalUI
             if (File.Exists(test))
             {
                 Debug.Log($"{this.mod.ModID} reloaded external translation: {test}");
-                transData = Regex.Split(File.ReadAllText(test), Environment.NewLine);
+                string d = File.ReadAllText(test);
+                if (d.Contains(Environment.NewLine)) { transData = Regex.Split(d, Environment.NewLine); }
+                else { transData = Regex.Split(d, "\n"); }
                 LoadTranslation();
             }
         }
@@ -717,7 +719,8 @@ namespace OptionalUI
                 return false;
             }
 
-            transData = Regex.Split(result, Environment.NewLine);
+            if (result.Contains(Environment.NewLine)) { transData = Regex.Split(result, Environment.NewLine); }
+            else { transData = Regex.Split(result, "\n"); }
             return true;
         }
 
