@@ -1,4 +1,6 @@
-﻿###1.4.4.3#!#20201118#!#
+﻿###1.4.4.4#!#20201210#!#
+1.4.4.4
+- Fixed OpSimpleButton's label's position is not updating
 1.4.4.3
 - Fixed LabelTest functioning incorrectly with ComMod's scaled font
 - Fixed potential NullRef spam in exceptionLog from 1.4.4.2
