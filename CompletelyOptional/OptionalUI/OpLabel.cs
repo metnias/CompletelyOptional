@@ -75,6 +75,7 @@ namespace OptionalUI
 
         /// <summary>
         /// Vertical Alignment of the text inside the box defined with <see cref="UIelement.size"/>. Will not work correctly with overflowed text.
+        /// See also <seealso cref="verticalAlignment"/>.
         /// </summary>
         public enum LabelVAlignment
         {
@@ -94,6 +95,11 @@ namespace OptionalUI
             Bottom
         }
 
+        /// <summary>
+        /// Vertical Alignment of the text inside the box defined with <see cref="UIelement.size"/>. Will not work correctly with overflowed text.
+        /// Changing this will call <see cref="OnChange"/> automatically.
+        /// See also <seealso cref="LabelVAlignment"/>.
+        /// </summary>
         public LabelVAlignment verticalAlignment
         {
             get { return _verticalAlignment; }
