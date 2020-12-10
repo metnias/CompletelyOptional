@@ -1,4 +1,8 @@
-﻿###1.4.4.4#!#20201210#!#
+﻿###1.5: Currently Unnamed Update#!#20201119#!#
+x Supports BepInEx plugins
+x Added OpComboBox default UIconfig
+- Fixed real time translation not working correctly
+﻿###1.4.4.4#!#20201210#!# 
 1.4.4.4
 - ConfigMachine's InternalTranslator is less likely to break
 - Fixed OpSimpleButton's label's position is not updating
@@ -27,8 +31,7 @@
 1.4.3.A
 - LabelTest.GetWidth no longer breaks in Initialize
 1.4.3.9
-- Fixed non-pixel perfect visual glitch with OpScrollBox
- + Thanks to Slime_Cubed's help
+- Fixed non-pixel perfect visual glitch with OpScrollBox (Thanks to Slime_Cubed)
 - Default offset for UIelements is moved by 0.01 px upwards
  + This would not affect users or modders, other than fixing visual glitches
 1.4.3.8
@@ -40,7 +43,7 @@
  + Rewrote OpLabel's autoWrap function again
   x OpLabel and OpLabelLong's autoWrap are much more visually pleasing!
   x Even works with CommunicationModule's custom fonts
-  x This did add noticeable performance cost with OpLabel.autoWrap, though, albeit I added some optimization
+  x This did add noticeable performance cost with OpLabel.autoWrap, though
  + Made FCursor(Cursor appears for text input)'s position more accurately
 ###1.4.3.6#!#20200920#!#
 1.4.3.6

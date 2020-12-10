@@ -82,6 +82,7 @@
     <Compile Include="OptionalUI\SubObjects\LoremIpsum.cs" />
     <Compile Include="OptionalUI\UItrigger.cs" />
     <Compile Include="OptionInterface.cs" />
+    <Compile Include="RainWorldMod.cs" />
     <Compile Include="UnconfiguableOI.cs" />
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
@@ -141,6 +142,6 @@
 copy /Y "$(TargetDir)$(TargetName).xml" "D:\Drive\Repo\References\RainWorld\$(TargetName).xml"
 copy /Y "$(TargetPath)" "E:\Game\Rain World\mods\$(TargetName).dll"
 copy /Y "$(TargetDir)$(TargetName).xml" "E:\Game\Rain World\mods\$(TargetName).xml"
-copy /Y "$(TargetPath)" "E:\SteamLibrary\steamapps\common\Rain World\Mods\$(TargetName).dll"</PostBuildEvent>
+copy /Y "$(TargetPath)" "E:\SteamLibrary\steamapps\common\Rain World\BepInEx\plugins\$(TargetName).dll"</PostBuildEvent>
   </PropertyGroup>
 </Project>
