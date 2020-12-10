@@ -58,7 +58,11 @@ namespace OptionalUI
             this.rect.size = this.size;
             this.rectH.pos = this.pos;
             this.rectH.size = this.size;
-            if (!IsImageButton) { this.label.size = this.size; }
+            if (!IsImageButton)
+            {
+                this.label.pos = this.pos;
+                this.label.size = this.size;
+            }
         }
 
         public override void GrafUpdate(float dt)

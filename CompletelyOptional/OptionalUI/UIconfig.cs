@@ -118,7 +118,7 @@ namespace OptionalUI
         private string _value;
 
         /// <summary>
-        /// Value in <see cref="string"/> form, which is how it is saved.
+        /// Value in <see cref="string"/> form, which is how it is saved. Changing this will call <see cref="OnChange"/> automatically.
         /// </summary>
         public virtual string value
         {

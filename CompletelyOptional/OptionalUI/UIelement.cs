@@ -177,7 +177,7 @@ namespace OptionalUI
         internal Vector2 _pos;
 
         /// <summary>
-        /// Size of this element.
+        /// Size of this element. Changing this will call <see cref="OnChange"/> automatically.
         /// </summary>
         public Vector2 size
         {
@@ -197,7 +197,7 @@ namespace OptionalUI
         internal Vector2 _size;
 
         /// <summary>
-        /// Radian of the element.
+        /// Radian of the element. Changing this will call <see cref="OnChange"/> automatically.
         /// </summary>
         public float rad
         {

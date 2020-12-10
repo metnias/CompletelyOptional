@@ -2,11 +2,16 @@
 x Supports BepInEx plugins
 x Added OpComboBox default UIconfig
 - Fixed real time translation not working correctly
-###1.4.4.3#!#20201118#!#
+﻿###1.4.4.4#!#20201210#!# 
+1.4.4.4
+- ConfigMachine's InternalTranslator is less likely to break
+- Fixed OpSimpleButton's label's position is not updating
+- Fixed Real-time translation function for mod translators
 1.4.4.3
 - Fixed LabelTest functioning incorrectly with ComMod's scaled font
 - Fixed potential NullRef spam in exceptionLog from 1.4.4.2
 - Tweaked invaild ModID handler
+###1.4.4.2#!#20201031#!#
 1.4.4.2
 - Minor clean-up in old codes regarding string.Concat
 - Removed arbitrary minimum size limit for OpSlider
@@ -40,6 +45,7 @@ x Added OpComboBox default UIconfig
   x Even works with CommunicationModule's custom fonts
   x This did add noticeable performance cost with OpLabel.autoWrap, though
  + Made FCursor(Cursor appears for text input)'s position more accurately
+###1.4.3.6#!#20200920#!#
 1.4.3.6
 - Removed leftover debug logging of OpLabelLong
 1.4.3.5

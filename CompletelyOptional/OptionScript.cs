@@ -118,9 +118,6 @@ namespace CompletelyOptional
         {
             //Application.RegisterLogCallback(new Application.LogCallback(TroubleShoot));
 
-            loadedMods = Partiality.PartialityManager.Instance.modManager.loadedMods;
-            loadedModsDictionary = new Dictionary<string, PartialityMod>();
-            ComModExists = false;
             ID2Code = new Dictionary<int, string>()
             {
                 { 0 , "eng" },
@@ -134,6 +131,12 @@ namespace CompletelyOptional
             };
             if (ID2Code.TryGetValue(rw.options.language, out string code)) { curLang = code; }
             else { curLang = "eng"; }
+            string curCurLang = curLang;
+            InternalTranslator.LoadTranslation();
+
+            loadedMods = Partiality.PartialityManager.Instance.modManager.loadedMods;
+            loadedModsDictionary = new Dictionary<string, PartialityMod>();
+            ComModExists = false;
             foreach (PartialityMod mod in loadedMods)
             {
                 if (string.IsNullOrEmpty(mod.ModID)) { goto invaildID; }
@@ -171,7 +174,7 @@ namespace CompletelyOptional
             }
 
             //Debug.Log(string.Concat("curLang: ", curLang));
-            InternalTranslator.LoadTranslation();
+            if (curCurLang != curLang) { InternalTranslator.LoadTranslation(); }
 
             isOptionMenu = false;
             loadedInterfaceDict = new Dictionary<string, OptionInterface>();
@@ -343,7 +346,7 @@ namespace CompletelyOptional
                     {
                         Initialize();
                     }
-                    catch (Exception ex) { Debug.LogError(ex); }
+                    catch (Exception ex) { Debug.LogError(ex); Debug.LogException(ex); }
                     init = true;
                 }
                 ConfigMenu.currentTab = null;
