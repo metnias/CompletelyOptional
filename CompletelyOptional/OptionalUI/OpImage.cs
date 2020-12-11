@@ -24,19 +24,15 @@ namespace OptionalUI
             }
 
             this._anchor = new Vector2(0f, 0f);
-            //do { seed = Mathf.FloorToInt(UnityEngine.Random.value * 10000); }
-            //while (Futile.atlasManager.DoesContainAtlas(salt + "image"));
-
-            //Futile.atlasManager.LoadAtlasFromTexture(salt + "image", image);
+            this._scale = new Vector2(1f, 1f);
+            this._alpha = 1f;
+            this.isTexture = true;
 
             this.sprite = new FTexture(image, "img");
-            //this.sprite = new FSprite(salt + "image", true);
+            this.sprite.SetPosition(Vector2.zero);
             this.sprite.SetAnchor(this._anchor);
             this._size = new Vector2(image.width, image.height);
             this.myContainer.AddChild(this.sprite);
-
-            this._alpha = 1f;
-            this.isTexture = true;
         }
 
         /// <summary>
@@ -54,23 +50,22 @@ namespace OptionalUI
             }
 
             this._anchor = new Vector2(0f, 0f);
-            FAtlasElement element;
-            try
-            { element = Futile.atlasManager.GetElementWithName(fAtlasElement); }
-            catch (Exception ex)
-            { throw new ElementFormatException(this, string.Concat("There is no such FAtlasElement called ", fAtlasElement, " : ", Environment.NewLine, ex.ToString())); }
-
-            this.sprite = new FSprite(element.name, true);
-            this.myContainer.AddChild(this.sprite);
-            this._size = element.sourceSize;
-            this.sprite.SetAnchor(this._anchor);
-
+            this._scale = new Vector2(1f, 1f);
             this._alpha = 1f;
             this.isTexture = false;
+
+            if (!Futile.atlasManager.DoesContainElementWithName(fAtlasElement))
+            { throw new ElementFormatException(this, $"There is no such FAtlasElement called [{fAtlasElement}]"); }
+
+            this.sprite = new FSprite(fAtlasElement, true);
+            this.sprite.SetPosition(Vector2.zero);
+            this.sprite.SetAnchor(this._anchor);
+            this._size = this.sprite.element.sourceSize;
+            this.myContainer.AddChild(this.sprite);
         }
 
         /// <summary>
-        /// Swap <see cref="Texture2D"/> to new one. This must be initialized with <see cref="Texture2D"/> to use this.
+        /// Swap <see cref="Texture2D"/> to new one. This must be initialized with <see cref="Texture2D"/> to use this. This will reset <see cref="color"/> to white.
         /// </summary>
         /// <exception cref="InvalidActionException">Thrown when you called this with <see cref="FAtlasElement"/> version of <see cref="OpImage"/></exception>
         /// <param name="newImage">New image to display</param>
@@ -80,10 +75,12 @@ namespace OptionalUI
             if (!isTexture) { throw new InvalidActionException(this, "You must construct this with Texture2D to use this function"); }
             if (newImage == null) { Debug.LogError("CompletelyOptional: newImage is null in OpImage.ChangeImage!"); return; }
 
-            this._size = new Vector2(newImage.width, newImage.height);
+            this.color = Color.white;
+            this._size = new Vector2(newImage.width * _scale.x, newImage.height * _scale.y);
             (this.sprite as FTexture).SetTexture(newImage);
             this.sprite.SetAnchor(this._anchor);
             this.sprite.alpha = this._alpha;
+            this.sprite.color = Color.white;
             this.myContainer.AddChild(this.sprite);
         }
 
@@ -98,14 +95,12 @@ namespace OptionalUI
             if (isTexture) { throw new InvalidActionException(this, "You must construct this with a name of FAtlasElement to use this function"); }
             if (newElement == null) { Debug.LogError("CompletelyOptional: newElement is null in OpImage.ChangeElement!"); return; }
             myContainer.RemoveAllChildren();
-            FAtlasElement element;
-            try
-            { element = Futile.atlasManager.GetElementWithName(newElement); }
-            catch (Exception ex)
-            { Debug.LogError(string.Concat("CompletelyOptional: There is no such FAtlasElement called ", newElement, " : ", Environment.NewLine, ex.ToString())); return; }
-            this.sprite = new FSprite(element.name, true);
+
+            if (!Futile.atlasManager.DoesContainElementWithName(newElement))
+            { Debug.LogError($"CompletelyOptional: There is no such FAtlasElement called [{newElement}]"); return; }
+            this.sprite = new FSprite(newElement, true);
             this.myContainer.AddChild(this.sprite);
-            this._size = element.sourceSize;
+            this._size = new Vector2(sprite.element.sourceSize.x * _scale.x, sprite.element.sourceSize.y * _scale.y);
             this.sprite.SetAnchor(this._anchor);
             this.sprite.alpha = this._alpha;
         }
@@ -114,7 +109,7 @@ namespace OptionalUI
         /// AnchorX and Y for sprite.
         /// </summary>
         /// <remarks>
-        /// In {0f, 0f}, pos will be the bottomleft of sprite. In {0.5f, 0.5f}, pos will be the center of sprite.
+        /// In {0f, 0f}(default), pos will be the bottomleft of sprite. In {0.5f, 0.5f}, pos will be the center of sprite.
         /// </remarks>
         public Vector2 anchor
         {
@@ -131,13 +126,30 @@ namespace OptionalUI
 
         private Vector2 _anchor;
 
+        /// <summary>
+        /// ScaleX and Y for sprite. {1f, 1f} in default.
+        /// </summary>
+        public Vector2 scale
+        {
+            get { return _scale; }
+            set
+            {
+                if (_scale != value)
+                {
+                    _scale = value;
+                    if (_init) { OnChange(); }
+                }
+            }
+        }
+        private Vector2 _scale;
+
         public FSprite sprite;
         private readonly bool isTexture;
         // private readonly int seed;
         // private string salt { get { return "img" + seed.ToString("D4"); } }
 
         /// <summary>
-        /// Alpha of OpImage.
+        /// Alpha of OpImage. 1f in default.
         /// </summary>
         public float alpha
         {
@@ -154,11 +166,10 @@ namespace OptionalUI
                 }
             }
         }
-
         private float _alpha;
 
         /// <summary>
-        /// Set new Colour. This will be ignored with <see cref="Texture2D"/> version of this.
+        /// Set new Colour.
         /// </summary>
         public Color color
         {
@@ -173,7 +184,6 @@ namespace OptionalUI
                 }
             }
         }
-
         private Color _color;
 
         public override void OnChange()
@@ -181,8 +191,11 @@ namespace OptionalUI
             base.OnChange();
             if (!_init) { return; }
             sprite.alpha = _alpha;
-            if (!isTexture) { sprite.color = _color; }
+            sprite.color = _color;
             sprite.SetPosition(Vector2.zero);
+            sprite.scaleX = _scale.x;
+            sprite.scaleY = _scale.y;
+            _size = new Vector2(sprite.element.sourceSize.x * _scale.x, sprite.element.sourceSize.y * _scale.y);
         }
 
         /*
@@ -195,7 +208,7 @@ namespace OptionalUI
             }
         }*/
 
-        public override void Hide()
+        /* public override void Hide()
         {
             base.Hide();
             sprite.isVisible = false;
@@ -205,7 +218,7 @@ namespace OptionalUI
         {
             base.Show();
             sprite.isVisible = true;
-        }
+        } */
 
         public override void Unload()
         {

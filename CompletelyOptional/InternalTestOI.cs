@@ -90,6 +90,8 @@ namespace CompletelyOptional
             sb.AddItems(new OpLabel(new Vector2(100f, 540f + 1800f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
                     new OpLabel(new Vector2(420f, 510f + 1800f), new Vector2(100f, 20f), v, FLabelAlignment.Right));
             sb.AddItems(new OpImage(new Vector2(420f, 50f), t));
+            sb.AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
+            Tabs[2].AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
             OpColorPicker cpk0 = new OpColorPicker(new Vector2(100f, 100f), "_TEST", "CCCCCC") { colorEdge = Color.red };
             sb.AddItems(cpk0, new OpLabel(new Vector2(300f, 100f), new Vector2(100f, 20f), "Red Colorpicker") { bumpBehav = cpk0.bumpBehav, color = Color.red });
             OpColorPicker cpk1 = new OpColorPicker(new Vector2(100f, 2000f), "_TEST", "AAAAAA") { colorEdge = Color.blue };
