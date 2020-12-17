@@ -40,12 +40,6 @@
     <Reference Include="HOOKS-Assembly-CSharp">
       <HintPath>D:\Game\Rain World\HOOKS-Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="MonoMod">
-      <HintPath>D:\Game\Rain World\MonoMod.exe</HintPath>
-    </Reference>
-    <Reference Include="MonoMod.Utils">
-      <HintPath>D:\Game\Rain World\MonoMod.Utils.dll</HintPath>
-    </Reference>
     <Reference Include="Partiality">
       <HintPath>D:\Game\Rain World\Partiality.dll</HintPath>
     </Reference>
