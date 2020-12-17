@@ -2,8 +2,8 @@
 x Supports BepInEx plugins
 x Added OpComboBox default UIconfig
 - Fixed real time translation not working correctly
-- OpImage now has scale field, and can set color for Texture2D version
-﻿###1.4.4.4#!#20201210#!# 
+- OpImage now has scale field, and can set color for Texture2D version. Also color is now properly initialized to white (Thanks to Slime_Cubed and Garrakx).
+﻿###1.4.4.4#!#20201210#!#
 1.4.4.4
 - ConfigMachine's InternalTranslator is less likely to break
 - Fixed OpSimpleButton's label's position is not updating

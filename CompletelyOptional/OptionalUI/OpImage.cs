@@ -26,9 +26,11 @@ namespace OptionalUI
             this._anchor = new Vector2(0f, 0f);
             this._scale = new Vector2(1f, 1f);
             this._alpha = 1f;
+            this._color = Color.white;
             this.isTexture = true;
 
             this.sprite = new FTexture(image, "img");
+            this.sprite.color = this._color;
             this.sprite.SetPosition(Vector2.zero);
             this.sprite.SetAnchor(this._anchor);
             this._size = new Vector2(image.width, image.height);
@@ -52,12 +54,14 @@ namespace OptionalUI
             this._anchor = new Vector2(0f, 0f);
             this._scale = new Vector2(1f, 1f);
             this._alpha = 1f;
+            this._color = Color.white;
             this.isTexture = false;
 
             if (!Futile.atlasManager.DoesContainElementWithName(fAtlasElement))
             { throw new ElementFormatException(this, $"There is no such FAtlasElement called [{fAtlasElement}]"); }
 
             this.sprite = new FSprite(fAtlasElement, true);
+            this.sprite.color = this._color;
             this.sprite.SetPosition(Vector2.zero);
             this.sprite.SetAnchor(this._anchor);
             this._size = this.sprite.element.sourceSize;
@@ -75,7 +79,7 @@ namespace OptionalUI
             if (!isTexture) { throw new InvalidActionException(this, "You must construct this with Texture2D to use this function"); }
             if (newImage == null) { Debug.LogError("CompletelyOptional: newImage is null in OpImage.ChangeImage!"); return; }
 
-            this.color = Color.white;
+            this._color = Color.white;
             this._size = new Vector2(newImage.width * _scale.x, newImage.height * _scale.y);
             (this.sprite as FTexture).SetTexture(newImage);
             this.sprite.SetAnchor(this._anchor);
@@ -99,6 +103,7 @@ namespace OptionalUI
             if (!Futile.atlasManager.DoesContainElementWithName(newElement))
             { Debug.LogError($"CompletelyOptional: There is no such FAtlasElement called [{newElement}]"); return; }
             this.sprite = new FSprite(newElement, true);
+            this.sprite.color = this._color;
             this.myContainer.AddChild(this.sprite);
             this._size = new Vector2(sprite.element.sourceSize.x * _scale.x, sprite.element.sourceSize.y * _scale.y);
             this.sprite.SetAnchor(this._anchor);
