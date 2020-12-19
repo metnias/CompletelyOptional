@@ -90,8 +90,8 @@ namespace CompletelyOptional
             sb.AddItems(new OpLabel(new Vector2(100f, 540f + 1800f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
                     new OpLabel(new Vector2(420f, 510f + 1800f), new Vector2(100f, 20f), v, FLabelAlignment.Right));
             sb.AddItems(new OpImage(new Vector2(420f, 50f), t));
-            sb.AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
-            Tabs[2].AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
+            //sb.AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
+            //Tabs[2].AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
             OpColorPicker cpk0 = new OpColorPicker(new Vector2(100f, 100f), "_TEST", "CCCCCC") { colorEdge = Color.red };
             sb.AddItems(cpk0, new OpLabel(new Vector2(300f, 100f), new Vector2(100f, 20f), "Red Colorpicker") { bumpBehav = cpk0.bumpBehav, color = Color.red });
             OpColorPicker cpk1 = new OpColorPicker(new Vector2(100f, 2000f), "_TEST", "AAAAAA") { colorEdge = Color.blue };
@@ -120,6 +120,10 @@ namespace CompletelyOptional
             sb.AddItems(new OpLabelLong(new Vector2(225f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Center });
             sb.AddItems(new OpLabelLong(new Vector2(425f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
 
+            sb.AddItems(new OpHoldButton(new Vector2(400f, 400f), "", "Button", 50f));
+            prg = new OpHoldButton(new Vector2(200f, 400f), "", "Button") { color = new Color(1f, 0.5f, 1f) };
+            sb.AddItems(prg);
+
             // Use OpScrollBox.AddItems instead of OpTab.AddItems.
             /*
             OpResourceSelector rs = new OpResourceSelector(new Vector2(100f, 1600f), new Vector2(200f, 30f), "", typeof(CreatureTemplate.Type));
@@ -136,6 +140,15 @@ namespace CompletelyOptional
             sb.AddItems(rs, new OpLabel(100f, 1130f, "Shaders") { bumpBehav = rs.bumpBehav });
             rs = new OpResourceSelector(new Vector2(100f, 1000f), new Vector2(200f, 30f), "", OpResourceSelector.SpecialEnum.Songs);
             sb.AddItems(rs, new OpLabel(100f, 1030f, "Songs") { bumpBehav = rs.bumpBehav });*/
+        }
+
+        private OpHoldButton prg;
+
+        public override void Update(float dt)
+        {
+            base.Update(dt);
+            prg.SetProgress(prg.progress >= 100f ? 0f : prg.progress + 0.3f + UnityEngine.Random.value * 0.1f);
+            prg.GrafUpdate(dt);
         }
     }
 }

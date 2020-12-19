@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpSimpleButton : UItrigger
+    public class OpSimpleButton : UItrigger, SelectableUIelement
     {
         /// <summary>
         /// Simple Rectangular Botton

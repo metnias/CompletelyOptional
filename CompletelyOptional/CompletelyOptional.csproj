@@ -60,6 +60,7 @@
     <Compile Include="InternalTestOI.cs" />
     <Compile Include="InternalTranslator.cs" />
     <Compile Include="Crypto.cs" />
+    <Compile Include="OptionalUI\OpHoldButton.cs" />
     <Compile Include="OptionalUI\OpLabelLong.cs" />
     <Compile Include="OptionalUI\SubObjects\LabelTest.cs" />
     <Compile Include="OptionalUI\SubObjects\ListItem.cs" />
