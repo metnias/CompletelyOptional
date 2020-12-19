@@ -1,6 +1,8 @@
 ﻿###1.5: Currently Unnamed Update#!#20201119#!#
 x Supports BepInEx plugins
 x Added OpComboBox default UIconfig
+- Added several new provided UIelements
+ + OpHoldButton: Circular Hold Button which can also be used as ProgressButton
 - Fixed real time translation not working correctly
 - OpImage now has scale field, and can set color for Texture2D version. Also color is now properly initialized to white (Thanks to Slime_Cubed and Garrakx).
 ﻿###1.4.4.4#!#20201210#!#

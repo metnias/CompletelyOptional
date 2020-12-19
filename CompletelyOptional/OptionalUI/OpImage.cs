@@ -23,10 +23,6 @@ namespace OptionalUI
                 return;
             }
 
-            this._anchor = new Vector2(0f, 0f);
-            this._scale = new Vector2(1f, 1f);
-            this._alpha = 1f;
-            this._color = Color.white;
             this.isTexture = true;
 
             this.sprite = new FTexture(image, "img");
@@ -51,10 +47,6 @@ namespace OptionalUI
                 return;
             }
 
-            this._anchor = new Vector2(0f, 0f);
-            this._scale = new Vector2(1f, 1f);
-            this._alpha = 1f;
-            this._color = Color.white;
             this.isTexture = false;
 
             if (!Futile.atlasManager.DoesContainElementWithName(fAtlasElement))
@@ -129,7 +121,7 @@ namespace OptionalUI
             }
         }
 
-        private Vector2 _anchor;
+        private Vector2 _anchor = new Vector2(0f, 0f);
 
         /// <summary>
         /// ScaleX and Y for sprite. {1f, 1f} in default.
@@ -146,7 +138,7 @@ namespace OptionalUI
                 }
             }
         }
-        private Vector2 _scale;
+        private Vector2 _scale = new Vector2(1f, 1f);
 
         public FSprite sprite;
         private readonly bool isTexture;
@@ -171,7 +163,7 @@ namespace OptionalUI
                 }
             }
         }
-        private float _alpha;
+        private float _alpha = 1f;
 
         /// <summary>
         /// Set new Colour.
@@ -189,7 +181,7 @@ namespace OptionalUI
                 }
             }
         }
-        private Color _color;
+        private Color _color = Color.white;
 
         public override void OnChange()
         {
