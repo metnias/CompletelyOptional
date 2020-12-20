@@ -12,13 +12,14 @@ namespace OptionalUI
         /// <summary>
         /// Circular Hold Button which can also be used as ProgressButton
         /// </summary>
-        /// <param name="pos">BottomLeft <see cref="UIelement.pos"/>; Radius is fixed with 55f (110f in diameter)</param>
+        /// <param name="pos">BottomLeft <see cref="UIelement.pos"/>; <see cref="UIelement.fixedRad"/> is 55f (110f in diameter)</param>
         /// <param name="signal"><see cref="UItrigger.signal"/></param>
         /// <param name="fillTime">How long do you need to hold to call Signal (set to 0f for instant)</param>
         /// <param name="displayText">Text to be displayed (overriden when it's ProgressButton mode)</param>
         public OpHoldButton(Vector2 pos, string signal, string displayText, float fillTime = 80f) : base(pos, 55f, signal)
         {
             this.fillTime = Mathf.Max(0f, fillTime);
+            fixedRad = 55f;
             _text = displayText;
             color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             if (!_init) { return; }
@@ -61,7 +62,7 @@ namespace OptionalUI
         {
             base.OnChange();
             if (!_init) { return; }
-            label.pos = this.pos + new Vector2(5f, 40f);
+            label.pos = this.pos + new Vector2(rad - 50f, rad - 15f);
             if (!isProgress) { label.text = text; }
             else { label.text = progress.ToString("N" + Mathf.Clamp(progressDeci, 0, 4).ToString()) + "%"; }
         }
@@ -72,13 +73,13 @@ namespace OptionalUI
             Color c = bumpBehav.GetColor(color);
             label.label.color = c;
             float r = rad + 8f * (bumpBehav.sizeBump + 0.5f * Mathf.Sin(bumpBehav.extraSizeBump * Mathf.PI)) * ((!held) ? 1f : (0.5f + 0.5f * Mathf.Sin(pulse * Mathf.PI * 2f))) + 0.5f;
-            for (int i = 0; i < circles.Length; i++) { circles[i].scale = r / 8f; }
+            for (int i = 0; i < circles.Length; i++) { circles[i].scale = r / 8f; circles[i].SetPosition(rad, rad); }
             circles[0].color = new Color(0.0196078438f, 0f, Mathf.Lerp(0.3f, 0.6f, bumpBehav.col));
             circles[1].color = c;
             circles[1].alpha = 2f / r;
             circles[2].scale = (r + 10f) / 8f;
-            circles[2].alpha = !isProgress ? filled : Mathf.Clamp01(progress / 100f);
-            circles[2].color = Color.Lerp(Color.white, color, 0.5f);
+            circles[2].alpha = Mathf.Clamp01(!isProgress ? filled : progress / 100f);
+            circles[2].color = Color.Lerp(Color.white, color, 0.7f);
             circles[3].color = Color.Lerp(c, DyeableRect.MidToDark(c), 0.5f);
             circles[3].scale = (r + 15f) / 8f;
             circles[3].alpha = 2f / (r + 15f);

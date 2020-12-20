@@ -35,8 +35,11 @@ namespace OptionalUI
         /// <param name="mod">Your Partiality mod.</param>
         public OptionInterface(PartialityMod mod)
         {
+#pragma warning disable CS0612
             this.mod = mod;
-            if (mod != null) { this._mod = new RainWorldMod(mod); }
+#pragma warning restore CS0612
+            if (mod != null) { this.rwMod = new RainWorldMod(mod); }
+            else { this.rwMod = new RainWorldMod(); }
             this.rawConfig = "Unconfiguable";
             instance = this;
         }
@@ -64,7 +67,7 @@ namespace OptionalUI
         /// </summary>
         public int GetPriority()
         {
-            if (OptionScript.blackList.Contains(mod?.ModID)) { return -1; }
+            if (OptionScript.blackList.Contains(rwMod.ModID)) { return -1; }
             if (this is UnconfiguableOI oi)
             {
                 if (oi.reason != UnconfiguableOI.Reason.NoInterface) { return 2; }
@@ -127,11 +130,15 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// The <see cref="PartialityMod"/> using this <see cref="OptionInterface"/>.
+        /// The <see cref="PartialityMod"/> using this <see cref="OptionInterface"/>. Unused after v1.5; check <see cref="rwMod"/>
         /// </summary>
+        [Obsolete]
         public PartialityMod mod;
 
-        private RainWorldMod _mod;
+        /// <summary>
+        /// <see cref="RainWorldMod"/> that holds basic information of Partiality Mod or BepInEx Plugin
+        /// </summary>
+        public RainWorldMod rwMod { get; private set; }
 
         /// <summary>
         /// OpTab that contains UIelements for your config screen.
@@ -149,7 +156,7 @@ namespace OptionalUI
 
         private DirectoryInfo directory => new DirectoryInfo(string.Concat(
                     OptionMod.directory.FullName,
-                    mod.ModID,
+                    rwMod.ModID,
                     Path.DirectorySeparatorChar
                     ));
 
@@ -196,15 +203,15 @@ namespace OptionalUI
                     txt = txt.Substring(32, txt.Length - 32);
                     if (Custom.Md5Sum(txt) != key)
                     {
-                        Debug.Log($"{mod.ModID} config file has been tinkered! Load Default Config instead.");
+                        Debug.Log($"{rwMod.ModID} config file has been tinkered! Load Default Config instead.");
                         return false;
                     }
 
-                    this.rawConfig = Crypto.DecryptString(txt, string.Concat("OptionalConfig ", mod.ModID));
+                    this.rawConfig = Crypto.DecryptString(txt, string.Concat("OptionalConfig ", rwMod.ModID));
                 }
                 catch
                 {
-                    Debug.Log(new LoadDataException($"{mod.ModID} config file has been corrupted! Load Default Config instead."));
+                    Debug.Log(new LoadDataException($"{rwMod.ModID} config file has been corrupted! Load Default Config instead."));
                     return false;
                 }
             }
@@ -278,7 +285,7 @@ namespace OptionalUI
                 }
                 else
                 {
-                    Debug.Log($"{mod.ModID} setting has been removed. (key: {setting.Key} / value: {setting.Value})");
+                    Debug.Log($"{rwMod.ModID} setting has been removed. (key: {setting.Key} / value: {setting.Value})");
                 }
             }
         }
@@ -346,7 +353,7 @@ namespace OptionalUI
                 directory.FullName,
                 "config.txt"
                 });
-                string enc = Crypto.EncryptString(this.rawConfig, string.Concat("OptionalConfig " + mod.ModID));
+                string enc = Crypto.EncryptString(this.rawConfig, string.Concat("OptionalConfig " + rwMod.ModID));
                 string key = Custom.Md5Sum(enc);
 
                 File.WriteAllText(path, key + enc, Encoding.UTF8);
@@ -475,14 +482,14 @@ namespace OptionalUI
                     data = data.Substring(32, data.Length - 32);
                     if (Custom.Md5Sum(data) != key)
                     {
-                        Debug.Log($"{mod.ModID} data file has been tinkered!");
+                        Debug.Log($"{rwMod.ModID} data file has been tinkered!");
                         dataTinkered = true;
                     }
                     else
                     {
                         dataTinkered = false;
                     }
-                    data = Crypto.DecryptString(data, string.Concat("OptionalData " + mod.ModID));
+                    data = Crypto.DecryptString(data, string.Concat("OptionalData " + rwMod.ModID));
                 }
                 string[] raw = Regex.Split(data, "<slugChar>");
                 _data = new string[Math.Max(_data.Length, raw.Length)];
@@ -517,7 +524,7 @@ namespace OptionalUI
                 slot.ToString(),
                 ".txt"
                 });
-                string enc = Crypto.EncryptString(data, string.Concat("OptionalData " + mod.ModID));
+                string enc = Crypto.EncryptString(data, string.Concat("OptionalData " + rwMod.ModID));
                 string key = Custom.Md5Sum(enc);
 
                 File.WriteAllText(path, key + enc);
@@ -685,7 +692,7 @@ namespace OptionalUI
 
             if (File.Exists(test))
             {
-                Debug.Log($"{this.mod.ModID} reloaded external translation: {test}");
+                Debug.Log($"{rwMod.ModID} reloaded external translation: {test}");
                 string d = File.ReadAllText(test);
                 if (d.Contains(Environment.NewLine)) { transData = Regex.Split(d, Environment.NewLine); }
                 else { transData = Regex.Split(d, "\n"); }
@@ -695,12 +702,9 @@ namespace OptionalUI
 
         private bool ReadTransTXT()
         {
-            if (this.mod == null)
-            { Debug.LogError("CompletelyOptional: OptionInterface.mod is null!"); return false; }
-
             if (string.IsNullOrEmpty(transFile)) { return false; }
 
-            var assembly = Assembly.GetAssembly(this.mod.GetType());
+            var assembly = Assembly.GetAssembly(rwMod.mod.GetType());
             string result;
 
             try

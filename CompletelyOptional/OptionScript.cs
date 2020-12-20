@@ -1,3 +1,4 @@
+using BepInEx;
 using Menu;
 using OptionalUI;
 using Partiality.Modloader;
@@ -134,6 +135,7 @@ namespace CompletelyOptional
             string curCurLang = curLang;
             InternalTranslator.LoadTranslation();
 
+            #region PartialityMods
             loadedMods = Partiality.PartialityManager.Instance.modManager.loadedMods;
             loadedModsDictionary = new Dictionary<string, PartialityMod>();
             ComModExists = false;
@@ -230,9 +232,12 @@ namespace CompletelyOptional
                     itf = new UnconfiguableOI(mod, UnconfiguableOI.Reason.NoInterface);
                 }
 
-                if (itf.mod == null)
-                { itf.mod = mod; Debug.Log(new NullModException(mod.ModID)); Debug.LogException(new NullModException(mod.ModID)); }
-                else { itf.mod.ModID = mod.ModID; }
+                if (itf.rwMod.mod == null)
+                {
+                    NullModException e = new NullModException(mod.ModID);
+                    Debug.Log(e); Debug.LogException(e);
+                    itf = new UnconfiguableOI(mod, e);
+                }
 
                 try
                 {
@@ -240,13 +245,13 @@ namespace CompletelyOptional
                 }
                 catch (Exception ex)
                 { //try catch better
-                    itf = new UnconfiguableOI(itf.mod, new GeneralInitializeException(ex));
+                    itf = new UnconfiguableOI(mod, new GeneralInitializeException(ex));
                     itf.Initialize();
                 }
 
                 if (itf.Tabs == null || itf.Tabs.Length < 1)
                 {
-                    itf = new UnconfiguableOI(itf.mod, new NoTabException(mod.ModID));
+                    itf = new UnconfiguableOI(mod, new NoTabException(mod.ModID));
                     itf.Initialize();
                     //OptionScript.loadedInterfaceDict.Remove(mod.ModID);
                     //OptionScript.loadedInterfaceDict.Add(mod.ModID, itf);
@@ -255,16 +260,16 @@ namespace CompletelyOptional
                 {
                     if (itf.LoadConfig())
                     {
-                        Debug.Log($"CompletelyOptional: {mod.ModID} config has been loaded.");
+                        Debug.Log($"CompletelyOptional) {mod.ModID} config has been loaded.");
                     }
                     else
                     {
-                        Debug.Log($"CompletelyOptional: {mod.ModID} does not have config.txt.");
+                        Debug.Log($"CompletelyOptional) {mod.ModID} does not have config.txt.");
                         //itf.Initialize();
                         try
                         {
                             itf.SaveConfig(itf.GrabConfig());
-                            Debug.Log($"CompletelyOptional: {mod.ModID} uses default config.");
+                            Debug.Log($"CompletelyOptional) {mod.ModID} uses default config.");
                         }
                         catch (Exception e)
                         {
@@ -278,6 +283,9 @@ namespace CompletelyOptional
                 loadedInterfaceDict.Add(mod.ModID, itf);
                 //loadedModsDictionary[item.Key].GetType().GetMember("OI")
             }
+            #endregion PartialityMods
+
+            #region InternalTest
             if (OptionMod.testing)
             {
 #pragma warning disable CS0162
@@ -292,14 +300,25 @@ namespace CompletelyOptional
                 try { itf.Initialize(); }
                 catch (Exception ex)
                 {
-                    itf = new UnconfiguableOI(itf.mod, new GeneralInitializeException(ex));
+                    itf = new UnconfiguableOI(temp, new GeneralInitializeException(ex));
                     itf.Initialize();
                 }
                 loadedInterfaces.Add(itf);
                 loadedInterfaceDict.Add(temp.ModID, itf);
 #pragma warning restore CS0162
             }
-            Debug.Log($"CompletelyOptional: Finished Initializing {loadedInterfaceDict.Count} OIs");
+            #endregion InternalTest
+
+            #region BaseUnityPlugins
+            BaseUnityPlugin[] plugins = FindObjectsOfType<BaseUnityPlugin>();
+            foreach (BaseUnityPlugin plugin in plugins)
+            {
+                RainWorldMod rwm = new RainWorldMod(plugin);
+                Debug.Log($"CompletelyOptional) {rwm.ModID}({rwm.Version}) by {rwm.author}");
+            }
+            #endregion BaseUnityPlugins
+
+            Debug.Log($"CompletelyOptional) Finished Initializing {loadedInterfaceDict.Count} OIs");
         }
 
         /// <summary>

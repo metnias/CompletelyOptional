@@ -8,10 +8,13 @@ using CompletelyOptional;
 
 namespace OptionalUI
 {
+    /// <summary>
+    /// DropDown box that can also be searched, useful for selecting an item from a list
+    /// </summary>
     public class OpComboBox : UIconfig
     {
         /// <summary>
-        /// DropDown box that can be also be searched.
+        /// DropDown box that can be also be searched
         /// </summary>
         /// <param name="pos">LeftBottom Position of folded <see cref="OpComboBox"/></param>
         /// <param name="size">The box size of folded <see cref="OpComboBox"/>. Minimum is 24 pxl for each dimension.</param>
