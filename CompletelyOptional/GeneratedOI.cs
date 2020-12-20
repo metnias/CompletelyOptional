@@ -1,12 +1,29 @@
 ﻿using OptionalUI;
 using BepInEx;
 using UnityEngine;
+using Partiality.Modloader;
 
 namespace CompletelyOptional
 {
+    /// <summary>
+    /// Procedurally generated OptionInterface
+    /// </summary>
     public class GeneratedOI : OptionInterface
     {
+        /// <summary>
+        /// If you're using BepInEx.Configuration, this is called automatically.
+        /// <para>Category will be separated by OpTab.</para>
+        /// </summary>
+        /// <param name="plugin"></param>
         public GeneratedOI(BaseUnityPlugin plugin) : base(plugin)
+        {
+        }
+
+        /// <summary>
+        /// PartialityMod version of GeneratedOI for lazy modders.
+        /// </summary>
+        /// <param name="mod"></param>
+        public GeneratedOI(PartialityMod mod) : base(mod)
         {
         }
 

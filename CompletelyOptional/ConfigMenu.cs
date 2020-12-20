@@ -176,7 +176,7 @@ namespace CompletelyOptional
             List<OptionInterface> itfs = new List<OptionInterface>();
 
             // Initialize
-            foreach (string id in OptionScript.loadedModsDictionary.Keys)
+            foreach (string id in OptionScript.loadedInterfaceDict.Keys)
             {
                 OptionInterface itf = OptionScript.loadedInterfaceDict[id];
                 Debug.Log(string.Concat("OptionInterface Initializing: " + id));
@@ -745,21 +745,19 @@ namespace CompletelyOptional
                     string output;
                     bool fc = false;
                     if (OptionScript.loadedInterfaceDict.TryGetValue(id, out OptionInterface oi))
-                    { fc = oi.Configuable(); }
-
-                    if (OptionScript.loadedModsDictionary.TryGetValue(id, out PartialityMod mod))
                     {
+                        fc = oi.Configuable();
                         if (fc)
                         {
-                            if (!string.IsNullOrEmpty(mod.author) && mod.author != RainWorldMod.authorNull)
-                            { output = InternalTranslator.Translate("Configure <ModID> by <ModAuthor>").Replace("<ModAuthor>", mod.author); }
+                            if (!string.IsNullOrEmpty(oi.rwMod.author) && oi.rwMod.author != RainWorldMod.authorNull)
+                            { output = InternalTranslator.Translate("Configure <ModID> by <ModAuthor>").Replace("<ModAuthor>", oi.rwMod.author); }
                             else
                             { output = InternalTranslator.Translate("Configure <ModID>"); }
                         }
                         else
                         {
-                            if (!string.IsNullOrEmpty(mod.author) && mod.author != RainWorldMod.authorNull)
-                            { output = InternalTranslator.Translate("Display <ModID> by <ModAuthor>").Replace("<ModAuthor>", mod.author); }
+                            if (!string.IsNullOrEmpty(oi.rwMod.author) && oi.rwMod.author != RainWorldMod.authorNull)
+                            { output = InternalTranslator.Translate("Display <ModID> by <ModAuthor>").Replace("<ModAuthor>", oi.rwMod.author); }
                             else
                             { output = InternalTranslator.Translate("Display <ModID>"); }
                         }

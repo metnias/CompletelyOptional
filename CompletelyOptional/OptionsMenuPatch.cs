@@ -15,7 +15,7 @@ namespace CompletelyOptional
         {
             //Code
             if (menu.selectedObject == enterConfig)
-            { return InternalTranslator.Translate("Configure Settings for Partiality Mods"); }
+            { return InternalTranslator.Translate("Configure Settings for Rain World Mods"); }
             return orig.Invoke(menu);
         }
 

@@ -1,5 +1,6 @@
 ﻿###1.5: Currently Unnamed Update#!#20201220#!#
-x Supports BepInEx plugins
+- Supports BepInEx plugins
+ + You can either use LoadOI(BaseUnityPlugin) for custom
 x Rewritten saved config from encrypted txt to json so it can be viewed and changed outside the game
 - Added several new provided UIelements
  + OpHoldButton: Circular Hold Button which can also be used as ProgressButton
