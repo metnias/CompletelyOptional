@@ -1,7 +1,8 @@
 ﻿###1.5: Currently Unnamed Update#!#20201220#!#
-- Supports BepInEx plugins
- + You can either use LoadOI(BaseUnityPlugin) for custom
-x Rewritten saved config from encrypted txt to json so it can be viewed and changed outside the game
+- Supports BepInEx plugins (BaseUnityPlugin)
+ + BepInEx Plugin can either use LoadOI(BaseUnityPlugin) for custom OptionInterface, or BepInEx.Configuration for procedural OI
+ + Partiality Mods may also use GeneratedOI for procedural OI
+- Rewritten saved config from encrypted txt to json so it can be viewed and changed outside the game
 - Added several new provided UIelements
  + OpHoldButton: Circular Hold Button which can also be used as ProgressButton
  + OpContainer: FContainer in Config screen which you can add FSprite on your own

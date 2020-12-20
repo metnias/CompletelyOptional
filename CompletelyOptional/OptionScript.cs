@@ -253,7 +253,7 @@ namespace CompletelyOptional
 
                 if (itf.Tabs == null || itf.Tabs.Length < 1)
                 {
-                    itf = new UnconfiguableOI(mod, new NoTabException(mod.ModID));
+                    itf = new UnconfiguableOI(itf.rwMod, new NoTabException(mod.ModID));
                     itf.Initialize();
                     //OptionScript.loadedInterfaceDict.Remove(mod.ModID);
                     //OptionScript.loadedInterfaceDict.Add(mod.ModID, itf);
@@ -315,19 +315,71 @@ namespace CompletelyOptional
             BaseUnityPlugin[] plugins = FindObjectsOfType<BaseUnityPlugin>();
             foreach (BaseUnityPlugin plugin in plugins)
             {
-                OptionInterface itf = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
-                if (blackList.Contains<string>(itf.rwMod.ModID)) { continue; }
+                OptionInterface itf;
 
+                // Load ITF
+                try
+                {
+                    object obj = plugin.GetType().GetMethod("LoadOI").Invoke(plugin, new object[] { });
+
+                    if (obj.GetType().IsSubclassOf(typeof(OptionInterface)))
+                    {
+                        itf = obj as OptionInterface;
+                        //Your code
+                        Debug.Log($"Loaded OptionInterface from {itf.rwMod.ModID} (type: {itf.GetType()})");
+                    }
+                    else
+                    {
+                        itf = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+                        Debug.Log($"{itf.rwMod.ModID} does not support CompletelyOptional: LoadOI returns what is not OptionInterface.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    itf = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+                    if (blackList.Contains<string>(itf.rwMod.ModID)) { continue; }
+                    Debug.Log($"{itf.rwMod.ModID} does not support CompletelyOptional: {ex.Message}");
+                }
+
+                // Initialize ITF
                 try
                 {
                     itf.Initialize();
                 }
                 catch (Exception ex)
                 { //try catch better
-                    itf = new UnconfiguableOI(plugin, new GeneralInitializeException(ex));
+                    itf = new UnconfiguableOI(itf.rwMod, new GeneralInitializeException(ex));
                     itf.Initialize();
                 }
-                Debug.Log($"CompletelyOptional) {itf.rwMod.ModID}({itf.rwMod.Version}) by {itf.rwMod.author}");
+                if (itf.Tabs == null || itf.Tabs.Length < 1)
+                {
+                    itf = new UnconfiguableOI(itf.rwMod, new NoTabException(itf.rwMod.ModID));
+                    itf.Initialize();
+                    //OptionScript.loadedInterfaceDict.Remove(mod.ModID);
+                    //OptionScript.loadedInterfaceDict.Add(mod.ModID, itf);
+                }
+                else if (itf.Configuable())
+                {
+                    if (itf.LoadConfig())
+                    {
+                        Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} config has been loaded.");
+                    }
+                    else
+                    {
+                        Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} does not have config.txt.");
+                        //itf.Initialize();
+                        try
+                        {
+                            itf.SaveConfig(itf.GrabConfig());
+                            Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} uses default config.");
+                        }
+                        catch (Exception e)
+                        {
+                            Debug.Log("Saving Default Config Failed.");
+                            Debug.Log(e);
+                        }
+                    }
+                }
 
                 loadedInterfaces.Add(itf);
                 loadedInterfaceDict.Add(itf.rwMod.ModID, itf);
