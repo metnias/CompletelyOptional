@@ -35,15 +35,16 @@ namespace OptionalUI
             circles[4] = new FSprite("Futile_White");
             circles[4].shader = menu.manager.rainWorld.Shaders["VectorCircleFadable"];
             for (int i = 0; i < circles.Length; i++) { myContainer.AddChild(circles[i]); circles[i].SetPosition(55f, 55f); }
-            label = new MenuLabel(menu, owner, text, this.pos + new Vector2(5f, 40f), new Vector2(100f, 30f), false);
-            subObjects.Add(label);
+            label = new FLabel(LabelTest.GetFont(false), text) { alignment = FLabelAlignment.Center };
+            label.SetPosition(new Vector2(55.01f, 55.01f));
+            myContainer.AddChild(label);
         }
 
-        private MenuLabel label;
+        private FLabel label;
         private MenuMicrophone.MenuSoundLoop soundLoop;
         private float filled = 0f, pulse;
         private readonly float fillTime;
-        private bool fillInstant => fillTime == 0f;
+        // private bool fillInstant => fillTime == 0f;
         private bool hasSignalled = false;
         private int releaseCounter;
         private readonly FSprite[] circles;
@@ -62,7 +63,7 @@ namespace OptionalUI
         {
             base.OnChange();
             if (!_init) { return; }
-            label.pos = this.pos + new Vector2(rad - 50f, rad - 15f);
+            label.SetPosition(new Vector2(rad + 0.01f, rad + 0.01f));
             if (!isProgress) { label.text = text; }
             else { label.text = progress.ToString("N" + Mathf.Clamp(progressDeci, 0, 4).ToString()) + "%"; }
         }
@@ -71,7 +72,7 @@ namespace OptionalUI
         {
             base.GrafUpdate(dt);
             Color c = bumpBehav.GetColor(color);
-            label.label.color = c;
+            label.color = c;
             float r = rad + 8f * (bumpBehav.sizeBump + 0.5f * Mathf.Sin(bumpBehav.extraSizeBump * Mathf.PI)) * ((!held) ? 1f : (0.5f + 0.5f * Mathf.Sin(pulse * Mathf.PI * 2f))) + 0.5f;
             for (int i = 0; i < circles.Length; i++) { circles[i].scale = r / 8f; circles[i].SetPosition(rad, rad); }
             circles[0].color = new Color(0.0196078438f, 0f, Mathf.Lerp(0.3f, 0.6f, bumpBehav.col));

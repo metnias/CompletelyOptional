@@ -3,6 +3,7 @@ using Partiality.Modloader;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using BepInEx;
 
 namespace CompletelyOptional
 {
@@ -13,13 +14,26 @@ namespace CompletelyOptional
     public class UnconfiguableOI : OptionInterface
     {
         public UnconfiguableOI(PartialityMod mod, Reason type) : base(mod)
-        {
-            this.reason = type;
-        }
+        { this.reason = type; }
 
         public UnconfiguableOI(PartialityMod mod, Exception exception) : base(mod)
+        { CtorInitError(exception); }
+
+        public UnconfiguableOI(BaseUnityPlugin plugin, Reason type) : base(plugin)
+        { this.reason = type; }
+
+        public UnconfiguableOI(BaseUnityPlugin plugin, Exception exception) : base(plugin)
+        { CtorInitError(exception); }
+
+        public UnconfiguableOI(RainWorldMod rwMod, Reason type) : base(rwMod)
+        { this.reason = type; }
+
+        public UnconfiguableOI(RainWorldMod rwMod, Exception exception) : base(rwMod)
+        { CtorInitError(exception); }
+
+        private void CtorInitError(Exception exception)
         {
-            Debug.LogError(string.Concat("CompletelyOptional: ", rwMod.ModID, " had issue in OptionInterface:"));
+            Debug.LogError($"CompletelyOptional: {this.rwMod.ModID} had issue in OptionInterface:");
             this.reason = Reason.InitError;
             this.exception = exception.ToString();
             Debug.LogException(exception);
@@ -112,31 +126,7 @@ namespace CompletelyOptional
                 return;
             }
 
-            //Futile.atlasManager.LogAllElementNames();
-
-            labelID = new OpLabel(new Vector2(100f, 550f), new Vector2(400f, 50f), rwMod.ModID, FLabelAlignment.Center, true);
-            labelVersion = new OpLabel(new Vector2(50f, 500f), new Vector2(100f, 20f), InternalTranslator.Translate("Version: <ModVersion>").Replace("<ModVersion>", rwMod.Version), FLabelAlignment.Left);
-            Tabs[0].AddItems(labelID, labelVersion);
-            if (rwMod.author != "NULL")
-            {
-                labelAuthor = new OpLabel(new Vector2(350f, 500f), new Vector2(200f, 20f), InternalTranslator.Translate("Author: <ModAuthor>").Replace("<ModAuthor>", rwMod.author), FLabelAlignment.Right);
-                Tabs[0].AddItems(labelAuthor);
-                labelAuthor.autoWrap = true;
-            }
-
-            /*
-            if (mod.coauthor != "NULL")
-            {
-                labelCoauthor = new OpLabel(new Vector2(100f, 420f), new Vector2(300f, 20f), string.Concat("Coautor: ", mod.coauthor));
-                Tabs[0].AddItem(labelCoauthor);
-                labelCoauthor.autoWrap = true;
-            }
-            if(mod.description != "NULL")
-            {
-                labelDesc = new OpLabel(new Vector2(80f, 350f), new Vector2(340f, 20f), mod.description, FLabelAlignment.Left);
-                Tabs[0].AddItem(labelDesc);
-                labelDesc.autoWrap = true;
-            }*/
+            GeneratedOI.AddBasicProfile(Tabs[0], rwMod);
 
             switch (this.reason)
             {
@@ -200,7 +190,7 @@ namespace CompletelyOptional
             {
                 string name = configuableMods[i].ModID + " (" + configuableMods[i].Version + ")";
                 string ath = "";
-                if (!string.IsNullOrEmpty(configuableMods[i].author) && configuableMods[i].author != "NULL") { ath = configuableMods[i].author; }
+                if (!string.IsNullOrEmpty(configuableMods[i].author) && configuableMods[i].author != RainWorldMod.authorNull) { ath = configuableMods[i].author; }
                 Vector2 pos = default;
                 pos.x = i % 2 == 0 ? 40f : 320f;
                 pos.y = 405f - Mathf.FloorToInt((i % modInPage) / 2f) * 40f;
@@ -214,7 +204,7 @@ namespace CompletelyOptional
             {
                 string name = ignoredMods[i].ModID + " (" + ignoredMods[i].Version + ")";
                 string desc = " ";
-                if (!string.IsNullOrEmpty(ignoredMods[i].author) && ignoredMods[i].author != "NULL")
+                if (!string.IsNullOrEmpty(ignoredMods[i].author) && ignoredMods[i].author != RainWorldMod.authorNull)
                 { desc = InternalTranslator.Translate("<ModID> by <ModAuthor>").Replace("<ModAuthor>", ignoredMods[i].author).Replace("<ModID>", ignoredMods[i].ModID); }
                 Vector2 pos = default;
                 pos.x = i % 2 == 0 ? 50f : 330f;

@@ -1,4 +1,4 @@
-﻿###1.5: Currently Unnamed Update#!#20201119#!#
+﻿###1.5: Currently Unnamed Update#!#20201220#!#
 x Supports BepInEx plugins
 x Rewritten saved config from encrypted txt to json so it can be viewed and changed outside the game
 - Added several new provided UIelements
@@ -6,7 +6,8 @@ x Rewritten saved config from encrypted txt to json so it can be viewed and chan
  + OpContainer: FContainer in Config screen which you can add FSprite on your own
  x OpComboBox: WIP
 - OpImage now has scale field, and can set color for Texture2D version. Also color is now properly initialized to white (Thanks to Slime_Cubed and Garrakx).
-﻿###1.4.4.4#!#20201210#!#
+- ﻿LabelTest's xml documents are improved, and GetFont method is added for getting fontName for FLabels
+###1.4.4.4#!#20201210#!#
 1.4.4.4
 - ConfigMachine's InternalTranslator is less likely to break
 - Fixed OpSimpleButton's label's position is not updating

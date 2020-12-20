@@ -190,7 +190,7 @@ namespace CompletelyOptional
                 {
                     ModID = "No Mods Installed",
                     Version = "XXXX",
-                    author = "NULL"
+                    author = RainWorldMod.authorNull
                 };
                 loadedModsDictionary.Add(blankMod.ModID, blankMod);
 
@@ -260,16 +260,16 @@ namespace CompletelyOptional
                 {
                     if (itf.LoadConfig())
                     {
-                        Debug.Log($"CompletelyOptional) {mod.ModID} config has been loaded.");
+                        Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} config has been loaded.");
                     }
                     else
                     {
-                        Debug.Log($"CompletelyOptional) {mod.ModID} does not have config.txt.");
+                        Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} does not have config.txt.");
                         //itf.Initialize();
                         try
                         {
                             itf.SaveConfig(itf.GrabConfig());
-                            Debug.Log($"CompletelyOptional) {mod.ModID} uses default config.");
+                            Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} uses default config.");
                         }
                         catch (Exception e)
                         {
@@ -280,7 +280,7 @@ namespace CompletelyOptional
                 }
 
                 loadedInterfaces.Add(itf);
-                loadedInterfaceDict.Add(mod.ModID, itf);
+                loadedInterfaceDict.Add(itf.rwMod.ModID, itf);
                 //loadedModsDictionary[item.Key].GetType().GetMember("OI")
             }
             #endregion PartialityMods
@@ -313,8 +313,21 @@ namespace CompletelyOptional
             BaseUnityPlugin[] plugins = FindObjectsOfType<BaseUnityPlugin>();
             foreach (BaseUnityPlugin plugin in plugins)
             {
-                RainWorldMod rwm = new RainWorldMod(plugin);
-                Debug.Log($"CompletelyOptional) {rwm.ModID}({rwm.Version}) by {rwm.author}");
+                OptionInterface itf = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+
+                try
+                {
+                    itf.Initialize();
+                }
+                catch (Exception ex)
+                { //try catch better
+                    itf = new UnconfiguableOI(plugin, new GeneralInitializeException(ex));
+                    itf.Initialize();
+                }
+                Debug.Log($"CompletelyOptional) {itf.rwMod.ModID}({itf.rwMod.Version}) by {itf.rwMod.author}");
+
+                loadedInterfaces.Add(itf);
+                loadedInterfaceDict.Add(itf.rwMod.ModID, itf);
             }
             #endregion BaseUnityPlugins
 
@@ -435,7 +448,7 @@ namespace CompletelyOptional
                 }
                 catch (Exception ex)
                 { //Update Error Handle!
-                    PartialityMod mod = ConfigMenu.currentInterface.mod;
+                    RainWorldMod mod = ConfigMenu.currentInterface.rwMod;
                     List<Exception> unload = new List<Exception>();
                     ConfigMenu menu = (pm.currentMainLoop as ConfigMenu);
                     foreach (OpTab tab in ConfigMenu.currentInterface.Tabs)

@@ -60,6 +60,7 @@
     <Compile Include="COExceptions.cs" />
     <Compile Include="ConfigMenu.cs" />
     <Compile Include="ConfigTabController.cs" />
+    <Compile Include="GeneratedOI.cs" />
     <Compile Include="InternalTestOI.cs" />
     <Compile Include="InternalTranslator.cs" />
     <Compile Include="Crypto.cs" />

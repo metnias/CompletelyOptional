@@ -1,8 +1,9 @@
-﻿//Translator Credits: Name
+﻿/// Translator Credits: Name ///
 Translator Name|kor$A토픽(topicular)|spa$Garrakx|fre$Daratrix|rus$Lex
-//Translator Credits: Swap 'English' to your language.
+/// Translator Credits: Swap 'English' to your language. ///
 Translated to English by <TranslatorName>|kor$한국어 번역: <TranslatorName>|spa$Traducido al español by <TranslatorName>|fre$Traduction française par <TranslatorName>|rus$Перевод на русский: <TranslatorName>
-//Essentials
+
+/// Essentials ///
 No Mods Installed|kor$설치된 모드 없음|spa$No hay Mods instalados|fre$Aucun Mod installé|rus$Моды не установлены
 MOD CONFIG|kor$모드 설정|spa$CONFIGURAR MOD|fre$CONFIGURER MOD|rus$НАСТРОЙКА МОДОВ
 APPLY|kor$적용|spa$APLICAR|fre$APPLIQUER|rus$ПРИМЕНИТЬ
@@ -39,7 +40,8 @@ Scroll Up|kor$위로 이동|spa$Subir|fre$Défiler vers le haut|rus$Прокру
 Scroll Down|kor$아래로 이동|spa$Bajar|fre$Défiler vers le bas|rus$Прокрутить вниз
 Click to Display Config Machine ChangeLog|kor$클릭해서 Config Machine의 변경 내역 보기
 Config Machine ChangeLog|spa$Config Machine Lista de cambios|kor$Config Machine 변경 내역
-//Description for provided UIelements
+
+/// Description for provided UIelements ///
 Click to Check/Uncheck|kor$클릭해서 체크 및 해제|spa$Click para marcar/desmarcar|fre$Cliquez pour cocher/décocher|rus$Нажмите, чтобы отметить/снять отметку
 Type Hex Code for desired Colour|kor$키보드로 색상 Hex 코드를 입력|spa$Escribe el código Hex para Color deseado|fre$Tapez le code hexadécimal de la couleur désirée|rus$Введите HEX код желаемого цвета
 Select Colour with RGB value|kor$RGB 값으로 색상 선택|spa$Selecciona el color con valores RGB|fre$Choisir la couleur via valeur RVB|rus$Выберите цвет со значением RGB
@@ -57,7 +59,8 @@ Click to choose this option|kor$클릭해서 이 옵션 선택|spa$Haz click par
 Use Scroll Wheel or Scrollbar to see more|kor$스크롤휠 또는 스크롤바를 사용해서 더 보기|spa$Usa la rueda del ratón o la barra de desplazamiento para ver más|fre$Utilisez la molette de la souris ou la barre de défilement pour voir plus d'options|rus$Используйте колесо мыши или полосу прокрутки, чтобы увидеть больше
 Use Scroll Wheel to see more|kor$스크롤휠을 사용해서 더 보기|spa$Usa le rueda del ratón para ver mas|fre$Utilisez la molette de la souris pour voir plus d'options|rus$Используйте полосу прокрутки, чтобы увидеть больше
 Click to open the list, Double Click to search|kor$클릭해서 목록을 펼치고, 더블클릭으로 검색|spa$Haz click para abrir la lista, doble click para buscar|fre$Cliquez pour ouvrir la liste, doucle-clic pour chercher|rus$Нажмите, чтобы открыть список, нажмите дважды для поиска
-//Hidden Comments
+
+/// Hidden Comments ///
 also shoutout to RW Discord for helping me out|kor$제작을 도와준 레인월드 디스코드에게도 감사를.|spa$Gracias al Discord de RW por ayudarme.|fre$merci également au Discord Rain World pour m'avoir aidé|rus$также благодарю RW Discord за помощь
 check out pinned tutorial in modding-support|kor$레인월드 디스코드 modding-support 채널에 고정된|spa$Mira el tutorial que está pineado en modding-support|fre$consultez le tutoriel épinglé dans #modding-support|rus$посмотрите закрепленное руководство в #modding-support
 and create your own config screen!|kor$튜토리얼을 보시고 자작모드의 설정 메뉴를 만드세요!|spa$y crea tu propia pantalla de configuración!|fre$et créez votre propre écran de configuration!|rus$и создавайте свое собственное окно конфигурации!
