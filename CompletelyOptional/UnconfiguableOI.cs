@@ -131,7 +131,8 @@ namespace CompletelyOptional
             switch (this.reason)
             {
                 case Reason.NoInterface:
-                    labelSluggo0 = new OpLabel(new Vector2(100f, 350f), new Vector2(400f, 20f), InternalTranslator.Translate("This Rain World Mod cannot be configured."));
+                    labelSluggo0 = new OpLabel(new Vector2(100f, 350f), new Vector2(400f, 20f),
+                        InternalTranslator.Translate(rwMod.type == RainWorldMod.Type.PartialityMod ? "This Partiality Mod cannot be configured." : "This BepInEx Plugin cannot be configured."));
                     Tabs[0].AddItems(labelSluggo0);
 
                     break;

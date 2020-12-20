@@ -212,83 +212,28 @@ namespace OptionalUI
         private const string rawConfigDef = "Unconfiguable";
 
         /// <summary>
-        /// This will be called by ConfigMachine manager. It's called automatically.
+        /// This will be called by ConfigMachine manager automatically.
         /// </summary>
         public bool LoadConfig()
         {
             config = new Dictionary<string, string>();
             rawConfig = rawConfigDef;
-            if (!directory.Exists)
-            { directory.Create(); return false; }
+            if (!Configuable()) { return true; }
+            if (!directory.Exists) { directory.Create(); return false; }
 
-            string path = string.Concat(directory.FullName, "config.txt");
-            if (File.Exists(path))
-            {
-                try
-                {
-                    string txt = File.ReadAllText(path, Encoding.UTF8);
-                    string key = txt.Substring(0, 32);
-                    txt = txt.Substring(32, txt.Length - 32);
-                    if (Custom.Md5Sum(txt) != key)
-                    {
-                        Debug.Log($"{rwMod.ModID} config file has been tinkered! Load Default Config instead.");
-                        return false;
-                    }
+            string path = string.Concat(directory.FullName, "config.json");
+            if (File.Exists(path)) { this.rawConfig = File.ReadAllText(path, Encoding.UTF8); }
+            else { return false; }
 
-                    this.rawConfig = Crypto.DecryptString(txt, string.Concat("OptionalConfig ", rwMod.ModID));
-                }
-                catch
-                {
-                    Debug.Log(new LoadDataException($"{rwMod.ModID} config file has been corrupted! Load Default Config instead."));
-                    return false;
-                }
-            }
-            else
-            {
-                //load default config from dictionary and save.
-                return false;
-            }
-
-            //Set Initialized stuff to new value
-            Dictionary<string, string> loadedConfig = new Dictionary<string, string>();
-
-            //convert to dictionary
-            //<CfgC>key<CfgB><CfgD>value<CfgA>
-            string[] array = Regex.Split(this.rawConfig, "<CfgA>");
-
-            for (int i = 0; i < array.Length; i++)
-            { //<CfgC>key<CfgB><CfgD>value
-                string key = string.Empty;
-                string value = string.Empty;
-                string[] array2 = Regex.Split(array[i], "<CfgB>");
-                for (int j = 0; j < array2.Length; j++)
-                { //<CfgC>key || <CfgD>value
-                    if (array2[j].Length < 6) { continue; }
-                    if (array2[j].Substring(0, 6) == "<CfgC>")
-                    {
-                        key = array2[j].Substring(6, array2[j].Length - 6);
-                    }
-                    else if (array2[j].Substring(0, 6) == "<CfgD>")
-                    {
-                        value = array2[j].Substring(6, array2[j].Length - 6);
-                    }
-                }
-                if (string.IsNullOrEmpty(key))
-                { //?!?!
-                    continue;
-                }
-                loadedConfig.Add(key, value);
-            }
-
-            config = loadedConfig;
+            Dictionary<string, object> loadedConfig = MiniJsonExtensions.dictionaryFromJson(this.rawConfig);
+            foreach (KeyValuePair<string, object> item in loadedConfig)
+            { config.Add(item.Key, item.Value.ToString()); }
 
             try
-            {
-                ConfigOnChange();
-            }
+            { ConfigOnChange(); }
             catch (Exception e)
             {
-                Debug.Log("CompletelyOptional: Lost backward compatibility in Config! Reset Config.");
+                Debug.Log("CompletelyOptional) Lost backward compatibility in Config! Reset Config.");
                 Debug.Log(new LoadDataException(e.ToString()));
                 File.Delete(path);
                 config = new Dictionary<string, string>();
@@ -357,34 +302,31 @@ namespace OptionalUI
         /// </summary>
         public bool SaveConfig(Dictionary<string, string> newConfig)
         {
+            if (!Configuable()) { return true; }
+            if (this is GeneratedOI && this.rwMod.type == RainWorldMod.Type.BepInExPlugin) { return true; } // Saving config is handled by BepInEx
+
             if (newConfig.Count < 1) { return false; } //Nothing to Save.
             config = newConfig;
-            if (!directory.Exists)
-            {
-                directory.Create();
-            }
+            if (!directory.Exists) { directory.Create(); }
             ConfigOnChange();
-
-            this.rawConfig = string.Empty;
-            //convert to raw data
-            //<CfgC>key<CfgB><CfgD>value<CfgA>
-
-            foreach (KeyValuePair<string, string> item in newConfig)
-            {
-                this.rawConfig = this.rawConfig + "<CfgC>" + item.Key + "<CfgB><CfgD>" + item.Value + "<CfgA>";
-            }
 
             //Write in file
             try
             {
-                string path = string.Concat(new object[] {
-                directory.FullName,
-                "config.txt"
-                });
-                string enc = Crypto.EncryptString(this.rawConfig, string.Concat("OptionalConfig " + rwMod.ModID));
-                string key = Custom.Md5Sum(enc);
+                string path = string.Concat(directory.FullName, "config.json");
+                Dictionary<string, object> temp = new Dictionary<string, object>();
+                foreach (KeyValuePair<string, string> item in newConfig)
+                {
+                    temp.Add(item.Key, item.Value);
+                }
+                rawConfig = MiniJsonExtensions.toJson(temp);
+                // Formatting
+                rawConfig = rawConfig.Replace("{", "{\n    ");
+                rawConfig = rawConfig.Replace("}", "\n}");
+                rawConfig = rawConfig.Replace("\",\"", "\",\n    \"");
+                rawConfig = rawConfig.Replace("\":\"", "\" : \"");
 
-                File.WriteAllText(path, key + enc, Encoding.UTF8);
+                File.WriteAllText(path, this.rawConfig, Encoding.UTF8);
 
                 return true;
             }
