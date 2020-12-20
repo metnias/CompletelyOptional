@@ -181,6 +181,7 @@ namespace CompletelyOptional
                 OptionInterface itf = OptionScript.loadedInterfaceDict[id];
                 Debug.Log(string.Concat("OptionInterface Initializing: " + id));
 
+#pragma warning disable CS0612
                 try { itf.Initialize(); }
                 catch (Exception ex)
                 { itf = new UnconfiguableOI(itf.mod, new GeneralInitializeException(ex)); goto replaced; }
@@ -198,6 +199,7 @@ namespace CompletelyOptional
                            )));
                     goto replaced;
                 }
+#pragma warning restore CS0612
 
                 itfs.Add(itf);
                 continue;
@@ -210,7 +212,7 @@ namespace CompletelyOptional
             }
 
             // Remove Excess
-            int priority = -1; UnconfiguableOI listItf = null; List<PartialityMod> listIgnored = new List<PartialityMod>();
+            int priority = -1; UnconfiguableOI listItf = null; List<RainWorldMod> listIgnored = new List<RainWorldMod>();
             while (itfs.Count > 16 && priority < 0) // 1
             {
                 Debug.Log(string.Concat("Mod Count: ", itfs.Count, "! Discarding priority ", priority));
@@ -234,7 +236,7 @@ namespace CompletelyOptional
                 foreach (OptionInterface oi in itfs)
                 {
                     if (oi.GetPriority() > priority) { temp.Add(oi); }
-                    else { listIgnored.Add(oi.mod); }
+                    else { listIgnored.Add(oi.rwMod); }
                 }
                 itfs = temp;
                 priority++;
@@ -274,7 +276,7 @@ namespace CompletelyOptional
             {
                 OptionInterface itf = itfs[i];
 #pragma warning disable CS0162
-                if (OptionMod.testing) { Debug.Log(string.Concat("Mod(" + i + ") : " + itf.mod.ModID)); }
+                if (OptionMod.testing) { Debug.Log(string.Concat("Mod(" + i + ") : " + itf.rwMod.ModID)); }
 #pragma warning restore CS0162
                 for (int t = 0; t < itf.Tabs.Length; t++)
                 {
@@ -286,10 +288,10 @@ namespace CompletelyOptional
                     }
                     itf.Tabs[t].Hide();
                 }
-                dictionary.Add(i, itf.mod.ModID);
+                dictionary.Add(i, itf.rwMod.ModID);
 
                 if (i > 15) { continue; }
-                modButtons[i] = new SelectOneButton(this, this.pages[0], itf.mod.ModID, "ModSelect", new Vector2(208f, 700f - 30f * i), new Vector2(250f, 24f), modButtons, i);
+                modButtons[i] = new SelectOneButton(this, this.pages[0], itf.rwMod.ModID, "ModSelect", new Vector2(208f, 700f - 30f * i), new Vector2(250f, 24f), modButtons, i);
                 this.pages[0].subObjects.Add(modButtons[i]);
             }
             modList = dictionary;
@@ -360,7 +362,7 @@ namespace CompletelyOptional
         /// Comparator for Sorting OptionInterfaces by ModID
         /// </summary>
         private static int CompareOIModID(OptionInterface x, OptionInterface y)
-        { return x.mod.ModID.CompareTo(y.mod.ModID); }
+        { return x.rwMod.ModID.CompareTo(y.rwMod.ModID); }
 
         public Dictionary<int, string> modList;
         public static int selectedModIndex;

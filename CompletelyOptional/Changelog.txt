@@ -1,9 +1,10 @@
 ﻿###1.5: Currently Unnamed Update#!#20201119#!#
 x Supports BepInEx plugins
-x Added OpComboBox default UIconfig
+x Rewritten saved config from encrypted txt to json so it can be viewed and changed outside the game
 - Added several new provided UIelements
  + OpHoldButton: Circular Hold Button which can also be used as ProgressButton
-- Fixed real time translation not working correctly
+ + OpContainer: FContainer in Config screen which you can add FSprite on your own
+ x OpComboBox: WIP
 - OpImage now has scale field, and can set color for Texture2D version. Also color is now properly initialized to white (Thanks to Slime_Cubed and Garrakx).
 ﻿###1.4.4.4#!#20201210#!#
 1.4.4.4

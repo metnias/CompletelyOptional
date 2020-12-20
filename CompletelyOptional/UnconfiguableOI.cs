@@ -19,7 +19,7 @@ namespace CompletelyOptional
 
         public UnconfiguableOI(PartialityMod mod, Exception exception) : base(mod)
         {
-            Debug.LogError(string.Concat("CompletelyOptional: ", this.mod.ModID, " had issue in OptionInterface:"));
+            Debug.LogError(string.Concat("CompletelyOptional: ", rwMod.ModID, " had issue in OptionInterface:"));
             this.reason = Reason.InitError;
             this.exception = exception.ToString();
             Debug.LogException(exception);
@@ -31,23 +31,23 @@ namespace CompletelyOptional
         /// <summary>
         /// Set the list of ignored mod
         /// </summary>
-        public void SetIgnoredModList(List<PartialityMod> mods)
+        public void SetIgnoredModList(List<RainWorldMod> mods)
         {
             mods.Sort(CompareModID);
             this.ignoredMods = mods.ToArray();
         }
 
-        private PartialityMod[] ignoredMods;
-        private PartialityMod[] configuableMods;
+        private RainWorldMod[] ignoredMods;
+        private RainWorldMod[] configuableMods;
 
         public void SetConfiguableModList(List<OptionInterface>[] ois)
         {
-            if (ois is null) { configuableMods = new PartialityMod[0]; return; }
-            List<PartialityMod> mods = new List<PartialityMod>();
+            if (ois is null) { configuableMods = new RainWorldMod[0]; return; }
+            List<RainWorldMod> mods = new List<RainWorldMod>();
             for (int p = 3; p >= 1; p--)
             {
                 for (int i = 0; i < ois[p].Count; i++)
-                { mods.Add(ois[p][i].mod); }
+                { mods.Add(ois[p][i].rwMod); }
             }
             //mods.Sort(CompareModID);
             configuableMods = mods.ToArray();
@@ -56,7 +56,7 @@ namespace CompletelyOptional
         /// <summary>
         /// Comparator for Sorting OptionInterfaces by ModID
         /// </summary>
-        private static int CompareModID(PartialityMod x, PartialityMod y)
+        private static int CompareModID(RainWorldMod x, RainWorldMod y)
         { return x.ModID.CompareTo(y.ModID); }
 
         public enum Reason
@@ -114,12 +114,12 @@ namespace CompletelyOptional
 
             //Futile.atlasManager.LogAllElementNames();
 
-            labelID = new OpLabel(new Vector2(100f, 550f), new Vector2(400f, 50f), mod.ModID, FLabelAlignment.Center, true);
-            labelVersion = new OpLabel(new Vector2(50f, 500f), new Vector2(100f, 20f), InternalTranslator.Translate("Version: <ModVersion>").Replace("<ModVersion>", mod.Version), FLabelAlignment.Left);
+            labelID = new OpLabel(new Vector2(100f, 550f), new Vector2(400f, 50f), rwMod.ModID, FLabelAlignment.Center, true);
+            labelVersion = new OpLabel(new Vector2(50f, 500f), new Vector2(100f, 20f), InternalTranslator.Translate("Version: <ModVersion>").Replace("<ModVersion>", rwMod.Version), FLabelAlignment.Left);
             Tabs[0].AddItems(labelID, labelVersion);
-            if (mod.author != "NULL")
+            if (rwMod.author != "NULL")
             {
-                labelAuthor = new OpLabel(new Vector2(350f, 500f), new Vector2(200f, 20f), InternalTranslator.Translate("Author: <ModAuthor>").Replace("<ModAuthor>", mod.author), FLabelAlignment.Right);
+                labelAuthor = new OpLabel(new Vector2(350f, 500f), new Vector2(200f, 20f), InternalTranslator.Translate("Author: <ModAuthor>").Replace("<ModAuthor>", rwMod.author), FLabelAlignment.Right);
                 Tabs[0].AddItems(labelAuthor);
                 labelAuthor.autoWrap = true;
             }

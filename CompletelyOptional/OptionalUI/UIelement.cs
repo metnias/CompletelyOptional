@@ -68,10 +68,16 @@ namespace OptionalUI
             //CompletelyOptional.OptionScript.uielements.Add(this);
         }
 
+#pragma warning disable CS0649
         /// <summary>
         /// If this is set, this element cannot change its <see cref="size"/>.
         /// </summary>
         internal Vector2? fixedSize;
+        /// <summary>
+        /// If this is set, this element cannot change its <see cref="rad"/>.
+        /// </summary>
+        internal float? fixedRad;
+#pragma warning restore CS0649
 
         /// <summary>
         /// This will be called by OpScrollBox automatically.
@@ -179,10 +185,14 @@ namespace OptionalUI
         /// <summary>
         /// Size of this element. Changing this will call <see cref="OnChange"/> automatically.
         /// </summary>
+        /// <exception cref="InvalidGetPropertyException">Thrown when <see cref="isRectangular"/> is false</exception>
         public Vector2 size
         {
             get
-            { return _size; }
+            {
+                if (!isRectangular) { throw new InvalidGetPropertyException(this, "size"); }
+                return _size;
+            }
             set
             {
                 if (fixedSize != null) { _size = fixedSize.Value; OnChange(); }
@@ -197,8 +207,9 @@ namespace OptionalUI
         internal Vector2 _size;
 
         /// <summary>
-        /// Radian of the element. Changing this will call <see cref="OnChange"/> automatically.
+        /// Radius of the element. Changing this will call <see cref="OnChange"/> automatically.
         /// </summary>
+        /// <exception cref="InvalidGetPropertyException">Thrown when <see cref="isRectangular"/> is true</exception>
         public float rad
         {
             get
@@ -208,13 +219,11 @@ namespace OptionalUI
             }
             set
             {
-                if (_rad != value)
+                if (fixedRad != null) { _rad = fixedRad.Value; OnChange(); }
+                else if (_rad != value)
                 {
-                    _rad = value;
-                    if (_init)
-                    {
-                        OnChange();
-                    }
+                    _rad = Mathf.Max(value, 0f);
+                    if (_init) { OnChange(); }
                 }
             }
         }

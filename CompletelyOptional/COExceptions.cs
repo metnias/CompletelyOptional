@@ -277,7 +277,7 @@ namespace OptionalUI
     public class InvalidGetPropertyException : FormatException
     {
         public InvalidGetPropertyException(OptionInterface oi, string name) : base(
-            string.Concat($"{oi.mod.ModID} called {name} eventhough its progData is false!"))
+            string.Concat($"{oi.rwMod.ModID} called {name} eventhough its progData is false!"))
         {
         }
 

@@ -37,6 +37,9 @@
     <Reference Include="Assembly-CSharp">
       <HintPath>D:\Game\Rain World\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>..\..\References\RWBepInEx\BepInEx.dll</HintPath>
+    </Reference>
     <Reference Include="HOOKS-Assembly-CSharp">
       <HintPath>D:\Game\Rain World\HOOKS-Assembly-CSharp.dll</HintPath>
     </Reference>
@@ -60,6 +63,7 @@
     <Compile Include="InternalTestOI.cs" />
     <Compile Include="InternalTranslator.cs" />
     <Compile Include="Crypto.cs" />
+    <Compile Include="OpContainer.cs" />
     <Compile Include="OptionalUI\OpHoldButton.cs" />
     <Compile Include="OptionalUI\OpLabelLong.cs" />
     <Compile Include="OptionalUI\SubObjects\LabelTest.cs" />
