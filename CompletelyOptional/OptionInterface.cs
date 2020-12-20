@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using UnityEngine;
+using BepInEx;
 
 namespace OptionalUI
 {
@@ -40,11 +41,21 @@ namespace OptionalUI
 #pragma warning restore CS0612
             if (mod != null) { this.rwMod = new RainWorldMod(mod); }
             else { this.rwMod = new RainWorldMod(); }
-            this.rawConfig = "Unconfiguable";
-            instance = this;
+            this.rawConfig = rawConfigDef;
         }
 
-        private static OptionInterface instance;
+        public OptionInterface(BaseUnityPlugin plugin)
+        {
+            if (plugin != null) { this.rwMod = new RainWorldMod(plugin); }
+            else { this.rwMod = new RainWorldMod(); }
+            this.rawConfig = rawConfigDef;
+        }
+
+        public OptionInterface(RainWorldMod rwMod)
+        {
+            this.rwMod = rwMod;
+            this.rawConfig = rawConfigDef;
+        }
 
         /// <summary>
         /// Returns whether ConfigMachine is loaded or not.
@@ -182,6 +193,7 @@ namespace OptionalUI
         public static Dictionary<string, string> config;
 
         private string rawConfig;
+        private const string rawConfigDef = "Unconfiguable";
 
         /// <summary>
         /// This will be called by ConfigMachine manager. It's called automatically.
@@ -189,7 +201,7 @@ namespace OptionalUI
         public bool LoadConfig()
         {
             config = new Dictionary<string, string>();
-            rawConfig = "Unconfiguable";
+            rawConfig = rawConfigDef;
             if (!directory.Exists)
             { directory.Create(); return false; }
 
@@ -264,7 +276,7 @@ namespace OptionalUI
                 Debug.Log(new LoadDataException(e.ToString()));
                 File.Delete(path);
                 config = new Dictionary<string, string>();
-                rawConfig = "Unconfiguable";
+                rawConfig = rawConfigDef;
                 return false;
             }
             return true;
@@ -379,7 +391,7 @@ namespace OptionalUI
         public string data
         {
             get { return _data[slugcat]; }
-            set { if (_data[slugcat] != value) { instance.DataOnChange(); _data[slugcat] = value; } }
+            set { if (_data[slugcat] != value) { DataOnChange(); _data[slugcat] = value; } }
         }
 
         /// <summary>

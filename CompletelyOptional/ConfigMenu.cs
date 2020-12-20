@@ -228,7 +228,7 @@ namespace CompletelyOptional
                     {
                         ModID = "Mod List",
                         Version = "XXXX",
-                        author = "NULL"
+                        author = RainWorldMod.authorNull
                     };
                     listItf = new UnconfiguableOI(blankMod, UnconfiguableOI.Reason.TooManyMod);
                 }
@@ -751,14 +751,14 @@ namespace CompletelyOptional
                     {
                         if (fc)
                         {
-                            if (!string.IsNullOrEmpty(mod.author) && mod.author != "NULL")
+                            if (!string.IsNullOrEmpty(mod.author) && mod.author != RainWorldMod.authorNull)
                             { output = InternalTranslator.Translate("Configure <ModID> by <ModAuthor>").Replace("<ModAuthor>", mod.author); }
                             else
                             { output = InternalTranslator.Translate("Configure <ModID>"); }
                         }
                         else
                         {
-                            if (!string.IsNullOrEmpty(mod.author) && mod.author != "NULL")
+                            if (!string.IsNullOrEmpty(mod.author) && mod.author != RainWorldMod.authorNull)
                             { output = InternalTranslator.Translate("Display <ModID> by <ModAuthor>").Replace("<ModAuthor>", mod.author); }
                             else
                             { output = InternalTranslator.Translate("Display <ModID>"); }

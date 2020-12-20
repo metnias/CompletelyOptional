@@ -5,11 +5,17 @@ using UnityEngine;
 
 namespace OptionalUI
 {
+    /// <summary>
+    /// static class for getting useful value regarding <see cref="MenuLabel"/> and <see cref="FLabel"/>
+    /// </summary>
     public static class LabelTest
     {
         private static MenuLabel tester;
         private static MenuLabel testerB;
 
+        /// <summary>
+        /// Initializes this class; Do NOT call this on your own
+        /// </summary>
         public static void Initialize(Menu.Menu menu)
         {
             tester = new MenuLabel(menu, menu.pages[0], "A", new Vector2(10000f, 10000f), new Vector2(10000f, 100f), false);
@@ -36,7 +42,9 @@ namespace OptionalUI
                 _charMeanB = testerB.label.textRect.width / meanTest.Length;
                 _charLim = Mathf.FloorToInt(60000f / (_lineHeight * _charMean));
                 _charLimB = Mathf.FloorToInt(60000f / (_lineHeightB * _charMeanB));
-                Debug.Log($"CompletelyOptionl: Label th: {_textHeight:0.0} thB: {_textHeightB:0.00} / lh: {_lineHeight:0.0} lhB: {_lineHeightB:0.0} / cm: {_charMean:0.0} cmB: {_charMeanB:0.0} / cl: {_charLim} clB: {_charLimB}");
+                _font = (string)typeof(FLabel).GetField("_fontName", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(tester.label);
+                _fontB = (string)typeof(FLabel).GetField("_fontName", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(testerB.label);
+                Debug.Log($"CompletelyOptional) Label th: {_textHeight:0.0} thB: {_textHeightB:0.00} / lh: {_lineHeight:0.0} lhB: {_lineHeightB:0.0} / cm: {_charMean:0.0} cmB: {_charMeanB:0.0} / cl: {_charLim} clB: {_charLimB}");
             }
         }
 
@@ -46,15 +54,46 @@ namespace OptionalUI
         private static float _textHeight = 15f, _textHeightB = 30f;
         private static float _charMean = 6.4f, _charMeanB = 11.1f;
         private static int _charLim = 600, _charLimB = 175;
+        private static string _font = "font", _fontB = "DisplayFont";
 
+        /// <summary>
+        /// LineHeight of current font
+        /// </summary>
+        /// <param name="bigText">Whether the font is big variant or not</param>
+        /// <returns>Line Height in pxl</returns>
         public static float LineHeight(bool bigText) => !bigText ? _lineHeight : _lineHeightB;
 
-        public static float TextHeight(bool bigText) => !bigText ? _textHeight : _textHeightB;
+        // public static float TextHeight(bool bigText) => !bigText ? _textHeight : _textHeightB;
 
+        /// <summary>
+        /// Mean pxl length for English characters with this font. Useful for optimizing autoWrap.
+        /// </summary>
+        /// <param name="bigText">Whether the font is big variant or not</param>
+        /// <returns>Mean pxl length of single character for current font</returns>
         public static float CharMean(bool bigText) => !bigText ? _charMean : _charMeanB;
 
+        /// <summary>
+        /// Average text limit of singular <see cref="FLabel"/> that does not cause Futile Crash
+        /// </summary>
+        /// <param name="bigText">Whether the font is big variant or not</param>
+        /// <returns>Absolute text length limit</returns>
         public static int CharLimit(bool bigText) => !bigText ? _charLim : _charLimB;
 
+        /// <summary>
+        /// Returns <see cref="FFont"/> fontName of <see cref="FLabel"/> for when you're directly using <see cref="FLabel"/> instead of <see cref="MenuLabel"/>.
+        /// Use this instead of hard-coded font, to keep compatibility with Rain World 1.8
+        /// </summary>
+        /// <param name="bigText">Whether the font is big variant or not</param>
+        /// <returns>fontName which can be used for <see cref="FLabel.FLabel(string, string, FTextParams)"/></returns>
+        public static string GetFont(bool bigText) => !bigText ? _font : _fontB;
+
+        /// <summary>
+        /// Checks how long pixels would the text take.
+        /// <para>This is very costy in performance, so do not use this too much. See also <see cref="CharMean(bool)"/></para>
+        /// </summary>
+        /// <param name="text">Text you want to test</param>
+        /// <param name="bigText">Whether the font is big variant or not</param>
+        /// <returns>Text width in pxl</returns>
         public static float GetWidth(string text, bool bigText)
         {
             if (!hasChecked) { return CharMean(bigText) * text.Length; }
