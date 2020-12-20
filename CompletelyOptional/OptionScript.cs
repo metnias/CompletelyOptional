@@ -48,13 +48,13 @@ namespace CompletelyOptional
         /// <summary>
         /// All loadedMods directly taken from Partiality ModManager.
         /// </summary>
-        public static List<PartialityMod> loadedMods;
+        private static List<PartialityMod> loadedMods;
 
         /// <summary>
         /// Loaded Mod Dictionary.
         /// Key: ModID, Value: PartialityMod Instance
         /// </summary>
-        public static Dictionary<string, PartialityMod> loadedModsDictionary;
+        private static Dictionary<string, PartialityMod> loadedModsDictionary;
 
         /// <summary>
         /// List of OptionInterface Instances
@@ -83,7 +83,9 @@ namespace CompletelyOptional
             "PolishedMachine",
             //"Enum Extender",
             "ComMod",
-            "CommunicationModule"
+            "CommunicationModule",
+            "BepInEx-Partiality-Wrapper",
+            "LogFix"
         };
 
         /// <summary>
@@ -314,6 +316,7 @@ namespace CompletelyOptional
             foreach (BaseUnityPlugin plugin in plugins)
             {
                 OptionInterface itf = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+                if (blackList.Contains<string>(itf.rwMod.ModID)) { continue; }
 
                 try
                 {

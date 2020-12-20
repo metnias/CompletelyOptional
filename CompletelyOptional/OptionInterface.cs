@@ -15,13 +15,12 @@ using BepInEx;
 namespace OptionalUI
 {
     /// <summary>
-    /// To Interact with CompletelyOptional Mod
-    /// Check if PartialityMod file has this class
+    /// To Interact with Config Machine, check if your project has this class
     /// </summary>
     public class OptionInterface
     {
         /// <summary>
-        /// Option Interface for Partiality Mod/Patch.
+        /// OptionInterface for Partiality Mod.
         /// Create <c>public static [YourOIclass] LoadOI()</c> in your <see cref="PartialityMod"/>.
         /// ConfigMachine will load your OI after IntroRoll.
         /// </summary>
@@ -33,7 +32,7 @@ namespace OptionalUI
         /// }
         /// </code>
         /// </remarks>
-        /// <param name="mod">Your Partiality mod.</param>
+        /// <param name="mod">Your Partiality mod</param>
         public OptionInterface(PartialityMod mod)
         {
 #pragma warning disable CS0612
@@ -44,6 +43,20 @@ namespace OptionalUI
             this.rawConfig = rawConfigDef;
         }
 
+        /// <summary>
+        /// Custom OptionInterface for BepInEx Plugin.
+        /// Create <c>public static [YourOIclass] LoadOI()</c> in your <see cref="BaseUnityPlugin"/>.
+        /// ConfigMachine will load your OI after IntroRoll.
+        /// </summary>
+        /// <remarks>Example:
+        /// <code>
+        /// public static MyOptionInterface LoadOI()
+        /// {
+        ///     return new MyOptionInterface(MyPlugin.instance);
+        /// }
+        /// </code>
+        /// </remarks>
+        /// <param name="plugin">Your BepInEx plugin</param>
         public OptionInterface(BaseUnityPlugin plugin)
         {
             if (plugin != null) { this.rwMod = new RainWorldMod(plugin); }
@@ -51,6 +64,9 @@ namespace OptionalUI
             this.rawConfig = rawConfigDef;
         }
 
+        /// <summary>
+        /// This ctor is only used by Config Machine internally.
+        /// </summary>
         public OptionInterface(RainWorldMod rwMod)
         {
             this.rwMod = rwMod;
