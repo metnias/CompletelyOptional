@@ -219,7 +219,9 @@ namespace OptionalUI
             config = new Dictionary<string, string>();
             rawConfig = rawConfigDef;
             if (!Configuable()) { return true; }
-            if (!directory.Exists) { directory.Create(); return false; }
+            if (this is GeneratedOI && (this as GeneratedOI).mode == GeneratedOI.GenMode.BepInExConfig)
+            { return (this as GeneratedOI).LoadBepConfig(); }
+            if (!directory.Exists) { return false; } //directory.Create();
 
             string path = string.Concat(directory.FullName, "config.json");
             if (File.Exists(path)) { this.rawConfig = File.ReadAllText(path, Encoding.UTF8); }
@@ -249,6 +251,8 @@ namespace OptionalUI
         public void ShowConfig()
         {
             GrabObject();
+            if (this is GeneratedOI && (this as GeneratedOI).mode == GeneratedOI.GenMode.BepInExConfig)
+            { (this as GeneratedOI).ShowBepConfig(); return; }
             if (!(config?.Count > 0)) { return; } //Nothing Loaded.
             foreach (KeyValuePair<string, string> setting in config)
             {
@@ -303,7 +307,8 @@ namespace OptionalUI
         public bool SaveConfig(Dictionary<string, string> newConfig)
         {
             if (!Configuable()) { return true; }
-            if (this is GeneratedOI && this.rwMod.type == RainWorldMod.Type.BepInExPlugin) { return true; } // Saving config is handled by BepInEx
+            if (this is GeneratedOI && (this as GeneratedOI).mode == GeneratedOI.GenMode.BepInExConfig)
+            { return (this as GeneratedOI).SaveBepConfig(newConfig); } // Saving config is handled by BepInEx
 
             if (newConfig.Count < 1) { return false; } //Nothing to Save.
             config = newConfig;
