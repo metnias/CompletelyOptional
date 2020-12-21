@@ -313,6 +313,8 @@ namespace CompletelyOptional
 
             #region BaseUnityPlugins
             BaseUnityPlugin[] plugins = FindObjectsOfType<BaseUnityPlugin>();
+            if (plugins.Length < 1) { goto skipToEnd; }
+
             foreach (BaseUnityPlugin plugin in plugins)
             {
                 OptionInterface itf;
@@ -339,6 +341,11 @@ namespace CompletelyOptional
                     itf = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
                     if (blackList.Contains<string>(itf.rwMod.ModID)) { continue; }
                     Debug.Log($"{itf.rwMod.ModID} does not support CompletelyOptional: {ex.Message}");
+                }
+
+                if (itf is UnconfiguableOI && plugin.Config.Keys.Count > 0)
+                { // Use BepInEx Configuration
+                    itf = new GeneratedOI(itf.rwMod, plugin.Config);
                 }
 
                 // Initialize ITF
@@ -384,8 +391,9 @@ namespace CompletelyOptional
                 loadedInterfaces.Add(itf);
                 loadedInterfaceDict.Add(itf.rwMod.ModID, itf);
             }
-            #endregion BaseUnityPlugins
+        #endregion BaseUnityPlugins
 
+        skipToEnd:
             Debug.Log($"CompletelyOptional) Finished Initializing {loadedInterfaceDict.Count} OIs");
         }
 

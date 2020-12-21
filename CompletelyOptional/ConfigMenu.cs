@@ -226,7 +226,7 @@ namespace CompletelyOptional
                 {
                     PartialityMod blankMod = new PartialityMod
                     {
-                        ModID = "Mod List",
+                        ModID = InternalTranslator.Translate("Mod List"),
                         Version = "XXXX",
                         author = RainWorldMod.authorNull
                     };
@@ -253,8 +253,8 @@ namespace CompletelyOptional
                 itfs = new List<OptionInterface>();
                 if (priority > -1)
                 {
-                    OptionScript.loadedInterfaceDict.Remove("Mod List");
-                    OptionScript.loadedInterfaceDict.Add("Mod List", listItf);
+                    OptionScript.loadedInterfaceDict.Remove(InternalTranslator.Translate("Mod List"));
+                    OptionScript.loadedInterfaceDict.Add(InternalTranslator.Translate("Mod List"), listItf);
                     listItf.SetIgnoredModList(listIgnored);
                     if (cmCount > 15) { listItf.SetConfiguableModList(sortTemp); }
                     else { listItf.SetConfiguableModList(null); }

@@ -33,6 +33,7 @@ This BepInEx Plugin cannot be configured.|kor$이 BepInEx 플러그인은 바꿀
 There was an issue initializing OptionInterface.|kor$이 모드의 설정을 여는 중 문제가 발생했습니다.|spa$Hubo un problema al inicializar OptionInterface|fre$Une erreur est survenue pendant l'initialisation d'OptionInterface.|rus$При инициализации OptionInterface возникла ошибка
 No Mod can be configured|kor$설정할 수 있는 모드 없음|spa$El Mod no se puede configurar|fre$Aucun Mod ne peut être configuré|rus$Ни один мод не может быть настроен
 This issue might be resolved by downloading the latest Config Machine.|kor$최신 Config Machine으로 업데이트하면 해결될 수 있습니다.|spa$Este problema puede resolverse descargando la última versión de Config Machine.|fre$Cette erreur peut être corrigée en téléchargeant la dernière version de Config Machine.|rus$Эту ошибку можно устранить, загрузив последнюю версию Config Machine.
+Mod List|kor$모드 목록|spa$Lista de Mods|fre$Liste des Mods|rus$Список модов
 Configurable Mod List|kor$모드 설정 목록|spa$Lista de Mods configurables|fre$Liste des Mods configurables|rus$Список настраиваемых модов
 Other Mod List|kor$기타 모드 목록|spa$Lista de otros Mods|fre$Liste des autres Mods|rus$Список других модов
 Configurable Mods|kor$모드 설정|spa$Mods configurables|fre$Mods configurables|rus$Настраиваемые моды
@@ -41,6 +42,8 @@ Scroll Up|kor$위로 이동|spa$Subir|fre$Défiler vers le haut|rus$Прокру
 Scroll Down|kor$아래로 이동|spa$Bajar|fre$Défiler vers le bas|rus$Прокрутить вниз
 Click to Display Config Machine ChangeLog|kor$클릭해서 Config Machine의 변경 내역 보기
 Config Machine ChangeLog|spa$Config Machine Lista de cambios|kor$Config Machine 변경 내역
+This plugin contains types of settings that are not supported by Config Machine:|kor$이 플러그인에는 Config Machine이 지원하지 않는 설정이 있습니다:
+Go to [BepInEx]-[config] folder and use Notepad to edit those settings.|kor$[BepInEx]-[config] 폴더에 가서 메모장으로 설정을 수정하세요.
 
 /// Description for provided UIelements ///
 Click to Check/Uncheck|kor$클릭해서 체크 및 해제|spa$Click para marcar/desmarcar|fre$Cliquez pour cocher/décocher|rus$Нажмите, чтобы отметить/снять отметку
