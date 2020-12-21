@@ -487,6 +487,7 @@ namespace CompletelyOptional
             }
 
             selectedTabIndex = 0;
+            tabCtrler.Reset();
             currentTab = currentInterface.Tabs[0];
             currentTab.Show();
 
