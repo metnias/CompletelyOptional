@@ -5,6 +5,7 @@ using UnityEngine;
 using Partiality.Modloader;
 using System.Collections.Generic;
 using System;
+using RWCustom;
 
 namespace CompletelyOptional
 {
@@ -83,85 +84,148 @@ namespace CompletelyOptional
                     {
                         if (TryGetBase(bepConfig, cds[e], out ConfigEntryBase entryBase))
                         {
-                            string desc = entryBase.Description.Description;
+                            string desc = LoremIpsum.Generate(3, 4); //entryBase.Description.Description;
+                                                                     // Debug.Log($"{cds[e].Key}: {entryBase.SettingType.Name}");
                             switch (entryBase.SettingType.Name.ToLower())
                             {
                                 case "bool": // OpCheckBox
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<bool> eBool))
                                     {
-                                        elms.Add(new OpCheckBox(new Vector2(30f, 600f - h - 30f), GenerateKey(cds[e]), (bool)eBool.DefaultValue)
+                                        elms.Add(new OpCheckBox(new Vector2(30f, 600f - h - 40f), GenerateKey(cds[e]), (bool)eBool.DefaultValue)
                                         { description = desc });
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(70f, 15f), cds[e].Key)
-                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as OpCheckBox).bumpBehav });
+                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
-                                        { elms.Add(new OpLabelLong(new Vector2(100f, 600f - h - 60f), new Vector2(480f, 60f), desc)); }
+                                        { elms.Add(new OpLabelLong(new Vector2(100f, 600f - h - 80f), new Vector2(480f, 60f), desc)); }
+                                        h += 80f;
+                                    }
+                                    else { continue; }
+                                    break;
+                                case "byte": //OpSliderSubtle
+                                    if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<byte> eByte))
+                                    {
+                                        elms.Add(new OpSliderSubtle(new Vector2(30f, 600f - h - 45f), GenerateKey(cds[e]), new IntVector2(0, 20), 120, false, Mathf.Clamp((byte)eByte.DefaultValue, 0, 20))
+                                        { description = desc });
+                                        elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
+                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                        if (!string.IsNullOrEmpty(desc))
+                                        { elms.Add(new OpLabelLong(new Vector2(80f, 600f - h - 90f), new Vector2(500f, 45f), desc)); }
+                                        h += 90f;
+                                    }
+                                    else { continue; }
+                                    break;
+                                case "uint": //OpSlider
+                                case "uint32":
+                                    if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<uint> eUint))
+                                    {
+                                        elms.Add(new OpSlider(new Vector2(30f, 600f - h - 45f), GenerateKey(cds[e]), new IntVector2(0, 100), 400, false, Mathf.Clamp(Convert.ToInt32((uint)eUint.DefaultValue), 0, 100))
+                                        { description = desc });
+                                        elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
+                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                        if (!string.IsNullOrEmpty(desc))
+                                        { elms.Add(new OpLabelLong(new Vector2(80f, 600f - h - 90f), new Vector2(500f, 45f), desc)); }
+                                        h += 90f;
+                                    }
+                                    else { continue; }
+                                    break;
+                                case "int": //OpTextBox
+                                case "int32":
+                                    if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<int> eInt))
+                                    {
+                                        elms.Add(new OpTextBox(new Vector2(30f, 600f - h - 45f), 110f, GenerateKey(cds[e]), ((int)eInt.DefaultValue).ToString(), OpTextBox.Accept.Int)
+                                        { description = desc });
+                                        elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
+                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                        if (!string.IsNullOrEmpty(desc))
+                                        { elms.Add(new OpLabelLong(new Vector2(160f, 600f - h - 60f), new Vector2(420f, 45f), desc)); }
                                         h += 60f;
                                     }
                                     else { continue; }
                                     break;
-                                case "byte":
-                                case "uint":
-                                case "int":
-                                    break;
-                                case "float":
+                                case "float": //OpTextBox
+                                case "single":
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<float> eFloat))
                                     {
-                                        elms.Add(new OpTextBox(new Vector2(30f, 600f - h - 30f), 110f, GenerateKey(cds[e]), ((float)eFloat.DefaultValue).ToString(), OpTextBox.Accept.Float)
+                                        elms.Add(new OpTextBox(new Vector2(30f, 600f - h - 45f), 110f, GenerateKey(cds[e]), ((float)eFloat.DefaultValue).ToString(), OpTextBox.Accept.Float)
                                         { description = desc });
-                                        elms.Add(new OpLabel(new Vector2(20f, 600f - h), new Vector2(110f, 15f), cds[e].Key)
-                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as OpTextBox).bumpBehav });
+                                        elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
+                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
-                                        { elms.Add(new OpLabelLong(new Vector2(150f, 600f - h - 60f), new Vector2(430f, 60f), desc)); }
+                                        { elms.Add(new OpLabelLong(new Vector2(160f, 600f - h - 60f), new Vector2(420f, 45f), desc)); }
                                         h += 60f;
                                     }
                                     else { continue; }
                                     break;
-                                case "string":
+                                case "string": //OpTextBox
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<string> eString))
                                     {
-                                        elms.Add(new OpTextBox(new Vector2(30f, 600f - h - 30f), 110f, GenerateKey(cds[e]), (string)eString.DefaultValue, OpTextBox.Accept.StringASCII)
-                                        { description = desc });
-                                        elms.Add(new OpLabel(new Vector2(20f, 600f - h), new Vector2(120f, 15f), cds[e].Key)
-                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as OpTextBox).bumpBehav });
-                                        if (!string.IsNullOrEmpty(desc))
-                                        { elms.Add(new OpLabelLong(new Vector2(160f, 600f - h - 60f), new Vector2(420f, 60f), desc)); }
-                                        h += 60f;
+                                        string defaultString = (string)eString.DefaultValue;
+                                        if (OpColorPicker.IsStringHexColor(defaultString))
+                                        { //OpColorPicker
+                                            elms.Add(new OpColorPicker(new Vector2(30f, 600f - h - 170f), GenerateKey(cds[e]), defaultString));
+                                            elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
+                                            { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                            if (!string.IsNullOrEmpty(desc))
+                                            { elms.Add(new OpLabelLong(new Vector2(200f, 600f - h - 170f), new Vector2(380f, 135f), desc)); }
+                                            h += 170f;
+                                        }
+                                        else
+                                        {
+                                            elms.Add(new OpTextBox(new Vector2(30f, 600f - h - 45f), 110f, GenerateKey(cds[e]), defaultString, OpTextBox.Accept.StringASCII)
+                                            { description = desc });
+                                            elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
+                                            { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                            if (!string.IsNullOrEmpty(desc))
+                                            { elms.Add(new OpLabelLong(new Vector2(160f, 600f - h - 60f), new Vector2(420f, 45f), desc)); }
+                                            h += 60f;
+                                        }
                                     }
                                     else { continue; }
                                     break;
-                                case "keycode":
-                                case "color":
+                                case "keycode": //OpKeyBinder
+                                    if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<KeyCode> eKeyCode))
+                                    {
+                                        elms.Add(new OpKeyBinder(new Vector2(30f, 600f - h - 50f), new Vector2(150f, 30f), rwMod.ModID, GenerateKey(cds[e]), ((KeyCode)eKeyCode.DefaultValue).ToString(), false));
+                                        elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
+                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                        if (!string.IsNullOrEmpty(desc))
+                                        { elms.Add(new OpLabelLong(new Vector2(200f, 600f - h - 90f), new Vector2(380f, 75f), desc)); }
+                                        h += 100f;
+                                    }
+                                    else { continue; }
                                     break;
-                                default: hasUnsupported = true; continue; // Not supported
+                                default:
+                                    Debug.Log($"Unsupported {cds[e].Key}: {entryBase.SettingType.Name}");
+                                    hasUnsupported = true; continue; // Not supported
                             }
                             h += 20f; // between gap
                         }
-                        if (h <= 600f)
-                        {
-                            if (t == 0) { AddBasicProfile(Tabs[0], rwMod); hasFirstScroll = false; }
-                            Tabs[t].AddItems(elms.ToArray());
-                        }
-                        else
-                        {
-                            OpScrollBox box = new OpScrollBox(Tabs[t], h);
-                            if (t == 0) { AddBasicProfile(box, rwMod); hasFirstScroll = true; firstScroll = box; }
-                            foreach (UIelement elm in elms)
-                            { elm.pos = new Vector2(elm.GetPos().x, elm.GetPos().y - 600f + h); }
-                            box.AddItems(elms.ToArray());
-                        }
                     }
-                    if (hasUnsupported)
+                    if (h <= 600f)
                     {
-                        string warn = InternalTranslator.Translate("This plugin contains types of settings that are not supported by Config Machine:") + Environment.NewLine
-                            + InternalTranslator.Translate("Go to [BepInEx]-[config] folder and use Notepad to edit those settings.");
-                        if (hasFirstScroll)
-                        {
-                            firstScroll.AddItems(new OpLabel(new Vector2(50f, firstScroll.contentSize - 600f + 525f), new Vector2(500f, 30f), warn));
-                        }
-                        else
-                        {
-                            Tabs[0].AddItems(new OpLabel(new Vector2(50f, 525f), new Vector2(500f, 20f), warn));
-                        }
+                        if (t == 0) { AddBasicProfile(Tabs[0], rwMod); hasFirstScroll = false; }
+                        Tabs[t].AddItems(elms.ToArray());
+                    }
+                    else
+                    {
+                        OpScrollBox box = new OpScrollBox(Tabs[t], h);
+                        if (t == 0) { AddBasicProfile(box, rwMod); hasFirstScroll = true; firstScroll = box; }
+                        foreach (UIelement elm in elms)
+                        { elm.pos = new Vector2(elm.GetPos().x, elm.GetPos().y - 600f + h); }
+                        box.AddItems(elms.ToArray());
+                    }
+                }
+                if (hasUnsupported)
+                {
+                    string warn = InternalTranslator.Translate("This plugin contains types of settings that are not supported by Config Machine:") + Environment.NewLine
+                        + InternalTranslator.Translate("Go to [BepInEx]-[config] folder and use Notepad to edit those settings.");
+                    if (hasFirstScroll)
+                    {
+                        firstScroll.AddItems(new OpLabel(new Vector2(50f, firstScroll.contentSize - 600f + 525f), new Vector2(500f, 30f), warn));
+                    }
+                    else
+                    {
+                        Tabs[0].AddItems(new OpLabel(new Vector2(50f, 525f), new Vector2(500f, 20f), warn));
                     }
                 }
             }
@@ -187,6 +251,50 @@ namespace CompletelyOptional
 
         public bool SaveBepConfig(Dictionary<string, string> newConfig)
         {
+            foreach (ConfigDefinition def in bepConfig.Keys)
+            {
+                if (newConfig.TryGetValue(GenerateKey(def), out string val))
+                {
+                    if (TryGetBase(bepConfig, def, out ConfigEntryBase entBase))
+                    {
+                        switch (entBase.SettingType.Name.ToLower())
+                        {
+                            case "bool":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<bool> eBool))
+                                { eBool.Value = val == "true" ? true : false; }
+                                break;
+                            case "byte":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<byte> eByte))
+                                { eByte.Value = byte.Parse(val); }
+                                break;
+                            case "uint":
+                            case "uint32":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<uint> eUint))
+                                { eUint.Value = uint.Parse(val); }
+                                break;
+                            case "int":
+                            case "int32":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<int> eInt))
+                                { eInt.Value = int.Parse(val); }
+                                break;
+                            case "float":
+                            case "single":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<float> eFloat))
+                                { eFloat.Value = float.Parse(val); }
+                                break;
+                            case "string":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<string> eString))
+                                { eString.Value = val; }
+                                break;
+                            case "keycode":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<KeyCode> eKeyCode))
+                                { eKeyCode.Value = (KeyCode)Enum.Parse(typeof(KeyCode), val); }
+                                break;
+                            default: continue;
+                        }
+                    }
+                }
+            }
             bepConfig.Save();
             return true;
         }
@@ -205,7 +313,41 @@ namespace CompletelyOptional
                 {
                     if (TryGetBase(bepConfig, def, out ConfigEntryBase entBase))
                     {
-                        obj.value = (string)entBase.BoxedValue;
+                        switch (entBase.SettingType.Name.ToLower())
+                        {
+                            case "bool":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<bool> eBool))
+                                { obj.value = eBool.Value ? "true" : "false"; }
+                                break;
+                            case "byte":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<byte> eByte))
+                                { obj.value = eByte.Value.ToString(); }
+                                break;
+                            case "uint":
+                            case "uint32":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<uint> eUint))
+                                { obj.value = eUint.Value.ToString(); }
+                                break;
+                            case "int":
+                            case "int32":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<int> eInt))
+                                { obj.value = eInt.Value.ToString(); }
+                                break;
+                            case "float":
+                            case "single":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<float> eFloat))
+                                { obj.value = eFloat.Value.ToString(); }
+                                break;
+                            case "string":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<string> eString))
+                                { obj.value = eString.Value; }
+                                break;
+                            case "keycode":
+                                if (bepConfig.TryGetEntry(def, out ConfigEntry<KeyCode> eKeyCode))
+                                { obj.value = eKeyCode.Value.ToString(); }
+                                break;
+                            default: continue;
+                        }
                     }
                 }
             }

@@ -1,6 +1,6 @@
 ﻿###1.5: Currently Unnamed Update#!#20201221#!#
 - Supports BepInEx plugins (BaseUnityPlugin)
- x BepInEx Plugin can either use LoadOI(BaseUnityPlugin) for custom OptionInterface, or BepInEx.Configuration for procedural OI
+ + BepInEx Plugin can either use LoadOI(BaseUnityPlugin) for custom OptionInterface, or BepInEx.Configuration for procedural OI
  x Partiality Mods may also use GeneratedOI for procedural OI
 - Rewritten saved config from encrypted txt to json so it can be viewed and changed outside the game
 - Added several new provided UIelements
@@ -8,6 +8,8 @@
  + OpContainer: FContainer in Config screen which you can add FSprite on your own
  x OpComboBox: WIP
 - OpImage now has scale field and can set color for Texture2D version. Also, color is now properly initialized to white (Thanks to Slime_Cubed and Garrakx).
+- Fixed ConfigTabController not resetting selected tab number even after Reset Config is done
+- OpColorPicker.HexToColor now supports 32bit HEX that has alpha, and OpColorPicker.IsStringHexColor is added for easy check
 - ﻿LabelTest's xml documents are improved, and GetFont method is added for getting fontName for FLabels
 ###1.4.4.4#!#20201210#!#
 1.4.4.4

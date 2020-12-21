@@ -47,6 +47,14 @@ namespace CompletelyOptional
             }
         }
 
+        public override void Reset()
+        {
+            base.Reset();
+            _index = 0;
+            OnChange();
+            Update(0f);
+        }
+
         private int _index;
 
         public static int GetTabCount() => ConfigMenu.currentInterface.Tabs.Length;

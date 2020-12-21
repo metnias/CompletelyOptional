@@ -174,14 +174,25 @@ namespace OptionalUI
             if (hex == "000000") { return new Color(0.01f, 0.01f, 0.01f, 1f); }
             try
             {
+                float a = hex.Length == 8 ? Convert.ToInt32(hex.Substring(6, 2), 16) / 255f : 1f;
                 return new Color(
                         Convert.ToInt32(hex.Substring(0, 2), 16) / 255f,
                         Convert.ToInt32(hex.Substring(2, 2), 16) / 255f,
                         Convert.ToInt32(hex.Substring(4, 2), 16) / 255f,
-                        1f
+                        a
                         );
             }
-            catch { throw new FormatException(string.Concat("Given input (", hex, ") is not correct form of Hex")); }
+            catch { throw new FormatException($"Given input [{hex}] is not correct form of HEX Color"); }
+        }
+
+        /// <summary>
+        /// Checks if the string is valid HEX
+        /// </summary>
+        public static bool IsStringHexColor(string test)
+        {
+            if (test.Length != 6 && test.Length != 8) { return false; }
+            try { HexToColor(test); return true; }
+            catch { return false; }
         }
 
         /// <summary>
