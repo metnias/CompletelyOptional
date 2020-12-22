@@ -7,6 +7,7 @@
  + OpHoldButton: Circular Hold Button which can also be used as ProgressButton
  + OpContainer: FContainer in Config screen which you can add FSprite on your own
  x OpComboBox: DropDown box that can also be searched, useful for selecting an item from a list
+- OpTextBox for numbers and allowSpace being true now allows '-' for its first character, allowing negative numbers
 - OpImage now has scale field and can set color for Texture2D version. Also, color is now properly initialized to white (Thanks to Slime_Cubed and Garrakx).
 - Fixed ConfigTabController not resetting selected tab number even after Reset Config is done
 - OpColorPicker.HexToColor now supports 32bit HEX that has alpha, and OpColorPicker.IsStringHexColor is added for easy check

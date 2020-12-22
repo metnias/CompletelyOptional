@@ -141,7 +141,7 @@ namespace CompletelyOptional
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<int> eInt))
                                     {
                                         elms.Add(new OpTextBox(new Vector2(30f, 600f - h - 45f), 110f, GenerateKey(cds[e]), ((int)eInt.DefaultValue).ToString(), OpTextBox.Accept.Int)
-                                        { description = GetFirstSentence(desc) });
+                                        { description = GetFirstSentence(desc), allowSpace = true });
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
                                         { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
@@ -155,7 +155,7 @@ namespace CompletelyOptional
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<float> eFloat))
                                     {
                                         elms.Add(new OpTextBox(new Vector2(30f, 600f - h - 45f), 110f, GenerateKey(cds[e]), ((float)eFloat.DefaultValue).ToString(), OpTextBox.Accept.Float)
-                                        { description = GetFirstSentence(desc) });
+                                        { description = GetFirstSentence(desc), allowSpace = true });
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
                                         { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
@@ -164,7 +164,7 @@ namespace CompletelyOptional
                                     }
                                     else { continue; }
                                     break;
-                                case "string": //OpTextBox
+                                case "string": //OpTextBox or OpColorPicker
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<string> eString))
                                     {
                                         string defaultString = (string)eString.DefaultValue;
@@ -203,7 +203,8 @@ namespace CompletelyOptional
                                     else { continue; }
                                     break;
                                 default:
-                                    Debug.Log($"Unsupported {cds[e].Key}: {entryBase.SettingType.Name}");
+                                    // if type is enum => OpComboBox
+                                    Debug.Log($"{rwMod.ModID} has unsupported ConfigEntry: {cds[e].Key}({entryBase.SettingType.Name})");
                                     hasUnsupported = true; continue; // Not supported
                             }
                             h += 20f; // between gap
@@ -225,7 +226,7 @@ namespace CompletelyOptional
                 }
                 if (hasUnsupported)
                 {
-                    string warn = InternalTranslator.Translate("This plugin contains types of settings that are not supported by Config Machine:") + Environment.NewLine
+                    string warn = InternalTranslator.Translate("This Plugin contains types of settings that are not supported by Config Machine:") + Environment.NewLine
                         + InternalTranslator.Translate("Go to [BepInEx]-[config] folder and use Notepad to edit those settings.");
                     if (hasFirstScroll)
                     {
