@@ -5,6 +5,9 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 
+[assembly: AssemblyVersion("1.5.0.0")]
+[assembly: AssemblyFileVersion("1.5.0.0")]
+
 namespace CompletelyOptional
 {
     /// <summary>

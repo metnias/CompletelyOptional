@@ -1,12 +1,12 @@
 ﻿###1.5: Currently Unnamed Update#!#20201221#!#
 - Supports BepInEx plugins (BaseUnityPlugin)
- + BepInEx Plugin can either use LoadOI(BaseUnityPlugin) for custom OptionInterface, or BepInEx.Configuration for procedural OI
- x Partiality Mods may also use GeneratedOI for procedural OI
-- Rewritten saved config from encrypted txt to json so it can be viewed and changed outside the game
+ + BepInEx Plugin can either use LoadOI(BaseUnityPlugin) for custom OptionInterface, or BepInEx.Configuration for GeneratedOI
+ + GeneratedOI can also be used for default profiled OI, for when the modder wants to use other features (e.g. Translate) of OptionInterface
+- Rewritten saved config format from encrypted txt to json so it can be viewed and changed outside the game
 - Added several new provided UIelements
  + OpHoldButton: Circular Hold Button which can also be used as ProgressButton
  + OpContainer: FContainer in Config screen which you can add FSprite on your own
- x OpComboBox: WIP
+ x OpComboBox: DropDown box that can also be searched, useful for selecting an item from a list
 - OpImage now has scale field and can set color for Texture2D version. Also, color is now properly initialized to white (Thanks to Slime_Cubed and Garrakx).
 - Fixed ConfigTabController not resetting selected tab number even after Reset Config is done
 - OpColorPicker.HexToColor now supports 32bit HEX that has alpha, and OpColorPicker.IsStringHexColor is added for easy check
