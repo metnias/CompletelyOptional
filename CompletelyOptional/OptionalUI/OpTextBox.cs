@@ -28,7 +28,8 @@ namespace OptionalUI
             this._lastValue = defaultValue;
             this.defaultValue = this.value;
             this.maxLength = Mathf.FloorToInt((size.x - 20f) / 6f);
-            this.allowSpace = false;
+            if (this.accept == Accept.Float || this.accept == Accept.Int) { this.allowSpace = float.Parse(defaultValue) < 0f; }
+            else { this.allowSpace = defaultValue.Contains(" "); }
             this.password = false;
             this.mouseDown = false;
 
@@ -233,12 +234,13 @@ namespace OptionalUI
         public bool password;
 
         /// <summary>
-        /// whether you allow space or not. default is false.
+        /// whether you allow space(for numbers, negative) or not.
+        /// <para>Default is false, unless defaultValue is impossible with allowSpace is false then this is set to true instead.</para>
         /// </summary>
         public bool allowSpace;
 
         /// <summary>
-        /// Which type of string this accept
+        /// Which type of string this accepts. See also <see cref="allowSpace"/>
         /// </summary>
         public Accept accept;
 
@@ -351,12 +353,12 @@ namespace OptionalUI
                 {
                     case Accept.Int:
                         // if (Regex.IsMatch(base.value, "^[0-9/-]+$")) { goto accepted; }
-                        if (int.TryParse(base.value, out int _)) { goto accepted; }
+                        if (int.TryParse(base.value, out int _) || (this.allowSpace && base.value == "-")) { goto accepted; }
                         break;
 
                     case Accept.Float:
                         // if (Regex.IsMatch(base.value, "^[0-9/./-]+$")) { goto accepted; }
-                        if (float.TryParse(base.value, out float _)) { goto accepted; }
+                        if (float.TryParse(base.value, out float _) || (this.allowSpace && base.value == "-")) { goto accepted; }
                         break;
 
                     default:
