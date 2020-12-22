@@ -26,14 +26,14 @@ namespace CompletelyOptional
 
         /// <summary>
         /// If you're using BepInEx.Configuration, GeneratedOI will be used automatically.
-        /// This is for more precise control over GeneratedOI.
+        /// This is for using default template, for when you want to use other function of OptionInterface(e.g. <see cref="OptionInterface.Translate(string)"/> but not wanting to set up Config Screen.
         /// </summary>
         /// <param name="plugin"></param>
         public GeneratedOI(BaseUnityPlugin plugin) : base(plugin)
         { mode = GenMode.ModderCall; }
 
         /// <summary>
-        /// PartialityMod version of GeneratedOI for lazy modders.
+        /// This is for using default template, for when you want to use other function of OptionInterface(e.g. <see cref="OptionInterface.Translate(string)"/> but not wanting to set up Config Screen.
         /// </summary>
         /// <param name="mod"></param>
         public GeneratedOI(PartialityMod mod) : base(mod)
@@ -84,30 +84,30 @@ namespace CompletelyOptional
                     {
                         if (TryGetBase(bepConfig, cds[e], out ConfigEntryBase entryBase))
                         {
-                            string desc = LoremIpsum.Generate(3, 4); //entryBase.Description.Description;
-                                                                     // Debug.Log($"{cds[e].Key}: {entryBase.SettingType.Name}");
+                            string desc = LoremIpsum.Generate(3, 4); //entryBase.Description.Description; //
                             switch (entryBase.SettingType.Name.ToLower())
                             {
                                 case "bool": // OpCheckBox
+                                case "boolean":
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<bool> eBool))
                                     {
                                         elms.Add(new OpCheckBox(new Vector2(30f, 600f - h - 40f), GenerateKey(cds[e]), (bool)eBool.DefaultValue)
-                                        { description = desc });
+                                        { description = GetFirstSentence(desc) });
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(70f, 15f), cds[e].Key)
-                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                        { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
-                                        { elms.Add(new OpLabelLong(new Vector2(100f, 600f - h - 80f), new Vector2(480f, 60f), desc)); }
-                                        h += 80f;
+                                        { elms.Add(new OpLabelLong(new Vector2(80f, 600f - h - 80f), new Vector2(500f, 45f), desc)); }
+                                        h += 60f;
                                     }
                                     else { continue; }
                                     break;
                                 case "byte": //OpSliderSubtle
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<byte> eByte))
                                     {
-                                        elms.Add(new OpSliderSubtle(new Vector2(30f, 600f - h - 45f), GenerateKey(cds[e]), new IntVector2(0, 20), 120, false, Mathf.Clamp((byte)eByte.DefaultValue, 0, 20))
-                                        { description = desc });
+                                        elms.Add(new OpSliderSubtle(new Vector2(30f, 600f - h - 45f), GenerateKey(cds[e]), new IntVector2(0, 20), 240, false, Mathf.Clamp((byte)eByte.DefaultValue, 0, 20))
+                                        { description = GetFirstSentence(desc) });
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
-                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                        { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
                                         { elms.Add(new OpLabelLong(new Vector2(80f, 600f - h - 90f), new Vector2(500f, 45f), desc)); }
                                         h += 90f;
@@ -119,9 +119,9 @@ namespace CompletelyOptional
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<uint> eUint))
                                     {
                                         elms.Add(new OpSlider(new Vector2(30f, 600f - h - 45f), GenerateKey(cds[e]), new IntVector2(0, 100), 400, false, Mathf.Clamp(Convert.ToInt32((uint)eUint.DefaultValue), 0, 100))
-                                        { description = desc });
+                                        { description = GetFirstSentence(desc) });
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
-                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                        { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
                                         { elms.Add(new OpLabelLong(new Vector2(80f, 600f - h - 90f), new Vector2(500f, 45f), desc)); }
                                         h += 90f;
@@ -133,9 +133,9 @@ namespace CompletelyOptional
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<int> eInt))
                                     {
                                         elms.Add(new OpTextBox(new Vector2(30f, 600f - h - 45f), 110f, GenerateKey(cds[e]), ((int)eInt.DefaultValue).ToString(), OpTextBox.Accept.Int)
-                                        { description = desc });
+                                        { description = GetFirstSentence(desc) });
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
-                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                        { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
                                         { elms.Add(new OpLabelLong(new Vector2(160f, 600f - h - 60f), new Vector2(420f, 45f), desc)); }
                                         h += 60f;
@@ -147,9 +147,9 @@ namespace CompletelyOptional
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<float> eFloat))
                                     {
                                         elms.Add(new OpTextBox(new Vector2(30f, 600f - h - 45f), 110f, GenerateKey(cds[e]), ((float)eFloat.DefaultValue).ToString(), OpTextBox.Accept.Float)
-                                        { description = desc });
+                                        { description = GetFirstSentence(desc) });
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
-                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                        { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
                                         { elms.Add(new OpLabelLong(new Vector2(160f, 600f - h - 60f), new Vector2(420f, 45f), desc)); }
                                         h += 60f;
@@ -164,7 +164,7 @@ namespace CompletelyOptional
                                         { //OpColorPicker
                                             elms.Add(new OpColorPicker(new Vector2(30f, 600f - h - 170f), GenerateKey(cds[e]), defaultString));
                                             elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
-                                            { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                            { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                             if (!string.IsNullOrEmpty(desc))
                                             { elms.Add(new OpLabelLong(new Vector2(200f, 600f - h - 170f), new Vector2(380f, 135f), desc)); }
                                             h += 170f;
@@ -172,9 +172,9 @@ namespace CompletelyOptional
                                         else
                                         {
                                             elms.Add(new OpTextBox(new Vector2(30f, 600f - h - 45f), 110f, GenerateKey(cds[e]), defaultString, OpTextBox.Accept.StringASCII)
-                                            { description = desc });
+                                            { description = GetFirstSentence(desc) });
                                             elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
-                                            { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                            { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                             if (!string.IsNullOrEmpty(desc))
                                             { elms.Add(new OpLabelLong(new Vector2(160f, 600f - h - 60f), new Vector2(420f, 45f), desc)); }
                                             h += 60f;
@@ -187,7 +187,7 @@ namespace CompletelyOptional
                                     {
                                         elms.Add(new OpKeyBinder(new Vector2(30f, 600f - h - 50f), new Vector2(150f, 30f), rwMod.ModID, GenerateKey(cds[e]), ((KeyCode)eKeyCode.DefaultValue).ToString(), false));
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
-                                        { alignment = FLabelAlignment.Left, description = desc, bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                        { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
                                         { elms.Add(new OpLabelLong(new Vector2(200f, 600f - h - 90f), new Vector2(380f, 75f), desc)); }
                                         h += 100f;
@@ -246,6 +246,12 @@ namespace CompletelyOptional
             return false;
         }
 
+        private static string GetFirstSentence(string text)
+        { // Used to cut off long description that would ruin bottom text
+            if (!text.Contains(".")) { return text; }
+            return text.Split('.')[0];
+        }
+
         private static int CompareCDkey(ConfigDefinition x, ConfigDefinition y)
         { return x.Key.CompareTo(y.Key); }
 
@@ -260,6 +266,7 @@ namespace CompletelyOptional
                         switch (entBase.SettingType.Name.ToLower())
                         {
                             case "bool":
+                            case "boolean":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<bool> eBool))
                                 { eBool.Value = val == "true" ? true : false; }
                                 break;
@@ -316,6 +323,7 @@ namespace CompletelyOptional
                         switch (entBase.SettingType.Name.ToLower())
                         {
                             case "bool":
+                            case "boolean":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<bool> eBool))
                                 { obj.value = eBool.Value ? "true" : "false"; }
                                 break;
@@ -384,7 +392,7 @@ namespace CompletelyOptional
         }
 
         /// <summary>
-        /// Adds Basic Profile on top of OpScrollBox
+        /// Adds Basic Profile on top of <see cref="OpScrollBox"/>
         /// </summary>
         /// <param name="box"><see cref="OpScrollBox"/> which will contain the profile</param>
         /// <param name="mod"><see cref="RainWorldMod"/> that has basic information of the mod</param>
@@ -397,20 +405,6 @@ namespace CompletelyOptional
             {
                 box.AddItems(new OpLabel(new Vector2(350f, box.contentSize - 600f + 500f), new Vector2(200f, 20f), InternalTranslator.Translate("Author: <ModAuthor>").Replace("<ModAuthor>", mod.author), FLabelAlignment.Right) { autoWrap = true });
             }
-
-            /*
-            if (mod.coauthor != RainWorldMod.authorNull)
-            {
-                labelCoauthor = new OpLabel(new Vector2(100f, 420f), new Vector2(300f, 20f), string.Concat("Coautor: ", mod.coauthor));
-                Tabs[0].AddItem(labelCoauthor);
-                labelCoauthor.autoWrap = true;
-            }
-            if(mod.description != RainWorldMod.authorNull)
-            {
-                labelDesc = new OpLabel(new Vector2(80f, 350f), new Vector2(340f, 20f), mod.description, FLabelAlignment.Left);
-                Tabs[0].AddItem(labelDesc);
-                labelDesc.autoWrap = true;
-            } */
         }
     }
 }
