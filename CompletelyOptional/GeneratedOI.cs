@@ -21,32 +21,40 @@ namespace CompletelyOptional
         public GeneratedOI(RainWorldMod mod, ConfigFile config) : base(mod)
         {
             mode = GenMode.BepInExConfig;
-            bepConfig = config;
+            bepConfigObj = config;
         }
 
         /// <summary>
         /// If you're using BepInEx.Configuration, GeneratedOI will be used automatically.
         /// This is for using default template, for when you want to use other function of OptionInterface(e.g. <see cref="OptionInterface.Translate(string)"/> but not wanting to set up Config Screen.
         /// </summary>
-        /// <param name="plugin"></param>
-        public GeneratedOI(BaseUnityPlugin plugin) : base(plugin)
-        { mode = GenMode.ModderCall; }
+        /// <param name="plugin">BaseUnityPlugin instance</param>
+        /// <param name="description">Description for your mod</param>
+        public GeneratedOI(BaseUnityPlugin plugin, string description = "") : base(plugin)
+        { mode = GenMode.ModderCall; modDescription = description; }
 
         /// <summary>
         /// This is for using default template, for when you want to use other function of OptionInterface(e.g. <see cref="OptionInterface.Translate(string)"/> but not wanting to set up Config Screen.
         /// </summary>
-        /// <param name="mod"></param>
-        public GeneratedOI(PartialityMod mod) : base(mod)
-        { mode = GenMode.ModderCall; }
+        /// <param name="mod">PartialityMod instance</param>
+        /// <param name="description">Description for your mod</param>
+        public GeneratedOI(PartialityMod mod, string description = "") : base(mod)
+        { mode = GenMode.ModderCall; modDescription = description; }
 
         /// <summary>
-        ///
+        /// Keeps track on which ctor this OI used
         /// </summary>
         public readonly GenMode mode;
-        public readonly ConfigFile bepConfig;
+        /// <summary>
+        /// BaseUnityPlugin.Config
+        /// </summary>
+        public ConfigFile bepConfig => bepConfigObj as ConfigFile;
+        protected readonly object bepConfigObj;
+
+        public string modDescription;
 
         /// <summary>
-        ///
+        /// Flags for which ctor this OI used
         /// </summary>
         public enum GenMode
         {
@@ -234,6 +242,8 @@ namespace CompletelyOptional
                 Tabs = new OpTab[1];
                 Tabs[0] = new OpTab();
                 AddBasicProfile(Tabs[0], rwMod);
+                if (!string.IsNullOrEmpty(modDescription))
+                { Tabs[0].AddItems(new OpLabelLong(new Vector2(50f, 200f), new Vector2(500f, 250f), modDescription, alignment: FLabelAlignment.Center)); }
             }
         }
 
@@ -255,6 +265,9 @@ namespace CompletelyOptional
         private static int CompareCDkey(ConfigDefinition x, ConfigDefinition y)
         { return x.Key.CompareTo(y.Key); }
 
+        /// <summary>
+        /// Saves Config to BepInEx's cfg format. One of the bridges between Config Machine and BepInEx.Config.
+        /// </summary>
         public bool SaveBepConfig(Dictionary<string, string> newConfig)
         {
             foreach (ConfigDefinition def in bepConfig.Keys)
@@ -306,12 +319,18 @@ namespace CompletelyOptional
             return true;
         }
 
+        /// <summary>
+        /// Reloads Config from BepInEx's cfg format. One of the bridges between Config Machine and BepInEx.Config
+        /// </summary>
         public bool LoadBepConfig()
         {
             bepConfig.Reload();
             return true;
         }
 
+        /// <summary>
+        /// Displays Config from BepInEx to UIconfigs. One of the bridges between Config Machine and BepInEx.Config
+        /// </summary>
         public void ShowBepConfig()
         {
             foreach (ConfigDefinition def in bepConfig.Keys)
