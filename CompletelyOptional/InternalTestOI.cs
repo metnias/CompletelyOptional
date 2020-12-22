@@ -64,17 +64,6 @@ namespace CompletelyOptional
             //Tabs[0].AddItems(new OpSpriteEditor(new Vector2(300f, 100f), new Vector2(100f, 100f), "_TEST", t));
             Tabs[0].AddItems(new OpSimpleButton(new Vector2(400f, 200f), new Vector2(100f, 24f), "singal", "SimpleButton"));
 
-            /*
-            OpComboBox cb = new OpComboBox(new Vector2(100f, 300f), new Vector2(100f, 30f), "", new List<ListItem>() {
-                new ListItem("Slugcat"), new ListItem("Is"), new ListItem("HalfSlug"),
-                new ListItem("And"), new ListItem("HalfBunny"), new ListItem("Creature") });
-            Tabs[0].AddItems(cb, new OpLabel(100f, 330f, "AutoSort") { bumpBehav = cb.bumpBehav });
-            cb = new OpComboBox(new Vector2(100f, 200f), new Vector2(100f, 30f), "", new List<ListItem>() {
-                new ListItem("Slugcat", 0), new ListItem("Is", 1), new ListItem("HalfSlug", 2),
-                new ListItem("And", 3), new ListItem("HalfBunny", 4), new ListItem("Creature", 5) });
-            Tabs[0].AddItems(cb, new OpLabel(100f, 230f, "DefinedOrder") { bumpBehav = cb.bumpBehav });
-            */
-
             Tabs[1].AddItems(new OpRect(new Vector2(0f, 0f), new Vector2(600f, 600f), 0f));
 
             OpCheckBox chk = new OpCheckBox(new Vector2(100f, 420f), "_", true);
@@ -101,6 +90,7 @@ namespace CompletelyOptional
             sb.AddItems(new OpSliderSubtle(new Vector2(100f, 1400f), "", new IntVector2(0, 20), 200));
             sb.AddItems(new OpSliderSubtle(new Vector2(500f, 1300f), "", new IntVector2(0, 20), 200, true));
 
+            /*
             sb.AddItems(new OpRect(new Vector2(25f, 1000f), new Vector2(150f, 150f)));
             sb.AddItems(new OpRect(new Vector2(225f, 1000f), new Vector2(150f, 150f)));
             sb.AddItems(new OpRect(new Vector2(425f, 1000f), new Vector2(150f, 150f)));
@@ -119,6 +109,16 @@ namespace CompletelyOptional
             sb.AddItems(new OpLabelLong(new Vector2(25f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Top });
             sb.AddItems(new OpLabelLong(new Vector2(225f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Center });
             sb.AddItems(new OpLabelLong(new Vector2(425f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
+            */
+
+            OpComboBox cb = new OpComboBox(new Vector2(100f, 1000f), new Vector2(150f, 30f), "", new List<ListItem>() {
+                new ListItem("Slugcat"), new ListItem("Is"), new ListItem("HalfSlug"),
+                new ListItem("And"), new ListItem("HalfBunny"), new ListItem("Creature") });
+            sb.AddItems(cb, new OpLabel(100f, 330f, "AutoSort") { bumpBehav = cb.bumpBehav });
+            cb = new OpComboBox(new Vector2(350f, 1000f), new Vector2(150f, 30f), "", new List<ListItem>() {
+                new ListItem("Slugcat", 0), new ListItem("Is", 1), new ListItem("HalfSlug", 2),
+                new ListItem("And", 3), new ListItem("HalfBunny", 4), new ListItem("Creature", 5) });
+            sb.AddItems(cb, new OpLabel(100f, 230f, "DefinedOrder") { bumpBehav = cb.bumpBehav });
 
             sb.AddItems(new OpHoldButton(new Vector2(400f, 400f), "", "Button", 50f));
             prg = new OpHoldButton(new Vector2(200f, 400f), "", "Button") { color = new Color(1f, 0.5f, 1f) };

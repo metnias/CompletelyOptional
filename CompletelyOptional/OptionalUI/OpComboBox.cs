@@ -136,13 +136,13 @@ namespace OptionalUI
         {
             base.Update(dt);
 
+            if (dTimer > 0) { dTimer--; }
             if (this.held)
             {
-                if (dTimer > 0)
+                if (this.MouseOver)
                 {
-                    dTimer--;
-                    //double click behaviour: mouseover & !getmousebutton & mousedown => dbclick
                 }
+                else { if (Input.GetMouseButton(0)) { held = false; } }
 
                 return;
             }
@@ -152,8 +152,9 @@ namespace OptionalUI
                 else if (mouseDown)
                 {
                     mouseDown = false;
-                    dTimer = 20;
-                    this.held = true;
+                    if (dTimer > 0) { dTimer = 0; this.held = true; return; }
+                    dTimer = 15; // double click behaviour: mouseover & !getmousebutton & mousedown => dbclick
+                    //this.held = true;
                     //clicked
                     test = test < this.itemList.Length - 1 ? test + 1 : 0;
                     this.value = this.itemList[test].name;

@@ -311,9 +311,23 @@ namespace CompletelyOptional
             }
             #endregion InternalTest
 
-            #region BaseUnityPlugins
+            // Garrakx code
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+            {
+                if (assembly.GetName().Name.Equals("BepInEx.MonoMod.Loader") || assembly.GetName().Name.Equals("BepInEx"))
+                {
+                    LoadBaseUnityPlugins();
+                    break;
+                }
+            }
+
+            Debug.Log($"CompletelyOptional) Finished Initializing {loadedInterfaceDict.Count} OIs");
+        }
+
+        private static void LoadBaseUnityPlugins()
+        {
             BaseUnityPlugin[] plugins = FindObjectsOfType<BaseUnityPlugin>();
-            if (plugins.Length < 1) { goto skipToEnd; }
+            if (plugins.Length < 1) { return; }
 
             foreach (BaseUnityPlugin plugin in plugins)
             {
@@ -391,10 +405,6 @@ namespace CompletelyOptional
                 loadedInterfaces.Add(itf);
                 loadedInterfaceDict.Add(itf.rwMod.ModID, itf);
             }
-        #endregion BaseUnityPlugins
-
-        skipToEnd:
-            Debug.Log($"CompletelyOptional) Finished Initializing {loadedInterfaceDict.Count} OIs");
         }
 
         /// <summary>
