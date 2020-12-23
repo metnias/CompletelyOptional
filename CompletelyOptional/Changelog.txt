@@ -1,15 +1,17 @@
 ﻿###1.5: Blepping Board Update#!#20201221#!#
+- Received many helps from Garrakx and Slime_Cubed for this update. Thank you!
 - Supports BepInEx plugins (BaseUnityPlugin)
  + BepInEx Plugin can either use LoadOI(BaseUnityPlugin) for custom OptionInterface, or BepInEx.Configuration for GeneratedOI
  + GeneratedOI can also be used for default profiled OI, for when the modder wants to use other features (e.g. Translate) of OptionInterface
 - Users can copy text from Clipboard to UIconfig that's held and vice versa
+- OpScrollBox no longer scrolls with mousewheel if the cursor is over any UIconfig
 - Rewritten saved config format from encrypted txt to json so it can be viewed and changed outside the game
 - Added several new provided UIelements
  + OpHoldButton: Circular Hold Button which can also be used as ProgressButton
  + OpContainer: FContainer in Config screen which you can add FSprite on your own
  x OpComboBox: DropDown box that can also be searched, useful for selecting an item from a list
 - OpTextBox for numbers and allowSpace being true now allows '-' for its first character, allowing negative numbers
-- OpImage now has scale field and can set color for Texture2D version. Also, color is now properly initialized to white (Thanks to Slime_Cubed and Garrakx).
+- OpImage now has scale field and can set color for Texture2D version, and its color is now properly initialized to white
 - Fixed ConfigTabController not resetting selected tab number even after Reset Config is done
 - OpColorPicker.HexToColor now supports 32bit HEX that has alpha, and OpColorPicker.IsStringHexColor is added for easy check
 - ﻿LabelTest's xml documents are improved, and GetFont method is added for getting fontName for FLabels

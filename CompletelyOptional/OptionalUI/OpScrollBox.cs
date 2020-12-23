@@ -362,6 +362,15 @@ namespace OptionalUI
         private readonly BumpBehaviour scrollBumpBehav;
         private bool scrollMouseOver;
 
+        private bool IsThereMouseOver()
+        {
+            foreach (UIelement e in this.tab.items)
+            {
+                if (e is UIconfig && !(e as UIconfig).disabled && e.MouseOver) { return true; }
+            }
+            return false;
+        }
+
         public override void OnChange()
         {
             this._size.x = Mathf.Min(this._size.x, 800f); this._size.y = Mathf.Min(this._size.y, 800f);
@@ -441,15 +450,18 @@ namespace OptionalUI
             // Do scroll wheel scrolling
             if (!ScrollLocked)
             {
-                if (MouseOver && !_draggingSlider)
-                    targetScrollOffset += (horizontal ? 40f : -40f) * Input.mouseScrollDelta.y;
-                if (targetScrollOffset != scrollOffset)
+                if (Input.mouseScrollDelta.y != 0f && !IsThereMouseOver())
                 {
-                    hasMoved = true; this.hasScrolled = true;
-                    if (this.scrollBumpBehav != null)
+                    if (MouseOver && !_draggingSlider)
+                        targetScrollOffset += (horizontal ? 40f : -40f) * Input.mouseScrollDelta.y;
+                    if (targetScrollOffset != scrollOffset)
                     {
-                        this.scrollBumpBehav.flash = Mathf.Min(1f, this.scrollBumpBehav.flash + 0.2f);
-                        this.scrollBumpBehav.sizeBump = Mathf.Min(2.5f, this.scrollBumpBehav.sizeBump + 0.3f);
+                        hasMoved = true; this.hasScrolled = true;
+                        if (this.scrollBumpBehav != null)
+                        {
+                            this.scrollBumpBehav.flash = Mathf.Min(1f, this.scrollBumpBehav.flash + 0.2f);
+                            this.scrollBumpBehav.sizeBump = Mathf.Min(2.5f, this.scrollBumpBehav.sizeBump + 0.3f);
+                        }
                     }
                 }
             }

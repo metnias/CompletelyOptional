@@ -60,7 +60,7 @@ namespace OptionalUI
         {
             if (greyedOut) { return DyeableRect.Grayscale(DyeableRect.MidToVeryDark(orig)); }
 
-            return Color.Lerp(orig, Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White), Mathf.Max(Mathf.Min(this.col, this.held ? 0.5f : 0.8f), Mathf.Min(this.flash, 1.0f)));
+            return Color.Lerp(orig, Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White), Mathf.Max(Mathf.Min(this.col, this.held ? 0.5f : 0.8f) / 2f, Mathf.Clamp01(this.flash)));
         }
 
         /// <summary>
