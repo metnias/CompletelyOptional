@@ -503,7 +503,42 @@ namespace CompletelyOptional
                         foreach (UIelement element in ConfigMenu.currentTab.items)
                         {
                             if (element.GetType().IsSubclassOf(typeof(UIconfig)))
-                            { if ((element as UIconfig).held) { h = true; element.Update(Time.deltaTime); continue; } }
+                            {
+                                if ((element as UIconfig).held)
+                                {
+                                    h = true;
+                                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKeyDown(KeyCode.RightControl))
+                                    {
+                                        if (Input.GetKey(KeyCode.V) && !string.IsNullOrEmpty(UniClipboard.GetText()))
+                                        {
+                                            string grab = UniClipboard.GetText();
+                                            if ((element as UIconfig).CopyFromClipboard(grab))
+                                            {
+                                                (element as UIconfig).bumpBehav.flash = 1f;
+                                                if ((element as UIconfig).cosmetic)
+                                                { ConfigMenu.alert = InternalTranslator.Translate("Pasted <Text> from Clipboard").Replace("<Text>", grab); }
+                                                else
+                                                { ConfigMenu.alert = InternalTranslator.Translate("Pasted <Text> from Clipboard to <ObjectName>").Replace("<Text>", grab).Replace("<ObjectName>", (element as UIconfig).key); }
+                                            }
+                                        }
+                                        else if (Input.GetKey(KeyCode.C))
+                                        {
+                                            string grab = (element as UIconfig).CopyToClipboard();
+                                            if (!string.IsNullOrEmpty(grab))
+                                            {
+                                                (element as UIconfig).bumpBehav.flash = 1f;
+                                                UniClipboard.SetText(grab);
+                                                if ((element as UIconfig).cosmetic)
+                                                { ConfigMenu.alert = InternalTranslator.Translate("Copied <Text> to Clipboard").Replace("<Text>", grab); }
+                                                else
+                                                { ConfigMenu.alert = InternalTranslator.Translate("Copied <Text> to Clipboard from <ObjectName>").Replace("<Text>", grab).Replace("<ObjectName>", (element as UIconfig).key); }
+                                            }
+                                        }
+                                    }
+                                    element.Update(Time.deltaTime);
+                                    continue;
+                                }
+                            }
                             if (element.GetType().IsSubclassOf(typeof(UItrigger)))
                             { if ((element as UItrigger).held) { h = true; element.Update(Time.deltaTime); continue; } }
                         }

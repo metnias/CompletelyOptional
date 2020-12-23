@@ -199,5 +199,16 @@ namespace OptionalUI
             if (this.held && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(dt); }
             if (showDesc && !this.greyedOut) { ConfigMenu.description = this.description; }
         }
+
+        public virtual bool CopyFromClipboard(string value)
+        {
+            try { this.value = value; return this.value == value; }
+            catch { return false; }
+        }
+
+        public virtual string CopyToClipboard()
+        {
+            return this.value;
+        }
     }
 }
