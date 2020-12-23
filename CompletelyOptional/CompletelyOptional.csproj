@@ -46,6 +46,7 @@
     <Reference Include="Partiality">
       <HintPath>D:\Game\Rain World\Partiality.dll</HintPath>
     </Reference>
+    <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -75,6 +76,7 @@
     <Compile Include="OptionalUI\OpScrollBox.cs" />
     <Compile Include="OptionalUI\SubObjects\BumpBehaviour.cs" />
     <Compile Include="OptionalUI\SubObjects\FTexture.cs" />
+    <Compile Include="UniClipboard.cs" />
     <None Include="OptionalUI\OpColorPicker_bak.cs" />
     <Compile Include="OptionalUI\OpSimpleButton.cs" />
     <Compile Include="OptionalUI\OpSimpleImageButton.cs" />

@@ -1561,5 +1561,18 @@ namespace OptionalUI
             "Rivulet",
             "Artificer"
         };
+
+        public override string CopyToClipboard()
+        {
+            this.inputHex = this.value; this.lblHex.text = this.inputHex;
+            return base.CopyToClipboard();
+        }
+
+        public override bool CopyFromClipboard(string value)
+        {
+            if (IsStringHexColor(value))
+            { this.inputHex = value.Substring(0, 6); this.lblHex.text = this.inputHex; return true; }
+            return false;
+        }
     }
 }

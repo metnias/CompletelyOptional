@@ -1,7 +1,8 @@
-﻿###1.5: Currently Unnamed Update#!#20201221#!#
+﻿###1.5: Blepping Board Update#!#20201221#!#
 - Supports BepInEx plugins (BaseUnityPlugin)
  + BepInEx Plugin can either use LoadOI(BaseUnityPlugin) for custom OptionInterface, or BepInEx.Configuration for GeneratedOI
  + GeneratedOI can also be used for default profiled OI, for when the modder wants to use other features (e.g. Translate) of OptionInterface
+- Users can copy text from Clipboard to UIconfig that's held and vice versa
 - Rewritten saved config format from encrypted txt to json so it can be viewed and changed outside the game
 - Added several new provided UIelements
  + OpHoldButton: Circular Hold Button which can also be used as ProgressButton

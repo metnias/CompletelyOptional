@@ -156,8 +156,11 @@ namespace CompletelyOptional
             this.saveButton = new SimpleButton(this, this.pages[0], InternalTranslator.Translate("APPLY"), "APPLY", new Vector2(600f, 50f), new Vector2(110f, 30f));
             this.pages[0].subObjects.Add(this.saveButton);
             base.MutualHorizontalButtonBind(saveButton, backButton);
-            this.resetButton = new HoldButton(this, this.pages[0], InternalTranslator.Translate("RESET CONFIG"), "RESET CONFIG", new Vector2(300f, 90f), 30f);
+            this.resetButton = new HoldButton(this, this.pages[0], InternalTranslator.Translate("RESET CONFIG"), "RESET CONFIG", new Vector2(300f, 110f), 30f);
             this.pages[0].subObjects.Add(this.resetButton);
+            this.alertLabel = new MenuLabel(this, this.pages[0], "", new Vector2(383f, 735f), new Vector2(600f, 30f), false);
+            this.pages[0].subObjects.Add(this.alertLabel);
+            this.alertLabelFade = 0f; this.lastAlertLabelFade = 0f; this.alertLabelSin = 0f;
 
             //Dark Box for ModList & Canvas
             //modlist x200 y400 w240 h600
@@ -372,21 +375,21 @@ namespace CompletelyOptional
         public static FContainer tabContainer;
         public static MenuTab menuTab;
         public static ConfigTabController tabCtrler;
-        public static string description;
+        public static string description, alert;
 
         public SelectOneButton[] modButtons;
 
         public SimpleButton backButton;
         public SimpleButton saveButton;
         public HoldButton resetButton;
+        private MenuLabel alertLabel;
+        private float alertLabelFade, lastAlertLabelFade, alertLabelSin;
 
-        public OpRect modListBound;
-        public OpRect modCanvasBound;
+        private OpRect modListBound, modCanvasBound;
 
-        public static string GetRandomSong() => OptionMod.randomSong;
+        private static string GetRandomSong() => OptionMod.randomSong;
 
-        public FSprite fadeSprite;
-        public FSprite darkSprite;
+        public FSprite fadeSprite, darkSprite;
 
         public static void ChangeSelectedTab()
         {
@@ -502,6 +505,17 @@ namespace CompletelyOptional
 
         private string lastDescription;
 
+        public override void GrafUpdate(float timeStacker)
+        {
+            base.GrafUpdate(timeStacker);
+            if (this.alertLabel != null)
+            {
+                this.alertLabel.label.alpha = Mathf.Clamp01(Mathf.Lerp(this.lastAlertLabelFade, this.alertLabelFade, timeStacker));
+                this.alertLabel.label.color = Color.Lerp(MenuRGB(MenuColors.White), MenuRGB(MenuColors.MediumGrey),
+                    0.5f + 0.5f * Mathf.Sin((this.alertLabelSin + timeStacker) / 4f));
+            }
+        }
+
         public override void Update()
         {
             if (!string.IsNullOrEmpty(description) && string.IsNullOrEmpty(this.UpdateInfoText()))
@@ -515,6 +529,16 @@ namespace CompletelyOptional
                 }
             }
             lastDescription = description;
+            if (!string.IsNullOrEmpty(alert))
+            {
+                this.alertLabelFade = 2f; this.lastAlertLabelFade = 2f;
+                this.alertLabelSin = 0f;
+                this.alertLabel.text = alert;
+                alert = null;
+            }
+            this.lastAlertLabelFade = this.alertLabelFade;
+            this.alertLabelFade = Mathf.Max(0f, this.alertLabelFade - 1f / Mathf.Lerp(1f, 100f, Mathf.Clamp01(this.alertLabelFade)));
+            this.alertLabelSin += this.alertLabelFade;
 
             base.Update(); //keep buttons to be sane
 
