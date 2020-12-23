@@ -430,5 +430,11 @@ namespace OptionalUI
             for (int i = 0; i < lineSprites.Length; i++) { lineSprites[i].RemoveFromContainer(); }
             base.Unload();
         }
+
+        public override bool CopyFromClipboard(string value)
+        {
+            this.held = false;
+            return base.CopyFromClipboard(value);
+        }
     }
 }
