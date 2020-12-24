@@ -112,6 +112,10 @@ namespace OptionalUI
 
             this.label = new MenuLabel(menu, owner, defaultKey, this.pos, this.size, true);
             this.subObjects.Add(this.label);
+
+            this.sprite = new FSprite("GamepadIcon", true) { anchorX = 0f, anchorY = 0.5f, scale = 0.333f };
+            this.myContainer.AddChild(sprite);
+
             this.OnChange();
         }
 
@@ -185,6 +189,8 @@ namespace OptionalUI
         /// </summary>
         public MenuLabel label;
 
+        private FSprite sprite;
+
         public enum BindController
         {
             /// <summary>
@@ -231,9 +237,11 @@ namespace OptionalUI
         {
             base.GrafUpdate(dt);
 
+            this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
+            this.sprite.color = this.bumpBehav.GetColor(this.colorEdge);
+
             if (greyedOut)
             {
-                this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
                 this.rect.colorF = this.bumpBehav.GetColor(this.colorFill);
                 if (string.IsNullOrEmpty(this._desError))
                 { this.label.label.color = this.bumpBehav.GetColor(this.colorEdge); }
@@ -243,7 +251,6 @@ namespace OptionalUI
             }
 
             this.rect.colorF = this.colorFill;
-            this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
 
@@ -425,13 +432,22 @@ namespace OptionalUI
             this._size = new Vector2(Mathf.Max(30f, this.size.x), Mathf.Max(30f, this.size.y));
             base.OnChange();
             if (!_init) { return; }
+            this.sprite.isVisible = IsJoystick(this.value);
             if (IsJoystick(this.value))
-            { this.label.text = this.value.Replace("Joystick", "Ctrler").Replace("Button", "Btn"); }
-            else { this.label.text = this.value; }
+            {
+                this.sprite.SetPosition(5f, this.size.y / 2f);
+                this.label.text = this.value.Replace("Joystick", "");
+                this.label.pos = new Vector2(this.pos.x + 20f, this.pos.y);
+                this.label.size = new Vector2(this.size.x - 20f, this.size.y);
+            }
+            else
+            {
+                this.label.text = this.value;
+                this.label.pos = this.pos;
+                this.label.size = this.size;
+            }
             this.rect.pos = this.pos;
             this.rect.size = this.size;
-            this.label.pos = this.pos;
-            this.label.size = this.size;
         }
 
         public override void Hide()
@@ -439,6 +455,7 @@ namespace OptionalUI
             base.Hide();
             this.rect.Hide();
             this.label.label.isVisible = false;
+            this.sprite.isVisible = false;
         }
 
         public override void Show()
@@ -446,6 +463,7 @@ namespace OptionalUI
             base.Show();
             this.rect.Show();
             this.label.label.isVisible = true;
+            this.sprite.isVisible = IsJoystick(this.value);
         }
 
         public override void Unload()

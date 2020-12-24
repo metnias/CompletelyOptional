@@ -11,6 +11,7 @@
  + OpContainer: FContainer in Config screen which you can add FSprite on your own
  x OpComboBox: DropDown box that can also be searched, useful for selecting an item from a list
 - OpTextBox for numbers and allowSpace being true now allows '-' for its first character, allowing negative numbers
+- OpKeyBinder now has fancier indicator when it's bound to Joystick
 - OpImage now has scale field and can set color for Texture2D version, and its color is now properly initialized to white
 - Fixed ConfigTabController not resetting selected tab number even after Reset Config is done
 - OpColorPicker.HexToColor now supports 32bit HEX that has alpha, and OpColorPicker.IsStringHexColor is added for easy check
