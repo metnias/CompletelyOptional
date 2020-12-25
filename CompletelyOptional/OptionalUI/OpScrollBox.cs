@@ -450,10 +450,10 @@ namespace OptionalUI
             // Do scroll wheel scrolling
             if (!ScrollLocked)
             {
-                if (Input.mouseScrollDelta.y != 0f && !IsThereMouseOver())
+                if (this.menu.mouseScrollWheelMovement != 0 && !IsThereMouseOver())
                 {
                     if (MouseOver && !_draggingSlider)
-                        targetScrollOffset += (horizontal ? 40f : -40f) * Input.mouseScrollDelta.y;
+                        targetScrollOffset -= (horizontal ? 40f : -40f) * Mathf.Sign(this.menu.mouseScrollWheelMovement);
                     if (targetScrollOffset != scrollOffset)
                     {
                         hasMoved = true; this.hasScrolled = true;

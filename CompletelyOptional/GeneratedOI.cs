@@ -92,7 +92,7 @@ namespace CompletelyOptional
                     {
                         if (TryGetBase(bepConfig, cds[e], out ConfigEntryBase entryBase))
                         {
-                            string desc = LoremIpsum.Generate(3, 4); //entryBase.Description.Description; //
+                            string desc = entryBase.Description.Description; // LoremIpsum.Generate(3, 4);
                             switch (entryBase.SettingType.Name.ToLower())
                             {
                                 case "bool": // OpCheckBox
