@@ -111,14 +111,15 @@ namespace CompletelyOptional
             sb.AddItems(new OpLabelLong(new Vector2(425f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
             */
 
-            OpComboBox cb = new OpComboBox(new Vector2(100f, 1000f), new Vector2(150f, 30f), "", new List<ListItem>() {
+            OpComboBox cb = new OpComboBox(new Vector2(100f, 1000f), 150f, "", new List<ListItem>() {
                 new ListItem("Slugcat"), new ListItem("Is"), new ListItem("HalfSlug"),
-                new ListItem("And"), new ListItem("HalfBunny"), new ListItem("Creature") });
-            sb.AddItems(cb, new OpLabel(100f, 330f, "AutoSort") { bumpBehav = cb.bumpBehav });
-            cb = new OpComboBox(new Vector2(350f, 1000f), new Vector2(150f, 30f), "", new List<ListItem>() {
-                new ListItem("Slugcat", 0), new ListItem("Is", 1), new ListItem("HalfSlug", 2),
-                new ListItem("And", 3), new ListItem("HalfBunny", 4), new ListItem("Creature", 5) });
-            sb.AddItems(cb, new OpLabel(100f, 230f, "DefinedOrder") { bumpBehav = cb.bumpBehav });
+                new ListItem("And"), new ListItem("HalfBunny"), new ListItem("Creature") }, "Slugcat");
+            sb.AddItems(cb, new OpLabel(100f, 1050f, "AutoSort") { bumpBehav = cb.bumpBehav });
+            cb = new OpComboBox(new Vector2(350f, 1000f), 150f, "", new List<ListItem>() {
+                new ListItem("The0", 0), new ListItem("quick1", 1), new ListItem("brown2", 2),
+                new ListItem("fox3", 3), new ListItem("jumps4", 4), new ListItem("over5", 5),
+                new ListItem("the6", 6), new ListItem("lazy7", 7), new ListItem("dog8", 8)}, "brown2");
+            sb.AddItems(cb, new OpLabel(350f, 1050f, "DefinedOrder") { bumpBehav = cb.bumpBehav });
 
             sb.AddItems(new OpHoldButton(new Vector2(400f, 400f), "", "Button", 50f));
             prg = new OpHoldButton(new Vector2(200f, 400f), "", "Button") { color = new Color(1f, 0.5f, 1f) };

@@ -210,5 +210,11 @@ namespace OptionalUI
         {
             return this.value;
         }
+
+        public override void Hide()
+        {
+            this.held = false;
+            base.Hide();
+        }
     }
 }

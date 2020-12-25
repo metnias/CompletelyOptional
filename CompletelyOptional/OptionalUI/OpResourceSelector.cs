@@ -18,12 +18,12 @@ namespace OptionalUI
         /// Special type of <see cref="OpComboBox"/> that uses Rain World Enum instead of custom list.
         /// </summary>
         /// <param name="pos">LeftBottom Position of folded <see cref="OpComboBox"/></param>
-        /// <param name="size">The box size of folded <see cref="OpComboBox"/></param>
+        /// <param name="width">The box width of folded <see cref="OpComboBox"/>. The height is fixed to 24f.</param>
         /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="enumType">Type of Enum that you want to get items</param>
         /// <param name="defaultName"></param>
         /// <exception cref="ElementFormatException">Thrown when enumType is not <see cref="Enum"/>.</exception>
-        public OpResourceSelector(Vector2 pos, Vector2 size, string key, Type enumType, string defaultName = "") : base(pos, size, key, list: null)
+        public OpResourceSelector(Vector2 pos, float width, string key, Type enumType, string defaultName = "") : base(pos, width, key, list: null)
         {
             if (!enumType.IsEnum) { throw new ElementFormatException(this, "OpEnumSelector's enumType is not Enum!", key); }
             this.listType = SpecialEnum.Enum;
@@ -41,12 +41,12 @@ namespace OptionalUI
         /// Special type of <see cref="OpComboBox"/> that uses Rain World Resources instead of custom list. See also <seealso cref="SpecialEnum"/>.
         /// </summary>
         /// <param name="pos">LeftBottom Position of folded <see cref="OpComboBox"/></param>
-        /// <param name="size">The box size of folded <see cref="OpComboBox"/></param>
+        /// <param name="width">The box width of folded <see cref="OpComboBox"/>. The height is fixed to 24f.</param>
         /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="listType">Type of List that you want to get items</param>
         /// <param name="defaultName"></param>
         /// <exception cref="ElementFormatException">Thrown when you used <see cref="SpecialEnum.Enum"/></exception>
-        public OpResourceSelector(Vector2 pos, Vector2 size, string key, SpecialEnum listType, string defaultName = "") : base(pos, size, key, list: null)
+        public OpResourceSelector(Vector2 pos, float width, string key, SpecialEnum listType, string defaultName = "") : base(pos, width, key, list: null)
         {
             List<ListItem> list = new List<ListItem>();
             switch (listType)
@@ -115,12 +115,12 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// The List of Rain World Resource that doesn't have enumType. See also <seealso cref="OpResourceSelector(Vector2, Vector2, string, SpecialEnum, string)"/>
+        /// The List of Rain World Resource that doesn't have enumType. See also <seealso cref="OpResourceSelector(Vector2, float, string, SpecialEnum, string)"/>
         /// </summary>
         public enum SpecialEnum : byte
         {
             /// <summary>
-            /// Do NOT use this. This is for <see cref="OpResourceSelector(Vector2, Vector2, string, Type, string)"/>.
+            /// Do NOT use this. This is for <see cref="OpResourceSelector(Vector2, float, string, Type, string)"/>.
             /// </summary>
             Enum = 0,
 
