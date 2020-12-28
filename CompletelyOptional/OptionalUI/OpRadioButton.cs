@@ -97,7 +97,7 @@ namespace OptionalUI
             this.symbolSprite.color = ce;
             if (this.MouseOver)
             {
-                this.symbolHalfVisible = Custom.LerpAndTick(this.symbolHalfVisible, 1f, 0.07f, 0.0166666675f);
+                this.symbolHalfVisible = Custom.LerpAndTick(this.symbolHalfVisible, 1f, 0.07f, 0.0166666675f * DTMultiply(dt));
                 if (!this.valueBool) { this.symbolSprite.color = Color.Lerp(DyeableRect.MidToDark(ce), ce, this.bumpBehav.Sin(10f)); }
             }
             else

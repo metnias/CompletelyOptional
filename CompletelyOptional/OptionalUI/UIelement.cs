@@ -123,7 +123,13 @@ namespace OptionalUI
         internal static int _soundFill
         {
             get { return OptionScript.soundFill; }
-            set { OptionScript.soundFill = value; }
+            set
+            {
+                if (OptionScript.soundFill < value)
+                { OptionScript.soundFill += FrameMultiply(value - OptionScript.soundFill); }
+                else
+                { OptionScript.soundFill = value; }
+            }
         }
 
         /// <summary>
@@ -132,7 +138,7 @@ namespace OptionalUI
         [Obsolete]
         public static bool soundFilled => _soundFilled;
 
-        public static bool _soundFilled => _soundFill > 80;
+        internal static bool _soundFilled => _soundFill > FrameMultiply(80);
 
         /// <summary>
         /// Whether this is in ConfigMenu or not. Use <see cref="OptionInterface.isOptionMenu"/> instead.
@@ -387,5 +393,20 @@ namespace OptionalUI
             this.myContainer.isVisible = true;
             this.hidden = false;
         }
+
+        /// <summary>
+        /// Frame multiplier for Many More Fixes' framerate unlock feature. See also <see cref="FrameMultiply(int)"/>
+        /// </summary>
+        public static float frameMulti => Mathf.Max(1.00f, OptionScript.curFramerate / 60.0f);
+
+        /// <summary>
+        /// Multiplies frame count by <see cref="frameMulti"/> to accomodated with Many More Fixes' framerate unlock feature.
+        /// </summary>
+        public static int FrameMultiply(int origFrameCount) => Mathf.RoundToInt(origFrameCount * frameMulti);
+
+        /// <summary>
+        /// Multiplies deltaTime for tick multiplier
+        /// </summary>
+        public static float DTMultiply(float deltaTime) => 60.0f * deltaTime;
     }
 }

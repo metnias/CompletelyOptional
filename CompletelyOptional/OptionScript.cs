@@ -437,6 +437,10 @@ namespace CompletelyOptional
             }
         }
 
+        public static float curFramerate = 60.0f;
+        private static float[] dtHistory = new float[16];
+        private static int dtHistoryMark = 0;
+
         /// <summary>
         /// MonoBehavior Update
         /// </summary>
@@ -454,6 +458,7 @@ namespace CompletelyOptional
                         Initialize();
                     }
                     catch (Exception ex) { Debug.LogError(ex); Debug.LogException(ex); }
+                    for (int i = 0; i < dtHistory.Length; i++) { dtHistory[i] = 0.016667f; }
                     init = true;
                 }
                 ConfigMenu.currentTab = null;
@@ -475,6 +480,14 @@ namespace CompletelyOptional
             //Option is running
             ConfigMenu.script = this;
             isOptionMenu = true;
+
+            #region curFramerate
+            dtHistory[dtHistoryMark] = Time.deltaTime;
+            dtHistoryMark--; if (dtHistoryMark < 0) { dtHistoryMark = dtHistory.Length - 1; }
+            float sum = 0;
+            for (int h = 0; h < dtHistory.Length; h++) { sum += dtHistory[h]; }
+            curFramerate = dtHistory.Length / sum;
+            #endregion curFramerate
 
             if (soundFill > 0) { soundFill--; }
             ConfigMenu.description = "";

@@ -68,25 +68,25 @@ namespace OptionalUI
         /// </summary>
         public void Update(float dt)
         {
-            float d = 60.0f * dt;
-            this.flash = Custom.LerpAndTick(this.flash, 0f, 0.03f, 0.166666672f * d);
+            float dtMulti = UIelement.DTMultiply(dt);
+            this.flash = Custom.LerpAndTick(this.flash, 0f, 0.03f, 0.166666672f * dtMulti);
             if (this.owner.MouseOver)
             {
-                this.sizeBump = Custom.LerpAndTick(this.sizeBump, 1f, 0.1f, 0.1f);
-                this.sin += 1f * d;
+                this.sizeBump = Custom.LerpAndTick(this.sizeBump, 1f, 0.1f, 0.1f * dtMulti);
+                this.sin += 1f * dtMulti;
                 if (!this.flashBool)
                 { this.flashBool = true; this.flash = 1f; }
                 if (!this.greyedOut)
                 {
-                    this.col = Mathf.Min(1f, this.col + 0.1f * d);
-                    this.extraSizeBump = Mathf.Min(1f, this.extraSizeBump + 0.1f * d);
+                    this.col = Mathf.Min(1f, this.col + 0.1f * dtMulti);
+                    this.extraSizeBump = Mathf.Min(1f, this.extraSizeBump + 0.1f * dtMulti);
                 }
             }
             else
             {
                 this.flashBool = false;
-                this.sizeBump = Custom.LerpAndTick(this.sizeBump, 0f, 0.1f, 0.05f * d);
-                this.col = Mathf.Max(0f, this.col - 0.0333333351f * d);
+                this.sizeBump = Custom.LerpAndTick(this.sizeBump, 0f, 0.1f, 0.05f * dtMulti);
+                this.col = Mathf.Max(0f, this.col - 0.0333333351f * dtMulti);
                 this.extraSizeBump = 0f;
             }
         }
