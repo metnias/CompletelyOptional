@@ -34,18 +34,11 @@
     <DocumentationFile>bin\Release\ConfigMachine.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp">
-      <HintPath>D:\Game\Rain World\Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="BepInEx">
-      <HintPath>..\..\References\RWBepInEx\BepInEx.dll</HintPath>
-    </Reference>
-    <Reference Include="HOOKS-Assembly-CSharp">
-      <HintPath>D:\Game\Rain World\HOOKS-Assembly-CSharp.dll</HintPath>
-    </Reference>
-    <Reference Include="Partiality">
-      <HintPath>D:\Game\Rain World\Partiality.dll</HintPath>
-    </Reference>
+    <Reference Include="Assembly-CSharp" />
+    <Reference Include="BepInEx" />
+    <Reference Include="HOOKS-Assembly-CSharp" />
+    <Reference Include="Partiality" />
+    <Reference Include="UnityEngine" />
     <Reference Include="PresentationCore" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -53,9 +46,6 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="UnityEngine">
-      <HintPath>D:\Game\Rain World\UnityEngine.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="COExceptions.cs" />
@@ -138,9 +128,17 @@
   <ItemGroup>
     <EmbeddedResource Include="Translations.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="lib\Assembly-CSharp.dll" />
+    <Content Include="lib\BepInEx.dll" />
+    <Content Include="lib\HOOKS-Assembly-CSharp.dll" />
+    <Content Include="lib\Partiality.dll" />
+    <Content Include="lib\UnityEngine.dll" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(TargetPath)" "D:\Drive\Repo\References\RainWorld\$(TargetName).dll"
+    <LocalDir>E:\Game\Rain World\RainWorld.exe</LocalDir>
+    <PostBuildEvent Condition="Exists($(LocalDir))">copy /Y "$(TargetPath)" "D:\Drive\Repo\References\RainWorld\$(TargetName).dll"
 copy /Y "$(TargetDir)$(TargetName).xml" "D:\Drive\Repo\References\RainWorld\$(TargetName).xml"
 copy /Y "$(TargetPath)" "E:\Game\Rain World\mods\$(TargetName).dll"
 copy /Y "$(TargetDir)$(TargetName).xml" "E:\Game\Rain World\mods\$(TargetName).xml"
