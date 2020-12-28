@@ -2,6 +2,7 @@
 using BepInEx;
 using System.Reflection;
 using System;
+using System.Linq;
 
 namespace OptionalUI
 {
@@ -21,31 +22,19 @@ namespace OptionalUI
             this.type = Type.BepInExPlugin;
             this.mod = plugin;
 
-            Assembly assm = Assembly.GetAssembly(plugin.GetType());
-            this.ModID = assm.GetName().Name;
+            this.ModID = plugin.Info.Metadata.Name;
             this.author = authorNull;
-            bool foundAthr = false;
-            this.Version = "XXXX";
-            bool foundVer = false;
+            this.Version = plugin.Info.Metadata.Version.ToString();
             try
             {
-                object[] attrs = assm.GetCustomAttributes(false);
-                foreach (object attr in attrs)
+                Assembly assm = Assembly.GetAssembly(plugin.GetType());
+                if (assm.GetCustomAttributes(typeof(AssemblyTrademarkAttribute), false).FirstOrDefault() is AssemblyTrademarkAttribute trademarkAttr && !string.IsNullOrEmpty(trademarkAttr.Trademark))
                 {
-                    if (!foundVer)
-                    {
-                        if (attr.GetType() == typeof(AssemblyVersionAttribute))
-                        { if (!string.IsNullOrEmpty(((AssemblyVersionAttribute)attr).Version)) { this.Version = ((AssemblyVersionAttribute)attr).Version; } foundVer = true; }
-                        else if (attr.GetType() == typeof(AssemblyFileVersionAttribute))
-                        { if (!string.IsNullOrEmpty(((AssemblyFileVersionAttribute)attr).Version)) { this.Version = ((AssemblyFileVersionAttribute)attr).Version; } }
-                    }
-                    if (attr.GetType() == typeof(AssemblyProductAttribute))
-                    { if (!string.IsNullOrEmpty(((AssemblyProductAttribute)attr).Product)) { this.ModID = ((AssemblyProductAttribute)attr).Product; } }
-                    else if (foundAthr) { continue; }
-                    else if (attr.GetType() == typeof(AssemblyTrademarkAttribute))
-                    { if (!string.IsNullOrEmpty(((AssemblyTrademarkAttribute)attr).Trademark)) { this.author = ((AssemblyTrademarkAttribute)attr).Trademark; } foundAthr = true; }
-                    else if (attr.GetType() == typeof(AssemblyCompanyAttribute))
-                    { if (!string.IsNullOrEmpty(((AssemblyCompanyAttribute)attr).Company)) { this.author = ((AssemblyCompanyAttribute)attr).Company; } }
+                    author = trademarkAttr.Trademark;
+                }
+                else if (assm.GetCustomAttributes(typeof(AssemblyCompanyAttribute), false).FirstOrDefault() is AssemblyCompanyAttribute companyAttr && !string.IsNullOrEmpty(companyAttr.Company))
+                {
+                    author = companyAttr.Company;
                 }
             }
             catch (Exception) { }
