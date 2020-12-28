@@ -99,7 +99,7 @@ namespace OptionalUI
         {
             if (!_init) { return; }
             base.Update(dt);
-            this.bumpBehav.Update();
+            this.bumpBehav.Update(dt);
 
             if (this.held && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(dt); }
             if (showDesc && !this.greyedOut) { ConfigMenu.description = this.description; }

@@ -145,6 +145,7 @@ namespace OptionalUI
             if (!held) { return; }
             for (int i = 0; i < this.lblList.Length; i++)
             {
+                this.lblList[i].text = this.itemList[this.listTop + i].name;
                 this.lblList[i].label.color = this.lblList[i].text == this.value ? this.sprArrow.color : this.rect.color;
                 this.lblList[i].pos = new Vector2(this.pos.x - this.size.x / 2f + 12f, this.pos.y - 25f - 20f * i + (downward ? 0f : this.size.y + this.rectList.size.y));
             }

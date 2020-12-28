@@ -160,7 +160,7 @@ namespace OptionalUI
         {
             base.GrafUpdate(dt);
             if (!_init || isHidden) { return; }
-            if (this.bumpBehav?.owner == this) { this.bumpBehav.Update(); }
+            if (this.bumpBehav?.owner == this) { this.bumpBehav.Update(dt); }
             if (this.IsLong) { return; }
             if (this.bumpBehav == null) { this.label.label.color = this.color; }
             else { this.label.label.color = this.bumpBehav.GetColor(this.color); }

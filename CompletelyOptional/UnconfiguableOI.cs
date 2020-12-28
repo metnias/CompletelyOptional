@@ -33,7 +33,8 @@ namespace CompletelyOptional
 
         private void CtorInitError(Exception exception)
         {
-            Debug.LogError($"CompletelyOptional: {this.rwMod.ModID} had issue in OptionInterface:");
+            if (this.rwMod.ModID != null)
+            { Debug.LogError($"CompletelyOptional: {this.rwMod.ModID} had issue in OptionInterface:"); }
             this.reason = Reason.InitError;
             this.exception = exception.ToString();
             Debug.LogException(exception);
@@ -144,10 +145,10 @@ namespace CompletelyOptional
                     oof = new OpLabel(new Vector2(100f, 380f), new Vector2(30f, 40f), ":(", FLabelAlignment.Left, true) { color = white };
                     labelSluggo0 = new OpLabel(new Vector2(150f, 390f), new Vector2(300f, 20f), InternalTranslator.Translate("There was an issue initializing OptionInterface.")) { color = white };
                     labelSluggo1 = new OpLabelLong(new Vector2(50f, 40f), new Vector2(500f, 320f), exception) { color = white, allowOverflow = false };
+                    labelVersion = new OpLabel(new Vector2(50f, 480f), new Vector2(100f, 20f), string.Concat(Environment.NewLine, "Config Machine ", MenuTab.GetCMVersion()), FLabelAlignment.Left);
 
-                    Tabs[0].AddItems(blue, oof, labelSluggo0, labelSluggo1);
+                    Tabs[0].AddItems(blue, oof, labelSluggo0, labelSluggo1, labelVersion);
 
-                    labelVersion.text += string.Concat(Environment.NewLine, "Config Machine ", MenuTab.GetCMVersion());
                     break;
             }
         }

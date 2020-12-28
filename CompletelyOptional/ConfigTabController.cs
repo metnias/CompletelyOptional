@@ -247,7 +247,7 @@ namespace CompletelyOptional
             {
                 base.GrafUpdate(dt);
                 this.bumpBehav.greyedOut = this.greyedOut;
-                this.bumpBehav.Update();
+                this.bumpBehav.Update(dt);
 
                 if (!this.active && (greyedOut || !this.MouseOver)) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f); }
                 else { this.darken = Mathf.Min(1f, this.darken + 0.1f); }
@@ -380,7 +380,7 @@ namespace CompletelyOptional
             {
                 base.GrafUpdate(dt);
                 this.bumpBehav.greyedOut = this.greyedOut;
-                this.bumpBehav.Update();
+                this.bumpBehav.Update(dt);
 
                 if (!this.active && (greyedOut || !this.MouseOver)) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f); }
                 else { this.darken = Mathf.Min(1f, this.darken + 0.1f); }

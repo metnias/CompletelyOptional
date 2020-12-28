@@ -75,7 +75,7 @@ namespace OptionalUI
                 return;
             }
             if (this.bumpBehav == null) { this.bumpBehav = new BumpBehaviour(this); }
-            this.bumpBehav.Update();
+            this.bumpBehav.Update(dt);
 
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
