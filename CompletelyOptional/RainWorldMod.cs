@@ -35,17 +35,47 @@ namespace OptionalUI
                     if (!foundVer)
                     {
                         if (attr.GetType() == typeof(AssemblyVersionAttribute))
-                        { if (!string.IsNullOrEmpty(((AssemblyVersionAttribute)attr).Version)) { this.Version = ((AssemblyVersionAttribute)attr).Version; } foundVer = true; }
+                        { 
+                            if (!string.IsNullOrEmpty(((AssemblyVersionAttribute)attr).Version)) 
+                            { 
+                                this.Version = ((AssemblyVersionAttribute)attr).Version; 
+                            } 
+                            foundVer = true; 
+                        }
                         else if (attr.GetType() == typeof(AssemblyFileVersionAttribute))
-                        { if (!string.IsNullOrEmpty(((AssemblyFileVersionAttribute)attr).Version)) { this.Version = ((AssemblyFileVersionAttribute)attr).Version; } }
+                        { 
+                            if (!string.IsNullOrEmpty(((AssemblyFileVersionAttribute)attr).Version)) 
+                            { 
+                                this.Version = ((AssemblyFileVersionAttribute)attr).Version; 
+                            } 
+                        }
                     }
                     if (attr.GetType() == typeof(AssemblyProductAttribute))
-                    { if (!string.IsNullOrEmpty(((AssemblyProductAttribute)attr).Product)) { this.ModID = ((AssemblyProductAttribute)attr).Product; } }
-                    else if (foundAthr) { continue; }
+                    {
+                        if (!string.IsNullOrEmpty(((AssemblyProductAttribute)attr).Product))
+                        {
+                            this.ModID = ((AssemblyProductAttribute)attr).Product;
+                        }
+                    }
+                    else if (foundAthr)
+                    {
+                        continue;
+                    }
                     else if (attr.GetType() == typeof(AssemblyTrademarkAttribute))
-                    { if (!string.IsNullOrEmpty(((AssemblyTrademarkAttribute)attr).Trademark)) { this.author = ((AssemblyTrademarkAttribute)attr).Trademark; } foundAthr = true; }
+                    {
+                        if (!string.IsNullOrEmpty(((AssemblyTrademarkAttribute)attr).Trademark))
+                        {
+                            this.author = ((AssemblyTrademarkAttribute)attr).Trademark;
+                        }
+                        foundAthr = true;
+                    }
                     else if (attr.GetType() == typeof(AssemblyCompanyAttribute))
-                    { if (!string.IsNullOrEmpty(((AssemblyCompanyAttribute)attr).Company)) { this.author = ((AssemblyCompanyAttribute)attr).Company; } }
+                    {
+                        if (!string.IsNullOrEmpty(((AssemblyCompanyAttribute)attr).Company))
+                        {
+                            this.author = ((AssemblyCompanyAttribute)attr).Company;
+                        }
+                    }
                 }
             }
             catch (Exception) { }
