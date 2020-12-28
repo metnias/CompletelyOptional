@@ -338,3 +338,7 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
+
+# Ignore Reference from Github
+lib/Assembly-CSharp.dll
+lib/UnityEngine.dll
