@@ -36,9 +36,8 @@ namespace OptionalUI
         public OptionInterface(PartialityMod mod)
         {
 #pragma warning disable CS0612
-            this.mod = mod;
+            if (mod != null) { this.mod = mod; this.rwMod = new RainWorldMod(mod); }
 #pragma warning restore CS0612
-            if (mod != null) { this.rwMod = new RainWorldMod(mod); }
             else { this.rwMod = new RainWorldMod(); }
             this.rawConfig = rawConfigDef;
         }
@@ -165,7 +164,12 @@ namespace OptionalUI
         /// <summary>
         /// <see cref="RainWorldMod"/> that holds basic information of Partiality Mod or BepInEx Plugin
         /// </summary>
-        public RainWorldMod rwMod { get; private set; }
+        public RainWorldMod rwMod { get; protected set; }
+
+        /// <summary>
+        /// Force change <see cref="rwMod"/>, used by Config Machine when the mod author forgot to set this in ctor
+        /// </summary>
+        public void ForceSetRWMod(RainWorldMod newRWMod) => rwMod = newRWMod;
 
         /// <summary>
         /// OpTab that contains UIelements for your config screen.

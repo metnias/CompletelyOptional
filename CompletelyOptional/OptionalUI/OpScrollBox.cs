@@ -502,12 +502,12 @@ namespace OptionalUI
         {
             base.GrafUpdate(dt);
             if (this.isHidden) { return; }
-            this.bumpBehav.Update();
+            this.bumpBehav.Update(dt);
 
             float sin = 1f;
             if (!this.hasScrolled && !this.ScrollLocked)
             {
-                _notifySin += 1f;
+                _notifySin += 60.0f * dt;
                 sin = 0.5f - 0.5f * Mathf.Sin(this._notifySin / 30f * 3.14159274f);
             }
 

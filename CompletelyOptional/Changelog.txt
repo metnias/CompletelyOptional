@@ -9,11 +9,12 @@
 - Added several new provided UIelements
  + OpHoldButton: Circular Hold Button which can also be used as ProgressButton
  + OpContainer: FContainer in Config screen which you can add FSprite on your own
- x OpComboBox: DropDown box that can also be searched, useful for selecting an item from a list
+ x OpComboBox(WIP): DropDown box that can also be searched, useful for selecting an item from a list
 - OpTextBox for numbers and allowSpace being true now allows '-' for its first character, allowing negative numbers
 - OpKeyBinder now has fancier indicator when it's bound to Joystick
 - OpImage now has scale field and can set color for Texture2D version, and its color is now properly initialized to white
 - Fixed ConfigTabController not resetting selected tab number even after Reset Config is done
+- Fixed UI flickering at high FPS with Many More Fixes
 - OpColorPicker.HexToColor now supports 32bit HEX that has alpha, and OpColorPicker.IsStringHexColor is added for easy check
 - ﻿LabelTest's xml documents are improved, and GetFont method is added for getting fontName for FLabels
 ###1.4.4.4#!#20201210#!#
@@ -113,11 +114,12 @@
  + doesBackBump (default: true): If this is false, Back Rectangular stops reacting with MouseOver.
 - Creating new UIelement in runtime(after Initialize) should work properly now.
 - When you stay in Mod Config Screen for a long time, the next music will be played correctly after the initial one.
-###1.4.2.x#!#20200912#!#
+###1.4.2#!#20200912#!#
+1.4.2
 - Added new UItrigger: OpSimpleImageButton
  + Basically, it's an OpSimpleButton but with FAtlasElement/Texture2D
 - Fixed the bug which OpSimpleButton's DyeableRects aren't moving when its pos is changed
-###1.4.1.x#!#20200907#!#
+1.4.1
 - Finally fixed Tab Controller's graphic to be intended way.
  + Displays Tab name, and has a highlight outline to make selected one much more noticeable.
 - OpRadioButtonGroup.Hide/Show now calls its children's Hide/Show instead of doing nothing.

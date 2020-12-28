@@ -339,7 +339,7 @@ namespace OptionalUI
     [Serializable]
     public class NullModException : NullReferenceException
     {
-        public NullModException(string id) : base(string.Concat("OptionInterface.mod is null! (id: ", id, ")"))
+        public NullModException(string id) : base($"OptionInterface.rwMod is null! (id: {id})")
         {
         }
 

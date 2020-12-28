@@ -66,26 +66,27 @@ namespace OptionalUI
         /// <summary>
         /// This will be called automatically with <see cref="UIconfig.Update(float)"/> or <see cref="UItrigger.Update(float)"/>
         /// </summary>
-        public void Update()
+        public void Update(float dt)
         {
-            this.flash = Custom.LerpAndTick(this.flash, 0f, 0.03f, 0.166666672f);
+            float d = 60.0f * dt;
+            this.flash = Custom.LerpAndTick(this.flash, 0f, 0.03f, 0.166666672f * d);
             if (this.owner.MouseOver)
             {
                 this.sizeBump = Custom.LerpAndTick(this.sizeBump, 1f, 0.1f, 0.1f);
-                this.sin += 1f;
+                this.sin += 1f * d;
                 if (!this.flashBool)
                 { this.flashBool = true; this.flash = 1f; }
                 if (!this.greyedOut)
                 {
-                    this.col = Mathf.Min(1f, this.col + 0.1f);
-                    this.extraSizeBump = Mathf.Min(1f, this.extraSizeBump + 0.1f);
+                    this.col = Mathf.Min(1f, this.col + 0.1f * d);
+                    this.extraSizeBump = Mathf.Min(1f, this.extraSizeBump + 0.1f * d);
                 }
             }
             else
             {
                 this.flashBool = false;
-                this.sizeBump = Custom.LerpAndTick(this.sizeBump, 0f, 0.1f, 0.05f);
-                this.col = Mathf.Max(0f, this.col - 0.0333333351f);
+                this.sizeBump = Custom.LerpAndTick(this.sizeBump, 0f, 0.1f, 0.05f * d);
+                this.col = Mathf.Max(0f, this.col - 0.0333333351f * d);
                 this.extraSizeBump = 0f;
             }
         }

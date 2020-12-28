@@ -85,6 +85,7 @@ namespace CompletelyOptional
             "ComMod",
             "CommunicationModule",
             "BepInEx-Partiality-Wrapper",
+            "BepInEx.Partiality.Wrapper",
             "LogFix"
         };
 
@@ -238,7 +239,8 @@ namespace CompletelyOptional
                 {
                     NullModException e = new NullModException(mod.ModID);
                     Debug.Log(e); Debug.LogException(e);
-                    itf = new UnconfiguableOI(mod, e);
+                    itf.ForceSetRWMod(new RainWorldMod(mod));
+                    // itf = new UnconfiguableOI(mod, e);
                 }
 
                 try

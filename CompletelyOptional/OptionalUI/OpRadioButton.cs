@@ -81,7 +81,7 @@ namespace OptionalUI
             if (this.isHidden) { return; }
 
             this.bumpBehav.greyedOut = this.greyedOut;
-            this.bumpBehav.Update();
+            this.bumpBehav.Update(dt);
 
             if (greyedOut)
             {

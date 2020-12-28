@@ -204,6 +204,16 @@ namespace CompletelyOptional
                                     break;
                                 default:
                                     // if type is enum => OpComboBox
+                                    if (entryBase.SettingType.IsEnum)
+                                    {
+                                        elms.Add(new OpResourceSelector(new Vector2(30f, 600f - h - 45f), 120f, GenerateKey(cds[e]), entryBase.SettingType, (string)entryBase.DefaultValue));
+                                        elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
+                                        { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                        if (!string.IsNullOrEmpty(desc))
+                                        { elms.Add(new OpLabelLong(new Vector2(160f, 600f - h - 60f), new Vector2(420f, 45f), desc)); }
+                                        h += 60f;
+                                        break;
+                                    }
                                     Debug.Log($"{rwMod.ModID} has unsupported ConfigEntry: {cds[e].Key}({entryBase.SettingType.Name})");
                                     hasUnsupported = true; continue; // Not supported
                             }
@@ -311,7 +321,10 @@ namespace CompletelyOptional
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<KeyCode> eKeyCode))
                                 { eKeyCode.Value = (KeyCode)Enum.Parse(typeof(KeyCode), val); }
                                 break;
-                            default: continue;
+                            default:
+                                if (entBase.SettingType.IsEnum)
+                                { entBase.SetSerializedValue(val); break; }
+                                continue;
                         }
                     }
                 }
@@ -374,7 +387,10 @@ namespace CompletelyOptional
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<KeyCode> eKeyCode))
                                 { obj.value = eKeyCode.Value.ToString(); }
                                 break;
-                            default: continue;
+                            default:
+                                if (entBase.SettingType.IsEnum)
+                                { obj.value = entBase.GetSerializedValue(); break; }
+                                continue;
                         }
                     }
                 }
