@@ -95,6 +95,7 @@ namespace OptionalUI
         public override void Update(float dt)
         {
             base.Update(dt);
+            float dtm = DTMultiply(dt);
             if (disabled || isProgress)
             {
                 held = false;
@@ -108,15 +109,15 @@ namespace OptionalUI
             if (held)
             {
                 if (soundLoop == null) { soundLoop = menu.PlayLoop(SoundID.MENU_Security_Button_LOOP, 0f, 0f, 1f, false); }
-                soundLoop.loopVolume = Mathf.Lerp(soundLoop.loopVolume, 1f, 0.85f);
+                soundLoop.loopVolume = Mathf.Lerp(soundLoop.loopVolume, 1f, 0.85f * dtm);
                 soundLoop.loopPitch = Mathf.Lerp(0.3f, 1.5f, filled) - 0.15f * Mathf.Sin(pulse * Mathf.PI * 2f);
-                pulse += filled / 20f;
+                pulse += dtm * filled / 20f;
             }
             else
             {
                 if (soundLoop != null)
                 {
-                    soundLoop.loopVolume = Mathf.Max(0f, soundLoop.loopVolume - 0.125f);
+                    soundLoop.loopVolume = Mathf.Max(0f, soundLoop.loopVolume - 0.125f * dtm);
                     if (soundLoop.loopVolume <= 0f) { soundLoop.Destroy(); soundLoop = null; }
                 }
                 pulse = 0f;
@@ -128,7 +129,7 @@ namespace OptionalUI
             if (held)
             {
                 bumpBehav.sin = pulse;
-                filled = Custom.LerpAndTick(filled, 1f, 0.007f, 1f / fillTime);
+                filled = Custom.LerpAndTick(filled, 1f, 0.007f, dtm / fillTime);
                 if (filled >= 1f && !hasSignalled)
                 {
                     Signal();
@@ -141,7 +142,7 @@ namespace OptionalUI
             // Release
             if (lastHeld && !hasSignalled && !OptionInterface.soundFilled)
             {
-                OptionInterface.soundFill += 20;
+                _soundFill += 20;
                 menu.PlaySound(SoundID.MENU_Security_Button_Init);
             }
             if (hasSignalled)
@@ -149,12 +150,12 @@ namespace OptionalUI
                 releaseCounter++;
                 if (releaseCounter > 30)
                 {
-                    filled = Custom.LerpAndTick(filled, 0f, 0.04f, 0.025f);
+                    filled = Custom.LerpAndTick(filled, 0f, 0.04f, 0.025f * dtm);
                     if (filled < 0.5f) { hasSignalled = false; }
                 }
                 else { filled = 1f; }
             }
-            else { filled = Custom.LerpAndTick(filled, 0f, 0.04f, 0.025f); }
+            else { filled = Custom.LerpAndTick(filled, 0f, 0.04f, 0.025f * dtm); }
         }
 
         #region ProgressButton

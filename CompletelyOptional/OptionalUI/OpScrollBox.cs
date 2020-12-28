@@ -507,7 +507,7 @@ namespace OptionalUI
             float sin = 1f;
             if (!this.hasScrolled && !this.ScrollLocked)
             {
-                _notifySin += 60.0f * dt;
+                _notifySin += DTMultiply(dt);
                 sin = 0.5f - 0.5f * Mathf.Sin(this._notifySin / 30f * 3.14159274f);
             }
 
@@ -574,7 +574,7 @@ namespace OptionalUI
                     if (!this.hasScrolled) { this._labelNotify.label.alpha = 0.5f + 0.5f * sin; }
                     else
                     {
-                        this._labelNotify.label.alpha -= 0.03333f;
+                        this._labelNotify.label.alpha -= 0.03333f * DTMultiply(dt);
                         if (this._labelNotify.label.alpha < float.Epsilon)
                         {
                             this._labelNotify.RemoveSprites();

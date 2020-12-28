@@ -907,9 +907,9 @@ namespace OptionalUI
 
                 if (!button && Input.GetMouseButton(0) && !input)
                 {
-                    clickDelay += 60;
+                    clickDelay += FrameMultiply(60);
                     input = true;
-                    if (clickDelay > 100)
+                    if (clickDelay > FrameMultiply(100))
                     {
                         this.inputMode = true;
                         this.clickDelay = 0;
@@ -1565,7 +1565,7 @@ namespace OptionalUI
         public override string CopyToClipboard()
         {
             this.inputHex = this.value; this.lblHex.text = this.inputHex;
-            return base.CopyToClipboard();
+            return this.value;
         }
 
         public override bool CopyFromClipboard(string value)

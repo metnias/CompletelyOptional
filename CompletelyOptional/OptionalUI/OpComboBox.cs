@@ -60,6 +60,7 @@ namespace OptionalUI
             for (int i = 0; i < this.itemList.Length; i++)
             { this.itemList[i].index = i; }
             this.searchDelay = Mathf.FloorToInt(Custom.LerpMap(Mathf.Clamp(itemList.Length, 10, 90), 10, 90, 1, 20));
+            this.searchDelay = FrameMultiply(this.searchDelay);
         }
 
         internal virtual void Initialize(string defaultName)

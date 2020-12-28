@@ -439,5 +439,11 @@ namespace OptionalUI
             //this.myContainer.RemoveChild(this.cursor);
             this.cursor.RemoveFromContainer();
         }
+
+        public override bool CopyFromClipboard(string value)
+        {
+            try { this.value = value; return this.value == value; }
+            catch { return false; }
+        }
     }
 }

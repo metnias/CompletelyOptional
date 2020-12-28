@@ -202,12 +202,13 @@ namespace OptionalUI
 
         public virtual bool CopyFromClipboard(string value)
         {
-            try { this.value = value; return this.value == value; }
+            try { this.value = value; this.held = false; return this.value == value; }
             catch { return false; }
         }
 
         public virtual string CopyToClipboard()
         {
+            this.held = false;
             return this.value;
         }
 
