@@ -120,6 +120,7 @@ namespace CompletelyOptional
                 new ListItem("fox3", 3), new ListItem("jumps4", 4), new ListItem("over5", 5),
                 new ListItem("the6", 6), new ListItem("lazy7", 7), new ListItem("dog8", 8)}, "brown2");
             sb.AddItems(cb, new OpLabel(350f, 1050f, "DefinedOrder") { bumpBehav = cb.bumpBehav });
+            sb.AddItems(new OpResourceSelector(new Vector2(200f, 900f), 200f, "", typeof(CreatureTemplate.Type)));
 
             sb.AddItems(new OpHoldButton(new Vector2(400f, 400f), "", "Button", 50f));
             prg = new OpHoldButton(new Vector2(200f, 400f), "", "Button") { color = new Color(1f, 0.5f, 1f) };

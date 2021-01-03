@@ -119,6 +119,7 @@ namespace OptionalUI
             {
                 if (base.value != value)
                 {
+                    if (string.IsNullOrEmpty(value)) { base.value = ""; return; }
                     foreach (ListItem i in this.itemList)
                     { if (i.name == value) { base.value = value; return; } }
                 }
@@ -163,7 +164,7 @@ namespace OptionalUI
                 if (i == listHover)
                 {
                     this.lblList[i].label.color = Color.Lerp(this.lblList[i].label.color,
-                        mouseDown || this.lblList[i].text == this.value ? DyeableRect.MidToDark(this.lblList[i].label.color) : Color.white, bumpList.Sin(this.lblList[i].text == this.value ? 60f : 20f));
+                        mouseDown || this.lblList[i].text == this.value ? DyeableRect.MidToDark(this.lblList[i].label.color) : Color.white, bumpList.Sin(this.lblList[i].text == this.value ? 60f : 10f));
                 }
                 this.lblList[i].pos = new Vector2(this.pos.x - this.size.x / 2f + 12f, this.pos.y - 25f - 20f * i + (downward ? 0f : this.size.y + this.rectList.size.y));
             }
@@ -255,7 +256,7 @@ namespace OptionalUI
                         {
                             mouseDown = false;
                             if (dTimer > 0) { dTimer = 0; this.searchMode = true; return; }
-                            else { dTimer = FrameMultiply(15); this.menu.PlaySound(SoundID.MENU_Checkbox_Uncheck); goto close; }
+                            else { dTimer = FrameMultiply(15); this.value = ""; this.menu.PlaySound(SoundID.MENU_Checkbox_Uncheck); goto close; }
                         }
                     }
                     else // MouseOver List

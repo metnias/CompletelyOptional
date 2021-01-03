@@ -1,4 +1,4 @@
-﻿###1.5: Blepping Board Update#!#20201221#!#
+﻿###1.5: Blepping Board Update#!#20210104#!#
 - Received many helps from Garrakx and Slime_Cubed for this update. Thank you!
 - Supports BepInEx plugins (BaseUnityPlugin)
  + BepInEx Plugin can either use LoadOI(BaseUnityPlugin) for custom OptionInterface, or BepInEx.Configuration for GeneratedOI
@@ -9,7 +9,7 @@
 - Added several new provided UIelements
  + OpHoldButton: Circular Hold Button which can also be used as ProgressButton
  + OpContainer: FContainer in Config screen which you can add FSprite on your own
- x OpComboBox(WIP): DropDown box that can also be searched, useful for selecting an item from a list
+ + OpComboBox: DropDown box that can also be searched(WIP), useful for selecting an item from a list
 - OpTextBox for numbers and allowSpace being true now allows '-' for its first character, allowing negative numbers
 - OpKeyBinder now has fancier indicator when it's bound to Joystick
 - OpImage now has scale field and can set color for Texture2D version, and its color is now properly initialized to white

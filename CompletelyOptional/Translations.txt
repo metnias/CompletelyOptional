@@ -40,14 +40,14 @@ Configurable Mods|kor$모드 설정|spa$Mods configurables|fre$Mods configurable
 Other Mods|kor$기타 모드|spa$Otros Mods|fre$Autres Mods|rus$Другие моды
 Scroll Up|kor$위로 이동|spa$Subir|fre$Défiler vers le haut|rus$Прокрутить вверх
 Scroll Down|kor$아래로 이동|spa$Bajar|fre$Défiler vers le bas|rus$Прокрутить вниз
-Click to Display Config Machine ChangeLog|kor$클릭해서 Config Machine의 변경 내역 보기|spa$Haz clic para mostrar la lista de cambios de Config Machine
-Config Machine ChangeLog|spa$Config Machine Lista de cambios|kor$Config Machine 변경 내역
-This Plugin contains types of settings that are not supported by Config Machine:|kor$이 플러그인에는 Config Machine이 지원하지 않는 설정이 있습니다:|spa$Este Plugin contiene ciertas opciones que no funcionan con Config Machine:
-Go to [BepInEx]-[config] folder and use Notepad to edit those settings.|kor$[BepInEx]-[config] 폴더에 가서 메모장으로 설정을 수정하세요.|spa$Navega a la carpeta [BepInEx]-[config] y usa el bloc de notas para editar esas opciones.
-Pasted <Text> from Clipboard|kor$클립보드에서 <Text> 붙여넣음
-Pasted <Text> from Clipboard to <ObjectName>|kor$클립보드에서 <ObjectName>으로 <Text> 붙여넣음
-Copied <Text> to Clipboard|kor$클립보드로 <Text> 복사함
-Copied <Text> to Clipboard from <ObjectName>|kor$<ObjectName>에서 클립보드로 <Text> 복사함
+Click to Display Config Machine ChangeLog|kor$클릭해서 Config Machine의 변경 내역 보기|spa$Haz clic para mostrar la lista de cambios de Config Machine|fre$Cliquez pour afficher l'historique des mises à jour Config Machine|rus$Нажмите, чтобы отобразить лог изменений Config Machine
+Config Machine ChangeLog|spa$Config Machine Lista de cambios|kor$Config Machine 변경 내역|fre$Historique des mises à jour Config Machine|rus$Лог изменений Config Machine
+This Plugin contains types of settings that are not supported by Config Machine:|kor$이 플러그인에는 Config Machine이 지원하지 않는 설정이 있습니다:|spa$Este Plugin contiene ciertas opciones que no funcionan con Config Machine:|fre$Ce Plugin contient des type de paramètre qui ne sont pas supportés par Config Machine:|rus$Этот плагин содержит типы настроек, которые не поддерживаются Config Machine:
+Go to [BepInEx]-[config] folder and use Notepad to edit those settings.|kor$[BepInEx]-[config] 폴더에 가서 메모장으로 설정을 수정하세요.|spa$Navega a la carpeta [BepInEx]-[config] y usa el bloc de notas para editar esas opciones.|fre$Allez dans le répertoire [BepInEx]-[config] et utilisez BlocNote pour éditer ces options.|rus$Перейдите в папку [BepInEx]-[config] и используйте Блокнот для редактирования этих настроек.
+Pasted <Text> from Clipboard|kor$클립보드에서 <Text> 붙여넣음|fre$Collé <Text> depuis le presse-papier|rus$<Text> вставлен из буфера обмена
+Pasted <Text> from Clipboard to <ObjectName>|kor$클립보드에서 <ObjectName>으로 <Text> 붙여넣음|fre$Collé <Text> du presse-papier vers <ObjectName>|rus$<Text> вставлен в <ObjectName> из буфера обмена
+Copied <Text> to Clipboard|kor$클립보드로 <Text> 복사함|fre$<Text> copié vers le presse-papier|rus$<Text> скопирован из буфера обмена
+Copied <Text> to Clipboard from <ObjectName>|kor$<ObjectName>에서 클립보드로 <Text> 복사함|fre$<Text> copié vers le presse-papier depuis <ObjectName>|rus$<Text> скопирован <ObjectName> из буфера обмена
 
 /// Description for provided UIelements ///
 Click to Check/Uncheck|kor$클릭해서 체크 및 해제|spa$Click para marcar/desmarcar|fre$Cliquez pour cocher/décocher|rus$Нажмите, чтобы отметить/снять отметку
