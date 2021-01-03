@@ -23,7 +23,7 @@ namespace CompletelyOptional
             instance = this;
         }
 
-        public const bool testing = true;
+        public const bool testing = false;
         public const bool soundTestEnabled = false;
 
         // Update URL - don't touch!

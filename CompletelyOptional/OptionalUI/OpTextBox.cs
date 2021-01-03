@@ -445,5 +445,12 @@ namespace OptionalUI
             try { this.value = value; return this.value == value; }
             catch { return false; }
         }
+
+        public override string CopyToClipboard()
+        {
+            cursorAlpha = 0f;
+            this.cursor.alpha = 0f;
+            return base.CopyToClipboard();
+        }
     }
 }
