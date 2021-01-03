@@ -129,7 +129,6 @@
     <None Include="SoundTest\SoundTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <AdditionalFiles Include="CompletelyOptional ReadMe.txt" />
     <None Include="SoundTest\MaxRoom_Settings.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -139,6 +138,13 @@
     <EmbeddedResource Include="Translations.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy /Y "$(TargetPath)" "D:\Drive\Repo\References\RainWorld\$(TargetName).dll"
+copy /Y "$(TargetDir)$(TargetName).xml" "D:\Drive\Repo\References\RainWorld\$(TargetName).xml"
+copy /Y "$(TargetPath)" "E:\Game\Rain World\mods\$(TargetName).dll"
+copy /Y "$(TargetDir)$(TargetName).xml" "E:\Game\Rain World\mods\$(TargetName).xml"
+copy /Y "$(TargetPath)" "E:\SteamLibrary\steamapps\common\Rain World\BepInEx\plugins\$(TargetName).dll"</PostBuildEvent>
+  </PropertyGroup>
   <PropertyGroup>
     <PostBuildEvent>copy /Y "$(TargetPath)" "D:\Drive\Repo\References\RainWorld\$(TargetName).dll"
 copy /Y "$(TargetDir)$(TargetName).xml" "D:\Drive\Repo\References\RainWorld\$(TargetName).xml"

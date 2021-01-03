@@ -31,9 +31,10 @@ namespace OptionalUI
         {
             get
             {
+                if (_greyedOut.HasValue) { return _greyedOut.Value; }
                 if (owner is UIconfig c) { return c.greyedOut; }
                 if (owner is UItrigger t) { return t.greyedOut; }
-                return _greyedOut;
+                return false;
             }
             set { _greyedOut = value; }
         }
@@ -42,14 +43,22 @@ namespace OptionalUI
         {
             get
             {
+                if (_held.HasValue) { return _held.Value; }
                 if (owner is UIconfig c) { return c.held; }
                 if (owner is UItrigger t) { return t.held; }
-                return _held;
+                return false;
             }
             set { _held = value; }
         }
 
-        private bool _greyedOut, _held;
+        private bool? _greyedOut, _held;
+
+        public bool MouseOver
+        {
+            get { if (!_mouseOver.HasValue) { return this.owner.MouseOver; } return _mouseOver.Value; }
+            set { _mouseOver = value; }
+        }
+        private bool? _mouseOver = null;
 
         /// <summary>
         /// Grab Reactive Color with BumpBehav
@@ -70,7 +79,7 @@ namespace OptionalUI
         {
             float dtMulti = UIelement.DTMultiply(dt);
             this.flash = Custom.LerpAndTick(this.flash, 0f, 0.03f, 0.166666672f * dtMulti);
-            if (this.owner.MouseOver)
+            if (MouseOver)
             {
                 this.sizeBump = Custom.LerpAndTick(this.sizeBump, 1f, 0.1f, 0.1f * dtMulti);
                 this.sin += 1f * dtMulti;

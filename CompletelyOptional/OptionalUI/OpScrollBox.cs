@@ -196,7 +196,7 @@ namespace OptionalUI
             }
             if (hasSlideBar)
             {
-                scrollBumpBehav = new BumpBehaviour(this);
+                bumpScroll = new BumpBehaviour(this);
                 _slideBar = new DyeableRect(this.menu, this.owner, pos, SliderSize);
                 subObjects.Add(_slideBar);
                 _slideBar.color = colorEdge;
@@ -359,7 +359,7 @@ namespace OptionalUI
         private float _lastScrollOffset = 1f;
 
         public BumpBehaviour bumpBehav { get; private set; }
-        private readonly BumpBehaviour scrollBumpBehav;
+        private readonly BumpBehaviour bumpScroll;
         private bool scrollMouseOver;
 
         private bool IsThereMouseOver()
@@ -457,15 +457,16 @@ namespace OptionalUI
                     if (targetScrollOffset != scrollOffset)
                     {
                         hasMoved = true; this.hasScrolled = true;
-                        if (this.scrollBumpBehav != null)
+                        if (!_soundFilled) { _soundFill += 6; this.menu.PlaySound(SoundID.MENU_Scroll_Tick); }
+                        if (this.bumpScroll != null)
                         {
-                            this.scrollBumpBehav.flash = Mathf.Min(1f, this.scrollBumpBehav.flash + 0.2f);
-                            this.scrollBumpBehav.sizeBump = Mathf.Min(2.5f, this.scrollBumpBehav.sizeBump + 0.3f);
+                            this.bumpScroll.flash = Mathf.Min(1f, this.bumpScroll.flash + 0.2f);
+                            this.bumpScroll.sizeBump = Mathf.Min(2.5f, this.bumpScroll.sizeBump + 0.3f);
                         }
                     }
                 }
             }
-            scrollOffset = Mathf.SmoothDamp(scrollOffset, targetScrollOffset, ref _scrollVel, 0.15f);
+            scrollOffset = Mathf.SmoothDamp(scrollOffset, targetScrollOffset, ref _scrollVel, 0.15f * DTMultiply(dt));
             // Snap the scrollbox to its target when it is within 0.5 of a pixel
             // This is to keep from rendering the box's contents each frame even when the difference in scroll is not visible
             if (Mathf.Abs(scrollOffset - targetScrollOffset) < 0.5f)
@@ -523,46 +524,27 @@ namespace OptionalUI
             }
             if (_slideBar != null)
             {
-                #region scrollBumpBehavUpdate
+                this.bumpScroll.MouseOver = this.scrollMouseOver;
+                this.bumpScroll.greyedOut = this.ScrollLocked;
+                this.bumpScroll.Update(dt);
 
-                this.scrollBumpBehav.flash = Custom.LerpAndTick(this.scrollBumpBehav.flash, 0f, 0.03f, 0.166666672f);
-                if (this.scrollMouseOver)
-                {
-                    this.scrollBumpBehav.sizeBump = Custom.LerpAndTick(this.scrollBumpBehav.sizeBump, 1f, 0.1f, 0.1f);
-                    this.scrollBumpBehav.sin += 1f;
-                    if (!this.scrollBumpBehav.flashBool)
-                    { this.scrollBumpBehav.flashBool = true; this.scrollBumpBehav.flash = 1f; }
-                    this.scrollBumpBehav.col = Mathf.Min(1f, this.scrollBumpBehav.col + 0.1f);
-                    this.scrollBumpBehav.extraSizeBump = Mathf.Min(1f, this.scrollBumpBehav.extraSizeBump + 0.1f);
-                }
-                else
-                {
-                    this.scrollBumpBehav.flashBool = false;
-                    this.scrollBumpBehav.sizeBump = Custom.LerpAndTick(this.scrollBumpBehav.sizeBump, 0f, 0.1f, 0.05f);
-                    this.scrollBumpBehav.col = Mathf.Max(0f, this.scrollBumpBehav.col - 0.0333333351f);
-                    this.scrollBumpBehav.extraSizeBump = 0f;
-                }
-                this.scrollBumpBehav.greyedOut = this.ScrollLocked;
-
-                #endregion scrollBumpBehavUpdate
-
-                if (this._draggingSlider) { _slideBar.colorF = this.scrollBumpBehav.GetColor(this.colorEdge); _slideBar.fillAlpha = 1f; }
+                if (this._draggingSlider) { _slideBar.colorF = this.bumpScroll.GetColor(this.colorEdge); _slideBar.fillAlpha = 1f; }
                 else
                 {
                     if (this.hasScrolled || this.ScrollLocked)
                     {
-                        _slideBar.colorF = this.scrollBumpBehav.GetColor(this.colorFill);
-                        _slideBar.fillAlpha = this.scrollBumpBehav.FillAlpha;
+                        _slideBar.colorF = this.bumpScroll.GetColor(this.colorFill);
+                        _slideBar.fillAlpha = this.bumpScroll.FillAlpha;
                     }
                     else
                     {
-                        _slideBar.colorF = this.scrollBumpBehav.GetColor(this.colorEdge);
+                        _slideBar.colorF = this.bumpScroll.GetColor(this.colorEdge);
                         _slideBar.fillAlpha = 0.3f + 0.6f * sin;
                     }
                 }
-                _slideBar.color = this.scrollBumpBehav.GetColor(this.colorEdge);
+                _slideBar.color = this.bumpScroll.GetColor(this.colorEdge);
                 _slideBar.size = SliderSize;
-                _slideBar.addSize = new Vector2(2f, 2f) * this.scrollBumpBehav.AddSize;
+                _slideBar.addSize = new Vector2(2f, 2f) * this.bumpScroll.AddSize;
                 _slideBar.pos = pos + SliderPos;
             }
             if (this._labelNotify != null)
@@ -570,7 +552,7 @@ namespace OptionalUI
                 if (this.ScrollLocked) { this._labelNotify.label.alpha = 0f; }
                 else
                 {
-                    this._labelNotify.label.color = Color.Lerp(Color.white, this.scrollBumpBehav.GetColor(this.colorEdge), 0.5f);
+                    this._labelNotify.label.color = Color.Lerp(Color.white, this.bumpScroll.GetColor(this.colorEdge), 0.5f);
                     if (!this.hasScrolled) { this._labelNotify.label.alpha = 0.5f + 0.5f * sin; }
                     else
                     {
