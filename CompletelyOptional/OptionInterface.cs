@@ -28,7 +28,7 @@ namespace OptionalUI
         /// <code>
         /// public static MyOptionInterface LoadOI()
         /// {
-        ///     return new MyOptionInterface(MyMod.instance);
+        ///     return new MyOptionInterface(mod: MyMod.instance);
         /// }
         /// </code>
         /// </remarks>
@@ -51,7 +51,7 @@ namespace OptionalUI
         /// <code>
         /// public static MyOptionInterface LoadOI()
         /// {
-        ///     return new MyOptionInterface(MyPlugin.instance);
+        ///     return new MyOptionInterface(plugin: MyPlugin.instance);
         /// }
         /// </code>
         /// </remarks>

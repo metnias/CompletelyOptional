@@ -86,7 +86,10 @@ namespace CompletelyOptional
             "CommunicationModule",
             "BepInEx-Partiality-Wrapper",
             "BepInEx.Partiality.Wrapper",
-            "LogFix"
+            "PartialityWrapper",
+            "Partiality Wrapper",
+            "LogFix",
+            "Log Fix"
         };
 
         /// <summary>
@@ -268,7 +271,7 @@ namespace CompletelyOptional
                     }
                     else
                     {
-                        Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} does not have config.txt.");
+                        Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} does not have config.json.");
                         //itf.Initialize();
                         try
                         {
@@ -356,6 +359,7 @@ namespace CompletelyOptional
                 {
                     itf = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
                     if (blackList.Contains<string>(itf.rwMod.ModID)) { continue; }
+                    if (itf.rwMod.ModID.Substring(0, 1) == "_") { continue; }
                     Debug.Log($"{itf.rwMod.ModID} does not support CompletelyOptional: {ex.Message}");
                 }
 
