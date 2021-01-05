@@ -5,8 +5,8 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.5.0.0")]
-[assembly: AssemblyFileVersion("1.5.0.0")]
+[assembly: AssemblyVersion("1.5.0.1")]
+[assembly: AssemblyFileVersion("1.5.0.1")]
 
 namespace CompletelyOptional
 {
@@ -18,12 +18,12 @@ namespace CompletelyOptional
         public OptionMod()
         {
             ModID = "ConfigMachine";
-            Version = "1500"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
+            Version = "1501"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
             author = "topicular";
             instance = this;
         }
 
-        public const bool testing = false;
+        public const bool testing = true;
         public const bool soundTestEnabled = false;
 
         // Update URL - don't touch!

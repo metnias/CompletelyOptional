@@ -365,7 +365,7 @@ namespace CompletelyOptional
         /// Comparator for Sorting OptionInterfaces by ModID
         /// </summary>
         private static int CompareOIModID(OptionInterface x, OptionInterface y)
-        { return x.rwMod.ModID.CompareTo(y.rwMod.ModID); }
+        { return ListItem.GetRealName(x.rwMod.ModID).CompareTo(ListItem.GetRealName(y.rwMod.ModID)); }
 
         public Dictionary<int, string> modList;
         public static int selectedModIndex;

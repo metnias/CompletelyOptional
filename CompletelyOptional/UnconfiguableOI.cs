@@ -72,7 +72,7 @@ namespace CompletelyOptional
         /// Comparator for Sorting OptionInterfaces by ModID
         /// </summary>
         private static int CompareModID(RainWorldMod x, RainWorldMod y)
-        { return x.ModID.CompareTo(y.ModID); }
+        { return ListItem.GetRealName(x.ModID).CompareTo(ListItem.GetRealName(y.ModID)); }
 
         public enum Reason
         {

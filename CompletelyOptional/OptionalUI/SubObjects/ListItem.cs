@@ -45,8 +45,20 @@
         /// </summary>
         public static int Comparer(ListItem x, ListItem y)
         {
-            if (x.value == y.value) { return x.name.CompareTo(y.name); }
+            if (x.value == y.value) { return GetRealName(x.name).CompareTo(GetRealName(y.name)); }
             return x.value.CompareTo(y.value);
+        }
+
+        /// <summary>
+        /// Remove initial articles before sorting
+        /// </summary>
+        public static string GetRealName(string text)
+        {
+            text = text.ToLower();
+            if (text.StartsWith("a ")) { return text.Remove(2); }
+            else if (text.StartsWith("an ")) { return text.Remove(3); }
+            else if (text.StartsWith("the ")) { return text.Remove(4); }
+            return text;
         }
     }
 }
