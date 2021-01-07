@@ -60,5 +60,41 @@
             else if (text.StartsWith("the ")) { return text.Remove(4); }
             return text;
         }
+
+        public static bool SearchMatch(string query, string text)
+        {
+            query = query.Trim().ToLower();
+            text = text.ToLower();
+            if (query.Contains(" ")) // AND search
+            {
+                string[] qarray = query.Split(' ');
+                foreach (string q in qarray)
+                {
+                    if (string.IsNullOrEmpty(q)) { continue; }
+                    if (!text.Contains(q)) { return false; }
+                }
+                return true;
+            }
+            else
+            {
+                if (string.IsNullOrEmpty(query)) { return true; }
+                if (text.Contains(query)) { return true; } // Simple Contain
+                if (!text.Contains(query.Substring(0, 1))) { return false; }
+                if (query.Length < 2) // One letter search
+                {
+                    if (text.StartsWith(query.Substring(0, 1))) { return true; }
+                    if (text.Contains(" " + query.Substring(0, 1))) { return true; }
+                    return false;
+                }
+                string test = text.Substring(text.IndexOf(query[0]));
+                for (int i = 1; i < query.Length; i++)
+                {
+                    if (test.Contains(query[i].ToString()))
+                    { test = test.Substring(test.IndexOf(query[i])); }
+                    else { return false; }
+                }
+                return true;
+            }
+        }
     }
 }

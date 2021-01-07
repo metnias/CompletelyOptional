@@ -9,7 +9,7 @@
 - Added several new provided UIelements
  + OpHoldButton: Circular Hold Button which can also be used as ProgressButton
  + OpContainer: FContainer in Config screen which you can add FSprite on your own
- + OpComboBox: DropDown box that can also be searched(WIP), useful for selecting an item from a list
+ + OpComboBox: DropDown box that can also be searched, useful for selecting an item from a list
   x OpResourceSelector: Special kind of OpComboBox that use enum/special list for initialization
 - OpTextBox for numbers and allowSpace being true now allows '-' for its first character, allowing negative numbers
 - OpKeyBinder now has fancier indicator when it's bound to Joystick

@@ -93,12 +93,16 @@ namespace OptionalUI
             { scale = 0.5f, rotation = 180f, anchorX = 0.5f, anchorY = 0.5f };
             this.myContainer.AddChild(this.sprArrow);
             this.sprArrow.SetPosition(this.size.x - 12f, this.size.y / 2f);
+            this.searchCursor = new FCursor();
+            this.myContainer.AddChild(this.searchCursor);
+            this.searchCursor.isVisible = false;
 
             this.bumpList = new BumpBehaviour(this) { held = false, MouseOver = false };
             this.bumpScroll = new BumpBehaviour(this) { held = false, MouseOver = false };
         }
 
-        internal ListItem[] itemList;
+        protected internal ListItem[] itemList;
+        private List<ListItem> searchList;
 
         /// <summary>
         /// Grab the array of <see cref="ListItem"/> in <see cref="OpComboBox"/>
@@ -146,9 +150,9 @@ namespace OptionalUI
             this.rect.colorF = greyedOut ? this.bumpBehav.GetColor(this.colorFill) : this.colorFill;
 
             this.sprArrow.color = this.held ? DyeableRect.MidToDark(this.rect.color) : this.rect.color;
-            this.lblText.label.color = this.sprArrow.color;
+            this.lblText.label.color = this.searchMode ? this.rect.color : this.sprArrow.color;
 
-            if (!held) { this.lblText.text = this.value; return; }
+            if (!held) { this.lblText.text = string.IsNullOrEmpty(this.value) ? "------" : this.value; return; }
 
             this.rectList.size.x = this.size.x;
             this.rectList.pos = new Vector2(this.pos.x, this.pos.y + (downward ? -this.rectList.size.y : this.size.y));
@@ -159,7 +163,8 @@ namespace OptionalUI
 
             for (int i = 0; i < this.lblList.Length; i++)
             {
-                this.lblList[i].text = this.itemList[this.listTop + i].name;
+                this.lblList[i].text = this.searchMode ? (this.searchList.Count > this.listTop + i ? this.searchList[this.listTop + i].name : "")
+                    : this.itemList[this.listTop + i].name;
                 this.lblList[i].label.color = this.lblList[i].text == this.value ? this.sprArrow.color : this.rectList.color;
                 if (i == listHover)
                 {
@@ -168,16 +173,33 @@ namespace OptionalUI
                 }
                 this.lblList[i].pos = new Vector2(this.pos.x - this.size.x / 2f + 12f, this.pos.y - 25f - 20f * i + (downward ? 0f : this.size.y + this.rectList.size.y));
             }
-            this.lblText.text = this.value;
+            this.lblText.text = this.searchMode ? this.searchQuery : (string.IsNullOrEmpty(this.value) ? "------" : this.value);
             //lblList[0].text = $"MO:{(MouseOver ? "O" : "X")}, lsMO:{(bumpList.MouseOver ? "O" : "X")}, scMO:{(bumpScroll.MouseOver ? "O" : "X")}, MD:{(mouseDown ? "O" : "X")}"; // Test
+            if (this.searchMode)
+            {
+                this.searchCursor.SetPosition(LabelTest.GetWidth(this.searchQuery, false) + LabelTest.CharMean(false) * 1.5f, this.size.y * 0.5f - 7f);
+                this.searchCursor.color = Color.Lerp(this.colorEdge, DyeableRect.MidToDark(this.colorEdge), this.bumpBehav.Sin(this.searchList.Count > 0 ? 10f : 30f));
+                this.searchCursor.alpha = 0.4f + 0.6f * Mathf.Clamp01((float)this.searchIdle / this.searchDelay);
+            }
 
-            this.rectScroll.size.y = ScrollLen(itemList.Length);
-            this.rectScroll.pos.x = this.rectList.pos.x + this.size.x - 20f;
-            this.rectScroll.pos.y = Custom.LerpAndTick(this.rectScroll.pos.y, ScrollPos(itemList.Length), bumpScroll.held ? 0.6f : 0.2f, (bumpScroll.held ? 0.6f : 0.2f) * DTMultiply(dt));
-            this.rectScroll.addSize = new Vector2(2f, 2f) * bumpScroll.AddSize;
-            this.rectScroll.color = bumpScroll.GetColor(this.colorEdge);
-            this.rectScroll.colorF = bumpScroll.held ? this.rectScroll.color : this.colorFill;
-            this.rectScroll.fillAlpha = bumpScroll.held ? 1f : bumpScroll.FillAlpha;
+            int listSize = this.searchMode ? this.searchList.Count : this.itemList.Length;
+            if (listSize > this.lblList.Length)
+            {
+                this.rectScroll.Show();
+                this.rectScroll.pos.x = this.rectList.pos.x + this.size.x - 20f;
+                if (this.rectScroll.size.y != ScrollLen(listSize))
+                {
+                    this.rectScroll.size.y = ScrollLen(listSize);
+                    this.rectScroll.pos.y = ScrollPos(listSize);
+                }
+                else
+                { this.rectScroll.pos.y = Custom.LerpAndTick(this.rectScroll.pos.y, ScrollPos(listSize), bumpScroll.held ? 0.6f : 0.2f, (bumpScroll.held ? 0.6f : 0.2f) * DTMultiply(dt)); }
+                this.rectScroll.addSize = new Vector2(2f, 2f) * bumpScroll.AddSize;
+                this.rectScroll.color = bumpScroll.GetColor(this.colorEdge);
+                this.rectScroll.colorF = bumpScroll.held ? this.rectScroll.color : this.colorFill;
+                this.rectScroll.fillAlpha = bumpScroll.held ? 1f : bumpScroll.FillAlpha;
+            }
+            else { this.rectScroll.Hide(); }
         }
 
         private float ScrollPos(int listSize) => this.rectList.pos.y + 10f + (this.rectList.size.y - 20f - this.rectScroll.size.y) * ((listSize - lblList.Length) - this.listTop) / (listSize - lblList.Length);
@@ -188,6 +210,8 @@ namespace OptionalUI
         private int dTimer = 0, searchDelay, searchIdle = 0, listTop, listHover = -1;
         private float scrollHeldPos;
         private BumpBehaviour bumpList, bumpScroll;
+        private string searchQuery = "";
+        private FCursor searchCursor;
 
         /// <summary>
         /// Return the index for specified value. Checks for current value if the argument is empty.
@@ -207,7 +231,7 @@ namespace OptionalUI
         {
             base.Update(dt);
 
-            this.searchMode = false; //temp
+            // this.searchMode = false; //temp
             if (dTimer > 0) { dTimer--; }
             this.bumpBehav.MouseOver = base.MouseOver && !this.MouseOverList();
             if (this.held)
@@ -215,12 +239,44 @@ namespace OptionalUI
                 this.bumpList.MouseOver = this.MouseOverList();
                 this.bumpScroll.MouseOver = this.MousePos.x >= this.rectScroll.pos.x - this.pos.x && this.MousePos.x <= this.rectScroll.pos.x + this.rectScroll.size.x - this.pos.x;
                 this.bumpScroll.MouseOver = this.bumpScroll.MouseOver && this.MousePos.y >= this.rectScroll.pos.y - this.pos.y && this.MousePos.y <= this.rectScroll.pos.y + this.rectScroll.size.y - this.pos.y;
+                if (this.searchMode)
+                {
+                    // Input
+                    foreach (char c in Input.inputString)
+                    {
+                        if (c == '\b')
+                        {
+                            if (this.searchQuery.Length > 0)
+                            {
+                                this.searchQuery = (this.searchQuery.Substring(0, this.searchQuery.Length - 1));
+                                this.searchIdle = -1;
+                                if (!_soundFilled) { _soundFill += 12; menu.PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked); }
+                            }
+                            break;
+                        }
+                        else if ((c == '\n') || (c == '\r')) // enter/return
+                        { continue; }
+                        else
+                        {
+                            this.bumpBehav.flash = 2.5f;
+                            this.searchQuery += c;
+                            this.searchIdle = -1;
+                            if (!_soundFilled) { _soundFill += 12; menu.PlaySound(SoundID.MENU_Checkbox_Uncheck); }
+                        }
+                    }
+                    if (this.searchIdle < this.searchDelay)
+                    {
+                        this.searchIdle++;
+                        if (this.searchIdle == this.searchDelay) { RefreshSearchList(); }
+                    }
+                }
+                int listSize = this.searchMode ? this.searchList.Count : this.itemList.Length;
                 if (this.bumpScroll.held)
                 { // Holding scrollbar
                     if (Input.GetMouseButton(0))
                     { // Hold Scroll and update listtop
-                        int num = Mathf.RoundToInt((this.MousePos.y - this.rectList.pos.y + this.pos.y - 10f - scrollHeldPos) * (this.itemList.Length - this.lblList.Length) / (this.rectList.size.y - 20f - this.rectScroll.size.y));
-                        num = Custom.IntClamp(this.itemList.Length - this.lblList.Length - num, 0, this.itemList.Length - this.lblList.Length);
+                        int num = Mathf.RoundToInt((this.MousePos.y - this.rectList.pos.y + this.pos.y - 10f - scrollHeldPos) * (listSize - this.lblList.Length) / (this.rectList.size.y - 20f - this.rectScroll.size.y));
+                        num = Custom.IntClamp(listSize - this.lblList.Length - num, 0, listSize - this.lblList.Length);
                         // Debug.Log($"{listTop} > {num}; {this.itemList.Length}, {this.lblList.Length}, {this.itemList.Length - this.lblList.Length}");
                         if (listTop != num)
                         {
@@ -242,7 +298,7 @@ namespace OptionalUI
                     { // Click behaviour
                         if (!mouseDown)
                         {
-                            if (this.bumpScroll.MouseOver)
+                            if (this.bumpScroll.MouseOver && listSize > this.lblList.Length)
                             {
                                 scrollHeldPos = this.MousePos.y - this.rectScroll.pos.y + this.pos.y;
                                 this.bumpScroll.held = true; this.menu.PlaySound(SoundID.MENU_First_Scroll_Tick);
@@ -255,7 +311,7 @@ namespace OptionalUI
                         if (!Input.GetMouseButton(0) && mouseDown)
                         {
                             mouseDown = false;
-                            if (dTimer > 0) { dTimer = 0; this.searchMode = true; return; }
+                            if (dTimer > 0) { dTimer = 0; this.searchMode = true; EnterSearchMode(); return; }
                             else { dTimer = FrameMultiply(15); this.value = ""; this.menu.PlaySound(SoundID.MENU_Checkbox_Uncheck); goto close; }
                         }
                     }
@@ -273,7 +329,7 @@ namespace OptionalUI
                         if (this.menu.mouseScrollWheelMovement != 0)
                         {
                             int num = listTop + (int)Mathf.Sign(this.menu.mouseScrollWheelMovement) * Mathf.CeilToInt(this.lblList.Length / 2f);
-                            num = Custom.IntClamp(num, 0, this.itemList.Length - this.lblList.Length);
+                            num = Custom.IntClamp(num, 0, listSize - this.lblList.Length);
                             // Debug.Log($"{listTop} > {num}; {this.itemList.Length}, {this.lblList.Length}, {this.itemList.Length - this.lblList.Length}");
                             if (listTop != num)
                             {
@@ -290,10 +346,12 @@ namespace OptionalUI
                             if (listHover >= 0)
                             {
                                 string newVal = this.value;
-
                                 if (this.searchMode)
                                 {
-                                    this.searchMode = false;
+                                    Debug.Log($"top: {listTop} hvr: {listHover} ({listTop + listHover}/{searchList.Count})");
+                                    if (listTop + listHover < this.searchList.Count)
+                                    { newVal = this.searchList[listTop + listHover].name; }
+                                    // this.searchMode = false;
                                 }
                                 else
                                 { // Select one from here
@@ -324,7 +382,7 @@ namespace OptionalUI
                 else if (mouseDown)
                 {
                     mouseDown = false;
-                    if (dTimer > 0) { dTimer = 0; this.searchMode = true; }
+                    if (dTimer > 0) { dTimer = 0; this.searchMode = true; EnterSearchMode(); }
                     else { dTimer = FrameMultiply(15); }
                     // clicked: Expand list
                     this.held = true; this.fixedSize = this.size;
@@ -368,7 +426,7 @@ namespace OptionalUI
                     // Set RectScroll
                     this.rectScroll.size = new Vector2(15f, ScrollLen(itemList.Length));
                     this.rectScroll.pos = new Vector2(this.rectList.pos.x + this.rectList.size.x - 20f, ScrollPos(itemList.Length));
-                    this.rectScroll.Show();
+                    if (lblList.Length < itemList.Length) { this.rectScroll.Show(); }
 
                     this.sprArrow.rotation = downward ? 180f : 0f;
                     this.bumpBehav.flash = 1f;
@@ -426,6 +484,8 @@ namespace OptionalUI
 
         private void Unheld()
         {
+            this.searchMode = false;
+            this.searchCursor.isVisible = false;
             this.fixedSize = null;
             this.rectList.Hide();
             for (int i = 0; i < this.lblList.Length; i++)
@@ -488,6 +548,52 @@ namespace OptionalUI
             this.itemList = temp.ToArray();
             this.ResetIndex();
             this.OnChange();
+        }
+
+        public override string CopyToClipboard()
+        {
+            this.Unheld();
+            return base.CopyToClipboard();
+        }
+
+        public override bool CopyFromClipboard(string value)
+        {
+            if (!this.searchMode)
+            {
+                this.searchMode = true;
+                EnterSearchMode();
+            }
+            this.searchQuery = value;
+            RefreshSearchList();
+            return true;
+        }
+
+        private void EnterSearchMode()
+        {
+            this.searchQuery = "";
+            this.searchList = new List<ListItem>(this.itemList);
+            this.searchList.Sort(ListItem.Comparer);
+            this.searchCursor.isVisible = true;
+            this.searchCursor.SetPosition(LabelTest.CharMean(false) * 1.5f, this.size.y * 0.5f - 7f);
+            this.searchIdle = 1000;
+        }
+
+        private void RefreshSearchList()
+        {
+            int curTop = this.searchList.Count > 0 ? GetIndex(this.searchList[this.listTop].name) : 0;
+            this.searchList.Clear();
+            for (int i = 0; i < this.itemList.Length; i++)
+            {
+                if (ListItem.SearchMatch(this.searchQuery, this.itemList[i].name))
+                { this.searchList.Add(this.itemList[i]); }
+            }
+            this.searchList.Sort(ListItem.Comparer);
+            for (int i = 1; i < this.searchList.Count; i++)
+            {
+                if (curTop > GetIndex(this.searchList[i].name))
+                { this.listTop = Math.Max(0, i - 1); return; }
+            }
+            this.listTop = 0;
         }
     }
 }

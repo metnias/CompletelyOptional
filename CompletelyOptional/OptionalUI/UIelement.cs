@@ -72,11 +72,11 @@ namespace OptionalUI
         /// <summary>
         /// If this is set, this element cannot change its <see cref="size"/>.
         /// </summary>
-        internal Vector2? fixedSize;
+        protected internal Vector2? fixedSize;
         /// <summary>
         /// If this is set, this element cannot change its <see cref="rad"/>.
         /// </summary>
-        internal float? fixedRad;
+        protected internal float? fixedRad;
 #pragma warning restore CS0649
 
         /// <summary>
@@ -93,8 +93,14 @@ namespace OptionalUI
             return true;
         }
 
-        internal OpScrollBox scrollBox { get; private set; }
-        internal bool inScrollBox { get; private set; }
+        /// <summary>
+        /// Which <see cref="OpScrollBox"/> this element is in. See also <seealso cref="inScrollBox"/>
+        /// </summary>
+        protected internal OpScrollBox scrollBox { get; private set; }
+        /// <summary>
+        /// Whether this is inside <see cref="OpScrollBox"/>. See also <seealso cref="scrollBox"/>
+        /// </summary>
+        protected internal bool inScrollBox { get; private set; }
 
         /// <summary>
         /// Resets <see cref="UIelement"/>.
@@ -112,7 +118,7 @@ namespace OptionalUI
         /// <summary>
         /// Offset from BottomLeft of the screen.
         /// </summary>
-        internal static readonly Vector2 _offset = new Vector2(558.00f, 120.01f);
+        protected internal static readonly Vector2 _offset = new Vector2(558.00f, 120.01f);
 
         /// <summary>
         /// Prevent Sound Engine from Crashing. Use <see cref="OptionInterface.soundFill"/> one instead.
@@ -120,7 +126,10 @@ namespace OptionalUI
         [Obsolete]
         public static int soundFill => _soundFill;
 
-        internal static int _soundFill
+        /// <summary>
+        /// Add number (in proportion with sound effect's length) to this whenever you're playing soundeffect. See also <seealso cref="_soundFilled"/>
+        /// </summary>
+        protected internal static int _soundFill
         {
             get { return OptionScript.soundFill; }
             set
@@ -138,7 +147,10 @@ namespace OptionalUI
         [Obsolete]
         public static bool soundFilled => _soundFilled;
 
-        internal static bool _soundFilled => _soundFill > FrameMultiply(80);
+        /// <summary>
+        /// Whether the sound engine is full or not. See also <seealso cref="_soundFill"/>
+        /// </summary>
+        protected internal static bool _soundFilled => _soundFill > FrameMultiply(80);
 
         /// <summary>
         /// Whether this is in ConfigMenu or not. Use <see cref="OptionInterface.isOptionMenu"/> instead.
@@ -146,7 +158,10 @@ namespace OptionalUI
         [Obsolete]
         public static bool init => OptionScript.isOptionMenu;
 
-        internal static bool _init => OptionScript.isOptionMenu;
+        /// <summary>
+        /// Whether this is initialized in ConfigMenu or not.
+        /// </summary>
+        protected internal static bool _init => OptionScript.isOptionMenu;
 
         /// <summary>
         /// For grabbing LeftBottom Position of this element from LeftBottom of <see cref="OpTab"/> or <see cref="OpScrollBox"/>, without offset.
@@ -236,7 +251,10 @@ namespace OptionalUI
 
         internal float _rad;
 
-        internal Menu.Menu menu;
+        /// <summary>
+        /// <see cref="Menu.Menu"/> instance this element is in. Used for adding <see cref="MenuObject"/>s.
+        /// </summary>
+        protected internal Menu.Menu menu;
 
         /// <summary>
         /// Whether the element is Rectangular(true) or Circular(false)
@@ -248,8 +266,14 @@ namespace OptionalUI
         /// </summary>
         internal OpTab tab;
 
-        internal Page owner;
-        internal FContainer myContainer;
+        /// <summary>
+        /// You can alternatively use <c>menu.page[0]</c> for this
+        /// </summary>
+        protected internal Page owner;
+        /// <summary>
+        /// <see cref="FContainer"/> to add <see cref="FSprite"/>.
+        /// </summary>
+        protected internal FContainer myContainer;
 
         /// <summary>
         /// Do not use this. Instead, use <see cref="OpTab.AddItems(UIelement[])"/> and <see cref="OpTab.RemoveItems(UIelement[])"/>.
@@ -290,7 +314,7 @@ namespace OptionalUI
             this.myContainer.SetPosition(this.ScreenPos);
         }
 
-        internal Vector2 ScreenPos
+        protected internal Vector2 ScreenPos
         {
             get
             {
