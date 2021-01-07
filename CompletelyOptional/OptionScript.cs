@@ -629,6 +629,7 @@ namespace CompletelyOptional
 
                     ConfigMenu.currentInterface = newItf;
                     ConfigMenu.currentTab = newItf.Tabs[0];
+                    ConfigMenu.tabCtrler.Reset();
 
                     (pm.currentMainLoop as ConfigMenu).PlaySound(SoundID.MENU_Error_Ping);
                     (pm.currentMainLoop as ConfigMenu).opened = false;

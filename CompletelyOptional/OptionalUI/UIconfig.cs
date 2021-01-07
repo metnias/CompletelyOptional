@@ -52,7 +52,7 @@ namespace OptionalUI
         /// This is set in ctor.
         /// <para>It'll be the default <see cref="value"/> of this <see cref="UIconfig"/> when your mod is installed first/configs are reset.</para>
         /// </summary>
-        public string defaultValue { get; internal set; }
+        public string defaultValue { get; protected internal set; }
 
         public override void Reset()
         {
