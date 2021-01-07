@@ -239,7 +239,7 @@ namespace OptionalUI
                 this.bumpList.MouseOver = this.MouseOverList();
                 this.bumpScroll.MouseOver = this.MousePos.x >= this.rectScroll.pos.x - this.pos.x && this.MousePos.x <= this.rectScroll.pos.x + this.rectScroll.size.x - this.pos.x;
                 this.bumpScroll.MouseOver = this.bumpScroll.MouseOver && this.MousePos.y >= this.rectScroll.pos.y - this.pos.y && this.MousePos.y <= this.rectScroll.pos.y + this.rectScroll.size.y - this.pos.y;
-                if (this.searchMode)
+                if (this.searchMode && !this.bumpScroll.held)
                 {
                     // Input
                     foreach (char c in Input.inputString)
@@ -348,7 +348,6 @@ namespace OptionalUI
                                 string newVal = this.value;
                                 if (this.searchMode)
                                 {
-                                    Debug.Log($"top: {listTop} hvr: {listHover} ({listTop + listHover}/{searchList.Count})");
                                     if (listTop + listHover < this.searchList.Count)
                                     { newVal = this.searchList[listTop + listHover].name; }
                                     // this.searchMode = false;
