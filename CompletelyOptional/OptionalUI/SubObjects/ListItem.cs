@@ -82,8 +82,8 @@
                 if (!text.Contains(query.Substring(0, 1))) { return false; }
                 if (query.Length < 2) // One letter search
                 {
-                    if (text.StartsWith(query.Substring(0, 1))) { return true; }
-                    if (text.Contains(" " + query.Substring(0, 1))) { return true; }
+                    // if (text.StartsWith(query.Substring(0, 1))) { return true; }
+                    // if (text.Contains(" " + query.Substring(0, 1))) { return true; }
                     return false;
                 }
                 string test = text.Substring(text.IndexOf(query[0]));
