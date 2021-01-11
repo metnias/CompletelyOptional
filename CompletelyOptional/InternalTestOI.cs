@@ -27,7 +27,7 @@ namespace CompletelyOptional
             base.Initialize();
             this.Tabs = new OpTab[3];
             this.Tabs[0] = new OpTab("TEST0");
-            this.Tabs[1] = new OpTab("TEST1");
+            this.Tabs[1] = new OpTab("TEST1") { color = Color.cyan };
             this.Tabs[2] = new OpTab("TESTSCROLL");
 
             string v = string.Concat(Environment.NewLine, "ConfigMachine Version", ": ");

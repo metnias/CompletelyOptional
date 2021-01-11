@@ -385,7 +385,7 @@ namespace CompletelyOptional
         private MenuLabel alertLabel;
         private float alertLabelFade, lastAlertLabelFade, alertLabelSin;
 
-        private OpRect modListBound, modCanvasBound;
+        internal OpRect modListBound, modCanvasBound;
 
         private static string GetRandomSong() => OptionMod.randomSong;
 

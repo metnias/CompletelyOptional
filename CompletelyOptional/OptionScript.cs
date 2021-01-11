@@ -242,7 +242,7 @@ namespace CompletelyOptional
                 {
                     NullModException e = new NullModException(mod.ModID);
                     Debug.Log(e); Debug.LogException(e);
-                    itf.ForceSetRWMod(new RainWorldMod(mod));
+                    itf.rwMod = new RainWorldMod(mod);
                     // itf = new UnconfiguableOI(mod, e);
                 }
 
