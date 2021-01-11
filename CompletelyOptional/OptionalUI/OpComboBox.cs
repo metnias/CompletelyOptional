@@ -64,14 +64,14 @@ namespace OptionalUI
 
         internal virtual void Initialize(string defaultName)
         {
-            if (string.IsNullOrEmpty(defaultName)) { this.defaultValue = ""; this.ForceValue(""); }
+            if (string.IsNullOrEmpty(defaultName)) { this.defaultValue = ""; this._value = ""; }
             else
             {
                 bool flag = false;
                 for (int i = 0; i < this.itemList.Length; i++)
                 { if (this.itemList[i].name == defaultName) { flag = true; break; } }
-                if (flag) { this.defaultValue = defaultName; this.ForceValue(this.defaultValue); }
-                else { this.defaultValue = ""; this.ForceValue(""); }
+                if (flag) { this.defaultValue = defaultName; this._value = this.defaultValue; }
+                else { this.defaultValue = ""; this._value = ""; }
             }
             if (!_init) { return; }
 
@@ -538,7 +538,7 @@ namespace OptionalUI
                     {
                         if (temp.Count == 1) { throw new InvalidActionException(this, "You cannot remove every items in OpComboBox", this.key); }
                         if (name == this.value)
-                        { this.ForceValue(selectNext ? temp[i == 0 ? 1 : i - 1].name : ""); }
+                        { this._value = selectNext ? temp[i == 0 ? 1 : i - 1].name : ""; }
                         temp.RemoveAt(i); break;
                     }
                 }

@@ -16,7 +16,7 @@ namespace OptionalUI
             throw new NotImplementedException("OpSliderRange may come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
         }
 
-        internal override void Initialize()
+        protected internal override void Initialize()
         {
             base.Initialize();
         }

@@ -45,8 +45,8 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
-        private readonly MenuLabel label;
-        internal readonly DyeableRect rect, rectH;
+        protected internal readonly MenuLabel label;
+        protected internal readonly DyeableRect rect, rectH;
 
         internal bool IsImageButton => this is OpSimpleImageButton;
 

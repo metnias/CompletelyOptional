@@ -63,6 +63,7 @@ namespace CompletelyOptional
 
             //Tabs[0].AddItems(new OpSpriteEditor(new Vector2(300f, 100f), new Vector2(100f, 100f), "_TEST", t));
             Tabs[0].AddItems(new OpSimpleButton(new Vector2(400f, 200f), new Vector2(100f, 24f), "singal", "SimpleButton"));
+            Tabs[0].AddItems(new OpLabel(new Vector2(100f, 100f), new Vector2(100f, 30f)));
 
             Tabs[1].AddItems(new OpRect(new Vector2(0f, 0f), new Vector2(600f, 600f), 0f));
 

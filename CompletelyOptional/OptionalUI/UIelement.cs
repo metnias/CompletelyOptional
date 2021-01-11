@@ -11,7 +11,7 @@ namespace OptionalUI
     /// <summary>
     /// UIelement for <see cref="OpTab"/> Canvas (600x600)
     /// </summary>
-    public class UIelement
+    public abstract class UIelement
     {
         /// <summary>
         /// Rectangular UIelement.
@@ -201,7 +201,7 @@ namespace OptionalUI
             }
         }
 
-        internal Vector2 _pos;
+        protected internal Vector2 _pos;
 
         /// <summary>
         /// Size of this element. Changing this will call <see cref="OnChange"/> automatically.
@@ -225,7 +225,7 @@ namespace OptionalUI
             }
         }
 
-        internal Vector2 _size;
+        protected internal Vector2 _size;
 
         /// <summary>
         /// Radius of the element. Changing this will call <see cref="OnChange"/> automatically.
@@ -249,7 +249,7 @@ namespace OptionalUI
             }
         }
 
-        internal float _rad;
+        protected internal float _rad;
 
         /// <summary>
         /// <see cref="Menu.Menu"/> instance this element is in. Used for adding <see cref="MenuObject"/>s.
@@ -264,7 +264,7 @@ namespace OptionalUI
         /// <summary>
         /// OpTab this element is belong to.
         /// </summary>
-        internal OpTab tab;
+        protected internal OpTab tab;
 
         /// <summary>
         /// You can alternatively use <c>menu.page[0]</c> for this
@@ -279,7 +279,7 @@ namespace OptionalUI
         /// Do not use this. Instead, use <see cref="OpTab.AddItems(UIelement[])"/> and <see cref="OpTab.RemoveItems(UIelement[])"/>.
         /// </summary>
         /// <param name="newTab">new OpTab this item will be belong to</param>
-        public void SetTab(OpTab newTab)
+        internal void SetTab(OpTab newTab)
         {
             if (this.tab != null && newTab != null) { this.tab.RemoveItems(this); }
             this.tab = newTab;
@@ -378,7 +378,7 @@ namespace OptionalUI
             { ConfigMenu.description = this.description; }
         }
 
-        internal bool showDesc;
+        protected internal bool showDesc;
 
         /// <summary>
         /// Update method that happens every frame, but this is only for graphical detail for visiblity of Update code.

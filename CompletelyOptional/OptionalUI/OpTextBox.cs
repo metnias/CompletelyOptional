@@ -24,7 +24,7 @@ namespace OptionalUI
             this.description = InternalTranslator.Translate("Click and Type text");
 
             this.accept = accept;
-            this.ForceValue(defaultValue);
+            this._value = defaultValue;
             this._lastValue = defaultValue;
             this.defaultValue = this.value;
             this.maxLength = Mathf.FloorToInt((size.x - 20f) / 6f);
@@ -64,7 +64,7 @@ namespace OptionalUI
         /// </summary>
         public DyeableRect rect;
 
-        private string _lastValue;
+        protected private string _lastValue;
         private readonly FCursor cursor;
         private float cursorAlpha;
 
@@ -142,7 +142,7 @@ namespace OptionalUI
                         cursorAlpha = 2.5f; this.bumpBehav.flash = 2.5f;
                         if (this.value.Length > 0)
                         {
-                            this.ForceValue(this.value.Substring(0, this.value.Length - 1));
+                            this._value = this.value.Substring(0, this.value.Length - 1);
                             if (!_soundFilled)
                             {
                                 _soundFill += 12;
@@ -164,7 +164,7 @@ namespace OptionalUI
                                 {
                                     if (float.TryParse(this.value.Substring(0, i), out _))
                                     {
-                                        this.ForceValue(this.value.Substring(0, i));
+                                        this._value = this.value.Substring(0, i);
                                         OnChange();
                                         menu.PlaySound(SoundID.Mouse_Light_Switch_On);
                                         return;
@@ -207,7 +207,7 @@ namespace OptionalUI
                             {
                                 if (float.TryParse(this.value.Substring(0, i), out _))
                                 {
-                                    this.ForceValue(this.value.Substring(0, i));
+                                    this._value = this.value.Substring(0, i);
                                     OnChange();
                                     menu.PlaySound(SoundID.Mouse_Light_Switch_On);
                                     return;
@@ -336,14 +336,14 @@ namespace OptionalUI
             {
                 if (base.value == value) { return; }
                 _lastValue = base.value;
-                ForceValue(value);
+                this._value = value;
                 if (!this.allowSpace)
                 {
                     char[] temp0 = base.value.ToCharArray();
                     for (int t = 0; t < temp0.Length; t++)
                     {
                         if (!char.IsWhiteSpace(temp0[t])) { continue; }
-                        ForceValue(_lastValue);
+                        this._value = _lastValue;
                         _lastValue = base.value;
                         return;
                     }
@@ -371,7 +371,7 @@ namespace OptionalUI
                         break;
                 }
                 //revert
-                ForceValue(_lastValue);
+                this._value = _lastValue;
                 _lastValue = base.value;
                 return;
 

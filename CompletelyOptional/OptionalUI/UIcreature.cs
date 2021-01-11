@@ -12,7 +12,7 @@ namespace OptionalUI
     /// [DO NOT USE]
     /// Creature Preview.
     /// </summary>
-    public class UIcreature : UIelement
+    public abstract class UIcreature : UIelement
     {
         /// <summary>
         /// Do not use this directly.

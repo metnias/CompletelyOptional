@@ -25,8 +25,8 @@ namespace CompletelyOptional
         private static ConfigTabController TabCtrler => ConfigMenu.tabCtrler;
         public OpLabel lblInfoButton;
         private readonly string _lblInfoDesc, _sbDesc;
-        protected bool _initLog; private bool _pressInfoBtn;
-        public static bool logMode { get; protected set; }
+        private bool _initLog; private bool _pressInfoBtn;
+        public static bool logMode { get; private set; }
 
         public new void Update(float dt)
         {
@@ -127,7 +127,7 @@ namespace CompletelyOptional
             _initLog = true;
         }
 
-        public void Signal(string signalText)
+        internal void Signal(string signalText)
         {
             curVer += signalText == "Right" ? 1 : -1;
             this.box.targetScrollOffset = curVer * -560f;
@@ -146,7 +146,7 @@ namespace CompletelyOptional
             rawLog = Regex.Split(result, "###");
         }
 
-        public void ShowChangeLog()
+        private void ShowChangeLog()
         {
             TabCtrler.Hide(); lblInfoButton.Hide(); ConfigMenu.currentTab.Hide();
             if (!_initLog) { InitChangeLog(); }
@@ -155,7 +155,7 @@ namespace CompletelyOptional
             logMode = true;
         }
 
-        public void HideChangeLog()
+        internal void HideChangeLog()
         {
             TabCtrler.Show(); lblInfoButton.Show(); ConfigMenu.currentTab.Show();
             lblTitle.Hide(); lblVer.Hide(); lblTrans.Hide();

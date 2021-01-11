@@ -8,7 +8,7 @@ namespace OptionalUI
     /// <para>Saving and loading will be handled automatically when this is added to the <see cref="OpTab"/>.</para>
     /// </summary>
     /// <remarks>Adding '_' before key (or leaving it empty) makes this <see cref="cosmetic"/>, preventing it to be saved.</remarks>
-    public class UIconfig : UIelement
+    public abstract class UIconfig : UIelement
     {
         /// <summary>
         /// Rectangular <see cref="UIconfig"/>.
@@ -104,7 +104,7 @@ namespace OptionalUI
         /// Either this is <see cref="greyedOut"/> or <see cref="UIelement.isHidden"/>.
         /// Prevents its interaction in <see cref="Update(float)"/>.
         /// </summary>
-        internal bool disabled => greyedOut || isHidden;
+        protected internal bool disabled => greyedOut || isHidden;
 
         /// <summary>
         /// If you want to change value directly without running <see cref="OnChange"/>.
@@ -115,7 +115,7 @@ namespace OptionalUI
             this._value = newValue;
         }
 
-        private string _value;
+        protected internal string _value;
 
         /// <summary>
         /// Value in <see cref="string"/> form, which is how it is saved. Changing this will call <see cref="OnChange"/> automatically.
