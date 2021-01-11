@@ -167,12 +167,7 @@ namespace OptionalUI
         /// <summary>
         /// <see cref="RainWorldMod"/> that holds basic information of Partiality Mod or BepInEx Plugin
         /// </summary>
-        public RainWorldMod rwMod { get; protected set; }
-
-        /// <summary>
-        /// Force change <see cref="rwMod"/>, used by Config Machine when the mod author forgot to set this in ctor
-        /// </summary>
-        public void ForceSetRWMod(RainWorldMod newRWMod) => rwMod = newRWMod;
+        public RainWorldMod rwMod { get; internal set; }
 
         /// <summary>
         /// OpTab that contains UIelements for your config screen.

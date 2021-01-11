@@ -64,8 +64,8 @@ namespace CompletelyOptional
         private enum TabMode
         {
             single, //==1
-            tab, //>1, <=7
-            button, //>7
+            tab, //>1, <=12
+            button, //>12
             NULL
         }
 
@@ -75,7 +75,24 @@ namespace CompletelyOptional
         {
             base.Update(dt);
             foreach (UIelement element in this.subElements)
-            { element.Update(dt); }
+            {
+                element.Update(dt);
+                if (element is Selector selector && selector.active)
+                {
+                    ConfigMenu.instance.modCanvasBound.colorEdge = selector.color;
+                    ConfigMenu.instance.modCanvasBound.colorFill = DyeableRect.MidToVeryDark(selector.color);
+                }
+            }
+            if (MenuTab.logMode || mode == TabMode.NULL)
+            {
+                ConfigMenu.instance.modCanvasBound.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
+                ConfigMenu.instance.modCanvasBound.colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.VeryDarkGrey);
+            }
+            else if (mode == TabMode.single)
+            {
+                ConfigMenu.instance.modCanvasBound.colorEdge = ConfigMenu.currentTab.color;
+                ConfigMenu.instance.modCanvasBound.colorFill = DyeableRect.MidToVeryDark(ConfigMenu.currentTab.color);
+            }
         }
 
         public override void OnChange()
@@ -193,12 +210,84 @@ namespace CompletelyOptional
             { element.Unload(); }
         }
 
-        public class SelectTab : UIelement
+        public class Selector : UIelement
         {
-            public SelectTab(int index, ConfigTabController ctrler) : base(new Vector2(), new Vector2())
+            public Selector(int index, ConfigTabController ctrler) : base(new Vector2(), new Vector2())
             {
                 this.index = index;
                 this.ctrl = ctrler;
+
+                this.bumpBehav = new BumpBehaviour(this);
+            }
+
+            internal readonly ConfigTabController ctrl;
+            internal bool active => ctrl.index == index;
+
+            /// <summary>
+            /// Index this Object is presenting
+            /// </summary>
+            public readonly int index;
+
+            internal readonly BumpBehaviour bumpBehav;
+
+            public Color color => ConfigMenu.currentInterface.Tabs[this.index].color;
+            internal bool greyedOut => this.ctrl.greyedOut;
+
+            public override void GrafUpdate(float dt)
+            {
+                base.GrafUpdate(dt);
+                this.bumpBehav.greyedOut = this.greyedOut;
+                this.bumpBehav.Update(dt);
+
+                if (!this.active && (greyedOut || !this.MouseOver)) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f); }
+                else { this.darken = Mathf.Min(1f, this.darken + 0.1f); }
+            }
+
+            internal bool mouseTop, click;
+            internal float darken;
+            internal string name => ConfigMenu.currentInterface.Tabs[index].name;
+
+            public override void Update(float dt)
+            {
+                foreach (MenuObject obj in this.subObjects)
+                {
+                    obj.Update();
+                    if (!this.ctrl.hidden) { obj.GrafUpdate(dt); }
+                }
+                this.GrafUpdate(dt);
+
+                if (greyedOut || this.ctrl.hidden) { return; }
+                if (MouseOver)
+                {
+                    if (!mouseTop)
+                    {
+                        mouseTop = true;
+                        ctrl.cfgMenu.PlaySound(SoundID.MENU_Button_Select_Mouse);
+                    }
+                    if (string.IsNullOrEmpty(this.name))
+                    { ConfigMenu.description = InternalTranslator.Translate("Switch to Tab No <TabIndex>").Replace("<TabIndex>", index.ToString()); }
+                    else
+                    { ConfigMenu.description = InternalTranslator.Translate("Switch to Tab <TabName>").Replace("<TabName>", this.name); }
+
+                    if (Input.GetMouseButton(0)) { this.click = true; this.bumpBehav.held = true; }
+                    else if (this.click)
+                    {
+                        this.click = false; this.bumpBehav.held = false;
+                        ctrl.index = this.index;
+                    }
+                }
+                else
+                {
+                    mouseTop = false;
+                    if (!Input.GetMouseButton(0)) { this.bumpBehav.held = false; this.click = false; }
+                }
+            }
+        }
+
+        public class SelectTab : Selector
+        {
+            public SelectTab(int index, ConfigTabController ctrler) : base(index, ctrler)
+            {
                 float height = Mathf.Min(120f, 600f / ctrler._tabCount);
                 //ctrler._tabCount
                 this._pos = ctrl.pos + new Vector2(17f, height * (-index - 1) + 603f); //ctrl.pos + new Vector2(17f, height * (ctrler._tabCount - index - 1) + 3f);
@@ -211,17 +300,7 @@ namespace CompletelyOptional
                 this.subObjects.Add(this.rect);
                 this.subObjects.Add(this.rectH);
                 this.subObjects.Add(this.label);
-
-                this.bumpBehav = new BumpBehaviour(this);
             }
-
-            private readonly ConfigTabController ctrl;
-            private bool active => ctrl.index == index;
-
-            /// <summary>
-            /// Index this Object is presenting
-            /// </summary>
-            public readonly int index;
 
             /// <summary>
             /// Tab Label
@@ -238,19 +317,10 @@ namespace CompletelyOptional
             /// </summary>
             public DyeableRect rectH;
 
-            private readonly BumpBehaviour bumpBehav;
-
-            private Color color => ConfigMenu.currentInterface.Tabs[this.index].color;
-            private bool greyedOut => this.ctrl.greyedOut;
-
             public override void GrafUpdate(float dt)
             {
                 base.GrafUpdate(dt);
-                this.bumpBehav.greyedOut = this.greyedOut;
-                this.bumpBehav.Update(dt);
 
-                if (!this.active && (greyedOut || !this.MouseOver)) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f); }
-                else { this.darken = Mathf.Min(1f, this.darken + 0.1f); }
                 this.label.label.rotation = -90f;
                 this.label.text = string.IsNullOrEmpty(this.name) ? index.ToString() : this.name;
 
@@ -284,46 +354,6 @@ namespace CompletelyOptional
                 for (int j = 0; j < 8; j++) { this.rectH.sprites[j].alpha = active ? 1f : highlight; }
             }
 
-            private bool mouseTop, click;
-            private float darken;
-            private string name => ConfigMenu.currentInterface.Tabs[index].name;
-
-            public override void Update(float dt)
-            {
-                foreach (MenuObject obj in this.subObjects)
-                {
-                    obj.Update();
-                    if (!this.ctrl.hidden) { obj.GrafUpdate(dt); }
-                }
-                this.GrafUpdate(dt);
-
-                if (greyedOut || this.ctrl.hidden) { return; }
-                if (MouseOver)
-                {
-                    if (!mouseTop)
-                    {
-                        mouseTop = true;
-                        ctrl.cfgMenu.PlaySound(SoundID.MENU_Button_Select_Mouse);
-                    }
-                    if (string.IsNullOrEmpty(this.name))
-                    { ConfigMenu.description = InternalTranslator.Translate("Switch to Tab No <TabIndex>").Replace("<TabIndex>", index.ToString()); }
-                    else
-                    { ConfigMenu.description = InternalTranslator.Translate("Switch to Tab <TabName>").Replace("<TabName>", this.name); }
-
-                    if (Input.GetMouseButton(0)) { this.click = true; this.bumpBehav.held = true; }
-                    else if (this.click)
-                    {
-                        this.click = false; this.bumpBehav.held = false;
-                        ctrl.index = this.index;
-                    }
-                }
-                else
-                {
-                    mouseTop = false;
-                    if (!Input.GetMouseButton(0)) { this.bumpBehav.held = false; this.click = false; }
-                }
-            }
-
             public override void Hide()
             {
                 this.rect.Hide(); this.rectH.Hide(); this.label.label.isVisible = false;
@@ -341,13 +371,10 @@ namespace CompletelyOptional
         /// <summary>
         /// When the number of Tab is more than 12. Only first 2 character of <see cref="OpTab.name"/> will be displayed.
         /// </summary>
-        public class SelectButton : UIelement
+        public class SelectButton : Selector
         {
-            public SelectButton(int index, ConfigTabController ctrler) : base(new Vector2(), new Vector2())
+            public SelectButton(int index, ConfigTabController ctrler) : base(index, ctrler)
             {
-                this.index = index;
-                this.ctrl = ctrler;
-
                 this._pos = ctrl.pos + new Vector2(18f, 30f * (19 - index) + 3f);
                 this.size = new Vector2(30f, 24f);
                 this.rect = new DyeableRect(menu, owner, this.pos, this.size, true) { tab = true };
@@ -356,34 +383,15 @@ namespace CompletelyOptional
                 this.subObjects.Add(this.rect);
                 this.subObjects.Add(this.rectH);
                 this.subObjects.Add(this.label);
-
-                this.bumpBehav = new BumpBehaviour(this);
             }
-
-            private readonly ConfigTabController ctrl;
-            private bool active => ctrl.index == index;
-            private Color color => ConfigMenu.currentInterface.Tabs[this.index].color;
-            private bool greyedOut => this.ctrl.greyedOut;
-
-            /// <summary>
-            /// Index this Object is presenting
-            /// </summary>
-            public readonly int index;
 
             public MenuLabel label;
             public DyeableRect rect, rectH;
-            private string name => ConfigMenu.currentInterface.Tabs[index].name;
-
-            private readonly BumpBehaviour bumpBehav;
 
             public override void GrafUpdate(float dt)
             {
                 base.GrafUpdate(dt);
-                this.bumpBehav.greyedOut = this.greyedOut;
-                this.bumpBehav.Update(dt);
 
-                if (!this.active && (greyedOut || !this.MouseOver)) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f); }
-                else { this.darken = Mathf.Min(1f, this.darken + 0.1f); }
                 this.label.text = string.IsNullOrEmpty(this.name) ? index.ToString() : (this.name.Length > 2 ? this.name.Substring(0, 2) : this.name);
 
                 if (greyedOut)
@@ -414,45 +422,6 @@ namespace CompletelyOptional
                 this.rectH.pos = this.pos + new Vector2(-this.rectH.addSize.x * 0.5f, 0f);
                 float highlight = this.MouseOver ? (0.5f + 0.5f * this.bumpBehav.Sin(10f)) * addSize : 0f;
                 for (int j = 0; j < 8; j++) { this.rectH.sprites[j].alpha = active ? 1f : highlight; }
-            }
-
-            private float darken;
-            private bool mouseTop, click;
-
-            public override void Update(float dt)
-            {
-                foreach (MenuObject obj in this.subObjects)
-                {
-                    obj.Update();
-                    if (!this.ctrl.hidden) { obj.GrafUpdate(dt); }
-                }
-                this.GrafUpdate(dt);
-
-                if (greyedOut || this.ctrl.hidden) { return; }
-                if (MouseOver)
-                {
-                    if (!mouseTop)
-                    {
-                        mouseTop = true;
-                        ctrl.cfgMenu.PlaySound(SoundID.MENU_Button_Select_Mouse);
-                    }
-                    if (string.IsNullOrEmpty(this.name))
-                    { ConfigMenu.description = InternalTranslator.Translate("Switch to Tab No <TabIndex>").Replace("<TabIndex>", index.ToString()); }
-                    else
-                    { ConfigMenu.description = InternalTranslator.Translate("Switch to Tab <TabName>").Replace("<TabName>", this.name); }
-
-                    if (Input.GetMouseButton(0)) { this.click = true; this.bumpBehav.held = true; }
-                    else if (this.click)
-                    {
-                        this.click = false; this.bumpBehav.held = false;
-                        ctrl.index = this.index;
-                    }
-                }
-                else
-                {
-                    mouseTop = false;
-                    if (!Input.GetMouseButton(0)) { this.bumpBehav.held = false; this.click = false; }
-                }
             }
 
             public override void Hide()
