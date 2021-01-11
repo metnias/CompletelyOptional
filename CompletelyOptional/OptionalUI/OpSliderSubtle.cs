@@ -25,7 +25,7 @@ namespace OptionalUI
             l = Mathf.Max(this.mul * (r - 1), l);
             this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
             this.fixedSize = this._size;
-            this.ForceValue(Custom.IntClamp(defaultValue, min, max).ToString());
+            this._value = Custom.IntClamp(defaultValue, min, max).ToString();
             this.wheelTick = 1;
             this.defaultValue = this.value;
 
@@ -42,7 +42,7 @@ namespace OptionalUI
             this.myContainer.sortZ = this.Nobs[0].sortZ + 1f;
         }
 
-        internal override void Initialize()
+        protected internal override void Initialize()
         {
             base.Initialize();
             if (!_init) { return; }
@@ -75,7 +75,7 @@ namespace OptionalUI
             this.Circle.color = this.bumpBehav.GetColor(this.colorEdge);
         }
 
-        internal override void LineVisibility(Vector2 cutPos, Vector2 cutSize)
+        protected internal override void LineVisibility(Vector2 cutPos, Vector2 cutSize)
         {
             base.LineVisibility(cutPos, cutSize);
             this.lineSprites[0].isVisible = false;

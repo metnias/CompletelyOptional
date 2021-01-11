@@ -112,7 +112,7 @@ namespace CompletelyOptional
         /// List of Random Song gets played in ConfigMenu,
         /// carefully chosen by me :P
         /// </summary>
-        public static string randomSong
+        internal static string randomSong
         {
             get
             {
@@ -126,7 +126,7 @@ namespace CompletelyOptional
         /// <summary>
         /// Path of Levels
         /// </summary>
-        public static string levelpath = string.Concat(new object[] {
+        internal static string levelpath = string.Concat(new object[] {
             Custom.RootFolderDirectory(),
             "Levels",
             Path.DirectorySeparatorChar
@@ -136,7 +136,7 @@ namespace CompletelyOptional
         /// <summary>
         /// Creates SoundTest Room files
         /// </summary>
-        public static void CopyMusicRoom()
+        internal static void CopyMusicRoom()
         {
             string sspath = string.Concat(new object[] {
                 "World",
@@ -168,7 +168,7 @@ namespace CompletelyOptional
         /// <summary>
         /// Removes SoundTest room files to prevent unwanted predicaments
         /// </summary>
-        public static void RemoveMusicRoom()
+        internal static void RemoveMusicRoom()
         {
             File.Delete(string.Concat(levelpath, "SoundTest.txt"));
             File.Delete(string.Concat(levelpath, "SoundTest_1.png"));

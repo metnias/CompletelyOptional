@@ -121,7 +121,7 @@ namespace CompletelyOptional
         /// <summary>
         /// Runs right before MainMenu opens
         /// </summary>
-        public static void Initialize()
+        private static void Initialize()
         {
             //Application.RegisterLogCallback(new Application.LogCallback(TroubleShoot));
 
@@ -421,7 +421,7 @@ namespace CompletelyOptional
         /// <summary>
         /// Unload All Tabs
         /// </summary>
-        public static void KillTabs()
+        internal static void KillTabs()
         {
             foreach (KeyValuePair<string, OpTab> item in tabs)
             { tabs[item.Key].Unload(); }

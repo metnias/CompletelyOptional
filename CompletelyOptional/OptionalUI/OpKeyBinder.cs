@@ -35,7 +35,7 @@ namespace OptionalUI
         public OpKeyBinder(Vector2 pos, Vector2 size, string modID, string key, string defaultKey, bool collisionCheck = true, BindController ctrlerNo = BindController.AnyController) : base(pos, size, key, defaultKey)
         {
             // if (string.IsNullOrEmpty(defaultKey)) { throw new ElementFormatException(this, "OpKeyBinderNull: defaultKey for this keyBinder is null.", key); }
-            if (string.IsNullOrEmpty(defaultKey)) { this.ForceValue(none); }
+            if (string.IsNullOrEmpty(defaultKey)) { this._value = none; }
             this.controlKey = !this.cosmetic ? string.Concat(modID, "_", key) : "_";
             this.modID = modID;
             this._size = new Vector2(Mathf.Max(30f, size.x), Mathf.Max(30f, size.y));
@@ -324,7 +324,7 @@ namespace OptionalUI
                     }
                     if (string.IsNullOrEmpty(this._desError))
                     {
-                        this.ForceValue(value);
+                        this._value = value;
                         menu.PlaySound(SoundID.MENU_Button_Successfully_Assigned);
                         if (this.collisionCheck)
                         {

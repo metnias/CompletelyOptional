@@ -52,7 +52,7 @@ namespace CompletelyOptional
             return lang.Substring(0, 3).ToLower();
         }
 
-        public static void LoadTranslation()
+        internal static void LoadTranslation()
         {
             Debug.Log($"CompletelyOptional Loading Translation for {curLang}");
             if (data == null) { ReadTXT(); }
@@ -86,7 +86,7 @@ namespace CompletelyOptional
             }
         }
 
-        public static string Translate(string orig)
+        internal static string Translate(string orig)
         {
             if (converter.TryGetValue(orig, out string res))
             { return res.Replace("\\n", Environment.NewLine); }

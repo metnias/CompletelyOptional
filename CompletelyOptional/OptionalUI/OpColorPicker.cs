@@ -27,7 +27,7 @@ namespace OptionalUI
             mod = 0;
             if (!_init)
             { //If this is called in main menu, just load the value, not ui.
-                this.ForceValue("XXXXXX");
+                this._value = "XXXXXX";
                 try
                 { this.value = defaultHex; }
                 catch
@@ -51,7 +51,7 @@ namespace OptionalUI
 
             r = 0; g = 0; b = 0;
             h = 0; s = 0; l = 0;
-            this.ForceValue("000000");
+            this._value = "000000";
 
             Color grey = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorEdge = grey;
@@ -136,7 +136,7 @@ namespace OptionalUI
             try
             {
                 //Now doing this will do the job.
-                this.ForceValue("XXXXXX");
+                this._value = "XXXXXX";
                 this.value = defaultHex;
                 this.defaultValue = this.value;
             }
@@ -766,9 +766,9 @@ namespace OptionalUI
                                             _soundFill += 4;
                                         }
                                         button = true;
-                                        this.ForceValue(string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
+                                        this._value = string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
                                             Mathf.RoundToInt(g * 255f / 100f).ToString("X2"),
-                                            Mathf.RoundToInt(b * 255f / 100f).ToString("X2")));
+                                            Mathf.RoundToInt(b * 255f / 100f).ToString("X2"));
                                     }
                                 }
                                 OnChange();
@@ -872,7 +872,7 @@ namespace OptionalUI
                                                 _soundFill += 8;
                                             }
                                         }
-                                        this.ForceValue(this.PaletteHex[_i]);
+                                        this._value = this.PaletteHex[_i];
                                         mod = 2;
                                         OnChange();
                                     }
@@ -1004,13 +1004,13 @@ namespace OptionalUI
                     r = Mathf.RoundToInt(c.r * 100f);
                     g = Mathf.RoundToInt(c.g * 100f);
                     b = Mathf.RoundToInt(c.b * 100f);
-                    this.ForceValue(string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
+                    this._value = string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
                         Mathf.RoundToInt(g * 255f / 100f).ToString("X2"),
-                        Mathf.RoundToInt(b * 255f / 100f).ToString("X2")));
+                        Mathf.RoundToInt(b * 255f / 100f).ToString("X2"));
                 }
                 else if (mod == 2) //palette
                 {
-                    this.ForceValue(this.PaletteHex[pi]);
+                    this._value = this.PaletteHex[pi];
                     return this.PaletteHex[pi];
                 }
 
@@ -1022,7 +1022,7 @@ namespace OptionalUI
             {
                 if (base.value == value) { return; }
                 try { HexToColor(value); } catch (Exception e) { Debug.LogError(e); return; }
-                this.ForceValue(value);
+                this._value = value;
 
                 r = Mathf.RoundToInt(Convert.ToInt32(value.Substring(0, 2), 16) / 255f * 100f);
                 g = Mathf.RoundToInt(Convert.ToInt32(value.Substring(2, 2), 16) / 255f * 100f);

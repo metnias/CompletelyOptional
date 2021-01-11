@@ -21,7 +21,7 @@ namespace OptionalUI
         /// <param name="defaultValue"></param>
         public OpRadioButtonGroup(string key, int defaultValue = 0) : base(Vector2.zero, new Vector2(1f, 1f), key, defaultValue.ToString())
         {
-            this.ForceValue(defaultValue.ToString());
+            this._value = defaultValue.ToString();
             this.defaultValue = this.value;
             if (!_init) { return; }
             this._greyedOut = false;
@@ -111,7 +111,7 @@ namespace OptionalUI
             {
                 if (base.value == value.ToString()) { return; }
                 if (value >= this.buttons.Length) { return; }
-                this.ForceValue(value.ToString());
+                this._value = value.ToString();
                 if (_init) { Switch(value); }
             }
         }
@@ -125,7 +125,7 @@ namespace OptionalUI
                 if (int.TryParse(value, out int v))
                 {
                     if (v >= this.buttons.Length) { return; }
-                    this.ForceValue(value);
+                    this._value = value;
                     if (_init) { Switch(v); }
                 }
             }

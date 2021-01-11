@@ -23,7 +23,7 @@ namespace OptionalUI
             {
                 throw new ElementFormatException(this, "OpRadioButtonMultiGroup init error: Length of Default values must be equal to number of choices", key);
             }
-            this.ForceValue(defaultSet.Substring(0, this.multi));
+            this._value = defaultSet.Substring(0, this.multi);
             this.valueOrder = this.value;
             this.defaultValue = this.value;
             if (!_init) { return; }
@@ -75,7 +75,7 @@ namespace OptionalUI
             {
                 s += newValue[i].ToString("X1");
             }
-            this.ForceValue(s);
+            this._value = s;
         }
 
         public override void SetButtons(OpRadioButton[] buttons)
@@ -130,7 +130,7 @@ namespace OptionalUI
             {
                 s += l[i].ToString("X1");
             }
-            this.ForceValue(s);
+            this._value = s;
         }
     }
 }

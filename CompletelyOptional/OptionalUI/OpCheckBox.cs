@@ -19,8 +19,8 @@ namespace OptionalUI
         public OpCheckBox(Vector2 pos, string key, bool defaultBool = false) : base(pos, new Vector2(24f, 24f), key, "false")
         {
             this.fixedSize = new Vector2(24f, 24f);
-            if (defaultBool) { this.ForceValue("true"); }
-            else { this.ForceValue("false"); }
+            if (defaultBool) { this._value = "true"; }
+            else { this._value = "false"; }
             this.defaultValue = this.value;
 
             if (!_init) { return; }

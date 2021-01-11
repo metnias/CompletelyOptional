@@ -32,7 +32,7 @@ namespace OptionalUI
             this.mul = Mathf.Max(multi, 1.0f);
             this._size = this.vertical ? new Vector2(30f, (r - 1) * this.mul) : new Vector2((r - 1) * this.mul, 30f);
             this.fixedSize = this._size;
-            this.ForceValue(Custom.IntClamp(defaultValue, min, max).ToString());
+            this._value = Custom.IntClamp(defaultValue, min, max).ToString();
             if (!_init) { return; }
             Initialize();
         }
@@ -57,7 +57,7 @@ namespace OptionalUI
             float l = Mathf.Max((float)(r - 1), (float)length);
             this.mul = l / (float)(r - 1);
             this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
-            this.ForceValue(Custom.IntClamp(defaultValue, min, max).ToString());
+            this._value = Custom.IntClamp(defaultValue, min, max).ToString();
             this.defaultValue = this.value;
             if (!_init) { return; }
             Initialize();
@@ -70,7 +70,7 @@ namespace OptionalUI
             get { return this is OpSliderRange; }
         }*/
 
-        internal virtual void Initialize()
+        protected internal virtual void Initialize()
         {
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
@@ -268,7 +268,7 @@ namespace OptionalUI
             if (!subtleSlider) { this.label.label.color = Color.Lerp(this.rect.color, Color.white, 0.5f); }
         }
 
-        internal virtual void LineVisibility(Vector2 cutPos, Vector2 cutSize)
+        protected internal virtual void LineVisibility(Vector2 cutPos, Vector2 cutSize)
         {
             if (!vertical)
             {

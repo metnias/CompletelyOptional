@@ -11,7 +11,7 @@ namespace CompletelyOptional
     /// Default OI that's called when your mod does not support CompletelyOptional.
     /// Also shows the error in your OI.
     /// </summary>
-    public class UnconfiguableOI : OptionInterface
+    internal class UnconfiguableOI : OptionInterface
     {
         public UnconfiguableOI(PartialityMod mod, Reason type) : base(mod)
         { this.reason = type; }
@@ -107,8 +107,6 @@ namespace CompletelyOptional
 
 #pragma warning restore IDE0060
 #pragma warning restore CA1822
-
-        public OpRect testRect;
 
         public override void Initialize()
         {
@@ -231,8 +229,8 @@ namespace CompletelyOptional
             ConfigMenu.instance.ChangeSelectedMod();
         }
 
-        public OpLabel labelID, labelVersion, labelAuthor, labelCoauthor;
-        public OpLabel labelDesc, labelSluggo0, labelSluggo1;
+        public OpLabel labelID, labelVersion, labelAuthor; //labelCoauthor labelDesc;
+        public OpLabel labelSluggo0, labelSluggo1;
         public OpRect blue;
         public OpLabel oof;
 

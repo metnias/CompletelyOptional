@@ -6,7 +6,7 @@ namespace OptionalUI
     /// <summary>
     /// Special kind of <see cref="UIelement"/> that can trigger <see cref="OptionInterface.Signal(UItrigger, string)"/>
     /// </summary>
-    public class UItrigger : UIelement, SelectableUIelement
+    public abstract class UItrigger : UIelement, SelectableUIelement
     {
         /// <summary>
         /// Special kind of Rectangular <see cref="UIelement"/> that can trigger <see cref="OptionInterface.Signal(UItrigger, string)"/>
@@ -44,7 +44,7 @@ namespace OptionalUI
         /// <summary>
         /// Whether this UItrigger is greyedOut or not
         /// </summary>
-        public bool greyedOut;
+        public bool greyedOut = false;
 
         /// <summary>
         /// Whether this is held or not.

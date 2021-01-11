@@ -353,7 +353,7 @@ namespace CompletelyOptional
         public static bool scrollMode { get; private set; }
         public static int scrollTop;
 
-        public static void ScrollButtons()
+        internal static void ScrollButtons()
         {
             for (int i = 2; i < 15; i++)
             { instance.modButtons[i].menuLabel.text = instance.modList[scrollTop + i - 2]; }
@@ -367,7 +367,7 @@ namespace CompletelyOptional
         private static int CompareOIModID(OptionInterface x, OptionInterface y)
         { return ListItem.GetRealName(x.rwMod.ModID).CompareTo(ListItem.GetRealName(y.rwMod.ModID)); }
 
-        public Dictionary<int, string> modList;
+        internal Dictionary<int, string> modList;
         public static int selectedModIndex;
         public static OptionInterface currentInterface;
         public static OpTab currentTab;
@@ -375,13 +375,13 @@ namespace CompletelyOptional
         public static FContainer tabContainer;
         public static MenuTab menuTab;
         public static ConfigTabController tabCtrler;
-        public static string description, alert;
+        internal static string description, alert;
 
-        public SelectOneButton[] modButtons;
+        internal SelectOneButton[] modButtons;
 
-        public SimpleButton backButton;
-        public SimpleButton saveButton;
-        public HoldButton resetButton;
+        internal SimpleButton backButton;
+        internal SimpleButton saveButton;
+        internal HoldButton resetButton;
         private MenuLabel alertLabel;
         private float alertLabelFade, lastAlertLabelFade, alertLabelSin;
 
@@ -715,7 +715,7 @@ namespace CompletelyOptional
             this.manager.arenaSitting.levelPlaylist.Add("SoundTest");
         }
 
-        public void KillTabElements()
+        internal void KillTabElements()
         {
             foreach (KeyValuePair<string, OpTab> item in OptionScript.tabs)
             {
@@ -912,7 +912,7 @@ namespace CompletelyOptional
             }
         }
 
-        public bool opened = false;
+        internal bool opened = false;
         private bool fadein = false;
         private int fadeoutFrame;
 

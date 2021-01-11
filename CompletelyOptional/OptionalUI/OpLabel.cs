@@ -108,7 +108,7 @@ namespace OptionalUI
 
         private LabelVAlignment _verticalAlignment;
 
-        internal bool IsLong => this is OpLabelLong;
+        protected internal bool IsLong => this is OpLabelLong;
 
         /// <summary>
         /// Access MenuLabel. Be aware: when IsConfigScreen is false, accessing this will throw NullRefException.
@@ -139,7 +139,7 @@ namespace OptionalUI
             }
         }
 
-        internal FLabelAlignment _alignment;
+        protected internal FLabelAlignment _alignment;
 
         /// <summary>
         /// Colour of the text. <see cref="Menu.Menu.MenuColors.MediumGrey"/> in default.
@@ -293,10 +293,10 @@ namespace OptionalUI
             }
         }
 
-        private string _text;
-        internal string _displayText;
+        protected internal string _text;
+        protected internal string _displayText;
 
-        internal int GetLineCount() => _displayText.Split('\n').Length;
+        protected internal int GetLineCount() => _displayText.Split('\n').Length;
 
         public override void Hide()
         {

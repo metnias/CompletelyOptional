@@ -89,15 +89,18 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// The less the value is, the more likely to ignored by ConfigMachine. The range is -1 ~ 2.
+        /// The less the value is, the more likely to get ignored by ConfigMachine. The range is -1 ~ 2.
         /// </summary>
         public int GetPriority()
         {
-            if (OptionScript.blackList.Contains(rwMod.ModID)) { return -1; }
-            if (this is UnconfiguableOI oi)
+            // if (OptionScript.blackList.Contains(rwMod.ModID)) { return -1; }
+            if (this is UnconfiguableOI uoi)
             {
-                if (oi.reason != UnconfiguableOI.Reason.NoInterface) { return 2; }
-                return -1;
+                return uoi.reason != UnconfiguableOI.Reason.NoInterface ? 2 : -1;
+            }
+            else if (this is GeneratedOI goi)
+            {
+                return goi.mode == GeneratedOI.GenMode.ModderCall ? -1 : 1;
             }
             else if (this is InternalTestOI) { return 2; }
             return this.Configuable() ? 1 : 0;
@@ -216,7 +219,7 @@ namespace OptionalUI
         /// <summary>
         /// This will be called by ConfigMachine manager automatically.
         /// </summary>
-        public bool LoadConfig()
+        internal bool LoadConfig()
         {
             config = new Dictionary<string, string>();
             rawConfig = rawConfigDef;
@@ -250,7 +253,7 @@ namespace OptionalUI
         /// <summary>
         /// Displays loaded config to <see cref="UIconfig"/>s. It's called automatically.
         /// </summary>
-        public void ShowConfig()
+        internal void ShowConfig()
         {
             GrabObject();
             if (this is GeneratedOI && (this as GeneratedOI).mode == GeneratedOI.GenMode.BepInExConfig)
@@ -290,7 +293,7 @@ namespace OptionalUI
         /// <summary>
         /// Grabbing config from config menu. It's called automatically.
         /// </summary>
-        public Dictionary<string, string> GrabConfig()
+        internal Dictionary<string, string> GrabConfig()
         {
             GrabObject();
             if (this.objectDictionary.Count < 1) { return new Dictionary<string, string>(0); }
@@ -306,7 +309,7 @@ namespace OptionalUI
         /// <summary>
         /// Saving Config. It's called automatically.
         /// </summary>
-        public bool SaveConfig(Dictionary<string, string> newConfig)
+        internal bool SaveConfig(Dictionary<string, string> newConfig)
         {
             if (!Configuable()) { return true; }
             if (this is GeneratedOI && (this as GeneratedOI).mode == GeneratedOI.GenMode.BepInExConfig)
@@ -436,6 +439,8 @@ namespace OptionalUI
         /// <returns>Loaded Data</returns>
         public virtual void LoadData()
         {
+            if (!directory.Exists) { data = string.Empty; return; }
+
             for (int i = 0; i < _data.Length; i++)
             {
                 _data[i] = defaultData;
@@ -490,6 +495,8 @@ namespace OptionalUI
         /// </summary>
         public virtual bool SaveData()
         {
+            if (!directory.Exists) { directory.Create(); }
+
             string data = string.Empty;
             for (int i = 0; i < _data.Length; i++) { data += _data[i] + "<slugChar>"; };
             //if (string.IsNullOrEmpty(_data)) { return false; }
@@ -541,7 +548,7 @@ namespace OptionalUI
         /// <summary>
         /// Do not call this by your own.
         /// </summary>
-        public void BackgroundUpdate(int saveOrLoad)
+        internal void BackgroundUpdate(int saveOrLoad)
         {
             switch (saveOrLoad)
             {
@@ -556,7 +563,7 @@ namespace OptionalUI
         /// Do not call this by your own.
         /// </summary>
         /// <param name="slugcatLength"></param>
-        public void GenerateDataArray(int slugcatLength)
+        internal void GenerateDataArray(int slugcatLength)
         {
             _data = new string[slugcatLength];
             LoadData();

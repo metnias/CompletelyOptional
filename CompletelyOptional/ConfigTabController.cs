@@ -220,18 +220,18 @@ namespace CompletelyOptional
                 this.bumpBehav = new BumpBehaviour(this);
             }
 
-            internal readonly ConfigTabController ctrl;
-            internal bool active => ctrl.index == index;
+            public readonly ConfigTabController ctrl;
+            public bool active => ctrl.index == index;
 
             /// <summary>
             /// Index this Object is presenting
             /// </summary>
             public readonly int index;
 
-            internal readonly BumpBehaviour bumpBehav;
+            public readonly BumpBehaviour bumpBehav;
 
             public Color color => ConfigMenu.currentInterface.Tabs[this.index].color;
-            internal bool greyedOut => this.ctrl.greyedOut;
+            public bool greyedOut => this.ctrl.greyedOut;
 
             public override void GrafUpdate(float dt)
             {
@@ -245,7 +245,7 @@ namespace CompletelyOptional
 
             internal bool mouseTop, click;
             internal float darken;
-            internal string name => ConfigMenu.currentInterface.Tabs[index].name;
+            public string name => ConfigMenu.currentInterface.Tabs[index].name;
 
             public override void Update(float dt)
             {
