@@ -431,7 +431,7 @@ namespace OptionalUI
             base.Unload();
         }
 
-        public override bool CopyFromClipboard(string value)
+        protected internal override bool CopyFromClipboard(string value)
         {
             this.held = false;
             return base.CopyFromClipboard(value);

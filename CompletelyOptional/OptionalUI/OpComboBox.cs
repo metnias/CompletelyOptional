@@ -115,6 +115,12 @@ namespace OptionalUI
 
         private bool IsResourceSelector => this is OpResourceSelector;
 
+        public override void Reset()
+        {
+            if (held) { Unheld(); }
+            base.Reset();
+        }
+
         public override string value
         {
             get => base.value;
@@ -548,13 +554,13 @@ namespace OptionalUI
             this.OnChange();
         }
 
-        public override string CopyToClipboard()
+        protected internal override string CopyToClipboard()
         {
             this.Unheld();
             return base.CopyToClipboard();
         }
 
-        public override bool CopyFromClipboard(string value)
+        protected internal override bool CopyFromClipboard(string value)
         {
             if (!this.searchMode)
             {

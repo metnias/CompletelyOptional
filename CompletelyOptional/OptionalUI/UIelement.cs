@@ -82,7 +82,7 @@ namespace OptionalUI
         /// <summary>
         /// This will be called by OpScrollBox automatically.
         /// </summary>
-        public bool AddToScrollBox(OpScrollBox scrollBox)
+        internal bool AddToScrollBox(OpScrollBox scrollBox)
         {
             if (OpScrollBox.ChildBlacklist.Contains<Type>(this.GetType())) { Debug.LogError(this.GetType().Name + " instances may not be added to a scrollbox!"); return false; }
             if (this.inScrollBox) { Debug.LogError("This item is already in an OpScrollBox! The later call is ignored."); return false; }
@@ -392,7 +392,7 @@ namespace OptionalUI
         /// <summary>
         /// Called when exiting ConfigMenu.
         /// </summary>
-        public virtual void Unload()
+        public virtual void Unload() // This should be protected internal, but i'm afraid that'd break compatibility
         {
             foreach (MenuObject o in this.subObjects) { o.RemoveSprites(); }
             this.subObjects.Clear();
@@ -424,7 +424,7 @@ namespace OptionalUI
         public static float frameMulti => Mathf.Max(1.00f, OptionScript.curFramerate / 60.0f);
 
         /// <summary>
-        /// Multiplies frame count by <see cref="frameMulti"/> to accomodated with Many More Fixes' framerate unlock feature.
+        /// Multiplies frame count by <see cref="frameMulti"/> to accommodate with Many More Fixes' framerate unlock feature.
         /// </summary>
         public static int FrameMultiply(int origFrameCount) => Mathf.RoundToInt(origFrameCount * frameMulti);
 

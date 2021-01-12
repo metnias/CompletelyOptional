@@ -75,7 +75,7 @@ namespace OptionalUI
         /// Whether this is held or not.
         /// If this is true, other <see cref="UIelement"/> will be frozen.
         /// </summary>
-        public bool held
+        protected internal bool held
         {
             get { return _held; }
             set
@@ -200,13 +200,13 @@ namespace OptionalUI
             if (showDesc && !this.greyedOut) { ConfigMenu.description = this.description; }
         }
 
-        public virtual bool CopyFromClipboard(string value)
+        protected internal virtual bool CopyFromClipboard(string value)
         {
             try { this.value = value; this.held = false; return this.value == value; }
             catch { return false; }
         }
 
-        public virtual string CopyToClipboard()
+        protected internal virtual string CopyToClipboard()
         {
             this.held = false;
             return this.value;

@@ -1,4 +1,11 @@
-﻿###1.5: Blepping Board Update#!#20210104#!#
+﻿###1.5.1: No longer Beta#!#20210111#!#
+- Changed access keywords of many properties and methods
+ + Methods that shouldn't be called by the modders are now internal instead of public
+ + UIconfig._value is now protected internal instead of private
+- Item sorting now ignores initial articles like 'The'
+ + Use ListItem.GetRealName(string) if you need this too
+- Canvas gets coloured with active OpTab.color
+###1.5: Blepping Board Update#!#20210104#!#
 - Received many helps from Garrakx and Slime_Cubed for this update. Thank you!
 - Supports BepInEx plugins (BaseUnityPlugin)
  + BepInEx Plugin can either use LoadOI(BaseUnityPlugin) for custom OptionInterface, or BepInEx.Configuration for GeneratedOI

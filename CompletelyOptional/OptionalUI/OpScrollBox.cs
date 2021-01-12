@@ -28,7 +28,7 @@ namespace OptionalUI
         /// The real position of the box's contents relative to the tab, a considerable distance off-screen.
         /// <para>This value is added to each child's pos automatically when they are added in <see cref="AddItems(UIelement[])"/>.</para>
         /// </summary>
-        public Vector2 childOffset { get; private set; }
+        internal Vector2 childOffset { get; private set; }
 
         /// <summary>
         /// A list of all items inside this scrollbox.
@@ -116,10 +116,8 @@ namespace OptionalUI
         /// </summary>
         public bool ScrollLocked { get; private set; }
 
-        /// <summary>
         /// Set to false to keep the mouse from interacting with this scrollbox's contents.
-        /// </summary>
-        public bool allowMouseOnContents = true;
+        // public bool allowMouseOnContents = true;
 
         private bool _contentsDirty = true;
         private float _dirtyUntil = -1f;

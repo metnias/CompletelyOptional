@@ -363,9 +363,6 @@ namespace CompletelyOptional
             {
                 this.rect.Show(); this.rectH.Show(); this.label.label.isVisible = true;
             }
-
-            public override void Unload()
-            { base.Unload(); }
         }
 
         /// <summary>
@@ -432,11 +429,6 @@ namespace CompletelyOptional
             public override void Show()
             {
                 this.rect.Show(); this.rectH.Show(); this.label.label.isVisible = true;
-            }
-
-            public override void Unload()
-            {
-                base.Unload();
             }
         }
     }

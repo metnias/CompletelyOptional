@@ -440,13 +440,13 @@ namespace OptionalUI
             this.cursor.RemoveFromContainer();
         }
 
-        public override bool CopyFromClipboard(string value)
+        protected internal override bool CopyFromClipboard(string value)
         {
             try { this.value = value; return this.value == value; }
             catch { return false; }
         }
 
-        public override string CopyToClipboard()
+        protected internal override string CopyToClipboard()
         {
             cursorAlpha = 0f;
             this.cursor.alpha = 0f;
