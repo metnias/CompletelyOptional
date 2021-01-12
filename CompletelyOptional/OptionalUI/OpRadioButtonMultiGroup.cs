@@ -99,7 +99,7 @@ namespace OptionalUI
             }
         }
 
-        public override void Switch(int index)
+        protected internal override void Switch(int index)
         {
             this.valueOrder = this.valueOrder.Substring(1, this.value.Length - 1) + index.ToString("X1");
             this.value = this.valueOrder;

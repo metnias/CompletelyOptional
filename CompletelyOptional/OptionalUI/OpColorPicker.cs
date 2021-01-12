@@ -72,7 +72,7 @@ namespace OptionalUI
             lblP.label.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
 
             //Hex Value Label
-            lblHex = new MenuLabel(menu, owner, value.ToString(), pos + _offset + new Vector2(40f, 5f), new Vector2(70f, 20f), false);
+            lblHex = new MenuLabel(menu, owner, value.ToString(), pos + _offset + new Vector2(25f, 5f), new Vector2(80f, 20f), false);
             this.subObjects.Add(lblHex);
             lblHex.label.alignment = FLabelAlignment.Left;
             //Top Menu RGB mode Button
@@ -127,7 +127,7 @@ namespace OptionalUI
                 alpha = 1f,
                 isVisible = false
             };
-            this.cdis1.SetPosition(65f, 15f);
+            this.cdis1.SetPosition(55f, 15f);
             this.myContainer.AddChild(this.cdis1);
 
             this._description = "";
@@ -391,7 +391,7 @@ namespace OptionalUI
                     this.rect2.SetTexture(ttre2);
                     this.rect1.SetPosition(new Vector2(60f, 80f));
                     this.rect2.SetPosition(new Vector2(135f, 80f));
-                    lblHex.text = value.ToString();
+                    lblHex.text = "#" + value.ToString();
                 }
                 else
                 {
@@ -662,7 +662,7 @@ namespace OptionalUI
                         if (Input.GetKey(acceptKeys[n]))
                         {
                             inputHex += acceptKeys[n].Substring(0, 1).ToUpper();
-                            lblHex.text = inputHex;
+                            lblHex.text = "#" + inputHex;
                             this.cursor.SetPosition(80f + LabelTest.GetWidth(inputHex, false), 5f);
                             if (!_soundFilled && inputHex.Length < 6)
                             {
@@ -688,7 +688,7 @@ namespace OptionalUI
                 else if (Input.GetMouseButton(0) && !this.MouseOver)
                 {
                     if (mod == 2) { this.SwitchMod(0); }
-                    lblHex.text = value;
+                    lblHex.text = "#" + value;
                     this.inputMode = false;
                     this.held = false;
                     this.myContainer.RemoveChild(this.cursor);
@@ -915,7 +915,7 @@ namespace OptionalUI
                         this.clickDelay = 0;
                         this.input = false;
                         this.inputHex = "";
-                        this.lblHex.text = "";
+                        this.lblHex.text = "#";
                         menu.PlaySound(SoundID.MENU_Player_Join_Game);
                         this.cursor = new FCursor();
                         this.myContainer.AddChild(this.cursor);
@@ -1060,7 +1060,7 @@ namespace OptionalUI
             this.lblG.pos = this.pos + new Vector2(124f, 70f);
             this.lblR.pos = this.pos + new Vector2(124f, 110f);
             this.lblP.pos = this.pos + new Vector2(10f, 5f);
-            this.lblHex.pos = this.pos + new Vector2(40f, 5f);
+            this.lblHex.pos = this.pos + new Vector2(25f, 5f);
             this.lblRGB.pos = this.pos + new Vector2(20f, 130f);
             this.lblHSL.pos = this.pos + new Vector2(60f, 130f);
             this.lblPLT.pos = this.pos + new Vector2(100f, 130f);
@@ -1082,7 +1082,7 @@ namespace OptionalUI
                     this.rect3.SetPosition(new Vector2(60f, 40f));
                     this.rect2.SetPosition(new Vector2(60f, 80f));
                     this.rect1.SetPosition(new Vector2(60f, 120f));
-                    lblHex.text = value.ToString();
+                    lblHex.text = "#" + value;
                     break;
 
                 case 1:
@@ -1091,14 +1091,14 @@ namespace OptionalUI
                     this.rect2.SetTexture(ttre2);
                     this.rect1.SetPosition(new Vector2(60f, 80f));
                     this.rect2.SetPosition(new Vector2(135f, 80f));
-                    lblHex.text = value.ToString();
+                    lblHex.text = "#" + value;
                     break;
 
                 case 2:
                     cdis0.color = this.PaletteColor(pi);
                     this.rect1.SetTexture(ttre1);
                     this.rect1.SetPosition(new Vector2(75f, 80f));
-                    lblHex.text = this.PaletteHex[pi].ToString();
+                    lblHex.text = "#" + this.PaletteHex[pi];
                     break;
             }
         }
@@ -1562,16 +1562,17 @@ namespace OptionalUI
             "Artificer"
         };
 
-        public override string CopyToClipboard()
+        protected internal override string CopyToClipboard()
         {
-            this.inputHex = this.value; this.lblHex.text = this.inputHex;
+            this.inputHex = this.value; this.lblHex.text = "#" + this.inputHex;
             return this.value;
         }
 
-        public override bool CopyFromClipboard(string value)
+        protected internal override bool CopyFromClipboard(string value)
         {
+            value = value.Trim().TrimStart('#');
             if (IsStringHexColor(value))
-            { this.inputHex = value.Substring(0, 6); this.lblHex.text = this.inputHex; return true; }
+            { this.inputHex = value.Substring(0, 6); this.lblHex.text = "#" + this.inputHex; return true; }
             return false;
         }
     }

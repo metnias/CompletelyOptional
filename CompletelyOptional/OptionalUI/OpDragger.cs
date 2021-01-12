@@ -11,7 +11,7 @@ namespace OptionalUI
     public class OpDragger : UIconfig, SelectableUIelement
     {
         /// <summary>
-        /// Dragger to adjust int value easily. The fixedSize is 24x24.
+        /// Dragger to adjust int value in a cramped space. The fixedSize is 24x24.
         /// </summary>
         /// <param name="pos">BottomLeft</param>
         /// <param name="key">Unique <see cref="UIconfig.key"/></param>
@@ -34,6 +34,16 @@ namespace OptionalUI
 
             this.useCT = false;
         }
+
+        /// <summary>
+        /// Dragger to adjust int value in a cramped space. The fixedSize is 24x24.
+        /// </summary>
+        /// <param name="posX">Left position.</param>
+        /// <param name="posY">Bottom position.</param>
+        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
+        /// <param name="defaultInt">default value</param>
+        public OpDragger(float posX, float posY, string key, int defaultInt = 0) : this(new Vector2(posX, posY), key, defaultInt)
+        { }
 
         /// <summary>
         /// Minimum value. default = 0

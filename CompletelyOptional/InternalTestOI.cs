@@ -27,7 +27,7 @@ namespace CompletelyOptional
             base.Initialize();
             this.Tabs = new OpTab[3];
             this.Tabs[0] = new OpTab("TEST0");
-            this.Tabs[1] = new OpTab("TEST1") { color = Color.cyan };
+            this.Tabs[1] = new OpTab("TEST1");
             this.Tabs[2] = new OpTab("TESTSCROLL");
 
             string v = string.Concat(Environment.NewLine, "ConfigMachine Version", ": ");
@@ -62,13 +62,16 @@ namespace CompletelyOptional
             t.SetPixels(n); t.Apply();
 
             //Tabs[0].AddItems(new OpSpriteEditor(new Vector2(300f, 100f), new Vector2(100f, 100f), "_TEST", t));
-            Tabs[0].AddItems(new OpSimpleButton(new Vector2(400f, 200f), new Vector2(100f, 24f), "singal", "SimpleButton"));
-            Tabs[0].AddItems(new OpLabel(new Vector2(100f, 100f), new Vector2(100f, 30f)));
-
-            Tabs[1].AddItems(new OpRect(new Vector2(0f, 0f), new Vector2(600f, 600f), 0f));
+            OpScrollBox scb = new OpScrollBox(new Vector2(100f, 100f), new Vector2(240f, 150f), 400f);
+            Tabs[0].AddItems(scb);
+            scb.AddItems(new OpLabelLong(new Vector2(20f, 20f), new Vector2(120f, 200f)),
+                new OpSlider(new Vector2(160f, 30f), "_", new IntVector2(-20, 20), length: 180, true, 10));
 
             OpCheckBox chk = new OpCheckBox(new Vector2(100f, 420f), "_", true);
             Tabs[1].AddItems(chk, new OpLabel(new Vector2(100f, 470f), new Vector2(50f, 15f), "CheckBox") { bumpBehav = chk.bumpBehav });
+            Tabs[1].AddItems(new OpColorPicker(new Vector2(50f, 220f), "_", "CC00CC"));
+            Tabs[1].AddItems(new OpColorPicker(new Vector2(220f, 220f), "_", "CC00CC"));
+            Tabs[1].AddItems(new OpColorPicker(new Vector2(390f, 220f), "_", "CC00CC"));
 
             OpRadioButtonGroup group = new OpRadioButtonGroup("_");
             Tabs[1].AddItems(group);

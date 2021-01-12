@@ -115,7 +115,7 @@ namespace OptionalUI
         /// </summary>
         public MenuLabel label;
 
-        private readonly bool _bigText;
+        protected internal readonly bool _bigText;
 
         /// <summary>
         /// (default : false) If this is true, OpLabel will automatically make text in MultiLine.

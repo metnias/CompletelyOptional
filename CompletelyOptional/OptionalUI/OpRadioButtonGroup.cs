@@ -131,7 +131,7 @@ namespace OptionalUI
             }
         }
 
-        public virtual void Switch(int index)
+        protected internal virtual void Switch(int index)
         {
             for (int i = 0; i < this.buttons.Length; i++)
             {
