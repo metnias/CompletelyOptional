@@ -1,19 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{5930839C-86D6-44CF-A345-E03AB51FD03A}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CompletelyOptional</RootNamespace>
     <AssemblyName>ConfigMachine</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <TargetFramework>net35</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <!--Debug settings below-->
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -24,128 +18,32 @@
     <DocumentationFile>bin\Debug\ConfigMachine.xml</DocumentationFile>
     <NoWarn>CS1591; CS1573</NoWarn>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>bin\Release\ConfigMachine.xml</DocumentationFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Assembly-CSharp" />
-    <Reference Include="BepInEx" />
-    <Reference Include="HOOKS-Assembly-CSharp" />
-    <Reference Include="Partiality" />
-    <Reference Include="UnityEngine" />
-    <Reference Include="PresentationCore" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="COExceptions.cs" />
-    <Compile Include="ConfigMenu.cs" />
-    <Compile Include="ConfigTabController.cs" />
-    <Compile Include="GeneratedOI.cs" />
-    <Compile Include="InternalTestOI.cs" />
-    <Compile Include="InternalTranslator.cs" />
-    <Compile Include="Crypto.cs" />
-    <Compile Include="OptionalUI\OpContainer.cs" />
-    <Compile Include="OptionalUI\OpHoldButton.cs" />
-    <Compile Include="OptionalUI\OpLabelLong.cs" />
-    <Compile Include="OptionalUI\OpUpdown.cs" />
-    <Compile Include="OptionalUI\SubObjects\LabelTest.cs" />
-    <Compile Include="OptionalUI\SubObjects\ListItem.cs" />
-    <Compile Include="OptionalUI\SubObjects\FCursor.cs" />
-    <Compile Include="OptionalUI\OpComboBox.cs" />
-    <Compile Include="OptionalUI\OpResourceSelector.cs" />
-    <Compile Include="OptionalUI\OpScrollBox.cs" />
-    <Compile Include="OptionalUI\SubObjects\BumpBehaviour.cs" />
-    <Compile Include="OptionalUI\SubObjects\FTexture.cs" />
-    <Compile Include="UniClipboard.cs" />
-    <None Include="OptionalUI\OpColorPicker_bak.cs" />
-    <Compile Include="OptionalUI\OpSimpleButton.cs" />
-    <Compile Include="OptionalUI\OpSimpleImageButton.cs" />
-    <Compile Include="OptionalUI\OpSpriteEditor.cs" />
-    <Compile Include="OptionalUI\SubObjects\LoremIpsum.cs" />
-    <Compile Include="OptionalUI\UItrigger.cs" />
-    <Compile Include="OptionInterface.cs" />
-    <Compile Include="RainWorldMod.cs" />
-    <Compile Include="UnconfiguableOI.cs" />
-    <None Include="..\.editorconfig">
-      <Link>.editorconfig</Link>
-    </None>
-    <None Include="SoundTest\MaxMusicPlayer.cs" />
-    <None Include="SoundTest\MaxSwarmer.cs" />
-    <Compile Include="MenuTab.cs" />
-    <Compile Include="OptionalUI\SubObjects\DyeableRect.cs" />
-    <Compile Include="OptionalUI\OpCheckBox.cs" />
-    <Compile Include="OptionalUI\OpColorPicker.cs" />
-    <Compile Include="OptionalUI\OpDragger.cs" />
-    <Compile Include="OptionalUI\OpImage.cs" />
-    <Compile Include="OptionalUI\OpKeyBinder.cs" />
-    <Compile Include="OptionalUI\OpLabel.cs" />
-    <Compile Include="OptionalUI\OpPathSelector.cs" />
-    <Compile Include="OptionalUI\OpRadioButton.cs" />
-    <Compile Include="OptionalUI\OpRadioButtonGroup.cs" />
-    <Compile Include="OptionalUI\OpRadioButtonMultiGroup.cs" />
-    <Compile Include="OptionalUI\OpRect.cs" />
-    <Compile Include="OptionalUI\OpSlider.cs" />
-    <Compile Include="OptionalUI\OpSliderRange.cs" />
-    <Compile Include="OptionalUI\OpSliderSubtle.cs" />
-    <None Include="OptionalUI\OpSlugcat.cs" />
-    <Compile Include="OptionalUI\OpTab.cs" />
-    <Compile Include="OptionalUI\OpTextBox.cs" />
-    <Compile Include="OptionalUI\SubObjects\SelectableUIElement.cs" />
-    <Compile Include="OptionalUI\UIconfig.cs" />
-    <None Include="OptionalUI\UIcreature.cs" />
-    <Compile Include="OptionalUI\UIelement.cs" />
-    <None Include="SoundTest\SoundingGameSession.cs" />
-    <None Include="SoundTest\SoundTestOwner.cs" />
-    <None Include="SoundTest\SoundTestPlayerUI.cs" />
-    <None Include="SoundTest\MaxGraphics.cs" />
-    <None Include="SoundTest\MaxOracle.cs" />
-    <None Include="SoundTest\MaxOracleBehavior.cs" />
-    <None Include="OptionalGameSession.cs" />
-    <Compile Include="OptionMod.cs" />
-    <Compile Include="OptionScript.cs" />
-    <Compile Include="OptionsMenuPatch.cs" />
-    <Compile Include="ProgressData.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="SoundTest\SoundTest.cs" />
-  </ItemGroup>
   <ItemGroup>
     <None Include="SoundTest\MaxRoom_Settings.txt" />
+    <None Include="**\OptionalGameSession.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="OptionalUI\UIcreature.cs" />
+    <Compile Remove="OptionalUI\OpSlugcat.cs" />
+    <Compile Remove="OptionalUI\OpColorPicker_bak.cs" />
+    <Compile Remove="**\SoundTest\*" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Changelog.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Translations.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="lib\Assembly-CSharp.dll" />
-    <Content Include="lib\BepInEx.dll" />
-    <Content Include="lib\HOOKS-Assembly-CSharp.dll" />
-    <Content Include="lib\Partiality.dll" />
-    <Content Include="lib\UnityEngine.dll" />
+    <Reference Include="lib\Assembly-CSharp.dll" />
+    <Reference Include="lib\BepInEx.dll" />
+    <Reference Include="lib\HOOKS-Assembly-CSharp.dll" />
+    <Reference Include="lib\Partiality.dll" />
+    <Reference Include="lib\UnityEngine.dll" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+
   <PropertyGroup>
-    <LocalDir>E:\Game\Rain World\RainWorld.exe</LocalDir>
-    <PostBuildEvent Condition="Exists($(LocalDir))">copy /Y "$(TargetPath)" "D:\Drive\Repo\References\RainWorld\$(TargetName).dll"
-copy /Y "$(TargetDir)$(TargetName).xml" "D:\Drive\Repo\References\RainWorld\$(TargetName).xml"
-copy /Y "$(TargetPath)" "E:\Game\Rain World\mods\$(TargetName).dll"
-copy /Y "$(TargetDir)$(TargetName).xml" "E:\Game\Rain World\mods\$(TargetName).xml"
-copy /Y "$(TargetPath)" "E:\SteamLibrary\steamapps\common\Rain World\BepInEx\plugins\$(TargetName).dll"</PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(TargetPath)" "D:\Drive\Repo\References\RainWorld\$(TargetName).dll"
+    <LocalDir>E:\Game\Rain World</LocalDir>
+    <LocalDir2>D:\Drive\Repo\References\RainWorld</LocalDir2>
+    <PostBuildEvent Condition="Exists($(LocalDir)) And Exists($(LocalDir2))">copy /Y "$(TargetPath)" "D:\Drive\Repo\References\RainWorld\$(TargetName).dll"
 copy /Y "$(TargetDir)$(TargetName).xml" "D:\Drive\Repo\References\RainWorld\$(TargetName).xml"
 copy /Y "$(TargetPath)" "E:\Game\Rain World\mods\$(TargetName).dll"
 copy /Y "$(TargetDir)$(TargetName).xml" "E:\Game\Rain World\mods\$(TargetName).xml"
