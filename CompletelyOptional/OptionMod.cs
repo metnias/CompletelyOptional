@@ -1,9 +1,7 @@
 using Partiality.Modloader;
 using RWCustom;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
@@ -124,8 +122,6 @@ namespace CompletelyOptional
                 { return playlistWork[UnityEngine.Random.Range(0, 2)]; }
             }
         }
-
-        public static bool ReferencesBepInEx { get; } = AppDomain.CurrentDomain.GetAssemblies().Any(asm => asm.GetName().Name == "BepInEx");
 
         /// <summary>
         /// Path of Levels
