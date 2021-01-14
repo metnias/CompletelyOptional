@@ -153,7 +153,7 @@ namespace CompletelyOptional
         public override void Update(float dt)
         {
             base.Update(dt);
-            prg.SetProgress(prg.progress >= 100f ? 0f : prg.progress + 0.3f + UnityEngine.Random.value * 0.1f);
+            prg.SetProgress(prg.progress >= 100f ? 0f : prg.progress + (0.3f + UnityEngine.Random.value * 0.1f) * UIelement.DTMultiply(dt));
             prg.GrafUpdate(dt);
         }
     }
