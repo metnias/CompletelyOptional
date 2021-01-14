@@ -189,7 +189,7 @@ namespace CompletelyOptional
             loadedInterfaces = new List<OptionInterface>();
 
             //No Mods Installed!
-            if (loadedModsDictionary.Count == 0 && !OptionMod.ReferencesBepInEx)
+            if (loadedModsDictionary.Count == 0)
             {
                 loadedModsDictionary = new Dictionary<string, PartialityMod>(1);
                 PartialityMod blankMod = new PartialityMod
@@ -316,9 +316,14 @@ namespace CompletelyOptional
             }
             #endregion InternalTest
 
-            if (OptionMod.ReferencesBepInEx)
+            // Garrakx code
+            foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                LoadBaseUnityPlugins();
+                if (assembly.GetName().Name.Equals("BepInEx.MonoMod.Loader") || assembly.GetName().Name.Equals("BepInEx"))
+                {
+                    LoadBaseUnityPlugins();
+                    break;
+                }
             }
 
             Debug.Log($"CompletelyOptional) Finished Initializing {loadedInterfaceDict.Count} OIs");
