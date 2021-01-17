@@ -16,13 +16,15 @@ namespace OptionalUI
         public OpUpdown(Vector2 pos, float sizeX, string key, int defaultInt) : base(pos, sizeX, key, defaultInt.ToString(), Accept.Int)
         {
             if (!_init) { return; }
-            throw new NotImplementedException("OpUpdown might come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
+            this.Initialize();
+            //throw new NotImplementedException("OpUpdown might come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
         }
 
         public OpUpdown(Vector2 pos, float sizeX, string key, float defaultFloat, int decimalNum) : base(pos, sizeX, key, defaultFloat.ToString(), Accept.Float)
         {
             if (!_init) { return; }
-            throw new NotImplementedException("OpUpdown might come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
+            this.Initialize();
+            //throw new NotImplementedException("OpUpdown might come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
         }
 
         private void Initialize()

@@ -134,6 +134,7 @@
     <Content Include="lib\HOOKS-Assembly-CSharp.dll" />
     <Content Include="lib\Partiality.dll" />
     <Content Include="lib\UnityEngine.dll" />
+    <Content Include="License.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
