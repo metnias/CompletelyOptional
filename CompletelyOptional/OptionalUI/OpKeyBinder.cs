@@ -61,6 +61,7 @@ namespace OptionalUI
 
         /// <summary>
         /// Simple Key Binder. Value is the KeyCode in string form.
+        /// Using string for ModID is recommended.
         /// </summary>
         /// <param name="pos">LeftBottom Position of this UI</param>
         /// <param name="size">Size. minimum size is 30f*30f.</param>
@@ -70,6 +71,7 @@ namespace OptionalUI
         /// <param name="collisionCheck">Whether you will check the key is colliding with other <see cref="OpKeyBinder"/> or not</param>
         /// <param name="ctrlerNo">Which Controller this <see cref="OpKeyBinder"/> can bind</param>
         /// <exception cref="ElementFormatException">Thrown when defaultKey is null or empty</exception>
+        [Obsolete]
         public OpKeyBinder(Vector2 pos, Vector2 size, PartialityMod mod, string key, string defaultKey, bool collisionCheck = true, BindController ctrlerNo = BindController.AnyController)
             : this(pos, size, mod.ModID, key, defaultKey, collisionCheck, ctrlerNo)
         {
