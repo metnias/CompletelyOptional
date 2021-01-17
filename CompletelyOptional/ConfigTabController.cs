@@ -79,8 +79,8 @@ namespace CompletelyOptional
                 element.Update(dt);
                 if (element is Selector selector && selector.active)
                 {
-                    ConfigMenu.instance.modCanvasBound.colorEdge = selector.color;
-                    ConfigMenu.instance.modCanvasBound.colorFill = DyeableRect.MidToVeryDark(selector.color);
+                    ConfigMenu.instance.modCanvasBound.colorEdge = selector.colorCanvas;
+                    ConfigMenu.instance.modCanvasBound.colorFill = DyeableRect.MidToVeryDark(selector.colorCanvas);
                 }
             }
             if (MenuTab.logMode || mode == TabMode.NULL)
@@ -90,8 +90,8 @@ namespace CompletelyOptional
             }
             else if (mode == TabMode.single)
             {
-                ConfigMenu.instance.modCanvasBound.colorEdge = ConfigMenu.currentTab.color;
-                ConfigMenu.instance.modCanvasBound.colorFill = DyeableRect.MidToVeryDark(ConfigMenu.currentTab.color);
+                ConfigMenu.instance.modCanvasBound.colorEdge = ConfigMenu.currentTab.colorCanvas;
+                ConfigMenu.instance.modCanvasBound.colorFill = DyeableRect.MidToVeryDark(ConfigMenu.currentTab.colorCanvas);
             }
         }
 
@@ -231,6 +231,7 @@ namespace CompletelyOptional
             public readonly BumpBehaviour bumpBehav;
 
             public Color color => ConfigMenu.currentInterface.Tabs[this.index].color;
+            public Color colorCanvas => ConfigMenu.currentInterface.Tabs[this.index].colorCanvas;
             public bool greyedOut => this.ctrl.greyedOut;
 
             public override void GrafUpdate(float dt)

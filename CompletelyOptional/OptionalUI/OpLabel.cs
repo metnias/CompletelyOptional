@@ -296,7 +296,7 @@ namespace OptionalUI
         protected internal string _text;
         protected internal string _displayText;
 
-        protected internal int GetLineCount() => _displayText.Split('\n').Length;
+        public int GetLineCount() => _displayText.Split('\n').Length;
 
         public override void Hide()
         {

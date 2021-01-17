@@ -18,6 +18,7 @@ namespace OptionalUI
             this.isHidden = true;
             this.name = name;
             this.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
+            this.colorCanvas = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
         }
 
         public List<SelectableUIelement> selectables;
@@ -31,6 +32,11 @@ namespace OptionalUI
         /// Colour of Tab Button. <see cref="Menu.Menu.MenuColors.MediumGrey"/> in default.
         /// </summary>
         public Color color;
+
+        /// <summary>
+        /// Colour of the Canvas. <see cref="Menu.Menu.MenuColors.MediumGrey"/> in default.
+        /// </summary>
+        public Color colorCanvas;
 
         /// <summary>
         /// Do NOT use this.
