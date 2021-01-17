@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("topicular")]
 [assembly: AssemblyProduct("Config Machine")]
-[assembly: AssemblyCopyright("MIT")]
+[assembly: AssemblyCopyright("MIT License")]
 [assembly: AssemblyTrademark("CompletelyOptional")]
 [assembly: AssemblyCulture("")]
 

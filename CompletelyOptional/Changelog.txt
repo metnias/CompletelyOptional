@@ -4,7 +4,7 @@
  + UIconfig._value is now protected internal instead of private
 - Item sorting now ignores initial articles like 'The'
  + Use ListItem.GetRealName(string) if you need this too
-- Canvas gets coloured with active OpTab.color
+- Canvas gets coloured with active OpTab.colorCanvas
 ###1.5: Blepping Board Update#!#20210104#!#
 - Received many helps from Garrakx and Slime_Cubed for this update. Thank you!
 - Supports BepInEx plugins (BaseUnityPlugin)
