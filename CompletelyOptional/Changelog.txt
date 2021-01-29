@@ -1,4 +1,4 @@
-﻿###1.5.1: No longer Beta#!#20210111#!#
+﻿###1.5.1: No longer Beta#!#20210129#!#
 - Changed access keywords of many properties and methods
  + Methods that shouldn't be called by the modders are now internal instead of public
  + UIconfig._value is now protected internal instead of private
@@ -6,7 +6,7 @@
  + Use ListItem.GetRealName(string) if you need this too
 - Canvas gets coloured with active OpTab.colorCanvas
 ###1.5: Blepping Board Update#!#20210104#!#
-- Received many helps from Garrakx and Slime_Cubed for this update. Thank you!
+- Received many bits of help from Garrakx and Slime_Cubed for this update. Thank you!
 - Supports BepInEx plugins (BaseUnityPlugin)
  + BepInEx Plugin can either use LoadOI(BaseUnityPlugin) for custom OptionInterface, or BepInEx.Configuration for GeneratedOI
  + GeneratedOI can also be used for default profiled OI, for when the modder wants to use other features (e.g. Translate) of OptionInterface
@@ -19,7 +19,7 @@
  + OpComboBox: DropDown box that can also be searched, useful for selecting an item from a list
   x OpResourceSelector: Special kind of OpComboBox that use enum/special list for initialization
 - OpTextBox for numbers and allowSpace being true now allows '-' for its first character, allowing negative numbers
-- OpKeyBinder now has fancier indicator when it's bound to Joystick
+- OpKeyBinder now has a fancier indicator when it's bound to Joystick
 - OpImage now has scale field and can set color for Texture2D version, and its color is now properly initialized to white
 - Fixed ConfigTabController not resetting selected tab number even after Reset Config is done
 - Fixed UI flickering at high FPS with Many More Fixes
