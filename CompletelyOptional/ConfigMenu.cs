@@ -179,6 +179,7 @@ namespace CompletelyOptional
             List<OptionInterface> itfs = new List<OptionInterface>();
 
             // Initialize
+            OptionScript.loadedInterfaceDict.Remove(InternalTranslator.Translate("Mod List")); // Remove old Mod List
             foreach (string id in OptionScript.loadedInterfaceDict.Keys)
             {
                 OptionInterface itf = OptionScript.loadedInterfaceDict[id];
@@ -215,8 +216,10 @@ namespace CompletelyOptional
             }
 
             // Remove Excess
-            int priority = -1; UnconfiguableOI listItf = null; List<RainWorldMod> listIgnored = new List<RainWorldMod>();
-            while (itfs.Count > 16 && priority < 0) // 1
+            int priority = (int)OptionInterface.Priority.NoInterface;
+            UnconfiguableOI listItf = null;
+            List<RainWorldMod> listIgnored = new List<RainWorldMod>();
+            while (itfs.Count > 16 && priority < (int)OptionInterface.Priority.Inconfiguable) // 1
             {
                 Debug.Log(string.Concat("Mod Count: ", itfs.Count, "! Discarding priority ", priority));
                 /* if (priority == -2)
@@ -225,7 +228,7 @@ namespace CompletelyOptional
                     foreach (OptionInterface oi in itfs) { if (oi.GetPriority() > -2) { temp2.Add(oi); } }
                     itfs = temp2; priority++; continue;
                 } */
-                if (priority == -1)
+                if (priority == (int)OptionInterface.Priority.NoInterface)
                 {
                     PartialityMod blankMod = new PartialityMod
                     {
@@ -247,16 +250,15 @@ namespace CompletelyOptional
 
             // Sorting
             {
-                List<OptionInterface>[] sortTemp = new List<OptionInterface>[4];
-                for (int p = 0; p < 4; p++) { sortTemp[p] = new List<OptionInterface>(); }
+                List<OptionInterface>[] sortTemp = new List<OptionInterface>[(int)OptionInterface.Priority.Error + 2];
+                for (int p = 0; p < sortTemp.Length; p++) { sortTemp[p] = new List<OptionInterface>(); }
                 foreach (OptionInterface oi in itfs) { sortTemp[oi.GetPriority() + 1].Add(oi); }
                 int cmCount = 0;
-                for (int p = 0; p < 4; p++) { cmCount += sortTemp[p].Count; sortTemp[p].Sort(CompareOIModID); }
+                for (int p = 0; p < sortTemp.Length; p++) { cmCount += sortTemp[p].Count; sortTemp[p].Sort(CompareOIModID); }
 
                 itfs = new List<OptionInterface>();
-                if (priority > -1)
+                if (priority > (int)OptionInterface.Priority.NoInterface)
                 {
-                    OptionScript.loadedInterfaceDict.Remove(InternalTranslator.Translate("Mod List"));
                     OptionScript.loadedInterfaceDict.Add(InternalTranslator.Translate("Mod List"), listItf);
                     listItf.SetIgnoredModList(listIgnored);
                     if (cmCount > 15) { listItf.SetConfiguableModList(sortTemp); }
@@ -264,7 +266,7 @@ namespace CompletelyOptional
                     listItf.Initialize();
                     itfs.Add(listItf);
                 }
-                for (int p = 3; p >= 0; p--)
+                for (int p = sortTemp.Length - 1; p >= 0; p--)
                 {
                     for (int i = 0; i < sortTemp[p].Count; i++)
                     { itfs.Add(sortTemp[p][i]); }
@@ -310,10 +312,6 @@ namespace CompletelyOptional
                 ScrollButtons();
             }
 
-            this.resetButton.nextSelectable[1] = this.modButtons[this.modButtons.Length - 1];
-            this.backButton.nextSelectable[1] = this.modButtons[this.modButtons.Length - 1];
-            this.saveButton.nextSelectable[1] = this.modButtons[this.modButtons.Length - 1];
-            this.modButtons[this.modButtons.Length - 1].nextSelectable[3] = this.saveButton;
             if (this.modButtons.Length > 1)
             {
                 for (int m = 0; m < this.modButtons.Length - 1; m++)
@@ -321,7 +319,12 @@ namespace CompletelyOptional
                     this.modButtons[m].nextSelectable[3] = this.modButtons[m + 1];
                     this.modButtons[m + 1].nextSelectable[1] = this.modButtons[m];
                 }
+                if (listItf != null) { this.modButtons[0].menuLabel.text = listItf.rwMod.ModID; }
             }
+            this.resetButton.nextSelectable[1] = this.modButtons[this.modButtons.Length - 1];
+            this.backButton.nextSelectable[1] = this.modButtons[this.modButtons.Length - 1];
+            this.saveButton.nextSelectable[1] = this.modButtons[this.modButtons.Length - 1];
+            this.modButtons[this.modButtons.Length - 1].nextSelectable[3] = this.saveButton;
 
             //Load Tab
             selectedTabIndex = 0;

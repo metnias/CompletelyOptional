@@ -173,14 +173,14 @@ namespace CompletelyOptional
             Tabs = new OpTab[cListNum + iListNum];
             for (int t = 0; t < cListNum; t++)
             {
-                string name = InternalTranslator.Translate("Configurable Mods") + " " + ((t * modInPage) + 1).ToString(modNumDecimal) + " ~ "
+                string name = InternalTranslator.Translate("Mods") + " " + ((t * modInPage) + 1).ToString(modNumDecimal) + " ~ "
                     + (Math.Min((t + 1) * modInPage, configuableMods.Length)).ToString(modNumDecimal);
                 Tabs[t] = new OpTab(name);
                 Tabs[t].AddItems(new OpLabel(new Vector2(100f, 500f), new Vector2(400f, 50f), InternalTranslator.Translate("Configurable Mod List"), FLabelAlignment.Center, true));
             }
             for (int t = cListNum; t < cListNum + iListNum; t++)
             {
-                string name = InternalTranslator.Translate("Other Mods") + " " + (1 + configuableMods.Length + ((t - cListNum) * modInPage)).ToString(modNumDecimal) + " ~ "
+                string name = InternalTranslator.Translate("Mods") + " " + (1 + configuableMods.Length + ((t - cListNum) * modInPage)).ToString(modNumDecimal) + " ~ "
                     + (configuableMods.Length + Math.Min((t - cListNum + 1) * modInPage, ignoredMods.Length)).ToString(modNumDecimal);
                 Tabs[t] = new OpTab(name);
                 Tabs[t].AddItems(new OpLabel(new Vector2(100f, 500f), new Vector2(400f, 50f), InternalTranslator.Translate("Other Mod List"), FLabelAlignment.Center, true));

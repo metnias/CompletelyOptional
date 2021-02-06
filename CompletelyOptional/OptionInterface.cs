@@ -96,14 +96,25 @@ namespace OptionalUI
             // if (OptionScript.blackList.Contains(rwMod.ModID)) { return -1; }
             if (this is UnconfiguableOI uoi)
             {
-                return uoi.reason != UnconfiguableOI.Reason.NoInterface ? 2 : -1;
+                if (uoi.reason == UnconfiguableOI.Reason.TooManyMod) { return (int)Priority.ModList; }
+                return uoi.reason != UnconfiguableOI.Reason.NoInterface ? (int)Priority.Error : (int)Priority.NoInterface;
             }
             else if (this is GeneratedOI goi)
             {
-                return goi.mode == GeneratedOI.GenMode.ModderCall ? -1 : 1;
+                return goi.mode == GeneratedOI.GenMode.ModderCall ? (int)Priority.NoInterface : (int)Priority.Configuable;
             }
-            else if (this is InternalTestOI) { return 2; }
-            return this.Configuable() ? 1 : 0;
+            else if (this is InternalTestOI) { return (int)Priority.InternalTest; }
+            return this.Configuable() ? (int)Priority.Configuable : (int)Priority.Inconfiguable;
+        }
+
+        public enum Priority : int
+        {
+            ModList = 3,
+            InternalTest = 2,
+            Error = 2,
+            Configuable = 1,
+            Inconfiguable = 0,
+            NoInterface = -1
         }
 
         /// <summary>

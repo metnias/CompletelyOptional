@@ -38,6 +38,7 @@ Configurable Mod List|kor$모드 설정 목록|spa$Lista de Mods configurables|f
 Other Mod List|kor$기타 모드 목록|spa$Lista de otros Mods|fre$Liste des autres Mods|rus$Список других модов
 Configurable Mods|kor$모드 설정|spa$Mods configurables|fre$Mods configurables|rus$Настраиваемые моды
 Other Mods|kor$기타 모드|spa$Otros Mods|fre$Autres Mods|rus$Другие моды
+Mods|kor$모드|spa$Mods|fre$Mods|rus$Моды
 Scroll Up|kor$위로 이동|spa$Subir|fre$Défiler vers le haut|rus$Прокрутить вверх
 Scroll Down|kor$아래로 이동|spa$Bajar|fre$Défiler vers le bas|rus$Прокрутить вниз
 Click to Display Config Machine ChangeLog|kor$클릭해서 Config Machine의 변경 내역 보기|spa$Haz clic para mostrar la lista de cambios de Config Machine|fre$Cliquez pour afficher l'historique des mises à jour Config Machine|rus$Нажмите, чтобы отобразить лог изменений Config Machine

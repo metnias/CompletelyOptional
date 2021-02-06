@@ -64,13 +64,14 @@ namespace OptionalUI
 
         internal virtual void Initialize(string defaultName)
         {
-            if (string.IsNullOrEmpty(defaultName)) { this.defaultValue = ""; this._value = ""; }
+            if (string.IsNullOrEmpty(defaultName) && allowEmpty) { this.defaultValue = ""; this._value = ""; }
             else
             {
                 bool flag = false;
                 for (int i = 0; i < this.itemList.Length; i++)
                 { if (this.itemList[i].name == defaultName) { flag = true; break; } }
                 if (flag) { this.defaultValue = defaultName; this._value = this.defaultValue; }
+                else if (!allowEmpty) { this.defaultValue = itemList[0].name; this._value = itemList[0].name; }
                 else { this.defaultValue = ""; this._value = ""; }
             }
             if (!_init) { return; }
@@ -128,7 +129,7 @@ namespace OptionalUI
             {
                 if (base.value != value)
                 {
-                    if (string.IsNullOrEmpty(value)) { base.value = ""; return; }
+                    if (string.IsNullOrEmpty(value)) { base.value = allowEmpty ? "" : itemList[0].name; return; }
                     foreach (ListItem i in this.itemList)
                     { if (i.name == value) { base.value = value; return; } }
                 }
@@ -145,10 +146,16 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
+        /// <summary>
+        /// If true, clicking the box again will choose None(<c>""</c>). If false, the user must choose one option.
+        /// </summary>
+        public bool allowEmpty = false;
+
         public override void GrafUpdate(float dt)
         {
             base.GrafUpdate(dt);
 
+            this.bumpBehav.greyedOut = this.greyedOut;
             this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
@@ -241,6 +248,7 @@ namespace OptionalUI
             this.bumpBehav.MouseOver = base.MouseOver && !this.MouseOverList();
             if (this.held)
             {
+                if (disabled) { goto close; }
                 this.bumpList.MouseOver = this.MouseOverList();
                 this.bumpScroll.MouseOver = this.MousePos.x >= this.rectScroll.pos.x - this.pos.x && this.MousePos.x <= this.rectScroll.pos.x + this.rectScroll.size.x - this.pos.x;
                 this.bumpScroll.MouseOver = this.bumpScroll.MouseOver && this.MousePos.y >= this.rectScroll.pos.y - this.pos.y && this.MousePos.y <= this.rectScroll.pos.y + this.rectScroll.size.y - this.pos.y;
@@ -317,7 +325,7 @@ namespace OptionalUI
                         {
                             mouseDown = false;
                             if (dTimer > 0) { dTimer = 0; this.searchMode = true; EnterSearchMode(); return; }
-                            else { dTimer = FrameMultiply(15); this.value = ""; this.menu.PlaySound(SoundID.MENU_Checkbox_Uncheck); goto close; }
+                            else { dTimer = FrameMultiply(15); if (allowEmpty) { this.value = ""; } this.menu.PlaySound(SoundID.MENU_Checkbox_Uncheck); goto close; }
                         }
                     }
                     else // MouseOver List
@@ -380,6 +388,7 @@ namespace OptionalUI
                 this.Unheld();
                 return;
             }
+            if (disabled) { return; }
             if (base.MouseOver)
             {
                 if (Input.GetMouseButton(0)) { mouseDown = true; }
@@ -483,6 +492,7 @@ namespace OptionalUI
         {
             base.Hide();
             this.rect.Hide();
+            this.lblText.label.isVisible = false;
             this.Unheld();
         }
 
