@@ -347,6 +347,8 @@ namespace CompletelyOptional
         /// </summary>
         public void ShowBepConfig()
         {
+            bool m = ConfigMenu.mute;
+            ConfigMenu.mute = true;
             foreach (ConfigDefinition def in bepConfig.Keys)
             {
                 if (objectDictionary.TryGetValue(GenerateKey(def), out UIconfig obj))
@@ -395,6 +397,7 @@ namespace CompletelyOptional
                     }
                 }
             }
+            ConfigMenu.mute = m;
         }
 
         /// <summary>

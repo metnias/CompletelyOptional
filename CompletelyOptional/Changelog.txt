@@ -13,6 +13,8 @@
 1.5.1.4
 - Hopefully fixed Mod List button showing up twice
 - Renamed Tab names for Mod List to avoid cluttering
+1.5.1.5
+- Menu sounds won't play when Config Menu is initializing
 ###1.5: Blepping Board Update#!#20210104#!#
 - Received many bits of help from Garrakx and Slime_Cubed for this update. Thank you!
 - Supports BepInEx plugins (BaseUnityPlugin)

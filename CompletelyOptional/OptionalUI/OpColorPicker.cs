@@ -554,7 +554,11 @@ namespace OptionalUI
             mod = newmod;
             value = temp;
             mod = newmod;
-            menu.PlaySound(SoundID.MENU_MultipleChoice_Clicked);
+            if (OptionInterface.soundFilled)
+            {
+                OptionInterface.soundFill += 6;
+                menu.PlaySound(SoundID.MENU_MultipleChoice_Clicked);
+            }
 
             RecalculateTexture();
             //load new mod

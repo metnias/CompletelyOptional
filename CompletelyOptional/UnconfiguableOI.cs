@@ -36,8 +36,11 @@ namespace CompletelyOptional
             if (this.rwMod.ModID != null)
             { Debug.LogError($"CompletelyOptional: {this.rwMod.ModID} had issue in OptionInterface:"); }
             this.reason = Reason.InitError;
+            if (exception == null)
+            { exception = new GeneralInitializeException("Unidentified Exception!"); }
             this.exception = exception.ToString();
-            Debug.LogException(exception);
+            Debug.LogError(this.exception);
+            //Debug.LogException(exception);
         }
 
         public Reason reason;

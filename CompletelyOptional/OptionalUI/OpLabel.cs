@@ -44,14 +44,14 @@ namespace OptionalUI
             //this.lineLength = Mathf.FloorToInt((size.x - 10f) / 6f);
             if (!_init) { return; }
             this.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
+            this._alignment = alignment;
             if (!this.IsLong)
             {
                 this.label = new MenuLabel(menu, owner, _text, this.pos, this.size, this._bigText);
                 this.label.label.color = this.color;
                 this.subObjects.Add(this.label);
+                OnChange();
             }
-            this._alignment = alignment;
-            OnChange();
         }
 
         /// <summary>
@@ -183,7 +183,9 @@ namespace OptionalUI
                 string ml;
                 if (this.IsLong) { ml = _text; }
                 else { ml = _text.Length < LabelTest.CharLimit(_bigText) ? _text : _text.Substring(0, LabelTest.CharLimit(_bigText)); }
+
                 char[] array = ml.ToCharArray();
+                // Debug.LogWarning($"({this.IsLong}){array.Length}:\n[{ml}]");
                 int d = 0; bool f = true; int l = 0; string t = "";
                 do
                 {

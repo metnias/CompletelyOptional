@@ -157,7 +157,7 @@ namespace OptionalUI
         /// <summary>
         /// Whether the Sound Engine is full or not. See also <seealso cref="soundFill"/> for example.
         /// </summary>
-        public static bool soundFilled => soundFill > UIelement.FrameMultiply(80);
+        public static bool soundFilled => soundFill > UIelement.FrameMultiply(80) || ConfigMenu.mute;
 
         /// <summary>
         /// Whether the mod is configurable or not.

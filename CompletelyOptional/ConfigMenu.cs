@@ -109,6 +109,7 @@ namespace CompletelyOptional
         };
 
         public static bool redUnlocked;
+        public static bool mute;
 
         public void Initialize() //UI
         {
@@ -119,6 +120,7 @@ namespace CompletelyOptional
             }
 
             instance = this;
+            mute = true;
 
             if (!redUnlocked)
             { this.scene = new InteractiveMenuScene(this, this.pages[0], (MenuScene.SceneID)(bgList[Mathf.FloorToInt(UnityEngine.Random.value * (bgList.Length))])); }
@@ -180,6 +182,7 @@ namespace CompletelyOptional
 
             // Initialize
             OptionScript.loadedInterfaceDict.Remove(InternalTranslator.Translate("Mod List")); // Remove old Mod List
+            List<UnconfiguableOI> replacedOIs = new List<UnconfiguableOI>();
             foreach (string id in OptionScript.loadedInterfaceDict.Keys)
             {
                 OptionInterface itf = OptionScript.loadedInterfaceDict[id];
@@ -209,10 +212,14 @@ namespace CompletelyOptional
                 continue;
 
             replaced:
-                OptionScript.loadedInterfaceDict.Remove(id);
-                OptionScript.loadedInterfaceDict.Add(id, itf);
                 itf.Initialize();
                 itfs.Add(itf);
+                replacedOIs.Add(itf as UnconfiguableOI);
+            }
+            foreach (UnconfiguableOI itf in replacedOIs)
+            {
+                OptionScript.loadedInterfaceDict.Remove(itf.rwMod.ModID);
+                OptionScript.loadedInterfaceDict.Add(itf.rwMod.ModID, itf);
             }
 
             // Remove Excess
@@ -351,6 +358,8 @@ namespace CompletelyOptional
             this.selectedObject = this.backButton;
 
             OptionScript.configChanged = false;
+
+            mute = false;
         }
 
         public static bool scrollMode { get; private set; }

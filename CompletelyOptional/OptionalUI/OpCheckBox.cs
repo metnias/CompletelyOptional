@@ -124,7 +124,11 @@ namespace OptionalUI
                     {
                         this.held = false;
                         this.valueBool = !this.valueBool;
-                        menu.PlaySound(!this.valueBool ? SoundID.MENU_Checkbox_Check : SoundID.MENU_Checkbox_Uncheck);
+                        if (!OptionInterface.soundFilled)
+                        {
+                            OptionInterface.soundFill += 6;
+                            menu.PlaySound(!this.valueBool ? SoundID.MENU_Checkbox_Check : SoundID.MENU_Checkbox_Uncheck);
+                        }
                     }
                 }
             }
