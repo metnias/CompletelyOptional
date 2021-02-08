@@ -1,5 +1,4 @@
-﻿using Menu;
-using OptionalUI;
+﻿using OptionalUI;
 using Partiality.Modloader;
 using RWCustom;
 using System;

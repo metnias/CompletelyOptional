@@ -184,57 +184,7 @@ namespace OptionalUI
                 if (this.IsLong) { ml = _text; }
                 else { ml = _text.Length < LabelTest.CharLimit(_bigText) ? _text : _text.Substring(0, LabelTest.CharLimit(_bigText)); }
 
-                char[] array = ml.ToCharArray();
-                // Debug.LogWarning($"({this.IsLong}){array.Length}:\n[{ml}]");
-                int d = 0; bool f = true; int l = 0; string t = "";
-                do
-                {
-                    if (f)
-                    { //forward
-                        if (array[d] == '\n') { l = 0; t = ""; d++; continue; }
-                        if (l == 0)
-                        { // optimize
-                            l = Mathf.FloorToInt(_size.x / LabelTest.CharMean(_bigText));
-                            bool e;
-                            do
-                            {
-                                e = false;
-                                t = "";
-                                l = Mathf.FloorToInt(l * 0.9f);
-                                for (int q = 0; q < l; q++)
-                                {
-                                    if (array.Length <= d + q) { e = true; l = q; break; }
-                                    if (array[d + q] == '\n') { l = 0; t = ""; d += q; goto optiSkip; }
-                                    t += array[d + q];
-                                }
-                            }
-                            while (LabelTest.GetWidth(t, _bigText) > _size.x);
-                            if (e) { break; } // no longer need to check linebreak
-                            // Debug.Log($"autoWrap skip) d: {d}, l: {l}, t(l {t.Length}): {t}");
-                            d += l;
-                        optiSkip:
-                            continue;
-                        }
-                        t += array[d];
-                        if (LabelTest.GetWidth(t, _bigText) < _size.x) { l++; d++; continue; }
-                        else { f = false; continue; }
-                    }
-                    else
-                    { //backward
-                        if (l < 0 || d < 0)
-                        { // No Spacing in between; force linebreak
-                            l = 0; d += t.Length; f = true;
-                            string temp = new string(array);
-                            temp = temp.Insert(d - 1, "\n");
-                            array = temp.ToCharArray(); continue;
-                        }
-                        else if (char.IsWhiteSpace(array[d])) { array[d] = '\n'; l = 0; t = ""; d++; f = true; continue; }
-                        l--; d--;
-                        continue;
-                    }
-                } while (d < array.Length);
-
-                this._displayText = new string(array);
+                this._displayText = LabelTest.WrapText(ml, _bigText, _size.x);
             }
         displaySkip:
             if (this.IsLong) { return; }

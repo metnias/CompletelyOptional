@@ -7,8 +7,8 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.5.1.5")]
-[assembly: AssemblyFileVersion("1.5.1.5")]
+[assembly: AssemblyVersion("1.5.2.0")]
+[assembly: AssemblyFileVersion("1.5.2.0")]
 
 namespace CompletelyOptional
 {
@@ -20,7 +20,7 @@ namespace CompletelyOptional
         public OptionMod()
         {
             ModID = "ConfigMachine";
-            Version = "1515"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
+            Version = "1520"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
             author = "topicular";
             instance = this;
         }

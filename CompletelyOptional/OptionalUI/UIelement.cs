@@ -216,12 +216,17 @@ namespace OptionalUI
             }
             set
             {
-                if (fixedSize != null) { _size = fixedSize.Value; OnChange(); }
+                if (fixedSize != null)
+                {
+                    _size = new Vector2(Mathf.Max(value.x, 0f), Mathf.Max(value.y, 0f));
+                    if (fixedSize.Value.x > 0f) { _size.x = fixedSize.Value.x; }
+                    if (fixedSize.Value.y > 0f) { _size.y = fixedSize.Value.y; }
+                }
                 else if (_size != value)
                 {
                     _size = new Vector2(Mathf.Max(value.x, 0f), Mathf.Max(value.y, 0f));
-                    if (_init) { OnChange(); }
                 }
+                if (_init) { OnChange(); }
             }
         }
 

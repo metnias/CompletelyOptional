@@ -1,6 +1,8 @@
 ﻿using CompletelyOptional;
 using Menu;
+using System.Collections.Generic;
 using System.Reflection;
+using System.Text;
 using UnityEngine;
 
 namespace OptionalUI
@@ -96,12 +98,85 @@ namespace OptionalUI
         /// <returns>Text width in pxl</returns>
         public static float GetWidth(string text, bool bigText)
         {
+            /*
             if (!hasChecked) { return CharMean(bigText) * text.Length; }
             MenuLabel l = !bigText ? tester : testerB;
             l.text = text;
-            return l.label.textRect.width;
+            return l.label.textRect.width;*/
+
+            FFont font = Futile.atlasManager.GetFontWithName(GetFont(bigText));
+            float width = 0f;
+            foreach (var item in font.GetQuadInfoForText(text, new FTextParams()))
+            { width = Mathf.Max(width, item.bounds.width); }
+            return width;
         }
 
-        //public static void
+        /// <summary>
+        /// Wraps text by dual curly potato noodles
+        /// </summary>
+        /// <param name="text">Text you want to wrap</param>
+        /// <param name="bigText">Whether the font is big variant or not</param>
+        /// <param name="width">Pixel width</param>
+        /// <returns></returns>
+        public static string WrapText(this string text, bool bigText, float width)
+        {
+            StringBuilder ret = new StringBuilder(text);
+            FFont font = Futile.atlasManager.GetFontWithName(GetFont(bigText));
+
+            List<FLetterQuad> quads = new List<FLetterQuad>();
+            foreach (var item in font.GetQuadInfoForText(text, new FTextParams()))
+            {
+                quads.AddRange(item.quads);
+                quads.Add(new FLetterQuad() { charInfo = new FCharInfo() }); // Placeholders for newlines
+            }
+
+            int lastStartLineIndex = 0;
+            int lastWhitespaceIndex = -1;
+            for (int i = 0; i < text.Length; i++)
+            {
+                void TrimWhitespace()
+                {
+                    while (i < text.Length - 1 && text[i] != '\n' && char.IsWhiteSpace(text[i]))
+                    {
+                        i++;
+                    }
+                }
+
+                var lineWidth = quads[i].rect.x + quads[i].rect.width - (quads[lastStartLineIndex].rect.x + quads[lastStartLineIndex].rect.width);
+
+                var curChar = ret[i];
+                if (curChar == '\n')
+                {
+                    TrimWhitespace(); // Trim line-ending whitespace
+                    lastWhitespaceIndex = -1;
+                    lastStartLineIndex = i;
+                    continue;
+                }
+
+                if (lineWidth < 0.01f)
+                {
+                    TrimWhitespace(); // Trim line-starting whitespace
+                }
+                else if (char.IsWhiteSpace(curChar))
+                {
+                    lastWhitespaceIndex = i;
+                }
+
+                if (lineWidth > width)
+                {
+                    if (lastWhitespaceIndex == -1)
+                    {
+                        ret.Insert(i + 1, '\n');
+                    }
+                    else
+                    {
+                        ret.Insert(lastWhitespaceIndex + 1, '\n');
+                        i = lastWhitespaceIndex;
+                    }
+                    continue;
+                }
+            }
+            return ret.ToString();
+        }
     }
 }

@@ -86,7 +86,7 @@ namespace OptionalUI
                         this.labels[b].pos.x = this.pos.x + this.size.x * 0.5f;
                         break;
                 }
-                this.labels[b].size.x = this.size.x;
+                this.labels[b].size.x = this._size.x;
                 this.labels[b].size.y = ln * lineHeight;
                 num += ln;
                 switch (this.verticalAlignment)

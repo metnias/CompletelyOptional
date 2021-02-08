@@ -1,4 +1,9 @@
-﻿###1.5.1: No longer Beta#!#20210207#!#
+﻿###1.5.2#!#20210208#!#
+- Optimised OpLabel.autoWrap significantly
+ + With help of dual curly potato noodles (and others)
+ + GetWidth is also optimised
+ + This also fixes rare crash with autoWrap
+###1.5.1: No longer Beta#!#20210207#!#
 - Changed access keywords of many properties and methods
  + Methods that shouldn't be called by the modders are now internal instead of public
  + UIconfig._value is now protected internal instead of private
@@ -13,8 +18,6 @@
 1.5.1.4
 - Hopefully fixed Mod List button showing up twice
 - Renamed Tab names for Mod List to avoid cluttering
-1.5.1.5
-- Menu sounds won't play when Config Menu is initializing
 ###1.5: Blepping Board Update#!#20210104#!#
 - Received many bits of help from Garrakx and Slime_Cubed for this update. Thank you!
 - Supports BepInEx plugins (BaseUnityPlugin)
