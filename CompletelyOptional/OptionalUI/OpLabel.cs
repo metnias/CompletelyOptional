@@ -188,6 +188,24 @@ namespace OptionalUI
             }
         displaySkip:
             if (this.IsLong) { return; }
+            if (this.GetLineCount() > 10)
+            {
+                int IndexOfOccurence(int occurence)
+                {
+                    int i = 1;
+                    int index = 0;
+
+                    while (i <= occurence && (index = _displayText.IndexOf('\n', index + 1)) != -1)
+                    {
+                        if (i == occurence)
+                            return index;
+                        i++;
+                    }
+                    return -1;
+                }
+                int sp = IndexOfOccurence(10);
+                if (sp > 0) { _displayText = _displayText.Substring(0, sp); }
+            }
             this.label.text = this._displayText;
             this.label.size = this.size;
             switch (this._alignment)

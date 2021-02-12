@@ -112,13 +112,25 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Wraps text by dual curly potato noodles
+        /// Text wrapper by <c>dual curly potato noodles</c>
         /// </summary>
         /// <param name="text">Text you want to wrap</param>
         /// <param name="bigText">Whether the font is big variant or not</param>
         /// <param name="width">Pixel width</param>
         /// <returns></returns>
         public static string WrapText(this string text, bool bigText, float width)
+        {
+            string[] lines = text.Split('\n');
+            StringBuilder ret = new StringBuilder();
+            for (int i = 0; i < lines.Length; i++)
+            {
+                ret.Append(ActualWrapText(lines[i], bigText, width));
+                if (i < lines.Length - 1) { ret.Append('\n'); }
+            }
+            return ret.ToString();
+        }
+
+        private static string ActualWrapText(this string text, bool bigText, float width)
         {
             StringBuilder ret = new StringBuilder(text);
             FFont font = Futile.atlasManager.GetFontWithName(GetFont(bigText));
