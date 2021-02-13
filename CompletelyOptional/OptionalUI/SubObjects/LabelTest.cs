@@ -120,10 +120,19 @@ namespace OptionalUI
         /// <returns></returns>
         public static string WrapText(this string text, bool bigText, float width)
         {
-            string ActualWrapText(string t)
+            FFont font = Futile.atlasManager.GetFontWithName(GetFont(bigText));
+            string[] lines = text.Replace("\r\n", "\n").Split('\n');
+            StringBuilder ret = new StringBuilder();
+            for (int i = 0; i < lines.Length; i++)
             {
-                StringBuilder r = new StringBuilder(t); // = t.Replace("\r\n", "\n")
-                FFont font = Futile.atlasManager.GetFontWithName(GetFont(bigText));
+                ret.Append(WrapLine(lines[i]));
+                if (i < lines.Length - 1) { ret.Append('\n'); }
+            }
+            return ret.ToString();
+
+            string WrapLine(string t)
+            {
+                StringBuilder r = new StringBuilder(t);
 
                 List<FLetterQuad> quads = new List<FLetterQuad>();
                 foreach (var item in font.GetQuadInfoForText(t, new FTextParams()))
@@ -136,51 +145,50 @@ namespace OptionalUI
                 int lastWhitespaceIndex = -1;
                 for (int i = 0; i < t.Length; i++)
                 {
-                    void TrimWhitespace(int j)
+                    void TrimWhitespace()
                     {
-                        int start = j;
-                        while (j < t.Length && t[j] != '\n' && char.IsWhiteSpace(t[j]))
+                        while (i < t.Length - 1 && t[i] != '\n' && char.IsWhiteSpace(t[i]))
                         {
-                            j++;
+                            i++;
                         }
-                        r.Remove(start, j - start);
                     }
 
                     var lineWidth = quads[i].rect.x + quads[i].rect.width - (quads[lastStartLineIndex].rect.x + quads[lastStartLineIndex].rect.width);
 
                     var curChar = r[i];
-                    if (lineWidth > width)
+                    if (curChar == '\n')
                     {
-                        lastStartLineIndex = lastWhitespaceIndex == -1 ? i + 1 : lastWhitespaceIndex + 1;
-                        lastWhitespaceIndex = -1;
-
-                        r.Insert(lastStartLineIndex, '\n');
-                        quads.Insert(lastStartLineIndex + 1, quads[lastStartLineIndex]);
-
-                        // Trim auto-linebreaks so there isn't extra space at the beginning of a line
-                        TrimWhitespace(lastStartLineIndex);
-                    }
-                    else if (curChar == '\n')
-                    {
+                        TrimWhitespace(); // Trim line-ending whitespace
                         lastWhitespaceIndex = -1;
                         lastStartLineIndex = i;
+                        continue;
+                    }
+
+                    if (lineWidth < 0.01f)
+                    {
+                        TrimWhitespace(); // Trim line-starting whitespace
                     }
                     else if (char.IsWhiteSpace(curChar))
                     {
                         lastWhitespaceIndex = i;
                     }
+
+                    if (lineWidth > width)
+                    {
+                        if (lastWhitespaceIndex == -1)
+                        {
+                            r.Insert(i + 1, '\n');
+                        }
+                        else
+                        {
+                            r.Insert(lastWhitespaceIndex + 1, '\n');
+                            i = lastWhitespaceIndex;
+                        }
+                        continue;
+                    }
                 }
                 return r.ToString();
             }
-
-            string[] lines = text.Replace("\r\n", "\n").Split('\n');
-            StringBuilder ret = new StringBuilder();
-            for (int i = 0; i < lines.Length; i++)
-            {
-                ret.Append(ActualWrapText(lines[i]));
-                if (i < lines.Length - 1) { ret.Append('\n'); }
-            }
-            return ret.ToString();
         }
     }
 }
