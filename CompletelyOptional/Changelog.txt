@@ -1,9 +1,9 @@
-﻿###1.5.2#!#20210212#!#
+﻿###1.5.2#!#20210213#!#
 - Optimised OpLabel.autoWrap significantly
  + With help of dual curly potato noodles (and others)
  + GetWidth is also optimised
  + This also fixes rare crash with autoWrap
-1.5.2.1
+1.5.2.2
 - Fixed ArgumentOutOfRangeException with OpLabel.OnChange
 - Added 10 line count limit to normal OpLabel to prevent Futile crash
 ###1.5.1: No longer Beta#!#20210207#!#

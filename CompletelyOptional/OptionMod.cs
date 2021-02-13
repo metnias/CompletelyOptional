@@ -7,8 +7,8 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.5.2.1")]
-[assembly: AssemblyFileVersion("1.5.2.1")]
+[assembly: AssemblyVersion("1.5.2.2")]
+[assembly: AssemblyFileVersion("1.5.2.2")]
 
 namespace CompletelyOptional
 {
@@ -20,7 +20,7 @@ namespace CompletelyOptional
         public OptionMod()
         {
             ModID = "ConfigMachine";
-            Version = "1521"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
+            Version = "1522"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
             author = "topicular";
             instance = this;
         }
@@ -35,7 +35,7 @@ namespace CompletelyOptional
 
         // Version - increase this by 1 when you upload a new version of the mod.
         // The first upload should be with version 0, the next version 1, the next version 2, etc.
-        public int version = 49;
+        public int version = 50;
 
         // Public key in base64 - don't touch!
         public string keyE = "AQAB";

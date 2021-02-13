@@ -120,73 +120,65 @@ namespace OptionalUI
         /// <returns></returns>
         public static string WrapText(this string text, bool bigText, float width)
         {
-            string[] lines = text.Split('\n');
+            string ActualWrapText(string t)
+            {
+                StringBuilder r = new StringBuilder(t); // = t.Replace("\r\n", "\n")
+                FFont font = Futile.atlasManager.GetFontWithName(GetFont(bigText));
+
+                List<FLetterQuad> quads = new List<FLetterQuad>();
+                foreach (var item in font.GetQuadInfoForText(t, new FTextParams()))
+                {
+                    quads.AddRange(item.quads);
+                    quads.Add(new FLetterQuad() { charInfo = new FCharInfo() }); // Placeholders for newlines
+                }
+
+                int lastStartLineIndex = 0;
+                int lastWhitespaceIndex = -1;
+                for (int i = 0; i < t.Length; i++)
+                {
+                    void TrimWhitespace(int j)
+                    {
+                        int start = j;
+                        while (j < t.Length && t[j] != '\n' && char.IsWhiteSpace(t[j]))
+                        {
+                            j++;
+                        }
+                        r.Remove(start, j - start);
+                    }
+
+                    var lineWidth = quads[i].rect.x + quads[i].rect.width - (quads[lastStartLineIndex].rect.x + quads[lastStartLineIndex].rect.width);
+
+                    var curChar = r[i];
+                    if (lineWidth > width)
+                    {
+                        lastStartLineIndex = lastWhitespaceIndex == -1 ? i + 1 : lastWhitespaceIndex + 1;
+                        lastWhitespaceIndex = -1;
+
+                        r.Insert(lastStartLineIndex, '\n');
+                        quads.Insert(lastStartLineIndex + 1, quads[lastStartLineIndex]);
+
+                        // Trim auto-linebreaks so there isn't extra space at the beginning of a line
+                        TrimWhitespace(lastStartLineIndex);
+                    }
+                    else if (curChar == '\n')
+                    {
+                        lastWhitespaceIndex = -1;
+                        lastStartLineIndex = i;
+                    }
+                    else if (char.IsWhiteSpace(curChar))
+                    {
+                        lastWhitespaceIndex = i;
+                    }
+                }
+                return r.ToString();
+            }
+
+            string[] lines = text.Replace("\r\n", "\n").Split('\n');
             StringBuilder ret = new StringBuilder();
             for (int i = 0; i < lines.Length; i++)
             {
-                ret.Append(ActualWrapText(lines[i], bigText, width));
+                ret.Append(ActualWrapText(lines[i]));
                 if (i < lines.Length - 1) { ret.Append('\n'); }
-            }
-            return ret.ToString();
-        }
-
-        private static string ActualWrapText(this string text, bool bigText, float width)
-        {
-            StringBuilder ret = new StringBuilder(text);
-            FFont font = Futile.atlasManager.GetFontWithName(GetFont(bigText));
-
-            List<FLetterQuad> quads = new List<FLetterQuad>();
-            foreach (var item in font.GetQuadInfoForText(text, new FTextParams()))
-            {
-                quads.AddRange(item.quads);
-                quads.Add(new FLetterQuad() { charInfo = new FCharInfo() }); // Placeholders for newlines
-            }
-
-            int lastStartLineIndex = 0;
-            int lastWhitespaceIndex = -1;
-            for (int i = 0; i < text.Length; i++)
-            {
-                void TrimWhitespace()
-                {
-                    while (i < text.Length - 1 && text[i] != '\n' && char.IsWhiteSpace(text[i]))
-                    {
-                        i++;
-                    }
-                }
-
-                var lineWidth = quads[i].rect.x + quads[i].rect.width - (quads[lastStartLineIndex].rect.x + quads[lastStartLineIndex].rect.width);
-
-                var curChar = ret[i];
-                if (curChar == '\n')
-                {
-                    TrimWhitespace(); // Trim line-ending whitespace
-                    lastWhitespaceIndex = -1;
-                    lastStartLineIndex = i;
-                    continue;
-                }
-
-                if (lineWidth < 0.01f)
-                {
-                    TrimWhitespace(); // Trim line-starting whitespace
-                }
-                else if (char.IsWhiteSpace(curChar))
-                {
-                    lastWhitespaceIndex = i;
-                }
-
-                if (lineWidth > width)
-                {
-                    if (lastWhitespaceIndex == -1)
-                    {
-                        ret.Insert(i + 1, '\n');
-                    }
-                    else
-                    {
-                        ret.Insert(lastWhitespaceIndex + 1, '\n');
-                        i = lastWhitespaceIndex;
-                    }
-                    continue;
-                }
             }
             return ret.ToString();
         }
