@@ -52,10 +52,10 @@ namespace OptionalUI
             base.UpdateLocalVertices();
         }
 
-        protected static uint garbage = 0;
+        internal static uint garbage = 0;
 
-        protected string _salt;
-        protected int _seed;
+        private string _salt;
+        private int _seed;
 
         /// <summary>
         /// Randomly generated salt to prevent duplicate <see cref="FAtlasElement"/> name

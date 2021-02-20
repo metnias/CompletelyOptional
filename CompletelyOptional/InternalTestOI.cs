@@ -29,14 +29,10 @@ namespace CompletelyOptional
             this.Tabs[1] = new OpTab("TEST1");
             this.Tabs[2] = new OpTab("TESTSCROLL");
 
-            string v = string.Concat(Environment.NewLine, "ConfigMachine Version", ": ");
-            v += OptionMod.instance.Version.Substring(0, 1);
-            for (int i = 1; i < OptionMod.instance.Version.Length; i++) { v += string.Concat(".", OptionMod.instance.Version.Substring(i, 1)); }
-
             Tabs[0].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
-                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), v, FLabelAlignment.Right));
+                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), MenuTab.GetCMVersion(), FLabelAlignment.Right));
             Tabs[1].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
-                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), v, FLabelAlignment.Right));
+                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), MenuTab.GetCMVersion(), FLabelAlignment.Right));
 
             #endregion init
 
@@ -68,9 +64,8 @@ namespace CompletelyOptional
 
             OpCheckBox chk = new OpCheckBox(new Vector2(100f, 420f), "_", true);
             Tabs[1].AddItems(chk, new OpLabel(new Vector2(100f, 470f), new Vector2(50f, 15f), "CheckBox") { bumpBehav = chk.bumpBehav });
-            Tabs[1].AddItems(new OpColorPicker(new Vector2(50f, 220f), "_", "CC00CC"));
-            Tabs[1].AddItems(new OpColorPicker(new Vector2(220f, 220f), "_", "CC00CC"));
-            Tabs[1].AddItems(new OpColorPicker(new Vector2(390f, 220f), "_", "CC00CC"));
+            Tabs[1].AddItems(new OpUpdown(new Vector2(50f, 220f), 150f, "_", 10));
+            Tabs[1].AddItems(new OpUpdown(new Vector2(250f, 220f), 150f, "_", 10.0f, 1));
 
             OpRadioButtonGroup group = new OpRadioButtonGroup("_");
             Tabs[1].AddItems(group);
@@ -80,7 +75,7 @@ namespace CompletelyOptional
             OpScrollBox sb = new OpScrollBox(Tabs[2], 2400f, false);
             // Use OpScrollBox.AddItems instead of OpTab.AddItems.
             sb.AddItems(new OpLabel(new Vector2(100f, 540f + 1800f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
-                    new OpLabel(new Vector2(420f, 510f + 1800f), new Vector2(100f, 20f), v, FLabelAlignment.Right));
+                    new OpLabel(new Vector2(420f, 510f + 1800f), new Vector2(100f, 20f), MenuTab.GetCMVersion(), FLabelAlignment.Right));
             sb.AddItems(new OpImage(new Vector2(420f, 50f), t));
             //sb.AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
             //Tabs[2].AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
@@ -125,10 +120,6 @@ namespace CompletelyOptional
             sb.AddItems(cb, new OpLabel(350f, 1050f, "DefinedOrder") { bumpBehav = cb.bumpBehav });
             sb.AddItems(new OpResourceSelector(new Vector2(200f, 900f), 200f, "", typeof(CreatureTemplate.Type)));
 
-            sb.AddItems(new OpHoldButton(new Vector2(400f, 400f), "", "Button", 50f));
-            prg = new OpHoldButton(new Vector2(200f, 400f), "", "Button") { color = new Color(1f, 0.5f, 1f) };
-            sb.AddItems(prg);
-
             // Use OpScrollBox.AddItems instead of OpTab.AddItems.
             /*
             OpResourceSelector rs = new OpResourceSelector(new Vector2(100f, 1600f), new Vector2(200f, 30f), "", typeof(CreatureTemplate.Type));
@@ -147,13 +138,9 @@ namespace CompletelyOptional
             sb.AddItems(rs, new OpLabel(100f, 1030f, "Songs") { bumpBehav = rs.bumpBehav });*/
         }
 
-        private OpHoldButton prg;
-
         public override void Update(float dt)
         {
             base.Update(dt);
-            prg.SetProgress(prg.progress >= 100f ? 0f : prg.progress + (0.3f + UnityEngine.Random.value * 0.1f) * UIelement.DTMultiply(dt));
-            prg.GrafUpdate(dt);
         }
     }
 }

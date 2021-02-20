@@ -18,7 +18,7 @@ namespace OptionalUI
         /// <summary>
         /// Initializes this class; Do NOT call this on your own
         /// </summary>
-        public static void Initialize(Menu.Menu menu)
+        internal static void Initialize(Menu.Menu menu)
         {
             tester = new MenuLabel(menu, menu.pages[0], "A", new Vector2(10000f, 10000f), new Vector2(10000f, 100f), false);
             tester.label.alpha = 0f; tester.label.RemoveFromContainer();

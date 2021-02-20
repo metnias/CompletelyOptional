@@ -77,8 +77,8 @@ namespace CompletelyOptional
 
         public static string GetCMVersion()
         {
-            string v = OptionMod.instance.Version.Substring(0, 1);
-            for (int i = 1; i < OptionMod.instance.Version.Length; i++) { v += string.Concat(".", OptionMod.instance.Version.Substring(i, 1)); }
+            string v = OptionMod.ver; // OptionMod.instance.Version.Substring(0, 1);
+            // for (int i = 1; i < OptionMod.instance.Version.Length; i++) { v += string.Concat(".", OptionMod.instance.Version.Substring(i, 1)); }
             return InternalTranslator.Translate("Version: <ModVersion>").Replace("<ModVersion>", v);
         }
 

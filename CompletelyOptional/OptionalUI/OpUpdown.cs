@@ -17,14 +17,15 @@ namespace OptionalUI
         {
             if (!_init) { return; }
             this.Initialize();
-            throw new NotImplementedException("OpUpdown might come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
+            // throw new NotImplementedException("OpUpdown might come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
         }
 
-        public OpUpdown(Vector2 pos, float sizeX, string key, float defaultFloat, int decimalNum) : base(pos, sizeX, key, defaultFloat.ToString(), Accept.Float)
+        public OpUpdown(Vector2 pos, float sizeX, string key, float defaultFloat, int decimalNum = 1) : base(pos, sizeX, key, defaultFloat.ToString(), Accept.Float)
         {
+            dNum = decimalNum;
             if (!_init) { return; }
             this.Initialize();
-            throw new NotImplementedException("OpUpdown might come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
+            // throw new NotImplementedException("OpUpdown might come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
         }
 
         private void Initialize()
@@ -40,22 +41,23 @@ namespace OptionalUI
             myContainer.AddChild(arrUp); myContainer.AddChild(arrDown);
         }
 
-        public void SetRange(int min, int max)
+        public void SetRange(int intMin, int intMax)
         {
-            iMin = min; iMax = max;
+            iMin = intMin; iMax = intMax;
             this.valueInt = Custom.IntClamp(this.valueInt, iMin, iMax);
         }
 
-        public void SetRange(float min, float max)
+        public void SetRange(float floatMin, float floatMax)
         {
-            fMin = min; fMax = max;
+            fMin = floatMin; fMax = floatMax;
             this.valueFloat = Mathf.Clamp(this.valueInt, fMin, fMax);
         }
 
         private DyeableRect rectUp, rectDown;
         private FSprite arrUp, arrDown;
-        private int iMin, iMax;
-        private float fMin, fMax;
+        private int iMin = int.MinValue, iMax = int.MaxValue;
+        private float fMin = float.MinValue, fMax = float.MaxValue;
+        private readonly int dNum;
 
         public bool isInt => this.accept == Accept.Int;
     }

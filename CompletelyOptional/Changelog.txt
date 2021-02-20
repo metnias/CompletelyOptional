@@ -1,11 +1,15 @@
-﻿###1.5.2#!#20210213#!#
+﻿###1.5.3#!#20210217#!#
+1.5.2.0
 - Optimised OpLabel.autoWrap significantly
  + With help of dual curly potato noodles (and others)
  + GetWidth is also optimised
  + This also fixes rare crash with autoWrap
-1.5.2.2
+1.5.2.1
 - Fixed ArgumentOutOfRangeException with OpLabel.OnChange
 - Added 10 line count limit to normal OpLabel to prevent Futile crash
+1.5.3.0
+- Added OpUpdown as a new provided UIconfig
+ + Textbox with arrows, specialized for accepting a large range of number.
 ###1.5.1: No longer Beta#!#20210207#!#
 - Changed access keywords of many properties and methods
  + Methods that shouldn't be called by the modders are now internal instead of public

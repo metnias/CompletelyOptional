@@ -7,8 +7,8 @@ using System.Linq;
 using System.Reflection;
 using UnityEngine;
 
-[assembly: AssemblyVersion("1.5.2.2")]
-[assembly: AssemblyFileVersion("1.5.2.2")]
+[assembly: AssemblyVersion(CompletelyOptional.OptionMod.ver)]
+[assembly: AssemblyFileVersion(CompletelyOptional.OptionMod.ver)]
 
 namespace CompletelyOptional
 {
@@ -17,15 +17,17 @@ namespace CompletelyOptional
     /// </summary>
     public class OptionMod : PartialityMod
     {
+        public const string ver = "1.5.3.0";
+
         public OptionMod()
         {
             ModID = "ConfigMachine";
-            Version = "1522"; //Assembly.GetEntryAssembly().GetName().Version.ToString();
+            Version = ver; //Assembly.GetEntryAssembly().GetName().Version.ToString();
             author = "topicular";
             instance = this;
         }
 
-        public const bool testing = false;
+        public const bool testing = true;
         public const bool soundTestEnabled = false;
 
         // Update URL - don't touch!
