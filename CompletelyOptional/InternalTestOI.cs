@@ -64,12 +64,9 @@ namespace CompletelyOptional
 
             OpCheckBox chk = new OpCheckBox(new Vector2(100f, 420f), "_", true);
             Tabs[1].AddItems(chk, new OpLabel(new Vector2(100f, 470f), new Vector2(50f, 15f), "CheckBox") { bumpBehav = chk.bumpBehav });
-            Tabs[1].AddItems(new OpUpdown(new Vector2(50f, 220f), 150f, "_", 10));
-            Tabs[1].AddItems(new OpUpdown(new Vector2(250f, 220f), 150f, "_", 10.0f, 1));
-
-            OpRadioButtonGroup group = new OpRadioButtonGroup("_");
-            Tabs[1].AddItems(group);
-            group.SetButtons(new OpRadioButton[] { new OpRadioButton(300f, 450f), new OpRadioButton(350f, 450f) });
+            Tabs[1].AddItems(new OpUpdown(new Vector2(20f, 220f), 150f, "_", 10));
+            Tabs[1].AddItems(new OpUpdown(new Vector2(220f, 220f), 150f, "_", 20.0f, 1));
+            Tabs[1].AddItems(new OpTextBox(new Vector2(420f, 220f), 150f, "_", "30", OpTextBox.Accept.Int));
 
             // For canvas-sized ScrollBox
             OpScrollBox sb = new OpScrollBox(Tabs[2], 2400f, false);

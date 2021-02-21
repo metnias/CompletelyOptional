@@ -13,14 +13,14 @@ namespace OptionalUI
         /// <summary>
         /// Simple TextBox.
         /// </summary>
-        /// <param name="pos">LeftBottom position.</param>
+        /// <param name="pos">LeftBottom <see cref="UIelement.pos"/>.</param>
         /// <param name="sizeX">Horizontal size (min = 30 pxl). The height is fixed to 24 pxl.</param>
         /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="defaultValue">Default string value</param>
         /// <param name="accept">Which type of text you want to <see cref="Accept"/></param>
         public OpTextBox(Vector2 pos, float sizeX, string key, string defaultValue = "TEXT", Accept accept = Accept.StringASCII) : base(pos, new Vector2(30f, 24f), key, defaultValue)
         {
-            this._size = new Vector2(Mathf.Max(30f, sizeX), 24f);
+            this._size = new Vector2(Mathf.Max(IsUpdown ? 40f : 30f, sizeX), IsUpdown ? 30f : 24f);
             this.description = InternalTranslator.Translate("Click and Type text");
 
             this.accept = accept;
@@ -42,7 +42,7 @@ namespace OptionalUI
             this.rect = new DyeableRect(menu, owner, this.pos, this.size, true) { fillAlpha = 0.5f };
             this.subObjects.Add(this.rect);
 
-            this.label = new MenuLabel(menu, owner, defaultValue, this.pos + new Vector2(5f - this._size.x * 0.5f, 12f), new Vector2(this._size.x, 16f), false);
+            this.label = new MenuLabel(menu, owner, defaultValue, this.pos + new Vector2(5f - this._size.x * 0.5f, IsUpdown ? 13f : 10f), new Vector2(this._size.x, 20f), false);
             this.label.label.alignment = FLabelAlignment.Left;
             this.label.label.SetAnchor(0f, 1f);
             this.label.label.color = this.colorText;
@@ -53,6 +53,11 @@ namespace OptionalUI
             cursor.SetPosition(LabelTest.GetWidth(value, false) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
             this.myContainer.AddChild(this.cursor);
         }
+
+        /// <summary>
+        /// Whether this is <see cref="OpUpdown"/> or not
+        /// </summary>
+        public bool IsUpdown => this is OpUpdown;
 
         /// <summary>
         /// MenuLabel of TextBox.
@@ -94,7 +99,7 @@ namespace OptionalUI
             base.GrafUpdate(dt);
             if (greyedOut)
             {
-                keyboardOn = false;
+                KeyboardOn = false;
                 this.label.label.color = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorText));
                 this.cursor.alpha = 0f;
                 this.rect.color = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorEdge));
@@ -106,7 +111,7 @@ namespace OptionalUI
             //this.label.label.color = grey;
             //this.rect.color = grey;
 
-            if (keyboardOn) { this.col = Mathf.Min(1f, this.bumpBehav.col + 0.1f); }
+            if (KeyboardOn) { this.col = Mathf.Min(1f, this.bumpBehav.col + 0.1f); }
             else { this.col = Mathf.Max(0f, this.bumpBehav.col - 0.0333333351f); }
 
             this.cursor.color = Color.Lerp(Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White), this.colorText, this.bumpBehav.Sin());
@@ -127,7 +132,7 @@ namespace OptionalUI
             this.bumpBehav.col = this.col;
             if (disabled) { return; }
 
-            if (keyboardOn)
+            if (KeyboardOn)
             {
                 cursor.alpha = Mathf.Clamp(cursorAlpha, 0f, 1f);
                 cursorAlpha -= 0.05f;
@@ -154,24 +159,7 @@ namespace OptionalUI
                     }
                     else if ((c == '\n') || (c == '\r')) // enter/return
                     {
-                        keyboardOn = false;
-                        this.cursor.isVisible = false;
-                        if (this.accept == Accept.Float)
-                        {
-                            if (!float.TryParse(this.value, out _))
-                            {
-                                for (int i = this.value.Length - 1; i > 0; i--)
-                                {
-                                    if (float.TryParse(this.value.Substring(0, i), out _))
-                                    {
-                                        this._value = this.value.Substring(0, i);
-                                        OnChange();
-                                        menu.PlaySound(SoundID.Mouse_Light_Switch_On);
-                                        return;
-                                    }
-                                }
-                            }
-                        }
+                        KeyboardOn = false;
                         menu.PlaySound(SoundID.MENU_Checkbox_Check);
                         break;
                     }
@@ -187,19 +175,38 @@ namespace OptionalUI
             if (Input.GetMouseButton(0) && !mouseDown)
             {
                 mouseDown = true;
-                if (MouseOver && !keyboardOn)
+                if (MouseOver && !KeyboardOn)
                 { //Turn on
                     menu.PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
-                    keyboardOn = true;
+                    KeyboardOn = true;
                     this.cursor.isVisible = true;
                     this.cursorAlpha = 1f;
                     cursor.SetPosition(LabelTest.GetWidth(this.label.text, false) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
                 }
-                else if (!MouseOver && keyboardOn)
+                else if (!MouseOver && KeyboardOn)
                 { //Shutdown
-                    keyboardOn = false;
+                    KeyboardOn = false;
+                    menu.PlaySound(SoundID.MENU_Checkbox_Uncheck);
+                }
+            }
+            else if (!Input.GetMouseButton(0))
+            {
+                mouseDown = false;
+            }
+        }
+
+        private bool mouseDown;
+        protected private bool KeyboardOn
+        {
+            get => this._keyboardOn;
+            set
+            {
+                if (this._keyboardOn == value) { return; }
+                this.held = value;
+                if (this._keyboardOn && !value)
+                {
                     this.cursor.isVisible = false;
-                    if (this.accept == Accept.Float)
+                    /* if (this.accept == Accept.Float)
                     {
                         if (!float.TryParse(this.value, out _))
                         {
@@ -214,18 +221,13 @@ namespace OptionalUI
                                 }
                             }
                         }
-                    }
-                    menu.PlaySound(SoundID.MENU_Checkbox_Uncheck);
+                    } */
                 }
-            }
-            else if (!Input.GetMouseButton(0))
-            {
-                mouseDown = false;
+                this._keyboardOn = value;
+                OnChange();
             }
         }
-
-        private bool mouseDown;
-        private bool keyboardOn { get => this.held; set => this.held = value; }
+        private bool _keyboardOn = false;
 
         /// <summary>
         /// If you want to hide what is written for whatever reason,
@@ -242,7 +244,7 @@ namespace OptionalUI
         /// <summary>
         /// Which type of string this accepts. See also <see cref="allowSpace"/>
         /// </summary>
-        public Accept accept;
+        public readonly Accept accept;
 
         /// <summary>
         /// maximum length. default is 100.
@@ -337,7 +339,8 @@ namespace OptionalUI
                 if (base.value == value) { return; }
                 _lastValue = base.value;
                 this._value = value;
-                if (!this.allowSpace)
+
+                if (this.accept == Accept.Int || this.accept == Accept.Float || !this.allowSpace)
                 {
                     char[] temp0 = base.value.ToCharArray();
                     for (int t = 0; t < temp0.Length; t++)
@@ -391,13 +394,18 @@ namespace OptionalUI
 
         public override void OnChange()
         {
-            this._size = new Vector2(Mathf.Max(30f, this._size.x), 24f);
+            this._size = new Vector2(Mathf.Max(IsUpdown ? 40f : 30f, this._size.x), IsUpdown ? 30f : 24f);
             base.OnChange();
             if (!_init) { return; }
 
             if (!this.password)
             {
-                this.label.text = this.value;
+                if (this is OpUpdown ud && !KeyboardOn)
+                {
+                    if (ud.IsInt) { this.label.text = valueInt.ToString("N0"); }
+                    else { this.label.text = valueFloat.ToString("N" + ud.dNum); }
+                }
+                else { this.label.text = this.value; }
             }
             else
             {
@@ -408,15 +416,15 @@ namespace OptionalUI
 
             this.rect.pos = this.pos;
             this.rect.size = this.size;
-            this.label.pos = this.pos + new Vector2(5f - this.size.x * 0.5f, 12f);
-            this.label.size = new Vector2(this._size.x, 16f);
+            this.label.pos = this.pos + new Vector2(5f - this.size.x * 0.5f, IsUpdown ? 13f : 10f);
+            this.label.size = new Vector2(this._size.x, 20f);
             this.cursor.SetPosition(LabelTest.GetWidth(this.label.text, false) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
         }
 
         public override void Hide()
         {
             base.Hide();
-            this.keyboardOn = false;
+            this.KeyboardOn = false;
             this.label.label.isVisible = false;
             this.cursor.isVisible = false;
             this.rect.Hide();
