@@ -161,7 +161,11 @@ namespace OptionalUI
                     if (num != valueInt)
                     {
                         this.bumpBehav.flash = 1f;
-                        this.menu.PlaySound(SoundID.MENU_Scroll_Tick);
+                        if (!_soundFilled)
+                        {
+                            _soundFill += 4;
+                            this.menu.PlaySound(SoundID.MENU_Scroll_Tick);
+                        }
                         this.bumpBehav.sizeBump = Mathf.Min(2.5f, this.bumpBehav.sizeBump + 1f);
                         this.valueInt = num;
                     }

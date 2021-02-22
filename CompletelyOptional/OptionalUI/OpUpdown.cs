@@ -58,6 +58,9 @@ namespace OptionalUI
         private float fMin = float.MinValue, fMax = float.MaxValue;
         protected internal readonly byte dNum;
         private BumpBehaviour bumpUp, bumpDown;
+        protected internal bool mouseOverArrow;
+        private int arrowCounter = 0, bumpCount, bumpDeci;
+        private Vector2 scrollHeldPos; private float scrollHeldTickPos;
 
         public override void OnChange()
         {
@@ -70,26 +73,29 @@ namespace OptionalUI
         public override void GrafUpdate(float dt)
         {
             base.GrafUpdate(dt);
-            arrUp.color = this.colorText; arrDown.color = this.colorText;
+            arrUp.color = bumpUp.GetColor(this.colorText);
+            arrDown.color = bumpDown.GetColor(this.colorText);
         }
 
         public override void Update(float dt)
         {
             if (!this.disabled)
             {
+                mouseOverArrow = false;
                 bumpUp.greyedOut = this.greyedOut; bumpDown.greyedOut = this.greyedOut;
                 bumpUp.MouseOver = false; bumpDown.MouseOver = false;
                 if (this.MousePos.x > this.size.x - 25f && this.MousePos.x < this.size.x - 5f)
                 {
                     if (this.MousePos.y > 5f)
                     {
-                        if (this.MousePos.y < 15f) { bumpDown.MouseOver = true; }
-                        else if (this.MousePos.y < 25f) { bumpUp.MouseOver = true; }
+                        if (this.MousePos.y < 15f) { bumpDown.MouseOver = true; mouseOverArrow = true; }
+                        else if (this.MousePos.y < 25f) { bumpUp.MouseOver = true; mouseOverArrow = true; }
                     }
                 }
             }
             else
             {
+                mouseOverArrow = false;
                 bumpUp.held = false; bumpDown.held = false;
                 bumpUp.greyedOut = true; bumpDown.greyedOut = true;
                 bumpUp.MouseOver = false; bumpDown.MouseOver = false;
@@ -97,6 +103,133 @@ namespace OptionalUI
             base.Update(dt);
             bumpUp.Update(dt); bumpDown.Update(dt);
             if (this.disabled) { return; }
+            byte bumpFlag = 200; // 200: no bump; 0: bump fail; 1: bump up; 2: bump down
+            if (held && !KeyboardOn)
+            {
+                mouseDown = Input.GetMouseButton(arrowCounter > 0 ? 0 : 2);
+                if (mouseDown)
+                {
+                    if (arrowCounter > 0) // arrow holding mode
+                    {
+                        arrowCounter--;
+                        if (arrowCounter < 1)
+                        {
+                            arrowCounter = FrameMultiply(8);
+                            bumpFlag = (byte)(TryBump(bumpUp.held) ? (bumpUp.held ? 1 : 2) : 0);
+                            if (bumpCount >= 10) { bumpCount = 1; bumpDeci++; }
+                        }
+                    }
+                    else // scrollwheel holding mode
+                    {
+                        if (Mathf.Abs(MousePos.y - scrollHeldTickPos) > 10f)
+                        {
+                            bool up = MousePos.y - scrollHeldTickPos > 0f;
+                            scrollHeldTickPos = MousePos.y;
+                            int deci = Custom.IntClamp(Mathf.FloorToInt((Mathf.Abs(MousePos.x - scrollHeldPos.x) - 50f) / 30f), 0, 9);
+                            if (IsInt)
+                            {
+                                int old = valueInt;
+                                valueInt += (int)Mathf.Pow(10, deci) * (up ? 1 : -1);
+                                // Debug.Log($"deci[{deci}]: {old} > {valueInt} ({(int)Mathf.Pow(10, deci) })");
+                                if (old != valueInt) { bumpFlag = (byte)(up ? 1 : 2); }
+                                else { bumpFlag = 0; }
+                            }
+                            else
+                            {
+                                float old = valueFloat;
+                                valueFloat += Mathf.Pow(10, deci - dNum) * (up ? 1 : -1);
+                                // Debug.Log($"deci[{deci - dNum}]: {old} > {valueFloat} ({Mathf.Pow(10, deci - dNum) })");
+                                if (old != valueFloat) { bumpFlag = (byte)(up ? 1 : 2); }
+                                else { bumpFlag = 0; }
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    //exit
+                    held = false;
+                    arrowCounter = 0;
+                    bumpUp.held = false; bumpDown.held = false;
+                }
+            }
+            else if (this.MouseOver && this.menu.mouseScrollWheelMovement != 0) // scroll mode
+            {
+                bumpDeci = IsInt ? 0 : -dNum;
+                bumpFlag = (byte)(TryBump(this.menu.mouseScrollWheelMovement < 0f) ? (this.menu.mouseScrollWheelMovement < 0f ? 1 : 2) : 0);
+            }
+            if (this.MouseOver && !mouseDown)
+            {
+                if (mouseOverArrow && Input.GetMouseButton(0))
+                {
+                    mouseDown = true; this.held = true;
+                    if (bumpUp.MouseOver) { bumpUp.held = true; bumpUp.flash = 2f; }
+                    else { bumpDown.held = true; bumpDown.flash = 2f; }
+                    arrowCounter = FrameMultiply(24);
+                    bumpCount = 0;
+                    bumpDeci = IsInt ? 0 : -dNum;
+                    bumpFlag = (byte)(TryBump(bumpUp.held) ? (bumpUp.held ? 1 : 2) : 0);
+                }
+                else if (Input.GetMouseButton(2))
+                {
+                    mouseDown = true; this.held = true;
+                    scrollHeldPos = MousePos;
+                    scrollHeldTickPos = scrollHeldPos.y;
+                    arrowCounter = -1;
+                    if (!_soundFilled)
+                    {
+                        _soundFill += 8;
+                        menu.PlaySound(SoundID.MENU_First_Scroll_Tick);
+                    }
+                }
+            }
+
+            #region BumpFlagReaction
+
+            if (bumpFlag < 200)
+            {
+                switch (bumpFlag)
+                {
+                    case 0: // bump fail
+                        if (!_soundFilled)
+                        {
+                            _soundFill += arrowCounter > 0 ? 8 : 6;
+                            menu.PlaySound(arrowCounter > 0 ? SoundID.MENU_Checkbox_Uncheck : SoundID.MENU_Scroll_Tick, 0f, 1f, 0.7f);
+                        }
+                        break;
+                    case 1: // bump up
+                    case 2: // bump down
+                        this.bumpBehav.flash = 1f;
+                        if (!_soundFilled)
+                        {
+                            _soundFill += arrowCounter > 0 ? 8 : 6;
+                            menu.PlaySound(arrowCounter > 0 ? SoundID.MENU_Checkbox_Uncheck : SoundID.MENU_Scroll_Tick);
+                        }
+                        if (bumpFlag == 1) { bumpUp.flash += 0.7f; }
+                        else { bumpDown.flash += 0.7f; }
+                        break;
+                }
+                this.bumpBehav.sizeBump = Mathf.Min(2.5f, this.bumpBehav.sizeBump + 1f);
+            }
+            #endregion BumpFlagReaction
+        }
+
+        private bool TryBump(bool plus)
+        {
+            if (IsInt)
+            {
+                int old = this.valueInt;
+                this.valueInt += (plus ? 1 : -1) * Mathf.RoundToInt(Mathf.Pow(10f, bumpDeci));
+                if (old != this.valueInt) { bumpCount++; return true; }
+                return false;
+            }
+            else
+            {
+                float old = this.valueFloat;
+                this.valueFloat += (plus ? 1f : -1f) * Mathf.Pow(10f, bumpDeci);
+                if (old != this.valueFloat) { bumpCount++; return true; }
+                return false;
+            }
         }
 
         /// <summary>

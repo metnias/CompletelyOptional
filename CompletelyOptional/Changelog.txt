@@ -9,7 +9,8 @@
 - Added 10 line count limit to normal OpLabel to prevent Futile crash
 1.5.3.0
 - Added OpUpdown as a new provided UIconfig
- + Textbox with arrows, specialized for accepting a large range of number.
+ + Textbox with arrows, specialized for accepting a large range of number
+ + Along with typing, you can use arrows button or scroll wheel to adjust the number
 - OpTextBox.Accept is now readonly and only can be set in its constructor.
 ###1.5.1: No longer Beta#!#20210207#!#
 - Changed access keywords of many properties and methods

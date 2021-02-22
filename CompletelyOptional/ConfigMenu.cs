@@ -122,12 +122,22 @@ namespace CompletelyOptional
             instance = this;
             mute = true;
 
-            if (!redUnlocked)
-            { this.scene = new InteractiveMenuScene(this, this.pages[0], (MenuScene.SceneID)(bgList[Mathf.FloorToInt(UnityEngine.Random.value * (bgList.Length))])); }
+#pragma warning disable CS0162 // 접근할 수 없는 코드가 있습니다.
+            if (!OptionMod.testing)
+            {
+                if (!redUnlocked)
+                { this.scene = new InteractiveMenuScene(this, this.pages[0], (MenuScene.SceneID)(bgList[Mathf.FloorToInt(UnityEngine.Random.value * (bgList.Length))])); }
+                else
+                { this.scene = new InteractiveMenuScene(this, this.pages[0], (MenuScene.SceneID)(bgListRed[Mathf.FloorToInt(UnityEngine.Random.value * (bgListRed.Length))])); }
+                Debug.Log(string.Concat("Chosen Background : " + this.scene.sceneID.ToString()));
+                this.pages[0].subObjects.Add(this.scene);
+            }
             else
-            { this.scene = new InteractiveMenuScene(this, this.pages[0], (MenuScene.SceneID)(bgListRed[Mathf.FloorToInt(UnityEngine.Random.value * (bgListRed.Length))])); }
-            Debug.Log(string.Concat("Chosen Background : " + this.scene.sceneID.ToString()));
-            this.pages[0].subObjects.Add(this.scene);
+            {
+                this.scene = new SlideShowMenuScene(this, this.pages[0], MenuScene.SceneID.Intro_4_Walking);
+                this.pages[0].subObjects.Add(this.scene);
+            }
+#pragma warning restore CS0162
 
             this.fadeSprite.RemoveFromContainer();
             this.pages[0].Container.AddChild(this.fadeSprite); //reset fadeSprite

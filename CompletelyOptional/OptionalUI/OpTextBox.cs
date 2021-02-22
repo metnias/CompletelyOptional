@@ -174,6 +174,7 @@ namespace OptionalUI
             else { cursorAlpha = 0f; }
             if (Input.GetMouseButton(0) && !mouseDown)
             {
+                if (this is OpUpdown ud && ud.mouseOverArrow) { return; }
                 mouseDown = true;
                 if (MouseOver && !KeyboardOn)
                 { //Turn on
@@ -195,7 +196,7 @@ namespace OptionalUI
             }
         }
 
-        private bool mouseDown;
+        protected internal bool mouseDown;
         protected private bool KeyboardOn
         {
             get => this._keyboardOn;
@@ -379,11 +380,11 @@ namespace OptionalUI
                 return;
 
             accepted:
-                if (Input.anyKey)
+                if (KeyboardOn && Input.anyKey)
                 {
                     if (!_soundFilled)
                     {
-                        _soundFill += 12;
+                        _soundFill += 8;
                         menu.PlaySound(SoundID.MENU_Checkbox_Uncheck);
                     }
                 }
@@ -450,7 +451,8 @@ namespace OptionalUI
 
         protected internal override bool CopyFromClipboard(string value)
         {
-            try { this.value = value; return this.value == value; }
+            if (!KeyboardOn) { return false; }
+            try { string old = this.value; this.value = value; return this.value != old; }
             catch { return false; }
         }
 
