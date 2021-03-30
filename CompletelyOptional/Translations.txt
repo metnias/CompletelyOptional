@@ -69,7 +69,7 @@ Use Scroll Wheel or Scrollbar to see more|kor$스크롤휠 또는 스크롤바�
 Use Scroll Wheel to see more|kor$스크롤휠을 사용해서 더 보기|spa$Usa le rueda del ratón para ver mas|fre$Utilisez la molette de la souris pour voir plus d'options|rus$Используйте полосу прокрутки, чтобы увидеть больше
 Click to open the list, Double Click to search|kor$클릭해서 목록을 펼치고, 더블클릭으로 검색|spa$Haz click para abrir la lista, doble click para buscar|fre$Cliquez pour ouvrir la liste, doucle-clic pour chercher|rus$Нажмите, чтобы открыть список, нажмите дважды для поиска
 Scroll the list, Double Click to search|kor$스크롤해서 목록을 보고, 더블클릭으로 검색
-Click and Type numbers, Use Arrows or Scrollwheel to Adjust|kor$클릭해서 키보드로 입력하거나, 화살표와 스크롤휠로 조정
+Click and Type numbers, Use Arrows or Scrollwheel to adjust|kor$클릭해서 키보드로 입력하거나, 화살표와 스크롤휠로 조정
 
 /// Hidden Comments ///
 also shoutout to RW Discord for helping me out|kor$제작을 도와준 레인월드 디스코드에게도 감사를.|spa$Gracias al Discord de RW por ayudarme.|fre$merci également au Discord Rain World pour m'avoir aidé|rus$также благодарю RW Discord за помощь

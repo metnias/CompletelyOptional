@@ -43,7 +43,7 @@ namespace OptionalUI
             // rectDown = new DyeableRect(menu, owner, this.pos + new Vector2(this.size.x - 20f, 3f), new Vector2(16f, 24f), true);
             // subObjects.Add(rectUp); subObjects.Add(rectDown);
 
-            this.description = InternalTranslator.Translate("Click and Type numbers, Use Arrows or Scrollwheel to Adjust");
+            this.description = InternalTranslator.Translate("Click and Type numbers, Use Arrows or Scrollwheel to adjust");
 
             arrUp = new FSprite("Big_Menu_Arrow", true)
             { scale = 0.5f, rotation = 0f, anchorX = 0.5f, anchorY = 0.5f, x = this.size.x - 15f, y = 20f, color = this.colorText };
