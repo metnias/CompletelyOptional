@@ -58,7 +58,7 @@ namespace OptionalUI
         {
             for (int i = 0; i < this.itemList.Length; i++)
             { this.itemList[i].index = i; }
-            this.searchDelay = Mathf.FloorToInt(Custom.LerpMap(Mathf.Clamp(itemList.Length, 10, 90), 10, 90, 1, 20));
+            this.searchDelay = Mathf.FloorToInt(Custom.LerpMap(Mathf.Clamp(itemList.Length, 10, 90), 10, 90, 10, 50));
             this.searchDelay = FrameMultiply(this.searchDelay);
         }
 
@@ -82,17 +82,25 @@ namespace OptionalUI
             this.rect = new DyeableRect(this.menu, this.owner, this.pos, this.size);
             this.lblText = new MenuLabel(this.menu, this.owner, this.value, new Vector2(this.pos.x - this.size.x / 2f + 12f, this.pos.y), this.size - new Vector2(12f, 0f), false);
             this.lblText.label.alignment = FLabelAlignment.Left;
-            this.rectList = new DyeableRect(this.menu, this.owner, this.pos, this.size);
-            this.rectScroll = new DyeableRect(this.menu, this.owner, this.pos, this.size);
+            if (IsListBox)
+            {
+                neverOpened = false;
+                this.rectList = new DyeableRect(this.menu, this.owner, this.pos, this.size);
+                this.rectScroll = new DyeableRect(this.menu, this.owner, this.pos, this.size);
+                this.subObjects.Add(this.rectList);
+                this.subObjects.Add(this.rectScroll);
+            }
+            else
+            {
+                neverOpened = true;
+                this.sprArrow = new FSprite("Big_Menu_Arrow", true)
+                { scale = 0.5f, rotation = 180f, anchorX = 0.5f, anchorY = 0.5f };
+                this.myContainer.AddChild(this.sprArrow);
+                this.sprArrow.SetPosition(this.size.x - 12f, this.size.y / 2f);
+            }
             this.lblList = new MenuLabel[0];
             this.subObjects.Add(this.rect);
             this.subObjects.Add(this.lblText);
-            this.subObjects.Add(this.rectList); this.rectList.Hide();
-            this.subObjects.Add(this.rectScroll); this.rectScroll.Hide();
-            this.sprArrow = new FSprite("Big_Menu_Arrow", true)
-            { scale = 0.5f, rotation = 180f, anchorX = 0.5f, anchorY = 0.5f };
-            this.myContainer.AddChild(this.sprArrow);
-            this.sprArrow.SetPosition(this.size.x - 12f, this.size.y / 2f);
             this.searchCursor = new FCursor();
             this.myContainer.AddChild(this.searchCursor);
             this.searchCursor.isVisible = false;
@@ -102,23 +110,25 @@ namespace OptionalUI
         }
 
         protected internal ListItem[] itemList;
-        private List<ListItem> searchList;
+        protected List<ListItem> searchList;
 
         /// <summary>
         /// Grab the array of <see cref="ListItem"/> in <see cref="OpComboBox"/>
         /// </summary>
         public ListItem[] GetItemList() => itemList;
 
-        private DyeableRect rect, rectList, rectScroll;
-        private MenuLabel lblText;
-        private MenuLabel[] lblList;
+        private bool neverOpened;
+        protected DyeableRect rect, rectList, rectScroll;
+        protected MenuLabel lblText;
+        protected MenuLabel[] lblList;
         private FSprite sprArrow;
 
-        private bool IsResourceSelector => this is OpResourceSelector;
+        private bool IsResourceSelector => this is OpResourceSelector || this is OpResourceList;
+        private bool IsListBox => this is OpListBox;
 
         public override void Reset()
         {
-            if (held) { Unheld(); }
+            if (held) { CloseList(); }
             base.Reset();
         }
 
@@ -161,35 +171,42 @@ namespace OptionalUI
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
             this.rect.colorF = greyedOut ? this.bumpBehav.GetColor(this.colorFill) : this.colorFill;
 
-            this.sprArrow.color = this.held ? DyeableRect.MidToDark(this.rect.color) : this.rect.color;
-            this.lblText.label.color = this.searchMode ? this.rect.color : this.sprArrow.color;
+            Color c = this.held ? DyeableRect.MidToDark(this.rect.color) : this.rect.color;
+            if (!IsListBox)
+            {
+                this.sprArrow.color = c;
+                this.lblText.label.color = this.searchMode ? this.rect.color : c;
+            }
+            this.lblText.label.color = this.searchMode ? this.rect.color : c;
 
-            if (!held) { this.lblText.text = string.IsNullOrEmpty(this.value) ? "------" : this.value; return; }
+            if (!IsListBox && !held) { this.lblText.text = string.IsNullOrEmpty(this.value) ? "------" : this.value; return; }
 
             this.rectList.size.x = this.size.x;
             this.rectList.pos = new Vector2(this.pos.x, this.pos.y + (downward ? -this.rectList.size.y : this.size.y));
+            if (IsListBox && downward) { this.rectList.pos.y += this.rectList.size.y; }
             this.rectList.addSize = new Vector2(4f, 4f) * bumpList.AddSize;
             this.rectList.color = bumpList.GetColor(this.colorEdge);
             this.rectList.colorF = this.colorFill;
-            this.rectList.fillAlpha = bumpList.FillAlpha;
+            this.rectList.fillAlpha = IsListBox ? bumpList.FillAlpha : Mathf.Lerp(0.5f, 0.7f, bumpList.col);
 
             for (int i = 0; i < this.lblList.Length; i++)
             {
                 this.lblList[i].text = this.searchMode ? (this.searchList.Count > this.listTop + i ? this.searchList[this.listTop + i].name : "")
                     : this.itemList[this.listTop + i].name;
-                this.lblList[i].label.color = this.lblList[i].text == this.value ? this.sprArrow.color : this.rectList.color;
+                this.lblList[i].label.color = this.lblList[i].text == this.value ? c : this.rectList.color;
                 if (i == listHover)
                 {
                     this.lblList[i].label.color = Color.Lerp(this.lblList[i].label.color,
                         mouseDown || this.lblList[i].text == this.value ? DyeableRect.MidToDark(this.lblList[i].label.color) : Color.white, bumpList.Sin(this.lblList[i].text == this.value ? 60f : 10f));
                 }
                 this.lblList[i].pos = new Vector2(this.pos.x - this.size.x / 2f + 12f, this.pos.y - 25f - 20f * i + (downward ? 0f : this.size.y + this.rectList.size.y));
+                if (IsListBox && downward) { this.lblList[i].pos.y += this.rectList.size.y; }
             }
             this.lblText.text = this.searchMode ? this.searchQuery : (string.IsNullOrEmpty(this.value) ? "------" : this.value);
             //lblList[0].text = $"MO:{(MouseOver ? "O" : "X")}, lsMO:{(bumpList.MouseOver ? "O" : "X")}, scMO:{(bumpScroll.MouseOver ? "O" : "X")}, MD:{(mouseDown ? "O" : "X")}"; // Test
             if (this.searchMode)
             {
-                this.searchCursor.SetPosition(LabelTest.GetWidth(this.searchQuery, false) + LabelTest.CharMean(false) * 1.5f, this.size.y * 0.5f - 7f);
+                this.searchCursor.SetPosition(LabelTest.GetWidth(this.searchQuery, false) + LabelTest.CharMean(false) * 1.5f, this.size.y * 0.5f - 7f + (IsListBox && downward ? this.rectList.size.y : 0f));
                 this.searchCursor.color = Color.Lerp(this.colorEdge, DyeableRect.MidToDark(this.colorEdge), this.bumpBehav.Sin(this.searchList.Count > 0 ? 10f : 30f));
                 this.searchCursor.alpha = 0.4f + 0.6f * Mathf.Clamp01((float)this.searchIdle / this.searchDelay);
             }
@@ -214,16 +231,23 @@ namespace OptionalUI
             else { this.rectScroll.Hide(); }
         }
 
-        private float ScrollPos(int listSize) => this.rectList.pos.y + 10f + (this.rectList.size.y - 20f - this.rectScroll.size.y) * ((listSize - lblList.Length) - this.listTop) / (listSize - lblList.Length);
+        /// <summary>
+        /// How long the DropBox should be. Default is 5 items long.
+        /// </summary>
+        public int listHeight = 5;
+        protected int _listHeight => Custom.IntClamp(listHeight, 1, itemList.Length);
 
-        private float ScrollLen(int listSize) => (this.rectList.size.y - 40f) * Mathf.Clamp01((float)lblList.Length / listSize) + 20f;
+        protected float ScrollPos(int listSize) => this.rectList.pos.y + 10f + (this.rectList.size.y - 20f - this.rectScroll.size.y) * ((listSize - lblList.Length) - this.listTop) / (listSize - lblList.Length);
 
-        private bool mouseDown = false, searchMode = false, downward = true;
-        private int dTimer = 0, searchDelay, searchIdle = 0, listTop, listHover = -1;
-        private float scrollHeldPos;
-        private BumpBehaviour bumpList, bumpScroll;
-        private string searchQuery = "";
-        private FCursor searchCursor;
+        protected float ScrollLen(int listSize) => (this.rectList.size.y - 40f) * Mathf.Clamp01((float)lblList.Length / listSize) + 20f;
+
+        protected bool mouseDown = false, searchMode = false;
+        protected bool downward = true;
+        protected int dTimer = 0, searchDelay, searchIdle = 0, listTop, listHover = -1;
+        protected float scrollHeldPos;
+        protected BumpBehaviour bumpList, bumpScroll;
+        protected string searchQuery = "";
+        protected FCursor searchCursor;
 
         /// <summary>
         /// Return the index for specified value. Checks for current value if the argument is empty.
@@ -245,6 +269,7 @@ namespace OptionalUI
 
             // this.searchMode = false; //temp
             if (dTimer > 0) { dTimer--; }
+            if (IsListBox) { return; }
             this.bumpBehav.MouseOver = base.MouseOver && !this.MouseOverList();
             if (this.held)
             {
@@ -365,12 +390,23 @@ namespace OptionalUI
                                     { newVal = this.searchList[listTop + listHover].name; }
                                     // this.searchMode = false;
                                 }
-                                else
+                                else if (listTop + listHover < this.itemList.Length)
                                 { // Select one from here
                                     newVal = this.itemList[listTop + listHover].name;
                                 }
                                 if (newVal != this.value) { this.value = newVal; this.menu.PlaySound(SoundID.MENU_Checkbox_Check); goto close; }
                             }
+                        }
+                        if (listHover >= 0)
+                        {
+                            string d = "";
+                            if (this.searchMode)
+                            {
+                                if (listTop + listHover < this.searchList.Count)
+                                { d = this.searchList[listTop + listHover].desc; }
+                            }
+                            else if (listTop + listHover < this.itemList.Length) { d = this.itemList[listTop + listHover].desc; }
+                            if (!string.IsNullOrEmpty(d)) { ConfigMenu.description = d; }
                         }
                     }
                 }
@@ -385,7 +421,7 @@ namespace OptionalUI
             close:
                 mouseDown = false;
                 held = false;
-                this.Unheld();
+                this.CloseList();
                 return;
             }
             if (disabled) { return; }
@@ -399,53 +435,7 @@ namespace OptionalUI
                     else { dTimer = FrameMultiply(15); }
                     // clicked: Expand list
                     this.held = true; this.fixedSize = this.size;
-                    // Check available space
-                    float listHeight = 20f * (Mathf.Clamp(this.itemList.Length, 1, 5)) + 10f;
-                    if (listHeight < this.GetPos().y) { downward = true; }
-                    else if (100f < this.GetPos().y) { downward = true; listHeight = 100f; }
-                    else
-                    {
-                        float upHeight = 600f; // OpTab height
-                        if (this.inScrollBox)
-                        { upHeight = this.scrollBox.horizontal ? this.scrollBox.size.y : this.scrollBox.contentSize; }
-                        upHeight -= this.GetPos().y + this.size.y;
-                        if (upHeight < this.GetPos().y) { downward = true; listHeight = Mathf.Floor(this.GetPos().y / 20f) * 20f - 10f; }
-                        else { downward = false; listHeight = Mathf.Min(listHeight, Mathf.Clamp(Mathf.Floor(upHeight / 20f), 1, 5) * 20f + 10f); }
-                    }
-                    // downward = false; // upward test
-                    // Set RectList size
-                    this.rectList.size = new Vector2(this.size.x, listHeight);
-                    this.rectList.pos = new Vector2(this.pos.x, this.pos.y + (downward ? -listHeight : this.size.y));
-                    this.rectList.Show();
-                    // Set LabelList
-                    this.lblList = new MenuLabel[Mathf.FloorToInt(listHeight / 20f)];
-                    if (downward)
-                    {
-                        this.listTop = GetIndex() + 1;
-                        if (this.listTop > this.itemList.Length - lblList.Length)
-                        { this.listTop = this.itemList.Length - lblList.Length; }
-                    }
-                    else
-                    {
-                        this.listTop = GetIndex() - lblList.Length;
-                        if (this.listTop < 0) { this.listTop = 0; }
-                    }
-                    for (int i = 0; i < this.lblList.Length; i++)
-                    {
-                        this.lblList[i] = new MenuLabel(menu, menu.pages[0], this.itemList[this.listTop + i].name, new Vector2(-10000f, -10000f), new Vector2(this.size.x - 12f, 20f), false);
-                        this.lblList[i].label.alignment = FLabelAlignment.Left;
-                        this.subObjects.Add(this.lblList[i]);
-                    }
-                    // Set RectScroll
-                    this.rectScroll.size = new Vector2(15f, ScrollLen(itemList.Length));
-                    this.rectScroll.pos = new Vector2(this.rectList.pos.x + this.rectList.size.x - 20f, ScrollPos(itemList.Length));
-                    if (lblList.Length < itemList.Length) { this.rectScroll.Show(); }
-
-                    this.sprArrow.rotation = downward ? 180f : 0f;
-                    this.bumpBehav.flash = 1f;
-                    this.bumpList.flash = 1f;
-                    this.bumpList.held = false;
-                    this.bumpScroll.held = false;
+                    OpenList();
 
                     this.menu.PlaySound(SoundID.MENU_Checkbox_Check);
                 }
@@ -474,11 +464,17 @@ namespace OptionalUI
             this._size = new Vector2(Mathf.Max(24f, size.x), 24f);
             base.OnChange();
             if (!_init) { return; }
-            this.rect.pos = this.pos; this.rect.size = this.size;
+            this.rect.pos = this.pos;
+            this.rect.size = this.size;
             this.lblText.pos = new Vector2(this.pos.x - this.size.x / 2f + 12f, this.pos.y);
             this.lblText.size = this.size - new Vector2(12f, 0f);
+            if (IsListBox && downward)
+            {
+                this.rect.pos.y += this.rectList.size.y;
+                this.lblText.pos.y += this.rectList.size.y;
+            }
             //this.lblText.text = this.value;
-            this.sprArrow.SetPosition(this.size.x - 12f, this.size.y / 2f);
+            if (!IsListBox) { this.sprArrow.SetPosition(this.size.x - 12f, this.size.y / 2f); }
         }
 
         public override void Show()
@@ -493,27 +489,100 @@ namespace OptionalUI
             base.Hide();
             this.rect.Hide();
             this.lblText.label.isVisible = false;
-            this.Unheld();
+            if (IsListBox)
+            {
+                this.searchMode = false;
+                this.searchCursor.isVisible = false;
+                this.rectList.Hide(); this.rectScroll.Hide();
+                for (int i = 0; i < this.lblList.Length; i++)
+                { this.lblList[i].label.isVisible = false; }
+                this.bumpScroll.held = false;
+            }
+            else { this.CloseList(); }
         }
 
-        private void Unheld()
+        protected void OpenList()
+        {
+            // Check available space
+            float listHeight = 20f * Mathf.Clamp(this.itemList.Length, 1, _listHeight) + 10f;
+            if (!IsListBox)
+            {
+                if (listHeight < this.GetPos().y) { downward = true; }
+                else if (100f < this.GetPos().y) { downward = true; listHeight = 100f; }
+                else
+                {
+                    float upHeight = 600f; // OpTab height
+                    if (this.inScrollBox)
+                    { upHeight = this.scrollBox.horizontal ? this.scrollBox.size.y : this.scrollBox.contentSize; }
+                    upHeight -= this.GetPos().y + this.size.y;
+                    if (upHeight < this.GetPos().y) { downward = true; listHeight = Mathf.Floor(this.GetPos().y / 20f) * 20f - 10f; }
+                    else { downward = false; listHeight = Mathf.Min(listHeight, Mathf.Clamp(Mathf.Floor(upHeight / 20f), 1, _listHeight) * 20f + 10f); }
+                }
+                // downward = false; //upward test
+                // Initialize Rects
+                if (neverOpened)
+                {
+                    this.rectList = new DyeableRect(this.menu, this.owner, this.pos, this.size);
+                    this.rectScroll = new DyeableRect(this.menu, this.owner, this.pos, this.size);
+                    this.subObjects.Add(this.rectList);
+                    this.subObjects.Add(this.rectScroll);
+                    neverOpened = false;
+                }
+                this.sprArrow.rotation = downward ? 180f : 0f;
+            }
+            // Set RectList size
+            this.rectList.size = new Vector2(this.size.x, listHeight);
+            this.rectList.pos = new Vector2(this.pos.x, this.pos.y + (downward ? -listHeight : this.size.y));
+            this.rectList.Show();
+            // Set LabelList
+            this.lblList = new MenuLabel[Mathf.FloorToInt(listHeight / 20f)];
+            if (downward)
+            {
+                this.listTop = GetIndex() + 1;
+                if (this.listTop > this.itemList.Length - lblList.Length)
+                { this.listTop = this.itemList.Length - lblList.Length; }
+            }
+            else
+            { this.listTop = GetIndex() - lblList.Length; }
+            if (listTop < 0) { listTop = 0; }
+            for (int i = 0; i < this.lblList.Length; i++)
+            {
+                this.lblList[i] = new MenuLabel(menu, menu.pages[0], this.itemList[this.listTop + i].name, new Vector2(-10000f, -10000f), new Vector2(this.size.x - 12f, 20f), false);
+                this.lblList[i].label.alignment = FLabelAlignment.Left;
+                this.subObjects.Add(this.lblList[i]);
+            }
+            // Set RectScroll
+            this.rectScroll.size = new Vector2(15f, ScrollLen(itemList.Length));
+            this.rectScroll.pos = new Vector2(this.rectList.pos.x + this.rectList.size.x - 20f, ScrollPos(itemList.Length));
+            if (lblList.Length < itemList.Length) { this.rectScroll.Show(); }
+
+            this.bumpBehav.flash = 1f;
+            this.bumpList.flash = 1f;
+            this.bumpList.held = false;
+            this.bumpScroll.held = false;
+        }
+
+        private void CloseList()
         {
             this.searchMode = false;
             this.searchCursor.isVisible = false;
             this.fixedSize = null;
-            this.rectList.Hide();
+            if (!neverOpened) { this.rectList.Hide(); this.rectScroll.Hide(); }
             for (int i = 0; i < this.lblList.Length; i++)
             { this.lblList[i].RemoveSprites(); this.subObjects.Remove(this.lblList[i]); }
             this.lblList = new MenuLabel[0];
-            this.rectScroll.Hide();
             this.bumpScroll.held = false;
         }
 
-        private bool MouseOverList()
+        protected bool MouseOverList()
         {
-            if (!this.held) { return false; }
+            if (!this.held && !IsListBox) { return false; }
             if (this.MousePos.x < 0f || this.MousePos.x > this.size.x) { return false; }
-            if (this.downward) { return this.MousePos.y >= -this.rectList.size.y && this.MousePos.y <= 0f; }
+            if (this.downward)
+            {
+                if (IsListBox) { return this.MousePos.y >= 0f && this.MousePos.y <= this.rectList.size.y; }
+                return this.MousePos.y >= -this.rectList.size.y && this.MousePos.y <= 0f;
+            }
             else { return this.MousePos.y >= this.size.y && this.MousePos.y <= this.size.y + this.rectList.size.y; }
         }
 
@@ -527,7 +596,7 @@ namespace OptionalUI
         /// <exception cref="InvalidActionException">Thrown when you call this for <see cref="OpResourceSelector"/>.</exception>
         public void AddItems(bool sort = true, params ListItem[] newItems)
         {
-            if (IsResourceSelector) { throw new InvalidActionException(this, "You cannot use AddItems for OpEnumSelector", this.key); }
+            if (IsResourceSelector) { throw new InvalidActionException(this, "You cannot use AddItems for OpResourceSelector", this.key); }
             List<ListItem> temp = new List<ListItem>(this.itemList);
             temp.AddRange(newItems);
             if (sort) { temp.Sort(ListItem.Comparer); }
@@ -544,7 +613,7 @@ namespace OptionalUI
         /// <exception cref="InvalidActionException">Thrown when this is <see cref="OpResourceSelector"/>, or you removed every items.</exception>
         public void RemoveItems(bool selectNext = true, params string[] names)
         {
-            if (IsResourceSelector) { throw new InvalidActionException(this, "You cannot use RemoveItems for OpEnumSelector", this.key); }
+            if (IsResourceSelector) { throw new InvalidActionException(this, "You cannot use RemoveItems for OpResourceSelector", this.key); }
             List<ListItem> temp = new List<ListItem>(this.itemList);
             foreach (string name in names)
             {
@@ -566,7 +635,7 @@ namespace OptionalUI
 
         protected internal override string CopyToClipboard()
         {
-            this.Unheld();
+            if (!IsListBox) { this.CloseList(); }
             return base.CopyToClipboard();
         }
 
@@ -582,17 +651,17 @@ namespace OptionalUI
             return true;
         }
 
-        private void EnterSearchMode()
+        protected void EnterSearchMode()
         {
             this.searchQuery = "";
             this.searchList = new List<ListItem>(this.itemList);
             this.searchList.Sort(ListItem.Comparer);
             this.searchCursor.isVisible = true;
-            this.searchCursor.SetPosition(LabelTest.CharMean(false) * 1.5f, this.size.y * 0.5f - 7f);
+            this.searchCursor.SetPosition(LabelTest.CharMean(false) * 1.5f, this.size.y * 0.5f - 7f + (IsListBox && downward ? this.rectList.size.y : 0f));
             this.searchIdle = 1000;
         }
 
-        private void RefreshSearchList()
+        protected void RefreshSearchList()
         {
             int curTop = this.searchList.Count > 0 ? GetIndex(this.searchList[this.listTop].name) : 0;
             this.searchList.Clear();

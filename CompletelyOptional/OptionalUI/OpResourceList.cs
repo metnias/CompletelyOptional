@@ -1,31 +1,32 @@
 ﻿using CompletelyOptional;
+using RWCustom;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
 using System.IO;
-using RWCustom;
+using System.Linq;
+using UnityEngine;
 
 namespace OptionalUI
 {
+    using SpecialEnum = OpResourceSelector.SpecialEnum;
+
     /// <summary>
-    /// Special type of <see cref="OpComboBox"/> that uses Rain World Resources instead of custom list.
+    /// Special type of <see cref="OpListBox"/> that uses Rain World Resources instead of custom list.
     /// </summary>
-    public class OpResourceSelector : OpComboBox
+    public class OpResourceList : OpListBox
     {
         /// <summary>
-        /// Special type of <see cref="OpComboBox"/> that uses Rain World Enum instead of custom list.
+        /// Special type of <see cref="OpListBox"/> that uses Rain World Enum instead of custom list.
         /// </summary>
         /// <param name="pos">LeftBottom Position of folded <see cref="OpComboBox"/></param>
-        /// <param name="width">The box width of folded <see cref="OpComboBox"/>. The height is fixed to 24f.</param>
+        /// <param name="width">The box width of folded <see cref="OpComboBox"/>.</param>
         /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="enumType">Type of Enum that you want to get items</param>
         /// <param name="defaultName"></param>
         /// <exception cref="ElementFormatException">Thrown when enumType is not <see cref="Enum"/>.</exception>
-        public OpResourceSelector(Vector2 pos, float width, string key, Type enumType, string defaultName = "") : base(pos, width, key, list: null)
+        public OpResourceList(Vector2 pos, float width, string key, Type enumType, int lineCount = 5, bool downward = true, string defaultName = "") : base(pos, width, key, lineCount: lineCount, downward: downward, list: null)
         {
-            if (!enumType.IsEnum) { throw new ElementFormatException(this, "OpResourceSelector's enumType is not Enum!", key); }
+            if (!enumType.IsEnum) { throw new ElementFormatException(this, "OpResourceList's enumType is not Enum!", key); }
             this.listType = SpecialEnum.Enum;
             string[] nameList = Enum.GetNames(enumType);
             List<ListItem> list = new List<ListItem>();
@@ -35,18 +36,19 @@ namespace OptionalUI
             this.itemList = list.ToArray();
             this.ResetIndex();
             this.Initialize(defaultName);
+            if (_init) { this.OpenList(); }
         }
 
         /// <summary>
-        /// Special type of <see cref="OpComboBox"/> that uses Rain World Resources instead of custom list. See also <seealso cref="SpecialEnum"/>.
+        /// Special type of <see cref="OpListBox"/> that uses Rain World Resources instead of custom list. See also <seealso cref="SpecialEnum"/>.
         /// </summary>
-        /// <param name="pos">LeftBottom Position of folded <see cref="OpComboBox"/></param>
-        /// <param name="width">The box width of folded <see cref="OpComboBox"/>. The height is fixed to 24f.</param>
+        /// <param name="pos">LeftBottom Position of folded <see cref="OpListBox"/></param>
+        /// <param name="width">The box width of folded <see cref="OpListBox"/>.</param>
         /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="listType">Type of List that you want to get items</param>
         /// <param name="defaultName"></param>
         /// <exception cref="ElementFormatException">Thrown when you used <see cref="SpecialEnum.Enum"/></exception>
-        public OpResourceSelector(Vector2 pos, float width, string key, SpecialEnum listType, string defaultName = "") : base(pos, width, key, list: null)
+        public OpResourceList(Vector2 pos, float width, string key, SpecialEnum listType, int lineCount = 5, bool downward = true, string defaultName = "") : base(pos, width, key, lineCount: lineCount, downward: downward, list: null)
         {
             List<ListItem> list = new List<ListItem>();
             switch (listType)
@@ -105,49 +107,9 @@ namespace OptionalUI
             //Debug.Log(listType);
             //for (int i = 0; i < itemList.Length; i++) { Debug.Log(string.Concat(i, ": ", itemList[i].name)); }
             this.Initialize(defaultName);
+            if (_init) { this.OpenList(); }
         }
 
         public readonly SpecialEnum listType;
-
-        /// <summary>
-        /// The List of Rain World Resource that doesn't have enumType. See also <seealso cref="OpResourceSelector(Vector2, float, string, SpecialEnum, string)"/>
-        /// </summary>
-        public enum SpecialEnum : byte
-        {
-            /// <summary>
-            /// Do NOT use this. This is for <see cref="OpResourceSelector(Vector2, float, string, Type, string)"/>.
-            /// </summary>
-            Enum = 0,
-
-            /// <summary>
-            /// World/Regions/regions.txt
-            /// </summary>
-            Regions,
-
-            /// <summary>
-            /// Resources/Decals
-            /// </summary>
-            Decals,
-
-            /// <summary>
-            /// Resources/Illustrations
-            /// </summary>
-            Illustrations,
-
-            /// <summary>
-            /// Resources/Music/Songs.
-            /// </summary>
-            Songs,
-
-            /// <summary>
-            /// Resources/Palettes
-            /// </summary>
-            Palettes,
-
-            /// <summary>
-            /// <see cref="RainWorld.Shaders"/>
-            /// </summary>
-            Shaders
-        }
     }
 }

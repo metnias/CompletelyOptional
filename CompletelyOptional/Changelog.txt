@@ -1,4 +1,4 @@
-﻿###1.5.3#!#20210217#!#
+﻿###1.5.3#!#20210223#!#
 1.5.2.0
 - Optimised OpLabel.autoWrap significantly
  + With help of dual curly potato noodles (and others)
@@ -8,10 +8,16 @@
 - Fixed ArgumentOutOfRangeException with OpLabel.OnChange
 - Added 10 line count limit to normal OpLabel to prevent Futile crash
 1.5.3.0
-- Added OpUpdown as a new provided UIconfig
- + Textbox with arrows, specialized for accepting a large range of number
- + Along with typing, you can use arrows button or scroll wheel to adjust the number
-- OpTextBox.Accept is now readonly and only can be set in its constructor.
+- Added new provided UIconfigs
+ + OpUpdown: Textbox with arrows, specialized for accepting a large range of number
+  x Along with typing, you can use arrows button or scroll wheel to adjust the number
+  x GeneratedOI for BepInEx.Configuration now uses this for int and float
+ + OpListBox: Listbox that stays open and you can also search
+  x OpResourceList: OpListBox variant of OpResourceSelector
+- ListItem now has a string field 'desc': when the mouse is hovered over this item, this description will be shown at the bottom
+- OpComboBox's list box now gets created when it's opened for the first time, preventing it going behind other UIelements
+- Extended OpComboBox's search function's delay
+- OpTextBox.Accept is now readonly and only can be set in its constructor
 ###1.5.1: No longer Beta#!#20210207#!#
 - Changed access keywords of many properties and methods
  + Methods that shouldn't be called by the modders are now internal instead of public

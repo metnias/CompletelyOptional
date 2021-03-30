@@ -119,7 +119,8 @@ namespace CompletelyOptional
                 new ListItem("fox3", 3), new ListItem("jumps4", 4), new ListItem("over5", 5),
                 new ListItem("the6", 6), new ListItem("lazy7", 7), new ListItem("dog8", 8)}, "brown2");
             sb.AddItems(cb, new OpLabel(350f, 1050f, "DefinedOrder") { bumpBehav = cb.bumpBehav });
-            sb.AddItems(new OpResourceSelector(new Vector2(200f, 900f), 200f, "", typeof(CreatureTemplate.Type)));
+            sb.AddItems(new OpResourceList(new Vector2(70f, 600f), 200f, "", typeof(CreatureTemplate.Type), lineCount: 10));
+            sb.AddItems(new OpResourceList(new Vector2(330f, 600f), 200f, "", typeof(AbstractPhysicalObject.AbstractObjectType), 10, downward: false));
 
             // Use OpScrollBox.AddItems instead of OpTab.AddItems.
             /*

@@ -1,4 +1,5 @@
-﻿using RWCustom;
+﻿using CompletelyOptional;
+using RWCustom;
 using System;
 using UnityEngine;
 
@@ -42,6 +43,8 @@ namespace OptionalUI
             // rectDown = new DyeableRect(menu, owner, this.pos + new Vector2(this.size.x - 20f, 3f), new Vector2(16f, 24f), true);
             // subObjects.Add(rectUp); subObjects.Add(rectDown);
 
+            this.description = InternalTranslator.Translate("Click and Type numbers, Use Arrows or Scrollwheel to Adjust");
+
             arrUp = new FSprite("Big_Menu_Arrow", true)
             { scale = 0.5f, rotation = 0f, anchorX = 0.5f, anchorY = 0.5f, x = this.size.x - 15f, y = 20f, color = this.colorText };
             arrDown = new FSprite("Big_Menu_Arrow", true)
@@ -55,7 +58,7 @@ namespace OptionalUI
         //private DyeableRect rectUp, rectDown;
         private FSprite arrUp, arrDown;
         private int iMin = int.MinValue, iMax = int.MaxValue;
-        private float fMin = float.MinValue, fMax = float.MaxValue;
+        private float fMin = -1000000, fMax = 1000000;
         protected internal readonly byte dNum;
         private BumpBehaviour bumpUp, bumpDown;
         protected internal bool mouseOverArrow;
@@ -247,8 +250,8 @@ namespace OptionalUI
         /// <summary>
         /// Sets range for <see cref="UIconfig.valueFloat"/>. Use for <see cref="float"/> version of <see cref="OpUpdown"/>
         /// </summary>
-        /// <param name="floatMin">Minimum value (default: <see cref="float.MinValue"/>)</param>
-        /// <param name="floatMax">Maximum value (default: <see cref="float.MaxValue"/>)</param>
+        /// <param name="floatMin">Minimum value (default: -1,000,000)</param>
+        /// <param name="floatMax">Maximum value (default: 1,000,000)</param>
         public void SetRange(float floatMin, float floatMax)
         {
             if (IsInt) { SetRange(intMin: Mathf.CeilToInt(floatMin), intMax: Mathf.FloorToInt(floatMax)); return; }

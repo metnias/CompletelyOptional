@@ -136,11 +136,11 @@ namespace CompletelyOptional
                                     }
                                     else { continue; }
                                     break;
-                                case "int": //OpTextBox
+                                case "int": //OpUpdown
                                 case "int32":
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<int> eInt))
                                     {
-                                        elms.Add(new OpTextBox(new Vector2(30f, 600f - h - 45f), 110f, GenerateKey(cds[e]), ((int)eInt.DefaultValue).ToString(), OpTextBox.Accept.Int)
+                                        elms.Add(new OpUpdown(new Vector2(30f, 600f - h - 45f), 110f, GenerateKey(cds[e]), (int)eInt.DefaultValue)
                                         { description = GetFirstSentence(desc), allowSpace = true });
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
                                         { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
@@ -150,11 +150,11 @@ namespace CompletelyOptional
                                     }
                                     else { continue; }
                                     break;
-                                case "float": //OpTextBox
+                                case "float": //OpUpdown
                                 case "single":
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<float> eFloat))
                                     {
-                                        elms.Add(new OpTextBox(new Vector2(30f, 600f - h - 45f), 110f, GenerateKey(cds[e]), ((float)eFloat.DefaultValue).ToString(), OpTextBox.Accept.Float)
+                                        elms.Add(new OpUpdown(new Vector2(30f, 600f - h - 45f), 110f, GenerateKey(cds[e]), (float)eFloat.DefaultValue, 2)
                                         { description = GetFirstSentence(desc), allowSpace = true });
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
                                         { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });

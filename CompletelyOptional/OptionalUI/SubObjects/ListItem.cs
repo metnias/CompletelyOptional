@@ -6,7 +6,7 @@
     public struct ListItem
     {
         /// <summary>
-        ///
+        /// struct that's used for handling items in <see cref="OpComboBox"/>
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
@@ -15,6 +15,7 @@
             this.name = name;
             this.value = value;
             this.index = -1;
+            this.desc = "";
         }
 
         /// <summary>
@@ -31,6 +32,11 @@
         /// index number in <see cref="OpComboBox"/>. This will be set automatically, and used for search function.
         /// </summary>
         public int index;
+
+        /// <summary>
+        /// The description to be shown when the mouse is hovered.
+        /// </summary>
+        public string desc;
 
         public override bool Equals(object obj) => obj is ListItem i && this.name == i.name && this.value == i.value;
 
