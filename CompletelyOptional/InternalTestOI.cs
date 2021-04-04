@@ -125,17 +125,6 @@ namespace CompletelyOptional
                 new ListItem("The Survivor", 0), new ListItem("The Monk", 1), new ListItem("The Hunter", 2),
                 new ListItem("The Sporecat", 3), new ListItem("The Electric Cat", 4), new ListItem("The Programmer Cat", 5)}, OpListBox.GetLineCountFromHeight(200f)));
             sb.AddItems(new OpLabel(330f, 780f, "Player 2 plays as", true));
-            string modDescription =
-@"LizardSkin lets you create profiles of cosmetics to be applied on your slugcat. Use the tabs on the left to edit or create profiles.
-
-When on a profile tab, you can select which characters that profile should apply to. If more than one profile applies to a slugcat, all cosmetics will be applied. Advanced mode let you specify difficulty, player-number or character-number so that you can get it working with custom slugcats too.
-
-Inside a profile you can add Cosmetics by clicking on the box with a +. Cosmetics can be reordered, copied, pasted, duplicated and deleted. You can also control the base color and effect color for your slugcat to match any custom sprites or skins.
-
-You can pick Cosmetics of several types, edit their settings and configure randomization. When you're done customizing, hit refresh on the preview panel to see what your sluggo looks like.";
-
-            sb.AddItems(new OpRect(new Vector2(50f, 280f), new Vector2(500f, 250f)),
-                new OpLabelLong(new Vector2(50f, 280f), new Vector2(500f, 250f), modDescription, alignment: FLabelAlignment.Center));
             // Use OpScrollBox.AddItems instead of OpTab.AddItems.
             /*
             OpResourceSelector rs = new OpResourceSelector(new Vector2(100f, 1600f), new Vector2(200f, 30f), "", typeof(CreatureTemplate.Type));
