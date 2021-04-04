@@ -440,7 +440,7 @@ namespace CompletelyOptional
             }
         }
 
-        public static void SaveAllConfig()
+        internal static void SaveAllConfig()
         {
             foreach (KeyValuePair<string, OptionInterface> item in OptionScript.loadedInterfaceDict)
             {
@@ -450,22 +450,49 @@ namespace CompletelyOptional
             }
         }
 
-        public static void SaveCurrentConfig()
+        /// <summary>
+        /// Call this manually if you really need to. This is what Save Button does.
+        /// </summary>
+        /// <param name="silent">Whether to hide indication or not</param>
+        public static void SaveCurrentConfig(bool silent = false)
         {
             if (!currentInterface.Configuable()) { return; }
             Dictionary<string, string> newConfig = currentInterface.GrabConfig();
-            currentInterface.SaveConfig(newConfig);
+            if (!currentInterface.SaveConfig(newConfig))
+            {
+                alert = InternalTranslator.Translate("<ModID> had an issue with saving its configuration").Replace("<ModID>", currentInterface.rwMod.ModID);
+            }
+            else if (!silent)
+            {
+                alert = InternalTranslator.Translate("<ModID> has saved its configuration").Replace("<ModID>", currentInterface.rwMod.ModID);
+            }
         }
 
         private bool reset = false;
+        private bool refresh = false;
 
         /// <summary>
         /// Call this manually if you really need to. This is what Reset Config Button does.
+        /// See also <seealso cref="RefreshCurrentConfig"/>
         /// </summary>
         public static void ResetCurrentConfig()
         {
             instance.reset = true;
             instance.opened = false;
+            instance.refresh = false;
+            instance.OpenMenu();
+        }
+
+        /// <summary>
+        /// Call this manually if you really need to. This unloads and reloads current Option Interface but does NOT reset Config.
+        /// This will NOT save config by itself, and reload the config from the file again. Call <seealso cref="SaveCurrentConfig(bool)"/> for that.
+        /// See also <seealso cref="ResetCurrentConfig"/>
+        /// </summary>
+        public static void RefreshCurrentConfig()
+        {
+            instance.reset = true;
+            instance.opened = false;
+            instance.refresh = true;
             instance.OpenMenu();
         }
 
@@ -518,8 +545,16 @@ namespace CompletelyOptional
 
             if (currentInterface.Configuable())
             {
-                currentInterface.SaveConfig(currentInterface.GrabConfig());
-                currentInterface.ConfigOnChange();
+                if (!refresh)
+                {
+                    currentInterface.SaveConfig(currentInterface.GrabConfig());
+                    currentInterface.ConfigOnChange();
+                }
+                else
+                {
+                    currentInterface.LoadConfig();
+                    currentInterface.ShowConfig();
+                }
             }
 
             //OptionScript.configChanged = false;
@@ -645,7 +680,7 @@ namespace CompletelyOptional
                             if (OptionScript.configChanged)
                             {
                                 base.PlaySound(SoundID.MENU_Switch_Page_In);
-                                SaveCurrentConfig();
+                                SaveCurrentConfig(true);
                                 OptionScript.configChanged = false;
                                 this.saveButton.menuLabel.text = InternalTranslator.Translate("SAVE ALL");
                             }

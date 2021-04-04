@@ -40,7 +40,7 @@ namespace OptionalUI
             if (this.labels == null || !_init) { return; }
             base.OnChange();
             float lineHeight = LabelTest.LineHeight(false);
-            string[] lines = this._displayText.Split(new char[] { '\n' });
+            string[] lines = this._displayText.Replace(Environment.NewLine, "\n").Split(new char[] { '\n' });
             List<string> splits = new List<string>() { string.Empty };
             int num = 0, lblTxt = 0, lineMax = this.allowOverflow ? int.MaxValue : Mathf.FloorToInt(this.size.y / lineHeight);
             int sLines = 0;
@@ -48,6 +48,7 @@ namespace OptionalUI
             {
                 if (l > lineMax) { break; }
                 string a = lines[l].Trim('\n');
+                if (string.IsNullOrEmpty(a)) { a = " "; }
                 if (lblTxt + a.Length > LabelTest.CharLimit(false) || sLines > 8)
                 { sLines = 0; lblTxt = 0; num++; splits.Add(string.Empty); }
                 if (lblTxt > 0) { splits[num] += '\n'; }

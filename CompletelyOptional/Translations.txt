@@ -49,6 +49,8 @@ Pasted <Text> from Clipboard|kor$클립보드에서 <Text> 붙여넣음|spa$Pega
 Pasted <Text> from Clipboard to <ObjectName>|kor$클립보드에서 <ObjectName>으로 <Text> 붙여넣음|spa$Pegado <Text> desde el Portapapeles a <ObjectName>|fre$Collé <Text> du presse-papier vers <ObjectName>|rus$<Text> вставлен в <ObjectName> из буфера обмена
 Copied <Text> to Clipboard|kor$클립보드로 <Text> 복사함|spa$Copiado <Text> al Portapapeles|fre$<Text> copié vers le presse-papier|rus$<Text> скопирован из буфера обмена
 Copied <Text> to Clipboard from <ObjectName>|kor$<ObjectName>에서 클립보드로 <Text> 복사함|spa$Copiado <Text> al Portapapeles desde <ObjectName>|fre$<Text> copié vers le presse-papier depuis <ObjectName>|rus$<Text> скопирован <ObjectName> из буфера обмена
+<ModID> had an issue with saving its configuration|kor$<ModID> 설정 저장 중 문제 발생
+<ModID> has saved its configuration|kor$<ModID> 설정 저장됨
 
 /// Description for provided UIelements ///
 Click to Check/Uncheck|kor$클릭해서 체크 및 해제|spa$Click para marcar/desmarcar|fre$Cliquez pour cocher/décocher|rus$Нажмите, чтобы отметить/снять отметку
