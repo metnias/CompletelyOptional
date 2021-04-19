@@ -77,10 +77,11 @@ namespace OptionalUI
             { item.Update(dt); }
         }
 
+        #region ItemManager
+
         /// <summary>
         /// Obsolete! Use <see cref="AddItems(UIelement[])"/> instead.
         /// </summary>
-        /// <param name="item">UIelement</param>
         [Obsolete]
         public void AddItem(UIelement item)
         {
@@ -90,6 +91,7 @@ namespace OptionalUI
         private void _AddItem(UIelement item)
         {
             if (this.items.Contains(item)) { return; }
+            if (item.tab != null && item.tab != this) { RemoveItemsFromTab(item); }
             this.items.Add(item);
             item.SetTab(this);
             if (OptionScript.isOptionMenu && ConfigMenu.currentTab == this)
@@ -101,8 +103,8 @@ namespace OptionalUI
 
         /// <summary>
         /// Add <see cref="UIelement"/> to this Tab.
+        /// If the item is already in other tab, this will call <see cref="RemoveItemsFromTab(UIelement[])"/> automatically
         /// </summary>
-        /// <param name="items">UIelements</param>
         public void AddItems(params UIelement[] items)
         {
             foreach (UIelement item in items) { this._AddItem(item); }
@@ -111,25 +113,77 @@ namespace OptionalUI
         /// <summary>
         /// Obsolete! Use RemoveItems instead.
         /// </summary>
-        /// <param name="item">UIelement</param>
         [Obsolete]
         public void RemoveItem(UIelement item) { _RemoveItem(item); }
 
         /// <summary>
         /// Remove <see cref="UIelement"/>  in this Tab.
+        /// This will also remove them from <see cref="OpScrollBox"/> if <see cref="UIelement.inScrollBox"/>.
+        /// See also <seealso cref="RemoveItemsFromTab(UIelement[])"/>
         /// </summary>
-        /// <param name="items">UIelements</param>
         public void RemoveItems(params UIelement[] items)
         {
             foreach (UIelement item in items) { this._RemoveItem(item); }
         }
 
+        /// <summary>
+        /// Remove <see cref="UIelement"/> from its Tab.
+        /// This will also remove them from <see cref="OpScrollBox"/> if <see cref="UIelement.inScrollBox"/>.
+        /// </summary>
+        public static void RemoveItemsFromTab(params UIelement[] items)
+        {
+            foreach (UIelement item in items) { item.tab._RemoveItem(item); }
+        }
+
         private void _RemoveItem(UIelement item)
         {
+            if (item.inScrollBox) { item.RemoveFromScrollBox(); }
             while (this.items.Contains(item))
             { this.items.Remove(item); }
             item.SetTab(null);
         }
+
+        /// <summary>
+        /// Call <see cref="UIelement.Show"/> in bulk
+        /// </summary>
+        public static void ShowItems(params UIelement[] items)
+        { foreach (UIelement item in items) { item.Show(); } }
+
+        /// <summary>
+        /// Call <see cref="UIelement.Hide"/> in bulk
+        /// </summary>
+        public static void HideItems(params UIelement[] items)
+        { foreach (UIelement item in items) { item.Hide(); } }
+
+        /// <summary>
+        /// Destroy UIelement from runtime. Generally using this is NOT recommended.
+        /// Using this for <see cref="UIconfig"/> should be avoided.
+        /// </summary>
+        public static void DestroyItems(params UIelement[] items)
+        {
+            foreach (UIelement item in items)
+            {
+                item.Hide();
+                item.tab.RemoveItems(item);
+                item.Unload();
+            }
+        }
+
+        /// <summary>
+        /// Set <see cref="UIconfig.greyedOut"/> and <see cref="UItrigger.greyedOut"/> in bulk.
+        /// This will ignore if the item is neither of those
+        /// </summary>
+        /// <param name="greyedOut">New greyedOut value</param>
+        public static void SetGreyedOutItems(bool greyedOut, params UIelement[] items)
+        {
+            foreach (UIelement item in items)
+            {
+                if (item is UIconfig) { (item as UIconfig).greyedOut = greyedOut; }
+                else if (item is UItrigger) { (item as UItrigger).greyedOut = greyedOut; }
+            }
+        }
+
+        #endregion ItemManager
 
         /// <summary>
         /// Hide this tab. Automatically called. Do NOT call this by yourself.

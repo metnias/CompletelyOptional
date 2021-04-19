@@ -134,7 +134,7 @@ namespace CompletelyOptional
             {
                 case Reason.NoInterface:
                     labelSluggo0 = new OpLabel(new Vector2(100f, 350f), new Vector2(400f, 20f),
-                        InternalTranslator.Translate(rwMod.type == RainWorldMod.Type.PartialityMod ? "This Partiality Mod cannot be configured." : "This BepInEx Plugin cannot be configured."));
+                        InternalTranslator.Translate(rwMod.type == RainWorldMod.Type.PartialityMod ? "This Partiality Mod has no Option Interface." : "This BepInEx Plugin has no Option Interface."));
                     Tabs[0].AddItems(labelSluggo0);
 
                     break;

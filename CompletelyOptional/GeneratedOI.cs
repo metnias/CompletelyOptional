@@ -240,7 +240,7 @@ namespace CompletelyOptional
                         + InternalTranslator.Translate("Go to [BepInEx]-[config] folder and use Notepad to edit those settings.");
                     if (hasFirstScroll)
                     {
-                        firstScroll.AddItems(new OpLabel(new Vector2(50f, firstScroll.contentSize - 600f + 525f), new Vector2(500f, 30f), warn));
+                        firstScroll.AddItems(new OpLabel(new Vector2(50f, firstScroll.GetContentSize() - 600f + 525f), new Vector2(500f, 30f), warn));
                     }
                     else
                     {
@@ -437,12 +437,12 @@ namespace CompletelyOptional
         /// <param name="mod"><see cref="RainWorldMod"/> that has basic information of the mod</param>
         public static void AddBasicProfile(OpScrollBox box, RainWorldMod mod)
         {
-            box.AddItems(new OpLabel(new Vector2(100f, box.contentSize - 600f + 550f), new Vector2(400f, 50f), mod.ModID, FLabelAlignment.Center, true));
-            box.AddItems(new OpLabel(new Vector2(50f, box.contentSize - 600f + 500f), new Vector2(100f, 20f), InternalTranslator.Translate("Version: <ModVersion>").Replace("<ModVersion>", mod.Version), FLabelAlignment.Left));
+            box.AddItems(new OpLabel(new Vector2(100f, box.GetContentSize() - 600f + 550f), new Vector2(400f, 50f), mod.ModID, FLabelAlignment.Center, true));
+            box.AddItems(new OpLabel(new Vector2(50f, box.GetContentSize() - 600f + 500f), new Vector2(100f, 20f), InternalTranslator.Translate("Version: <ModVersion>").Replace("<ModVersion>", mod.Version), FLabelAlignment.Left));
 
             if (mod.author != RainWorldMod.authorNull)
             {
-                box.AddItems(new OpLabel(new Vector2(350f, box.contentSize - 600f + 500f), new Vector2(200f, 20f), InternalTranslator.Translate("Author: <ModAuthor>").Replace("<ModAuthor>", mod.author), FLabelAlignment.Right) { autoWrap = true });
+                box.AddItems(new OpLabel(new Vector2(350f, box.GetContentSize() - 600f + 500f), new Vector2(200f, 20f), InternalTranslator.Translate("Author: <ModAuthor>").Replace("<ModAuthor>", mod.author), FLabelAlignment.Right) { autoWrap = true });
             }
         }
     }

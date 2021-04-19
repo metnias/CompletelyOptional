@@ -513,7 +513,7 @@ namespace OptionalUI
                 {
                     float upHeight = 600f; // OpTab height
                     if (this.inScrollBox)
-                    { upHeight = this.scrollBox.horizontal ? this.scrollBox.size.y : this.scrollBox.contentSize; }
+                    { upHeight = this.scrollBox.horizontal ? this.scrollBox.size.y : this.scrollBox.GetContentSize(); }
                     upHeight -= this.GetPos().y + this.size.y;
                     if (upHeight < this.GetPos().y) { downward = true; listHeight = Mathf.Floor(this.GetPos().y / 20f) * 20f - 10f; }
                     else { downward = false; listHeight = Mathf.Min(listHeight, Mathf.Clamp(Mathf.Floor(upHeight / 20f), 1, _listHeight) * 20f + 10f); }

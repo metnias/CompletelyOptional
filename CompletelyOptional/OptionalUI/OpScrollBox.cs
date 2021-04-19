@@ -72,7 +72,7 @@ namespace OptionalUI
         /// Returns the value of <see cref="ScrollOffset"/> at the topmost or rightmost position of the box.
         /// This value will always be negative or zero.
         /// </summary>
-        public float MaxScroll => -Mathf.Max(contentSize - size.y, 0f);
+        public float MaxScroll => -Mathf.Max(_contentSize - size.y, 0f);
 
         /// <summary>
         /// The target value of <see cref="ScrollOffset"/>. Change this to smoothly animate scrolling.
@@ -80,10 +80,42 @@ namespace OptionalUI
         public float targetScrollOffset;
 
         /// <summary>
-        /// The height of the content inside this scrollbox.
-        /// Used to calculate maximum scroll distance.
+        /// The height/width of the content inside this scrollbox from its constructor.
+        /// Use <see cref="GetContentSize"/> instead.
         /// </summary>
+        [Obsolete]
         public readonly float contentSize;
+
+        private float _contentSize;
+
+        /// <summary>
+        /// Returns current contentSize. See also <seealso cref="SetContentSize(float, bool)"/>
+        /// </summary>
+        public float GetContentSize() => _contentSize;
+
+        /// <summary>
+        /// Resize contentSize of OpScrollBox
+        /// </summary>
+        /// <param name="newSize">New contentSize (the max is 10000f)</param>
+        /// <param name="sortToTop">Whether to sort children to top/left or bottom/right</param>
+        /// <returns>Whether this call is valid or not</returns>
+        public bool SetContentSize(float newSize, bool sortToTop = true)
+        {
+            float ns = Mathf.Clamp(newSize, horizontal ? size.x : size.y, 10000f);
+            if (Mathf.Approximately(_contentSize, ns)) { return false; }
+            if (sortToTop)
+            {
+                float ofs = ns - _contentSize;
+                foreach (UIelement item in children) // Move all stuff
+                { item.pos = item.GetPos() + (horizontal ? new Vector2(ofs, 0f) : new Vector2(0f, ofs)); }
+                _contentSize = ns;
+                targetScrollOffset += ofs;
+                scrollOffset = targetScrollOffset;
+            }
+            else { _contentSize = ns; }
+            hasScrolled = false; // Add flashing to let user know there's a change
+            return true;
+        }
 
         /// <summary>
         /// Indicates when the contents of a scrollbox should be redrawn.
@@ -149,7 +181,10 @@ namespace OptionalUI
         {
             this._size.x = Mathf.Min(this._size.x, 800f); this._size.y = Mathf.Min(this._size.y, 800f);
             this.horizontal = horizontal;
-            this.contentSize = Mathf.Clamp(contentSize, horizontal ? size.x : size.y, 10000f);
+            this._contentSize = Mathf.Clamp(contentSize, horizontal ? size.x : size.y, 10000f);
+#pragma warning disable CS0612
+            this.contentSize = this._contentSize;
+#pragma warning restore CS0612
             this.isTab = false; this.hasScrolled = false;
             this.doesBackBump = true;
 
@@ -348,8 +383,26 @@ namespace OptionalUI
             }
         }
 
-        private Vector2 SliderSize => horizontal ? new Vector2(Mathf.Max(Mathf.Min(size.x, size.x * size.x / contentSize), 20f), 15f) : new Vector2(15f, Mathf.Max(Mathf.Min(size.y, size.y * size.y / contentSize), 20f));
-        private Vector2 SliderPos => horizontal ? new Vector2(-scrollOffset * size.x / contentSize, isTab ? -10f : 5f) : new Vector2((isTab ? 15f : 0f) + size.x - 20f, -scrollOffset * size.y / contentSize);
+        /// <summary>
+        /// Remove UIelements from OpScrollbox they're in
+        /// </summary>
+        /// <param name="items">Items to remove from its <see cref="OpScrollBox"/></param>
+        public static void RemoveItemsFromScrollBox(params UIelement[] items)
+        {
+            foreach (UIelement item in items)
+            {
+                if (!item.inScrollBox) { continue; }
+                item.scrollBox.children.Remove(item);
+                item.RemoveFromScrollBox();
+            }
+        }
+
+        private Vector2 SliderSize => horizontal
+            ? new Vector2(Mathf.Max(Mathf.Min(size.x, size.x * size.x / _contentSize), 20f), 15f)
+            : new Vector2(15f, Mathf.Max(Mathf.Min(size.y, size.y * size.y / _contentSize), 20f));
+        private Vector2 SliderPos => horizontal
+            ? new Vector2(-scrollOffset * size.x / _contentSize, isTab ? -10f : 5f)
+            : new Vector2((isTab ? 15f : 0f) + size.x - 20f, -scrollOffset * size.y / _contentSize);
 
         private bool _firstUpdate = true;
         private float _dragOffset = 0f;
@@ -408,7 +461,7 @@ namespace OptionalUI
                 else
                 {
                     float scrollPerc = ((horizontal ? MousePos.x : MousePos.y) + _dragOffset) / ScrollSize;
-                    scrollPerc *= -contentSize;
+                    scrollPerc *= -_contentSize;
                     scrollOffset = scrollPerc;
                     targetScrollOffset = scrollOffset;
                     hasMoved = true;
@@ -474,8 +527,8 @@ namespace OptionalUI
             }
 
             // Don't allow overscroll
-            targetScrollOffset = Mathf.Clamp(targetScrollOffset, -Mathf.Max(contentSize - ScrollSize, 0f), 0f);
-            scrollOffset = Mathf.Clamp(scrollOffset, -Mathf.Max(contentSize - ScrollSize, 0f), 0f);
+            targetScrollOffset = Mathf.Clamp(targetScrollOffset, -Mathf.Max(_contentSize - ScrollSize, 0f), 0f);
+            scrollOffset = Mathf.Clamp(scrollOffset, -Mathf.Max(_contentSize - ScrollSize, 0f), 0f);
             MoveCam();
 
             if (hasMoved || _firstUpdate)

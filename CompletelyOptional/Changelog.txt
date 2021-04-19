@@ -1,4 +1,13 @@
-﻿###1.5.3#!#20210405#!#
+﻿###1.5.4#!#20210420#!#
+- Changed the message for mods that doesn't support CM to something less look like an error message but more neutral
+- Added and modified several functions to make managing UIelements easier
+ + Added several bulk managing static methods for OpTab: RemoveItemsFromTab, ShowItems, HideItems, DestroyItems, SetGreyedOutItems
+ + Added OpScrollBox.RemoveItemsFromScrollBox
+ + OpTab.RemoveItems (and RemoveItemsFromTab) now removes the item from its scrollBox
+ + OpTab.AddItems now automatically calls RemoveItemsFromTab if the item is already in other OpTab
+- OpScrollBox.SetContentSize is added
+ + OpScrollBox.contentSize is now Obsolete; use GetContentSize instead
+###1.5.3#!#20210405#!#
 1.5.2.0
 - Optimised OpLabel.autoWrap significantly
  + With help of dual curly potato noodles (and others)

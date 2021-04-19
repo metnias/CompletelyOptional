@@ -93,6 +93,15 @@ namespace OptionalUI
             return true;
         }
 
+        internal void RemoveFromScrollBox()
+        {
+            if (!this.inScrollBox) { Debug.LogError("This item is not in an OpScrollBox! This call will be ignored."); return; }
+            this._pos -= this.scrollBox.childOffset;
+            this.inScrollBox = false;
+            this.scrollBox = null;
+            if (_init) { this.OnChange(); }
+        }
+
         /// <summary>
         /// Which <see cref="OpScrollBox"/> this element is in. See also <seealso cref="inScrollBox"/>
         /// </summary>
