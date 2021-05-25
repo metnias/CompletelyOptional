@@ -39,7 +39,7 @@ namespace OptionalUI
         {
             if (this.labels == null || !_init) { return; }
             base.OnChange();
-            float lineHeight = LabelTest.LineHeight(false);
+            float lineHeight = LabelTest.LineHeight(false, isVFont);
             string[] lines = this._displayText.Replace(Environment.NewLine, "\n").Split(new char[] { '\n' });
             List<string> splits = new List<string>() { string.Empty };
             int num = 0, lblTxt = 0, lineMax = this.allowOverflow ? int.MaxValue : Mathf.FloorToInt(this.size.y / lineHeight);
@@ -49,7 +49,7 @@ namespace OptionalUI
                 if (l > lineMax) { break; }
                 string a = lines[l].Trim('\n');
                 if (string.IsNullOrEmpty(a)) { a = " "; }
-                if (lblTxt + a.Length > LabelTest.CharLimit(false) || sLines > 8)
+                if (lblTxt + a.Length > LabelTest.CharLimit(false, isVFont) || sLines > 8)
                 { sLines = 0; lblTxt = 0; num++; splits.Add(string.Empty); }
                 if (lblTxt > 0) { splits[num] += '\n'; }
                 splits[num] += a;
@@ -58,7 +58,8 @@ namespace OptionalUI
             }
             while (this.labels.Count < splits.Count)
             {
-                MenuLabel nl = new MenuLabel(this.menu, this.owner, string.Empty, this.pos, this.size, false);
+                MenuLabel nl = new MenuLabel(this.menu, this.owner, isVFont ? "A" : "", this.pos, this.size, false);
+                nl.text = "";
                 this.labels.Add(nl);
                 this.subObjects.Add(nl);
             }

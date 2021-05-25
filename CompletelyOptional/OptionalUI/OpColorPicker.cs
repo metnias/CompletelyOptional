@@ -66,7 +66,7 @@ namespace OptionalUI
             lblG.label.color = grey;
             lblB.label.color = grey;
             //lblP: Displays Selected Palette Color Name
-            lblP = new MenuLabel(menu, owner, "", pos + _offset + new Vector2(10f, 5f), new Vector2(60f, 20f), false);
+            lblP = new MenuLabel(menu, owner, "X", pos + _offset + new Vector2(10f, 5f), new Vector2(60f, 20f), false);
             this.subObjects.Add(lblP);
             lblP.label.isVisible = false;
             lblP.label.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);

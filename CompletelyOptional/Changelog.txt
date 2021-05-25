@@ -1,4 +1,11 @@
-﻿###1.5.4#!#20210420#!#
+﻿###1.5.4#!#20210525#!#
+1.5.4.2
+- Reverted some of LabelTest changes to restore compatibility with CRS
+- Config Machine will now use AssemblyDescription to describe mods that doesn't support CM
+1.5.4.1
+- Rearranged LabelTest to accomodate ComunicationModule 2.5.0 Patch
+- Also rearranged internal Changelog so the latest version always comes first
+1.5.4.0
 - Changed the message for mods that doesn't support CM to something less look like an error message but more neutral
 - Added and modified several functions to make managing UIelements easier
  + Added several bulk managing static methods for OpTab: RemoveItemsFromTab, ShowItems, HideItems, DestroyItems, SetGreyedOutItems
@@ -8,14 +15,12 @@
 - OpScrollBox.SetContentSize is added
  + OpScrollBox.contentSize is now Obsolete; use GetContentSize instead
 ###1.5.3#!#20210405#!#
-1.5.2.0
-- Optimised OpLabel.autoWrap significantly
- + With help of dual curly potato noodles (and others)
- + GetWidth is also optimised
- + This also fixes a rare crash with autoWrap
-1.5.2.1
-- Fixed ArgumentOutOfRangeException with OpLabel.OnChange
-- Added 10 line count limit to normal OpLabel to prevent Futile crash
+1.5.3.2
+- Fixed OpLabelLong breaking with multiple linebreaks at once
+- Mods can manually call ConfigMenu.RefreshCurrentConfig() to refresh own OI
+ + ResetCurrentConfig() refreshes AND resets configurations
+ + RefreshCurrentConfig() only unloads and reload OI but won't reset configurations
+ + Of course, call ConfigMenu.SaveCurrentConfig(bool) manually before calling RefreshCurrentConfig() to preserve configurations
 1.5.3.0
 - Added new provided UIconfigs
  + OpUpdown: Textbox with arrows, specialized for accepting a large range of number
@@ -27,27 +32,30 @@
 - OpComboBox's list box now gets created when it's opened for the first time, preventing it from going behind other UIelements
 - Extended OpComboBox's search function's delay
 - OpTextBox.Accept is now readonly and only can be set in its constructor
-1.5.3.2
-- Fixed OpLabelLong breaking with multiple linebreaks at once
-- Mods can manually call ConfigMenu.RefreshCurrentConfig() to refresh own OI
- + ResetCurrentConfig() refreshes AND resets configurations
- + RefreshCurrentConfig() only unloads and reload OI but won't reset configurations
- + Of course, call ConfigMenu.SaveCurrentConfig(bool) manually before calling RefreshCurrentConfig() to preserve configurations
+1.5.2.1
+- Fixed ArgumentOutOfRangeException with OpLabel.OnChange
+- Added 10 line count limit to normal OpLabel to prevent Futile crash
+1.5.2.0
+- Optimised OpLabel.autoWrap significantly
+ + With help of dual curly potato noodles (and others)
+ + GetWidth is also optimised
+ + This also fixes a rare crash with autoWrap
 ###1.5.1: No longer Beta#!#20210207#!#
+1.5.1.4
+- Hopefully fixed Mod List button showing up twice
+- Renamed Tab names for Mod List to avoid cluttering
+1.5.1.2
+- OpComboBox now has allowEmpty property which forces the user to choose one option if this is false
+- Fixed OpComboBox not getting disabled with greyedOut
+1.5.1.1
+- Fixed OpComboBox not hiding its lblText
+1.5.1.0
 - Changed access keywords of many properties and methods
  + Methods that shouldn't be called by the modders are now internal instead of public
  + UIconfig._value is now protected internal instead of private
 - Item sorting now ignores initial articles like 'The'
  + Use ListItem.GetRealName(string) if you need this too
 - Canvas gets coloured with active OpTab.colorCanvas
-1.5.1.1
-- Fixed OpComboBox not hiding its lblText
-1.5.1.2
-- OpComboBox now has allowEmpty property which forces the user to choose one option if this is false
-- Fixed OpComboBox not getting disabled with greyedOut
-1.5.1.4
-- Hopefully fixed Mod List button showing up twice
-- Renamed Tab names for Mod List to avoid cluttering
 ###1.5: Blepping Board Update#!#20210104#!#
 - Received many bits of help from Garrakx and Slime_Cubed for this update. Thank you!
 - Supports BepInEx plugins (BaseUnityPlugin)

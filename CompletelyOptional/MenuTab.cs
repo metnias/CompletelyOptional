@@ -106,7 +106,8 @@ namespace CompletelyOptional
                 string[] split = Regex.Split(rawLog[i + 1], "#!#");
                 this.vers[i] = split[0];
                 OpLabel ver = new OpLabel(new Vector2(130f + i * 560f, 470f), new Vector2(300f, 30f), split[0], bigText: true);
-                OpLabelLong log = new OpLabelLong(new Vector2(20f + i * 560f, 20f), new Vector2(520f, 420f), split[2].Trim()) { allowOverflow = false };
+                OpLabelLong log = new OpLabelLong(new Vector2(20f + i * 560f, 20f), new Vector2(520f, 420f), "placeholder") { allowOverflow = false };
+                log.text = split[2].Trim();
                 if (!string.IsNullOrEmpty(split[1]))
                 { ver.description = ConvertDate(split[1].Trim()); ver.bumpBehav = new BumpBehaviour(ver); }
                 this.box.AddItems(ver, log);

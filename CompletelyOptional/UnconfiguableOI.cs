@@ -133,8 +133,18 @@ namespace CompletelyOptional
             switch (this.reason)
             {
                 case Reason.NoInterface:
-                    labelSluggo0 = new OpLabel(new Vector2(100f, 350f), new Vector2(400f, 20f),
-                        InternalTranslator.Translate(rwMod.type == RainWorldMod.Type.PartialityMod ? "This Partiality Mod has no Option Interface." : "This BepInEx Plugin has no Option Interface."));
+                    if (rwMod.description != RainWorldMod.authorNull)
+                    {
+                        Tabs[0].AddItems(new OpLabelLong(new Vector2(50f, 200f), new Vector2(500f, 250f), rwMod.description, alignment: FLabelAlignment.Center));
+                        labelSluggo0 = new OpLabel(new Vector2(100f, 150f), new Vector2(400f, 20f),
+                            InternalTranslator.Translate(rwMod.type == RainWorldMod.Type.PartialityMod ? "This Partiality Mod has no Option Interface." : "This BepInEx Plugin has no Option Interface."));
+                    }
+                    else
+                    {
+                        labelSluggo0 = new OpLabel(new Vector2(100f, 350f), new Vector2(400f, 20f),
+                            InternalTranslator.Translate(rwMod.type == RainWorldMod.Type.PartialityMod ? "This Partiality Mod has no Option Interface." : "This BepInEx Plugin has no Option Interface."));
+                    }
+
                     Tabs[0].AddItems(labelSluggo0);
 
                     break;

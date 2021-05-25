@@ -1,6 +1,7 @@
 using Menu;
 using RWCustom;
 using System;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace OptionalUI
@@ -42,6 +43,8 @@ namespace OptionalUI
             else
             { this._text = text; _verticalAlignment = LabelVAlignment.Center; }
             //this.lineLength = Mathf.FloorToInt((size.x - 10f) / 6f);
+            string cleanText = Regex.Replace(_text, @"\s+", "");
+            this.isVFont = cleanText.Length > 0 && !LabelTest.HasNonASCIIChars(cleanText);
             if (!_init) { return; }
             this.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this._alignment = alignment;
@@ -156,6 +159,8 @@ namespace OptionalUI
         /// <remarks>Alternatively, you can initialize this on its own to make <see cref="OpLabel"/> reactive to Mouse.</remarks>
         public BumpBehaviour bumpBehav;
 
+        protected readonly bool isVFont;
+
         public override void GrafUpdate(float dt)
         {
             base.GrafUpdate(dt);
@@ -176,15 +181,15 @@ namespace OptionalUI
             if (!this.autoWrap)
             {
                 if (this.IsLong) { this._displayText = _text; }
-                else { this._displayText = _text.Length < LabelTest.CharLimit(_bigText) ? _text : _text.Substring(0, LabelTest.CharLimit(_bigText)); }
+                else { this._displayText = _text.Length < LabelTest.CharLimit(_bigText, isVFont) ? _text : _text.Substring(0, LabelTest.CharLimit(_bigText, isVFont)); }
             }
             else
             {
                 string ml;
                 if (this.IsLong) { ml = _text; }
-                else { ml = _text.Length < LabelTest.CharLimit(_bigText) ? _text : _text.Substring(0, LabelTest.CharLimit(_bigText)); }
+                else { ml = _text.Length < LabelTest.CharLimit(_bigText, isVFont) ? _text : _text.Substring(0, LabelTest.CharLimit(_bigText, isVFont)); }
 
-                this._displayText = LabelTest.WrapText(ml, _bigText, _size.x);
+                this._displayText = LabelTest.WrapText(ml, _bigText, _size.x, isVFont);
             }
         displaySkip:
             if (this.IsLong) { return; }
@@ -227,7 +232,7 @@ namespace OptionalUI
                     break;
             }
 
-            float lh = LabelTest.LineHeight(_bigText) * GetLineCount();
+            float lh = LabelTest.LineHeight(_bigText, isVFont) * GetLineCount();
             switch (this._verticalAlignment)
             {
                 default:

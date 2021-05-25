@@ -20,24 +20,28 @@ namespace OptionalUI
         /// </summary>
         internal static void Initialize(Menu.Menu menu)
         {
-            tester = new MenuLabel(menu, menu.pages[0], "A", new Vector2(10000f, 10000f), new Vector2(10000f, 100f), false);
+            tester = new MenuLabel(menu, menu.pages[0], "", new Vector2(10000f, 10000f), new Vector2(10000f, 100f), false);
             tester.label.alpha = 0f; tester.label.RemoveFromContainer();
-            testerB = new MenuLabel(menu, menu.pages[0], "B", new Vector2(10000f, 10500f), new Vector2(10000f, 300f), true);
+            testerB = new MenuLabel(menu, menu.pages[0], "", new Vector2(10000f, 10500f), new Vector2(10000f, 300f), true);
             testerB.label.alpha = 0f; testerB.label.RemoveFromContainer();
+
             if (OptionScript.ComModExists)
             {
                 float s = 1f / (int)OptionScript.ComMod.GetType().GetField("pMulti", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(OptionScript.ComMod);
                 tester.label.scale = s;
                 s = 1f / (int)OptionScript.ComMod.GetType().GetField("pdMulti", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(OptionScript.ComMod);
                 testerB.label.scale = s;
+                //Debug.Log($"ComMod detected: s:{s}, sd:{sd}");
             }
 
             if (!hasChecked)
             {
                 hasChecked = true;
+                tester.text = "A"; testerB.text = "A";
                 _textHeight = tester.label.textRect.height; _textHeightB = testerB.label.textRect.height;
                 tester.text = "A\nB"; testerB.text = "A\nB";
                 _lineHeight = tester.label.textRect.height - _textHeight; _lineHeightB = testerB.label.textRect.height - _textHeightB;
+                //_textHeight *= s; _lineHeight *= s; _textHeightB *= sd; _lineHeightB *= sd;
                 string meanTest = "ABCDEFGHIJKLMNOPQRSTUVWXYZ, abcdefghijklmnopqrstuvwxyz. abcdefghijklmnopqrstuvwxyz! abcdefghijklmnopqrstuvwxyz?";
                 tester.text = meanTest; testerB.text = meanTest; //60473.68
                 _charMean = tester.label.textRect.width / meanTest.Length;
@@ -58,12 +62,18 @@ namespace OptionalUI
         private static int _charLim = 600, _charLimB = 175;
         private static string _font = "font", _fontB = "DisplayFont";
 
+        private const float _VlineHeight = 15f, _VlineHeightB = 30f;
+        private const float _VtextHeight = 15f, _VtextHeightB = 30f;
+        private const float _VcharMean = 6.4f, _VcharMeanB = 11.1f;
+        private const int _VcharLim = 600, _VcharLimB = 175;
+        private const string _Vfont = "font", _VfontB = "DisplayFont";
+
         /// <summary>
         /// LineHeight of current font
         /// </summary>
         /// <param name="bigText">Whether the font is big variant or not</param>
         /// <returns>Line Height in pxl</returns>
-        public static float LineHeight(bool bigText) => !bigText ? _lineHeight : _lineHeightB;
+        public static float LineHeight(bool bigText, bool ascii = false) => !ascii ? (!bigText ? _lineHeight : _lineHeightB) : (!bigText ? _VlineHeight : _VlineHeightB);
 
         // public static float TextHeight(bool bigText) => !bigText ? _textHeight : _textHeightB;
 
@@ -72,14 +82,14 @@ namespace OptionalUI
         /// </summary>
         /// <param name="bigText">Whether the font is big variant or not</param>
         /// <returns>Mean pxl length of single character for current font</returns>
-        public static float CharMean(bool bigText) => !bigText ? _charMean : _charMeanB;
+        public static float CharMean(bool bigText, bool ascii = false) => !ascii ? (!bigText ? _charMean : _charMeanB) : (!bigText ? _VcharMean : _charMeanB);
 
         /// <summary>
         /// Average text limit of singular <see cref="FLabel"/> that does not cause Futile Crash
         /// </summary>
         /// <param name="bigText">Whether the font is big variant or not</param>
         /// <returns>Absolute text length limit</returns>
-        public static int CharLimit(bool bigText) => !bigText ? _charLim : _charLimB;
+        public static int CharLimit(bool bigText, bool ascii = false) => !ascii ? (!bigText ? _charLim : _charLimB) : (!bigText ? _VcharLim : _VcharLimB);
 
         /// <summary>
         /// Returns <see cref="FFont"/> fontName of <see cref="FLabel"/> for when you're directly using <see cref="FLabel"/> instead of <see cref="MenuLabel"/>.
@@ -87,11 +97,16 @@ namespace OptionalUI
         /// </summary>
         /// <param name="bigText">Whether the font is big variant or not</param>
         /// <returns>fontName which can be used for <see cref="FLabel.FLabel(string, string, FTextParams)"/></returns>
-        public static string GetFont(bool bigText) => !bigText ? _font : _fontB;
+        public static string GetFont(bool bigText, bool ascii = false) => !ascii ? (!bigText ? _font : _fontB) : (!bigText ? _Vfont : _VfontB);
+
+        /// <summary>
+        /// Returns whether the text has non ASCII characters or not
+        /// </summary>
+        public static bool HasNonASCIIChars(string text) => (System.Text.Encoding.UTF8.GetByteCount(text) != text.Length);
 
         /// <summary>
         /// Checks how long pixels would the text take.
-        /// <para>This is very costy in performance, so do not use this too much. See also <see cref="CharMean(bool)"/></para>
+        /// <para>This is very costy in performance, so do not use this too much. See also <see cref="CharMean"/></para>
         /// </summary>
         /// <param name="text">Text you want to test</param>
         /// <param name="bigText">Whether the font is big variant or not</param>
@@ -104,7 +119,7 @@ namespace OptionalUI
             l.text = text;
             return l.label.textRect.width;*/
 
-            FFont font = Futile.atlasManager.GetFontWithName(GetFont(bigText));
+            FFont font = Futile.atlasManager.GetFontWithName(GetFont(bigText, !HasNonASCIIChars(text)));
             float width = 0f;
             foreach (var item in font.GetQuadInfoForText(text, new FTextParams()))
             { width = Mathf.Max(width, item.bounds.width); }
@@ -118,9 +133,9 @@ namespace OptionalUI
         /// <param name="bigText">Whether the font is big variant or not</param>
         /// <param name="width">Pixel width</param>
         /// <returns></returns>
-        public static string WrapText(this string text, bool bigText, float width)
+        public static string WrapText(this string text, bool bigText, float width, bool ascii = false)
         {
-            FFont font = Futile.atlasManager.GetFontWithName(GetFont(bigText));
+            FFont font = Futile.atlasManager.GetFontWithName(GetFont(bigText, ascii));
             string[] lines = text.Replace("\r\n", "\n").Split('\n');
             StringBuilder ret = new StringBuilder();
             for (int i = 0; i < lines.Length; i++)
