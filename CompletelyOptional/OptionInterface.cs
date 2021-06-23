@@ -394,16 +394,6 @@ namespace OptionalUI
         public PartialityMod mod;
 
         /// <summary>
-        /// Use <see cref="data"/> instead.
-        /// </summary>
-        /// <exception cref="NotImplementedException">Thrown when used.</exception>
-        [Obsolete]
-        public static string progData
-        {
-            get { throw new NotImplementedException("OptionInterface.progData is no longer used! Use OptionInterface.data instead."); }
-        }
-
-        /// <summary>
         /// Use <see cref="OpColorPicker.HexToColor(string)"/> instead.
         /// </summary>
         [Obsolete]

@@ -90,16 +90,6 @@ namespace CompletelyOptional
             return false;
         }
 
-        public override bool SaveData()
-        {
-            return false;
-        }
-
-        public override void LoadData()
-        {
-            return;
-        }
-
 #pragma warning disable CA1822 // Mark members as static
 
         public new bool LoadConfig() => true;
