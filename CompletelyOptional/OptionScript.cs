@@ -20,6 +20,32 @@ namespace CompletelyOptional
         public OptionScript()
         {
             init = false;
+            //On.RainWorld.Start += RainWorld_Start;
+            On.ProcessManager.ctor += ProcessManager_ctor;
+        }
+
+        private void ProcessManager_ctor(On.ProcessManager.orig_ctor orig, ProcessManager self, RainWorld rainWorld)
+        {
+            try
+            {
+                pm = self;
+                rw = rainWorld;
+                //if (rw == null) { return; }
+                try
+                {
+                    Initialize();
+                    ProgressData.SubPatch();
+                }
+                catch (Exception ex) { Debug.LogError(ex); Debug.LogException(ex); }
+                for (int i = 0; i < dtHistory.Length; i++) { dtHistory[i] = 0.016667f; }
+                init = true;
+
+                ConfigMenu.currentTab = null;
+            }
+            finally
+            {
+                orig(self,rainWorld);
+            }
         }
 
         public static bool init = false;
@@ -95,12 +121,12 @@ namespace CompletelyOptional
         /// <summary>
         /// Current SaveSlot.
         /// </summary>
-        public static int Slot => pm.rainWorld.options.saveSlot;
+        public static int Slot => rw.options.saveSlot;
 
         /// <summary>
         /// Currently Playing Slugcat.
         /// </summary>
-        public static int Slugcat => pm.rainWorld.progression.PlayingAsSlugcat;
+        public static int Slugcat => rw.progression.PlayingAsSlugcat;
 
         /// <summary>
         /// Whether Config has changed in Config Menu or not
@@ -448,27 +474,6 @@ namespace CompletelyOptional
         {
             if (!init)
             {
-                rw = UnityEngine.Object.FindObjectOfType<RainWorld>();
-                if (rw == null) { return; }
-                pm = rw.processManager;
-                if (pm.upcomingProcess == ProcessManager.ProcessID.MainMenu)
-                {
-                    try
-                    {
-                        Initialize();
-                    }
-                    catch (Exception ex) { Debug.LogError(ex); Debug.LogException(ex); }
-                    for (int i = 0; i < dtHistory.Length; i++) { dtHistory[i] = 0.016667f; }
-                    init = true;
-                }
-                ConfigMenu.currentTab = null;
-                return;
-            }
-            if (pm == null)
-            {
-                rw = UnityEngine.Object.FindObjectOfType<RainWorld>();
-                if (rw == null) { return; }
-                pm = rw.processManager;
                 return;
             }
 

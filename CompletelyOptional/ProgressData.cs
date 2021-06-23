@@ -11,6 +11,7 @@ namespace CompletelyOptional
             On.DeathPersistentSaveData.SaveToString += new On.DeathPersistentSaveData.hook_SaveToString(SaveToStringPatch);
             On.SaveState.SessionEnded += new On.SaveState.hook_SessionEnded(SessionEndPatch);
             On.SaveState.LoadGame += new On.SaveState.hook_LoadGame(LoadGamePatch);
+            //On.PlayerProgression.WipeAll hmmmmm
         }
 
         private static void LoadAndSaveOI(int saveOrLoad, bool force, bool saveAsDeath = false, bool saveAsQuit = false)
@@ -49,7 +50,21 @@ namespace CompletelyOptional
         private static void LoadGamePatch(On.SaveState.orig_LoadGame orig, SaveState self, string str, RainWorldGame game)
         {
             orig.Invoke(self, str, game);
-            LoadAndSaveOI(2, false);
+            if (str == string.Empty)
+            {
+                // Fresh start/restart
+                foreach (OptionInterface oi in OptionScript.loadedInterfaces)
+                {
+                    if (oi.progressData)
+                    {
+                        oi.OnNewSave();
+                    }
+                }
+            }
+            else
+            {
+                LoadAndSaveOI(2, false);
+            }
         }
 
         private static string SaveToStringPatch(On.DeathPersistentSaveData.orig_SaveToString orig, DeathPersistentSaveData self, bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
