@@ -1,4 +1,9 @@
-﻿###1.5.4#!#20210525#!#
+﻿###1.5.5#!#20210623#!#
+- This Update is brought you by Henpemaz
+- Config Machine now initializes with ProcessManager
+ + Fixes CM not loading with EDT's skip_title feature
+- 
+###1.5.4#!#20210525#!#
 1.5.4.2
 - Reverted some of LabelTest changes to restore compatibility with CRS
 - Config Machine will now use AssemblyDescription to describe mods that doesn't support CM

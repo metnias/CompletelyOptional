@@ -20,11 +20,10 @@ namespace CompletelyOptional
         public OptionScript()
         {
             init = false;
-            //On.RainWorld.Start += RainWorld_Start;
-            On.ProcessManager.ctor += ProcessManager_ctor;
+            On.ProcessManager.ctor += ProcessManagerCtor;
         }
 
-        private void ProcessManager_ctor(On.ProcessManager.orig_ctor orig, ProcessManager self, RainWorld rainWorld)
+        private static void ProcessManagerCtor(On.ProcessManager.orig_ctor orig, ProcessManager self, RainWorld rainWorld)
         {
             try
             {
@@ -44,7 +43,7 @@ namespace CompletelyOptional
             }
             finally
             {
-                orig(self,rainWorld);
+                orig(self, rainWorld);
             }
         }
 
@@ -472,10 +471,7 @@ namespace CompletelyOptional
         /// </summary>
         public void Update()
         {
-            if (!init)
-            {
-                return;
-            }
+            if (!init) { return; }
 
             if (pm.currentMainLoop?.ID != ProcessManager.ProcessID.OptionsMenu)
             { goto BackgroundUpdate; }
@@ -643,7 +639,7 @@ namespace CompletelyOptional
         BackgroundUpdate:
             isOptionMenu = false;
             //Background running
-            if (pm.currentMainLoop?.ID == ProcessManager.ProcessID.IntroRoll) { return; }
+            // if (pm.currentMainLoop?.ID == ProcessManager.ProcessID.IntroRoll) { return; }
             /*
             foreach (OptionInterface oi in loadedInterfaces)
             {
