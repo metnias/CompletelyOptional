@@ -197,6 +197,14 @@ namespace OptionalUI
             get { return string.Empty; }
         }
 
+        /// <summary>
+        /// Default Misc Save Data of this mod. If this isn't needed, just leave it be.
+        /// </summary>
+        public virtual string defaultMiscData
+        {
+            get { return string.Empty; }
+        }
+
         private DirectoryInfo directory => new DirectoryInfo(string.Concat(
                     OptionMod.directory.FullName,
                     rwMod.ModID,
@@ -363,14 +371,26 @@ namespace OptionalUI
         public Dictionary<string, UIconfig> objectDictionary;
 
         private string[] _data;
+        private string _miscdata;
 
         /// <summary>
+        /// Save data tied to a specific slugcat
         /// Set this to whatever you want and call <see cref="SaveData"/> and <see cref="LoadData"/> when you need.
         /// </summary>
         public string data
         {
             get { return _data[slugcat]; }
-            set { if (_data[slugcat] != value) { DataOnChange(); _data[slugcat] = value; } }
+            set { if (_data[slugcat] != value) { _data[slugcat] = value; DataOnChange(); } }
+        }
+
+        /// <summary>
+        /// Save data shared across all slugcats on the same save-slot
+        /// Set this to whatever you want and call <see cref="SaveData"/> and <see cref="LoadData"/> when you need.
+        /// </summary>
+        public string miscdata
+        {
+            get { return _miscdata; }
+            set { if (_miscdata != value) { _miscdata = value; DataOnChange(); } }
         }
 
         /// <summary>
@@ -450,12 +470,14 @@ namespace OptionalUI
         /// <returns>Loaded Data</returns>
         public virtual void LoadData()
         {
-            if (!directory.Exists) { data = string.Empty; return; }
-
+            if (_data == null) GenerateDataArray(Mathf.Max(3, _slugcat)); // skipped menu/charselect :(
             for (int i = 0; i < _data.Length; i++)
             {
                 _data[i] = defaultData;
             }
+            _miscdata = defaultMiscData;
+
+            if (!directory.Exists) {Debug.Log("CM: Missing directory for " + this.rwMod.ModID); return; } // already set to default
             try
             {
                 string data = string.Empty;
@@ -484,11 +506,27 @@ namespace OptionalUI
                     }
                     data = Crypto.DecryptString(data, string.Concat("OptionalData " + rwMod.ModID));
                 }
-                string[] raw = Regex.Split(data, "<slugChar>");
+
+                // data : 
+                string[] raw = Regex.Split(data, "<miscData>");
+                if (raw.Length > 1)
+                {
+                    _miscdata = raw[1];
+                    //Debug.Log("CM: Got misc data :" + raw[1]);
+                }
+                data = raw[0];
+                //Debug.Log("CM: Got raw data :" + raw[0]);
+                raw = Regex.Split(data, "<slugChar>");
+
                 _data = new string[Math.Max(_data.Length, raw.Length)];
                 for (int j = 0; j < raw.Length; j++)
                 {
-                    _data[j] = raw[j];
+                    if(j == _slugcat && _data[j] != raw[j])
+                    {
+                        _data[j] = raw[j];
+                        DataOnChange();
+                    }
+                    else _data[j] = raw[j];
                 }
                 return;
             }
@@ -510,6 +548,8 @@ namespace OptionalUI
 
             string data = string.Empty;
             for (int i = 0; i < _data.Length; i++) { data += _data[i] + "<slugChar>"; };
+            data += "<miscData>" + _miscdata;
+            //Debug.Log("CM: Saving data :" + data);
             //if (string.IsNullOrEmpty(_data)) { return false; }
             try
             {
@@ -529,6 +569,14 @@ namespace OptionalUI
             catch (Exception ex) { Debug.LogException(new SaveDataException(ex.ToString())); }
 
             return false;
+        }
+
+        /// <summary>
+        /// Event that happens when the player starts a new save. Defaults to overiting data with defaultData.
+        /// </summary>
+        public virtual void OnNewSave()
+        {
+            data = defaultData;
         }
 
         /// <summary>
