@@ -1576,7 +1576,7 @@ namespace OptionalUI
         {
             value = value.Trim().TrimStart('#');
             if (IsStringHexColor(value))
-            { this.inputHex = value.Substring(0, 6); this.lblHex.text = "#" + this.inputHex; return true; }
+            { this.inputHex = value.Substring(0, 6).ToUpper(); this.lblHex.text = "#" + this.inputHex; return true; }
             return false;
         }
     }

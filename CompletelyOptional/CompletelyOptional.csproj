@@ -38,6 +38,9 @@
     <Reference Include="BepInEx" />
     <Reference Include="HOOKS-Assembly-CSharp" />
     <Reference Include="Partiality" />
+    <Reference Include="SlugBase">
+      <HintPath>..\..\References\RainWorld\SlugBase.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine" />
     <Reference Include="PresentationCore" />
     <Reference Include="System" />

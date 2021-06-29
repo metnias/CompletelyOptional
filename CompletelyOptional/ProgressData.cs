@@ -40,10 +40,6 @@ namespace CompletelyOptional
         private static void SlugMenuCtorPatch(On.Menu.SlugcatSelectMenu.orig_ctor orig, SlugcatSelectMenu self, ProcessManager manager)
         {
             orig.Invoke(self, manager);
-            foreach (OptionInterface oi in OptionScript.loadedInterfaces)
-            {
-                if (oi.hasProgData) { oi.GenerateDataArray(self.slugcatColorOrder.Length); }
-            }
             SaveAndLoadOIs(SaveAndLoad.Update, true);
         }
 

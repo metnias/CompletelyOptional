@@ -138,8 +138,11 @@ namespace CompletelyOptional
         public static string curLang;
 
         public static PartialityMod ComMod;
-        public static bool ComModExists;
+        public static bool ComModExists { get; private set; } = false;
         public static Dictionary<int, string> ID2Code;
+
+        public static PartialityMod SlugBaseMod;
+        public static bool SlugBaseExists { get; private set; } = false;
 
         private static bool ValidModIDCheck(string id) => !loadedModsDictionary.ContainsKey(id) && Regex.IsMatch(id, "^[^\\/?%*:|\"<>/.]+$");
 
@@ -185,6 +188,7 @@ namespace CompletelyOptional
                     continue;
                 }
                 if (mod.ModID.Substring(0, 1) == "_") { continue; } //Skip this mod from configuration
+                if (mod.ModID == "SlugBase") { SlugBaseMod = mod; SlugBaseExists = true; }
 
                 if (loadedModsDictionary.ContainsKey(mod.ModID))
                 { Debug.LogError($"Duplicate ModID detected! (dupe ID: {mod.ModID})"); }

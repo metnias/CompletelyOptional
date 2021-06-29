@@ -123,6 +123,14 @@ namespace OptionalUI
         }
 
         /// <summary>
+        /// Default <see cref="progPersData"/> of this mod. If this isn't needed, just leave it be.
+        /// </summary>
+        public virtual string defaultProgPersData
+        {
+            get { return string.Empty; }
+        }
+
+        /// <summary>
         /// Default <see cref="progMiscData"/> of this mod. If this isn't needed, just leave it be.
         /// </summary>
         public virtual string defaultProgMiscData
@@ -133,34 +141,67 @@ namespace OptionalUI
         /// <summary>
         /// Currently selected saveslot
         /// </summary>
-        public static int slot => OptionScript.Slot;
-
-        private static int _slot;
+        public int slot { get; private set; } = -1;
 
         /// <summary>
         /// Currently selected slugcat
         /// </summary>
-        public static int slugcat => OptionScript.Slugcat;
+        public int slugcat { get; private set; } = -1;
 
-        private static int _slugcat;
-
-        private string[] _progData;
+        private string _progData;
+        private string _progPersData;
         private string _progMiscData;
 
         /// <summary>
-        /// Progression Savedata tied to a specific slugcat.
+        /// Progression Savedata tied to a specific slugcat. This gets reverted automatically if the Slugcat loses.
         /// Set this to whatever you want in game. Config Machine will then manage saving automatically.
         /// </summary>
         public string progData
         {
             get
             {
-                hasProgData = true;
-                if (slugcat > 0 && slugcat >= _progData.Length) { GenerateDataArray(slugcat); }
-                return _progData[slugcat];
+                if (!hasProgData)
+                { hasProgData = true; slot = OptionScript.Slot; slugcat = OptionScript.Slugcat; LoadProgData(); }
+                else if (slot != OptionScript.Slot || slugcat != OptionScript.Slugcat)
+                { SlotOnChange(); }
+                return _progData;
             }
-            set { if (_progData[slugcat] != value) { hasProgData = true; _progData[slugcat] = value; ProgDataOnChange(); } }
+            set
+            {
+                if (slot != OptionScript.Slot || slugcat != OptionScript.Slugcat)
+                { SlotOnChange(); }
+                if (_progData != value) { hasProgData = true; _progData = value; ProgDataOnChange(); }
+            }
         }
+
+        /// <summary>
+        /// Progression Savedata tied to a specific slugcat.
+        /// Set this to whatever you want in game. Config Machine will then manage saving automatically.
+        /// </summary>
+        public string progPersData
+        {
+            get
+            {
+                if (!hasProgData)
+                { hasProgData = true; slot = OptionScript.Slot; slugcat = OptionScript.Slugcat; LoadProgData(); }
+                else if (slot != OptionScript.Slot || slugcat != OptionScript.Slugcat)
+                { SlotOnChange(); }
+                return _progPersData;
+            }
+            set
+            {
+                if (slot != OptionScript.Slot || slugcat != OptionScript.Slugcat)
+                { SlotOnChange(); }
+                if (_progPersData != value) { hasProgData = true; _progPersData = value; ProgDataOnChange(); }
+            }
+        }
+
+        public string GetProgDataOfSlugcat(string name)
+        {
+            return "";
+        }
+
+        public string GetProgDataOfSlugcat(int slugcatNumber) => GetProgDataOfSlugcat(GetSlugcatName(slugcatNumber));
 
         /// <summary>
         /// Progression Savedata shared across all slugcats on the same Saveslot.
@@ -181,15 +222,15 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Event that happens when selected SaveSlot has been changed.
+        /// Event that happens when either selected SaveSlot or Slugcat has been changed.
         /// This automatically saves and loads <see cref="progData"/> and <see cref="progMiscData"/> by default.
         /// </summary>
         public virtual void SlotOnChange()
         {
-            if (!hasProgData) { _slot = slot; _slugcat = slugcat; return; }
-            SaveProgData();
-            _slot = slot; _slugcat = slugcat;
-            LoadProgData();
+            // if (!hasProgData) { slot = OptionScript.Slot; slugcat = OptionScript.Slugcat; return; }
+            // SaveProgData();
+            slot = OptionScript.Slot; slugcat = OptionScript.Slugcat;
+            if (hasProgData) LoadProgData();
         }
 
         /// <summary>
@@ -207,35 +248,51 @@ namespace OptionalUI
         /// </summary>
         public bool saveAsQuit { get; internal set; } = false;
 
+        public static string GetSlugcatName(int slugcat)
+        {
+            if (slugcat < 3 && slugcat >= 0) { return ((SlugcatStats.Name)slugcat).ToString(); }
+            if (OptionScript.SlugBaseExists) { return GetSlugBaseSlugcatName(slugcat); }
+            else { return ((SlugcatStats.Name)Math.Max(0, slugcat)).ToString(); }
+        }
+
+        internal static int GetSlugcatSeed(int slugcat)
+        {
+        }
+
+        #region SlugBase
+
+        private static string GetSlugBaseSlugcatName(int slugcat) => SlugBase.PlayerManager.GetCustomPlayer(slugcat).Name;
+
+        #endregion SlugBase
+
+        // progData1_White.txt
+        // progPersData1_White.txt
+        // progMiscData1.txt
+
         /// <summary>
-        /// Loads <see cref="progData"/> and <see cref="progMiscData"/>. This is called automatically.
+        /// Loads <see cref="progData"/>. This is called automatically.
         /// Check <see cref="progDataTinkered"/> to see if saved data is tinkered or not.
         /// </summary>
         internal void LoadProgData()
-        {
-            if (_progData == null) GenerateDataArray(Mathf.Max(3, _slugcat)); // skipped menu/charselect :(
-            for (int i = 0; i < _progData.Length; i++)
-            {
-                _progData[i] = defaultData;
-            }
-            _progMiscData = defaultProgMiscData;
-
-            if (!directory.Exists) { Debug.Log("CompletelyOptional) Missing directory for " + this.rwMod.ModID); return; } // already set to default
+        { // check also seed match for progdata
+            _progData = defaultProgData;
+            if (!directory.Exists) { Debug.Log("CompletelyOptional) Missing directory for " + this.rwMod.ModID); directory.Create(); return; }
             try
             {
-                string data = string.Empty;
+                string data = string.Empty, name = GetSlugcatName(slugcat);
                 foreach (FileInfo file in directory.GetFiles())
                 {
-                    if (file.Name.Length < 12) { continue; }
+                    if (file.Name.Length < 12 + name.Length) { continue; }
                     if (file.Name.Substring(file.Name.Length - 4) != ".txt") { continue; }
 
                     if (file.Name.Substring(0, 8) == "progData")
                     {
                         if (slot.ToString() != file.Name.Substring(file.Name.Length - 9, 1)) { continue; }
+                        if (!file.Name.Substring(10).StartsWith(name)) { continue; }
                     }
                     else { continue; }
 
-                    //LoadSlotData:
+                    //LoadProgData:
                     data = File.ReadAllText(file.FullName, Encoding.UTF8);
                     string key = data.Substring(0, 32);
                     data = data.Substring(32, data.Length - 32);
@@ -247,8 +304,9 @@ namespace OptionalUI
                     else
                     {
                         progDataTinkered = false;
+                        data = Crypto.DecryptString(data, CryptoProgDataKey(slugcat));
+                        string[] seedsplit = Regex.Split(data, "<Seed>");
                     }
-                    data = Crypto.DecryptString(data, string.Concat("OptionalProgData" + rwMod.ModID));
                 }
 
                 // data :
@@ -265,7 +323,7 @@ namespace OptionalUI
                 _progData = new string[Math.Max(_progData.Length, raw.Length)];
                 for (int j = 0; j < raw.Length; j++)
                 {
-                    if (j == _slugcat && _progData[j] != raw[j])
+                    if (j == slugcat && _progData[j] != raw[j])
                     {
                         _progData[j] = raw[j];
                         ProgDataOnChange();
@@ -274,13 +332,21 @@ namespace OptionalUI
                 }
                 return;
             }
-            catch (Exception ex) { Debug.LogException(new LoadDataException(ex.ToString())); }
+            catch (Exception ex)
+            {
+                Debug.LogException(new LoadDataException(ex.ToString()));
+            }
         }
 
         /// <summary>
         /// If you want to see whether your <see cref="progData"/> is tinkered or not.
         /// </summary>
         public bool progDataTinkered { get; private set; } = false;
+
+        private static int GetSeedOfSlugcat(int slugcat)
+        {
+            return 0;
+        }
 
         /// <summary>
         /// Saves <see cref="progData"/> and <see cref="progMiscData"/>. This is called automatically.
@@ -303,7 +369,7 @@ namespace OptionalUI
                 slot.ToString(),
                 ".txt"
                 });
-                string enc = Crypto.EncryptString(data, string.Concat("OptionalProgData" + rwMod.ModID));
+                string enc = Crypto.EncryptString(data, CryptoProgDataKey(9));
                 string key = Custom.Md5Sum(enc);
 
                 File.WriteAllText(path, key + enc);
@@ -314,6 +380,8 @@ namespace OptionalUI
 
             return false;
         }
+
+        private string CryptoProgDataKey(int slugcat) => "OptionalProgData" + (slugcat < 0 ? "Misc" : slugcat.ToString()) + rwMod.ModID;
 
         /// <summary>
         /// Event that happens when the player starts a new save, resets the save, or resumed the game with this mod freshly installed(<paramref name="resume"/>).
@@ -335,17 +403,7 @@ namespace OptionalUI
                 case ProgressData.SaveAndLoad.Save: SaveProgData(); break;
                 case ProgressData.SaveAndLoad.Load: LoadProgData(); break;
             }
-            if (_slot != slot) { SlotOnChange(); }
-            else if (_slugcat != slugcat) { SlotOnChange(); }
-        }
-
-        /// <summary>
-        /// Do not call this by your own.
-        /// </summary>
-        /// <param name="slugcatLength"></param>
-        internal void GenerateDataArray(int slugcatLength)
-        {
-            _progData = new string[slugcatLength];
+            if (slot != OptionScript.Slot || slugcat != OptionScript.Slugcat) { SlotOnChange(); }
         }
 
         #endregion progData

@@ -383,7 +383,7 @@ namespace OptionalUI
             {
                 if (mod.ModID == OptionMod.instance.ModID) { return true; }
             }
-            _slot = slot;
+            //slot = OptionScript.Slot;
             return false;
         }
 
