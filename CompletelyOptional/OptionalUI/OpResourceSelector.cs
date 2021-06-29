@@ -30,7 +30,12 @@ namespace OptionalUI
             string[] nameList = Enum.GetNames(enumType);
             List<ListItem> list = new List<ListItem>();
             for (int i = 0; i < nameList.Length; i++)
-            { list.Add(new ListItem(nameList[i], (int)Enum.Parse(enumType, nameList[i]))); }
+            {
+                var enumVal = (Enum) Enum.Parse(enumType, nameList[i]);
+                var item = new ListItem(nameList[i], (int)(object)enumVal);
+                item.displayName = EnumHelper.GetEnumDesc(enumVal);
+                list.Add(item);
+            }
             list.Sort(ListItem.Comparer);
             this.itemList = list.ToArray();
             this.ResetIndex();
