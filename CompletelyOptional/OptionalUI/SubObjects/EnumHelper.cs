@@ -3,6 +3,9 @@ using System.ComponentModel;
 
 namespace OptionalUI
 {
+    /// <summary>
+    /// by PJB3005
+    /// </summary>
     internal static class EnumHelper
     {
         public static string GetEnumDesc(Enum value)

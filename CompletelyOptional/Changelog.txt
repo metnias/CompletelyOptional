@@ -11,6 +11,7 @@
  + ProgData_1_White.txt
 - ListItem now has a property called displayName (by PJB)
  + Useful for supporting Translation
+ + Also fixed OpResourceSelector and OpResourceList not working properly with EnumExtender
 ###1.5.4#!#20210525#!#
 1.5.4.2
 - Reverted some of LabelTest changes to restore compatibility with CRS
