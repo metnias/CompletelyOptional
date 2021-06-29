@@ -31,8 +31,8 @@ namespace OptionalUI
             List<ListItem> list = new List<ListItem>();
             for (int i = 0; i < nameList.Length; i++)
             {
-                var enumVal = (Enum) Enum.Parse(enumType, nameList[i]);
-                var item = new ListItem(nameList[i], (int)(object)enumVal);
+                var enumVal = (Enum)Enum.Parse(enumType, nameList[i]);
+                ListItem item = new ListItem(nameList[i], (int)(object)enumVal);
                 item.displayName = EnumHelper.GetEnumDesc(enumVal);
                 list.Add(item);
             }

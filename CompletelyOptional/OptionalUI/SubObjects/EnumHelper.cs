@@ -1,7 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 
-namespace CompletelyOptional
+namespace OptionalUI
 {
     internal static class EnumHelper
     {

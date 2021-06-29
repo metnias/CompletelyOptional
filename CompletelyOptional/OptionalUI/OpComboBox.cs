@@ -667,7 +667,7 @@ namespace OptionalUI
             this.searchList.Clear();
             for (int i = 0; i < this.itemList.Length; i++)
             {
-                if (ListItem.SearchMatch(this.searchQuery, this.itemList[i].EffectiveDisplayName))
+                if (ListItem.SearchMatch(this.searchQuery, this.itemList[i].displayName) || ListItem.SearchMatch(this.searchQuery, this.itemList[i].name))
                 { this.searchList.Add(this.itemList[i]); }
             }
             this.searchList.Sort(ListItem.Comparer);
@@ -679,14 +679,12 @@ namespace OptionalUI
             this.listTop = 0;
         }
 
-        private string GetDisplayValue()
+        protected string GetDisplayValue()
         {
             foreach (var item in itemList)
             {
                 if (item.name == value)
-                {
-                    return item.displayName ?? value;
-                }
+                { return item.EffectiveDisplayName; }
             }
 
             return value;

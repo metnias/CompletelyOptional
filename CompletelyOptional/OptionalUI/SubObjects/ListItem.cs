@@ -6,17 +6,32 @@
     public struct ListItem
     {
         /// <summary>
-        /// struct that's used for handling items in <see cref="OpComboBox"/>
+        /// struct that's used for handling items in <see cref="OpComboBox"/> and <see cref="OpListBox"/>
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="value"></param>
+        /// <param name="name">The code name of this item, which will be used for its <see cref="UIconfig.value"/></param>
+        /// <param name="value">Sorting priority of this item. The higher the lower it goes.</param>
         public ListItem(string name, int value = int.MaxValue)
         {
             this.name = name;
             this.value = value;
             this.index = -1;
             this.desc = "";
-            this.displayName = null;
+            this.displayName = name;
+        }
+
+        /// <summary>
+        /// struct that's used for handling items in <see cref="OpComboBox"/> and <see cref="OpListBox"/>
+        /// </summary>
+        /// <param name="name">The code name of this item, which will be refered in its <see cref="UIconfig.value"/></param>
+        /// <param name="value">Sorting priority of this item. The higher the lower it goes.</param>
+        /// <param name="displayName">The display name of this item, which will be displayed in its <see cref="UIconfig"/></param>
+        public ListItem(string name, string displayName, int value = int.MaxValue)
+        {
+            this.name = name;
+            this.value = value;
+            this.index = -1;
+            this.desc = "";
+            this.displayName = displayName;
         }
 
         /// <summary>
@@ -32,20 +47,20 @@
         /// <summary>
         /// index number in <see cref="OpComboBox"/>. This will be set automatically, and used for search function.
         /// </summary>
-        public int index;
+        internal int index;
 
         /// <summary>
-        /// The description to be shown when the mouse is hovered.
+        /// The description to be shown when the mouse is hovered. You can change this.
         /// </summary>
         public string desc;
 
         /// <summary>
-        ///     Display name shown to the actual user. Can be null, in which case <see cref="name"/> is shown instead.
+        /// Display name shown to the actual user. Useful for supporting translation.
         /// </summary>
         public string displayName;
 
-        public string EffectiveDisplayName => displayName ?? name;
-        
+        public string EffectiveDisplayName => string.IsNullOrEmpty(displayName) ? name : displayName;
+
         public override bool Equals(object obj) => obj is ListItem i && this.name == i.name && this.value == i.value;
 
         public override int GetHashCode() => this.name.GetHashCode();
@@ -77,6 +92,7 @@
 
         public static bool SearchMatch(string query, string text)
         {
+            if (string.IsNullOrEmpty(text) || string.IsNullOrEmpty(query)) { return false; }
             query = query.Trim().ToLower();
             text = text.ToLower();
             if (query.Contains(" ")) // AND search

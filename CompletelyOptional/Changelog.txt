@@ -1,8 +1,7 @@
 ﻿###1.5.5#!#20210623#!#
-- This Update is brought you by Henpemaz
-- Config Machine now initializes with ProcessManager
+- Config Machine now initializes with ProcessManager (by Henpemaz)
  + Fixes CM not initializing with Extended DevTools' skip_title feature
-- Reworked OptionInterface's Data API
+- Reworked OptionInterface's Data API (by Henpemaz)
  + This BREAKS backward compatibility with mods that use older Data API
  + There are now three types of data in OptionInterface
   x data: Not bound to the game. Modders can set this to anything anytime, but have to call LoadData and SaveData manually
@@ -10,6 +9,8 @@
   x progMiscData: Progression Data bound to each Saveslot and shared across all the slugcats. Also gets saved and loaded automatically.
  + Todo: Use Slugcat Name instead of number to support custom slugcat
  + ProgData_1_White.txt
+- ListItem now has a property called displayName (by PJB)
+ + Useful for supporting Translation
 ###1.5.4#!#20210525#!#
 1.5.4.2
 - Reverted some of LabelTest changes to restore compatibility with CRS
