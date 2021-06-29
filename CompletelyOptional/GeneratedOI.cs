@@ -206,7 +206,7 @@ namespace CompletelyOptional
                                     // if type is enum => OpComboBox
                                     if (entryBase.SettingType.IsEnum)
                                     {
-                                        elms.Add(new OpResourceSelector(new Vector2(30f, 600f - h - 45f), 120f, GenerateKey(cds[e]), entryBase.SettingType, (string)entryBase.DefaultValue));
+                                        elms.Add(new OpResourceSelector(new Vector2(30f, 600f - h - 45f), 120f, GenerateKey(cds[e]), entryBase.SettingType, entryBase.DefaultValue.ToString()));
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
                                         { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))

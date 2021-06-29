@@ -179,7 +179,7 @@ namespace OptionalUI
             }
             this.lblText.label.color = this.searchMode ? this.rect.color : c;
 
-            if (!IsListBox && !held) { this.lblText.text = string.IsNullOrEmpty(this.value) ? "------" : this.value; return; }
+            if (!IsListBox && !held) { this.lblText.text = string.IsNullOrEmpty(this.value) ? "------" : GetDisplayValue(); return; }
 
             this.rectList.size.x = this.size.x;
             this.rectList.pos = new Vector2(this.pos.x, this.pos.y + (downward ? -this.rectList.size.y : this.size.y));
@@ -191,18 +191,18 @@ namespace OptionalUI
 
             for (int i = 0; i < this.lblList.Length; i++)
             {
-                this.lblList[i].text = this.searchMode ? (this.searchList.Count > this.listTop + i ? this.searchList[this.listTop + i].name : "")
-                    : this.itemList[this.listTop + i].name;
+                this.lblList[i].text = this.searchMode ? (this.searchList.Count > this.listTop + i ? this.searchList[this.listTop + i].displayName : "")
+                    : this.itemList[this.listTop + i].displayName;
                 this.lblList[i].label.color = this.lblList[i].text == this.value ? c : this.rectList.color;
                 if (i == listHover)
                 {
                     this.lblList[i].label.color = Color.Lerp(this.lblList[i].label.color,
-                        mouseDown || this.lblList[i].text == this.value ? DyeableRect.MidToDark(this.lblList[i].label.color) : Color.white, bumpList.Sin(this.lblList[i].text == this.value ? 60f : 10f));
+                        mouseDown || this.lblList[i].text == this.value ? DyeableRect.MidToDark(this.lblList[i].label.color) : Color.white, bumpList.Sin(this.lblList[i].text == GetDisplayValue() ? 60f : 10f));
                 }
                 this.lblList[i].pos = new Vector2(this.pos.x - this.size.x / 2f + 12f, this.pos.y - 25f - 20f * i + (downward ? 0f : this.size.y + this.rectList.size.y));
                 if (IsListBox && downward) { this.lblList[i].pos.y += this.rectList.size.y; }
             }
-            this.lblText.text = this.searchMode ? this.searchQuery : (string.IsNullOrEmpty(this.value) ? "------" : this.value);
+            this.lblText.text = this.searchMode ? this.searchQuery : (string.IsNullOrEmpty(this.value) ? "------" : GetDisplayValue());
             //lblList[0].text = $"MO:{(MouseOver ? "O" : "X")}, lsMO:{(bumpList.MouseOver ? "O" : "X")}, scMO:{(bumpScroll.MouseOver ? "O" : "X")}, MD:{(mouseDown ? "O" : "X")}"; // Test
             if (this.searchMode)
             {
@@ -547,7 +547,7 @@ namespace OptionalUI
             if (listTop < 0) { listTop = 0; }
             for (int i = 0; i < this.lblList.Length; i++)
             {
-                this.lblList[i] = new MenuLabel(menu, menu.pages[0], this.itemList[this.listTop + i].name, new Vector2(-10000f, -10000f), new Vector2(this.size.x - 12f, 20f), false);
+                this.lblList[i] = new MenuLabel(menu, menu.pages[0], this.itemList[this.listTop + i].EffectiveDisplayName, new Vector2(-10000f, -10000f), new Vector2(this.size.x - 12f, 20f), false);
                 this.lblList[i].label.alignment = FLabelAlignment.Left;
                 this.subObjects.Add(this.lblList[i]);
             }
@@ -667,7 +667,7 @@ namespace OptionalUI
             this.searchList.Clear();
             for (int i = 0; i < this.itemList.Length; i++)
             {
-                if (ListItem.SearchMatch(this.searchQuery, this.itemList[i].name))
+                if (ListItem.SearchMatch(this.searchQuery, this.itemList[i].EffectiveDisplayName))
                 { this.searchList.Add(this.itemList[i]); }
             }
             this.searchList.Sort(ListItem.Comparer);
@@ -677,6 +677,19 @@ namespace OptionalUI
                 { this.listTop = Math.Max(0, i - 1); return; }
             }
             this.listTop = 0;
+        }
+
+        private string GetDisplayValue()
+        {
+            foreach (var item in itemList)
+            {
+                if (item.name == value)
+                {
+                    return item.displayName ?? value;
+                }
+            }
+
+            return value;
         }
     }
 }
