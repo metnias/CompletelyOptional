@@ -5,6 +5,7 @@ using UnityEngine;
 using Partiality.Modloader;
 using System.Collections.Generic;
 using System;
+using System.Reflection;
 using RWCustom;
 
 namespace CompletelyOptional
@@ -214,6 +215,29 @@ namespace CompletelyOptional
                                         h += 60f;
                                         break;
                                     }
+
+                                    if (TryAcceptableValueList(entryBase.Description.AcceptableValues, 
+                                        out var valueType, out var values))
+                                    {
+                                        var items = new List<ListItem>();
+                                        for (var i = 0; i < values.Length; i++)
+                                        {
+                                            var value = values[i];
+                                            var name = TomlTypeConverter.ConvertToString(value, valueType);
+                                            var item = new ListItem(name, i);
+                                            item.displayName = value.ToString();
+                                            items.Add(item);
+                                        }
+
+                                        elms.Add(new OpComboBox(new Vector2(30f, 600f - h - 45f), 120f, GenerateKey(cds[e]), items, TomlTypeConverter.ConvertToString(entryBase.DefaultValue, valueType)));
+                                        elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
+                                            { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                        if (!string.IsNullOrEmpty(desc))
+                                        { elms.Add(new OpLabelLong(new Vector2(160f, 600f - h - 60f), new Vector2(420f, 45f), desc)); }
+                                        h += 60f;
+                                        break;
+                                    }
+                                    
                                     Debug.Log($"{rwMod.ModID} has unsupported ConfigEntry: {cds[e].Key}({entryBase.SettingType.Name})");
                                     hasUnsupported = true; continue; // Not supported
                             }
@@ -322,9 +346,8 @@ namespace CompletelyOptional
                                 { eKeyCode.Value = (KeyCode)Enum.Parse(typeof(KeyCode), val); }
                                 break;
                             default:
-                                if (entBase.SettingType.IsEnum)
-                                { entBase.SetSerializedValue(val); break; }
-                                continue;
+                                entBase.SetSerializedValue(val);
+                                break;
                         }
                     }
                 }
@@ -390,9 +413,8 @@ namespace CompletelyOptional
                                 { obj.value = eKeyCode.Value.ToString(); }
                                 break;
                             default:
-                                if (entBase.SettingType.IsEnum)
-                                { obj.value = entBase.GetSerializedValue(); break; }
-                                continue;
+                                obj.value = entBase.GetSerializedValue();
+                                break;
                         }
                     }
                 }
@@ -444,6 +466,42 @@ namespace CompletelyOptional
             {
                 box.AddItems(new OpLabel(new Vector2(350f, box.GetContentSize() - 600f + 500f), new Vector2(200f, 20f), InternalTranslator.Translate("Author: <ModAuthor>").Replace("<ModAuthor>", mod.author), FLabelAlignment.Right) { autoWrap = true });
             }
+        }
+
+        private static bool TryAcceptableValueList(
+            AcceptableValueBase valueBase, 
+            out Type valueType,
+            out object[] values)
+        {
+            values = null;
+            valueType = null;
+            if (valueBase == null)
+                return false;
+
+            var type = valueBase.GetType();
+            if (type.GetGenericTypeDefinition() != typeof(AcceptableValueList<>))
+                return false;
+
+            valueType = type.GetGenericArguments()[0];
+
+            // ReSharper disable once PossibleNullReferenceException
+            var helper = typeof(GeneratedOI)
+                .GetMethod(nameof(AcceptableValueListHelper), BindingFlags.Static | BindingFlags.NonPublic)
+                .MakeGenericMethod(valueType);
+
+            values = (object[]) helper.Invoke(null, new object[]{valueBase});
+            return true;
+        }
+
+        private static object[] AcceptableValueListHelper<T>(AcceptableValueList<T> list) where T : IEquatable<T>
+        {
+            var objs = new object[list.AcceptableValues.Length];
+            for (var i = 0; i < list.AcceptableValues.Length; i++)
+            {
+                objs[i] = list.AcceptableValues[i];
+            }
+
+            return objs;
         }
     }
 }
