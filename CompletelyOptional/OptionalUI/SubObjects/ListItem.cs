@@ -16,6 +16,7 @@
             this.value = value;
             this.index = -1;
             this.desc = "";
+            this.displayName = null;
         }
 
         /// <summary>
@@ -38,6 +39,13 @@
         /// </summary>
         public string desc;
 
+        /// <summary>
+        ///     Display name shown to the actual user. Can be null, in which case <see cref="name"/> is shown instead.
+        /// </summary>
+        public string displayName;
+
+        public string EffectiveDisplayName => displayName ?? name;
+        
         public override bool Equals(object obj) => obj is ListItem i && this.name == i.name && this.value == i.value;
 
         public override int GetHashCode() => this.name.GetHashCode();

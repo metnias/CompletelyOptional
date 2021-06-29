@@ -54,6 +54,7 @@
     <Compile Include="COExceptions.cs" />
     <Compile Include="ConfigMenu.cs" />
     <Compile Include="ConfigTabController.cs" />
+    <Compile Include="EnumHelper.cs" />
     <Compile Include="GeneratedOI.cs" />
     <Compile Include="InternalTestOI.cs" />
     <Compile Include="InternalTranslator.cs" />
