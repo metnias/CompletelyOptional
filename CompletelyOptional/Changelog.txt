@@ -8,7 +8,10 @@
   x progData: Progression Data bound to each slugcat, and gets saved and loaded automatically.
   x progMiscData: Progression Data bound to each Saveslot and shared across all the slugcats. Also gets saved and loaded automatically.
  + Todo: Use Slugcat Name instead of number to support custom slugcat
- + ProgData_1_White.txt
+  x ProgData_1_White.txt
+  x Todo2: Save seed of the save of slugcats, and check them when CM loads progData so it'd know if this progData matches with current save
+   * Ability to check seed from the slugcat savefile by both SlugBase and EnumExt/Patched SlugcatStats.Name
+  x Todo3: Change saving to smth like SlugBase; instead of messing with strings, use virtual Save function with Dictionary<string, string>
 - ListItem now has a property called displayName (by PJB)
  + Useful for supporting Translation
  + Also fixed OpResourceSelector and OpResourceList not working properly with EnumExtender
