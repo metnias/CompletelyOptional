@@ -9,9 +9,17 @@ namespace CompletelyOptional
     /// </summary>
     public static class OptionsMenuPatch
     {
+        internal static void SubPatch()
+        {
+            On.Menu.OptionsMenu.UpdateInfoText += UpdateInfoTextPatch;
+            On.Menu.OptionsMenu.Update += UpdatePatch;
+            On.Menu.OptionsMenu.Singal += SingalPatch;
+            On.Menu.OptionsMenu.ShutDownProcess += ShutDownProcessPatch;
+        }
+
 #pragma warning disable IDE0060
 
-        public static string UpdateInfoTextPatch(On.Menu.OptionsMenu.orig_UpdateInfoText orig, OptionsMenu menu)
+        internal static string UpdateInfoTextPatch(On.Menu.OptionsMenu.orig_UpdateInfoText orig, OptionsMenu menu)
         {
             //Code
             if (menu.selectedObject == enterConfig)
@@ -19,7 +27,7 @@ namespace CompletelyOptional
             return orig.Invoke(menu);
         }
 
-        public static void UpdatePatch(On.Menu.OptionsMenu.orig_Update orig, OptionsMenu menu)
+        internal static void UpdatePatch(On.Menu.OptionsMenu.orig_Update orig, OptionsMenu menu)
         {
             if (mod)
             {
@@ -71,7 +79,7 @@ namespace CompletelyOptional
             */
         }
 
-        public static void SingalPatch(On.Menu.OptionsMenu.orig_Singal orig, OptionsMenu menu, MenuObject sender, string message)
+        internal static void SingalPatch(On.Menu.OptionsMenu.orig_Singal orig, OptionsMenu menu, MenuObject sender, string message)
         {
             if (message == "MOD CONFIG")
             {
@@ -92,7 +100,7 @@ namespace CompletelyOptional
             }
         }
 
-        public static void ShutDownProcessPatch(On.Menu.OptionsMenu.orig_ShutDownProcess orig, OptionsMenu menu)
+        internal static void ShutDownProcessPatch(On.Menu.OptionsMenu.orig_ShutDownProcess orig, OptionsMenu menu)
         {
             orig.Invoke(menu);
 

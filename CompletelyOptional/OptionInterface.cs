@@ -180,6 +180,7 @@ namespace OptionalUI
 
         /// <summary>
         /// This will be called by ConfigMachine manager automatically.
+        /// If you called this directly, also call <see cref="ShowConfig"/> to apply them in UI.
         /// </summary>
         internal bool LoadConfig()
         {

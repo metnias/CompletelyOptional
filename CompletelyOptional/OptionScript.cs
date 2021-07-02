@@ -20,10 +20,9 @@ namespace CompletelyOptional
         public OptionScript()
         {
             init = false;
-            On.ProcessManager.ctor += ProcessManagerCtor;
         }
 
-        private static void ProcessManagerCtor(On.ProcessManager.orig_ctor orig, ProcessManager self, RainWorld rainWorld)
+        internal static void ProcessManagerCtor(On.ProcessManager.orig_ctor orig, ProcessManager self, RainWorld rainWorld)
         {
             try
             {
@@ -33,7 +32,6 @@ namespace CompletelyOptional
                 try
                 {
                     Initialize();
-                    ProgressData.SubPatch();
                 }
                 catch (Exception ex) { Debug.LogError(ex); Debug.LogException(ex); }
                 for (int i = 0; i < dtHistory.Length; i++) { dtHistory[i] = 0.016667f; }

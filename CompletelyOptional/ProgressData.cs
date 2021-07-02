@@ -5,12 +5,12 @@ namespace CompletelyOptional
 {
     public static class ProgressData
     {
-        public static void SubPatch()
+        internal static void SubPatch()
         {
-            On.Menu.SlugcatSelectMenu.ctor += new On.Menu.SlugcatSelectMenu.hook_ctor(SlugMenuCtorPatch);
-            On.DeathPersistentSaveData.SaveToString += new On.DeathPersistentSaveData.hook_SaveToString(SaveToStringPatch);
-            On.SaveState.SessionEnded += new On.SaveState.hook_SessionEnded(SessionEndPatch);
-            On.SaveState.LoadGame += new On.SaveState.hook_LoadGame(LoadGamePatch);
+            On.Menu.SlugcatSelectMenu.ctor += SlugMenuCtorPatch;
+            On.DeathPersistentSaveData.SaveToString += SaveToStringPatch;
+            On.SaveState.SessionEnded += SessionEndPatch;
+            On.SaveState.LoadGame += LoadGamePatch;
             //On.PlayerProgression.WipeAll hmmmmm
         }
 
