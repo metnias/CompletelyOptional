@@ -34,7 +34,7 @@ namespace OptionalUI
             {
                 var enumVal = (Enum)Enum.Parse(enumType, nameList[i]);
                 ListItem item = new ListItem(nameList[i], (int)(object)enumVal);
-                item.displayName = EnumHelper.GetEnumDesc(enumVal);
+                item.displayName = EnumHelper.GetEnumDesc(enumVal) ?? item.name;
                 list.Add(item);
             }
             list.Sort(ListItem.Comparer);

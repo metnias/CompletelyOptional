@@ -1,4 +1,4 @@
-﻿###1.5.5#!#20210630#!#
+﻿###1.5.5#!#20210704#!#
 - Reworked OptionInterface's Data API (by Henpemaz)
  + This BREAKS backward compatibility with mods that use older Data API
  + There are now three types of data in OptionInterface
@@ -10,7 +10,9 @@
   x Todo2: Save seed of the save of slugcats, and check them when CM loads progData so it'd know if this progData matches with current save
    * Ability to check seed from the slugcat savefile by both SlugBase and EnumExt/Patched SlugcatStats.Name
   x Todo3: Change saving to smth like SlugBase; instead of messing with strings, use virtual Save function with Dictionary<string, string>
-###1.5.4#!#20210630#!#
+###1.5.4#!#20210704#!#
+1.5.4.4
+- Fixed OpResourceSelector and OpResourceList breaking with the last fix
 1.5.4.3
 - ListItem now has a property called displayName (by PJB)
  + Useful for supporting Translation
