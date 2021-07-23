@@ -10,7 +10,7 @@ namespace OptionalUI
 {
     public partial class OptionInterface
     {
-        #region customData
+#region customData
 
         /// <summary>
         /// Default <see cref="data"/> of this mod. If this isn't needed, just leave it be.
@@ -110,9 +110,9 @@ namespace OptionalUI
             return false;
         }
 
-        #endregion customData
+#endregion customData
 
-        #region progData
+#region progData
 
         /// <summary>
         /// Default <see cref="progData"/> of this mod. If this isn't needed, just leave it be.
@@ -255,15 +255,17 @@ namespace OptionalUI
             else { return ((SlugcatStats.Name)Math.Max(0, slugcat)).ToString(); }
         }
 
+#if !STABLE
         internal static int GetSlugcatSeed(int slugcat)
         {
         }
+#endif
 
-        #region SlugBase
+#region SlugBase
 
         private static string GetSlugBaseSlugcatName(int slugcat) => SlugBase.PlayerManager.GetCustomPlayer(slugcat).Name;
 
-        #endregion SlugBase
+#endregion SlugBase
 
         // progData1_White.txt
         // progPersData1_White.txt
@@ -320,6 +322,7 @@ namespace OptionalUI
                 //Debug.Log("CM: Got raw data :" + raw[0]);
                 raw = Regex.Split(data, "<slugChar>");
 
+#if !STABLE
                 _progData = new string[Math.Max(_progData.Length, raw.Length)];
                 for (int j = 0; j < raw.Length; j++)
                 {
@@ -330,6 +333,7 @@ namespace OptionalUI
                     }
                     else _progData[j] = raw[j];
                 }
+#endif
                 return;
             }
             catch (Exception ex)
@@ -406,6 +410,6 @@ namespace OptionalUI
             if (slot != OptionScript.Slot || slugcat != OptionScript.Slugcat) { SlotOnChange(); }
         }
 
-        #endregion progData
+#endregion progData
     }
 }
