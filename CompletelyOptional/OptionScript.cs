@@ -350,7 +350,7 @@ namespace CompletelyOptional
                 LoadBaseUnityPlugins();
             }
 
-            Debug.Log($"CompletelyOptional) Finished Initializing {loadedInterfaceDict.Count} OIs");
+            Debug.Log($"CompletelyOptional finished initializing {loadedInterfaceDict.Count} OIs.");
         }
 
         private static void LoadBaseUnityPlugins()
@@ -423,16 +423,16 @@ namespace CompletelyOptional
                 {
                     if (itf.LoadConfig())
                     {
-                        Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} config has been loaded.");
+                        Debug.Log($"{itf.rwMod.ModID} config has been loaded.");
                     }
                     else
                     {
-                        Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} does not have config.txt.");
+                        Debug.Log($"{itf.rwMod.ModID} does not have config.txt.");
                         //itf.Initialize();
                         try
                         {
                             itf.SaveConfig(itf.GrabConfig());
-                            Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} uses default config.");
+                            Debug.Log($"{itf.rwMod.ModID} uses default config.");
                         }
                         catch (Exception e)
                         {
