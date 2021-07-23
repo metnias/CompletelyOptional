@@ -153,10 +153,11 @@ copy /Y "$(TargetDir)$(TargetName).xml" "E:\Game\Rain World\mods\$(TargetName).x
 copy /Y "$(TargetPath)" "E:\SteamLibrary\steamapps\common\Rain World\BepInEx\plugins\$(TargetName).dll"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>copy /Y "$(TargetPath)" "D:\Drive\Repo\References\RainWorld\$(TargetName).dll"
+    <PostBuildEvent Label="copyoutputTopi">copy /Y "$(TargetPath)" "D:\Drive\Repo\References\RainWorld\$(TargetName).dll"
 copy /Y "$(TargetDir)$(TargetName).xml" "D:\Drive\Repo\References\RainWorld\$(TargetName).xml"
 copy /Y "$(TargetPath)" "E:\Game\Rain World\mods\$(TargetName).dll"
 copy /Y "$(TargetDir)$(TargetName).xml" "E:\Game\Rain World\mods\$(TargetName).xml"
 copy /Y "$(TargetPath)" "E:\SteamLibrary\steamapps\common\Rain World\BepInEx\plugins\$(TargetName).dll"</PostBuildEvent>
   </PropertyGroup>
+  <Import Condition="Exists('user.targets')" Project="user.targets" />
 </Project>

@@ -344,3 +344,4 @@ lib/Assembly-CSharp.dll
 lib/UnityEngine.dll
 /CompletelyOptional/lib/UnityEngine.dll
 /CompletelyOptional/lib/Assembly-CSharp.dll
+CompletelyOptional/user.targets

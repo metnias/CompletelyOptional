@@ -242,26 +242,27 @@ namespace CompletelyOptional
 
                 try
                 {
-                    object obj = mod.GetType().GetMethod("LoadOI").Invoke(mod, new object[] { });
-                    //Debug.Log(obj);
-                    //itf = (OptionInterface)obj;
-                    //itf = obj as OptionInterface;
-
-                    if (obj.GetType().IsSubclassOf(typeof(OptionInterface)))
+                    var method = mod.GetType().GetMethod("LoadOI");
+                    if (method == null || method.GetParameters().Length > 0 || method.ContainsGenericParameters)
                     {
-                        itf = obj as OptionInterface;
+                        // Mod didn't attempt to interface with CompletelyOptional, don't bother logging it.
+                        itf = new UnconfiguableOI(mod, UnconfiguableOI.Reason.NoInterface);
+                    }
+                    else if (method.Invoke(mod, null) is OptionInterface oi)
+                    {
+                        itf = oi;
                         //Your code
                         Debug.Log($"Loaded OptionInterface from {mod.ModID} (type: {itf.GetType()})");
                     }
                     else
                     {
-                        Debug.Log($"{mod.ModID} does not support CompletelyOptional: LoadOI returns what is not OptionInterface.");
                         itf = new UnconfiguableOI(mod, UnconfiguableOI.Reason.NoInterface);
+                        Debug.Log($"{mod.ModID} did not return an OptionInterface in LoadOI.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    Debug.Log($"{mod.ModID} does not support CompletelyOptional: {ex.Message}");
+                    Debug.Log($"{mod.ModID} threw an exception in LoadOI: {ex.Message}");
                     itf = new UnconfiguableOI(mod, UnconfiguableOI.Reason.NoInterface);
                 }
 
@@ -349,7 +350,7 @@ namespace CompletelyOptional
                 LoadBaseUnityPlugins();
             }
 
-            Debug.Log($"CompletelyOptional) Finished Initializing {loadedInterfaceDict.Count} OIs");
+            Debug.Log($"CompletelyOptional finished initializing {loadedInterfaceDict.Count} OIs.");
         }
 
         private static void LoadBaseUnityPlugins()
@@ -364,40 +365,50 @@ namespace CompletelyOptional
                 // Load ITF
                 try
                 {
-                    object obj = plugin.GetType().GetMethod("LoadOI").Invoke(plugin, new object[] { });
-
-                    if (obj.GetType().IsSubclassOf(typeof(OptionInterface)))
+                    var method = plugin.GetType().GetMethod("LoadOI");
+                    if (method == null || method.GetParameters().Length > 0 || method.ContainsGenericParameters)
                     {
-                        itf = obj as OptionInterface;
+                        // Mod didn't attempt to interface with CompletelyOptional, don't bother logging it.
+                        itf = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+                    }
+                    else if (method.Invoke(plugin, null) is OptionInterface oi)
+                    {
+                        itf = oi;
                         //Your code
                         Debug.Log($"Loaded OptionInterface from {itf.rwMod.ModID} (type: {itf.GetType()})");
                     }
                     else
                     {
                         itf = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
-                        Debug.Log($"{itf.rwMod.ModID} does not support CompletelyOptional: LoadOI returns what is not OptionInterface.");
+                        Debug.Log($"{itf.rwMod.ModID} did not return an OptionInterface in LoadOI.");
                     }
                 }
                 catch (Exception ex)
                 {
                     itf = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
-                    if (blackList.Contains<string>(itf.rwMod.ModID)) { continue; }
-                    if (itf.rwMod.ModID.Substring(0, 1) == "_") { continue; }
-                    Debug.Log($"{itf.rwMod.ModID} does not support CompletelyOptional: {ex.Message}");
+
+                    if (blackList.Contains(itf.rwMod.ModID) || itf.rwMod.ModID.Substring(0, 1) == "_") 
+                    { 
+                        continue; 
+                    }
+
+                    Debug.Log($"{itf.rwMod.ModID} threw an exception in LoadOI: {ex.Message}");
                 }
 
                 if (itf is UnconfiguableOI && plugin.Config.Keys.Count > 0)
-                { // Use BepInEx Configuration
+                {
+                    // Use BepInEx Configuration
                     itf = new GeneratedOI(itf.rwMod, plugin.Config);
                 }
 
-                // Initialize ITF
+                // Initialize the interface
                 try
                 {
                     itf.Initialize();
                 }
                 catch (Exception ex)
-                { //try catch better
+                { 
+                    // Try-catch better
                     itf = new UnconfiguableOI(itf.rwMod, new GeneralInitializeException(ex));
                     itf.Initialize();
                 }
@@ -405,23 +416,23 @@ namespace CompletelyOptional
                 {
                     itf = new UnconfiguableOI(itf.rwMod, new NoTabException(itf.rwMod.ModID));
                     itf.Initialize();
-                    //OptionScript.loadedInterfaceDict.Remove(mod.ModID);
-                    //OptionScript.loadedInterfaceDict.Add(mod.ModID, itf);
+                    // OptionScript.loadedInterfaceDict.Remove(mod.ModID);
+                    // OptionScript.loadedInterfaceDict.Add(mod.ModID, itf);
                 }
                 else if (itf.Configuable())
                 {
                     if (itf.LoadConfig())
                     {
-                        Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} config has been loaded.");
+                        Debug.Log($"{itf.rwMod.ModID} config has been loaded.");
                     }
                     else
                     {
-                        Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} does not have config.txt.");
+                        Debug.Log($"{itf.rwMod.ModID} does not have config.txt.");
                         //itf.Initialize();
                         try
                         {
                             itf.SaveConfig(itf.GrabConfig());
-                            Debug.Log($"CompletelyOptional) {itf.rwMod.ModID} uses default config.");
+                            Debug.Log($"{itf.rwMod.ModID} uses default config.");
                         }
                         catch (Exception e)
                         {
