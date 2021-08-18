@@ -1,6 +1,7 @@
 ﻿using CompletelyOptional;
 using RWCustom;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -90,15 +91,13 @@ namespace OptionalUI
         {
             if (!directory.Exists) { directory.Create(); }
 
-            if (string.IsNullOrEmpty(_data))
-            { Debug.LogException(new SaveDataException($"CompletelyOptional) {rwMod.ModID} data has nothing to be saved!")); return false; }
             try
             {
                 string path = string.Concat(new object[] {
                 directory.FullName,
                 "data.txt"
                 });
-                string enc = Crypto.EncryptString(_data, CryptoDataKey);
+                string enc = Crypto.EncryptString(_data ?? "", CryptoDataKey);
                 string key = Custom.Md5Sum(enc);
 
                 File.WriteAllText(path, key + enc);
@@ -175,7 +174,7 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Progression Savedata tied to a specific slugcat.
+        /// Progression Savedata tied to a specific slugcat, death-persistent.
         /// Set this to whatever you want in game. Config Machine will then manage saving automatically.
         /// </summary>
         public string progPersData
@@ -198,7 +197,8 @@ namespace OptionalUI
 
         public string GetProgDataOfSlugcat(string name)
         {
-            return "";
+#warning GetProgDataOfSlugcat not implemented
+            throw new NotImplementedException("GetProgDataOfSlugcat not implemented");
         }
 
         public string GetProgDataOfSlugcat(int slugcatNumber) => GetProgDataOfSlugcat(GetSlugcatName(slugcatNumber));
@@ -251,19 +251,79 @@ namespace OptionalUI
         public static string GetSlugcatName(int slugcat)
         {
             if (slugcat < 3 && slugcat >= 0) { return ((SlugcatStats.Name)slugcat).ToString(); }
-            if (OptionScript.SlugBaseExists) { return GetSlugBaseSlugcatName(slugcat); }
+            if (OptionScript.SlugBaseExists && IsSlugBaseSlugcat(slugcat)) { return GetSlugBaseSlugcatName(slugcat); }
             else { return ((SlugcatStats.Name)Math.Max(0, slugcat)).ToString(); }
         }
 
-#if !STABLE
-        internal static int GetSlugcatSeed(int slugcat)
+        internal static int GetSlugcatSeed(int slugcat, int slot)
         {
+            // Load from currently loaded save if available and valid
+            SaveState save = OptionScript.rw?.progression?.currentSaveState;
+            if (save != null && save.saveStateNumber == slugcat)
+            {
+                return save.seed;
+            }
+            // Load from slugbase custom save file
+            if (OptionScript.SlugBaseExists && IsSlugBaseSlugcat(slugcat))
+            {
+                return GetSlugBaseSeed(slugcat, slot);
+            }
+            // Load from vanilla save file
+            if (OptionScript.rw.progression.IsThereASavedGame(slugcat))
+            {
+                string[] progLines = OptionScript.rw.progression.GetProgLines();
+                if (progLines.Length != 0)
+                {
+                    for (int i = 0; i < progLines.Length; i++)
+                    {
+                        string[] data = Regex.Split(progLines[i], "<progDivB>");
+                        if (data.Length == 2 && data[0] == "SAVE STATE" && int.Parse(data[1][21].ToString()) == slugcat)
+                        {
+                            List<SaveStateMiner.Target> query = new List<SaveStateMiner.Target>()
+                        {
+                            new SaveStateMiner.Target(">SEED", "<svB>", "<svA>", 20)
+                        };
+                            List<SaveStateMiner.Result> result = SaveStateMiner.Mine(OptionScript.rw, data[1], query);
+                            if (result.Count == 0) break;
+                            try
+                            {
+                                return int.Parse(result[0].data);
+                            }
+                            catch (Exception)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return -1;
         }
-#endif
 
 #region SlugBase
 
-        private static string GetSlugBaseSlugcatName(int slugcat) => SlugBase.PlayerManager.GetCustomPlayer(slugcat).Name;
+        private static bool IsSlugBaseSlugcat(int slugcat) => SlugBase.PlayerManager.GetCustomPlayer(slugcat) != null;
+        private static string GetSlugBaseSlugcatName(int slugcat) => SlugBase.PlayerManager.GetCustomPlayer(slugcat)?.Name;
+        private static int GetSlugBaseSeed(int slugcat, int slot)
+        {
+            SlugBase.SlugBaseCharacter ply = SlugBase.PlayerManager.GetCustomPlayer(slugcat);
+            if (ply == null || !SlugBase.SaveManager.HasCustomSaveData(ply.Name, slot)) return -1;
+            string saveData = File.ReadAllText(SlugBase.SaveManager.GetSaveFilePath(ply.Name, slot));
+            List<SaveStateMiner.Target> query = new List<SaveStateMiner.Target>()
+                {
+                    new SaveStateMiner.Target(">SEED", "<svB>", "<svA>", 20)
+                };
+            List<SaveStateMiner.Result> result = SaveStateMiner.Mine(OptionScript.rw, saveData, query);
+            if (result.Count != 0)
+            {
+                try
+                {
+                    return int.Parse(result[0].data);
+                }
+                catch (Exception) { }
+            }
+            return -1;
+        }
 
 #endregion SlugBase
 
@@ -276,38 +336,40 @@ namespace OptionalUI
         /// Check <see cref="progDataTinkered"/> to see if saved data is tinkered or not.
         /// </summary>
         internal void LoadProgData()
-        { // check also seed match for progdata
+        {
             _progData = defaultProgData;
-            if (!directory.Exists) { Debug.Log("CompletelyOptional) Missing directory for " + this.rwMod.ModID); directory.Create(); return; }
+            if (!directory.Exists) { Debug.Log("CompletelyOptional) Missing directory for " + this.rwMod.ModID); directory.Create(); ProgDataOnChange(); return; }
             try
             {
                 string data = string.Empty, name = GetSlugcatName(slugcat);
+                string progDataFile = $"progData{slot}_{name}.txt";
+                string progPersFile = $"progPers{slot}_{name}.txt";
+                int expectedSeed = GetSlugcatSeed(slugcat, slot);
+                bool seedIsGood = false;
                 foreach (FileInfo file in directory.GetFiles())
                 {
-                    if (file.Name.Length < 12 + name.Length) { continue; }
-                    if (file.Name.Substring(file.Name.Length - 4) != ".txt") { continue; }
-
-                    if (file.Name.Substring(0, 8) == "progData")
+                    if (file.Name == progDataFile)
                     {
-                        if (slot.ToString() != file.Name.Substring(file.Name.Length - 9, 1)) { continue; }
-                        if (!file.Name.Substring(10).StartsWith(name)) { continue; }
-                    }
-                    else { continue; }
-
-                    //LoadProgData:
-                    data = File.ReadAllText(file.FullName, Encoding.UTF8);
-                    string key = data.Substring(0, 32);
-                    data = data.Substring(32, data.Length - 32);
-                    if (Custom.Md5Sum(data) != key)
-                    {
-                        Debug.Log($"{rwMod.ModID} progData file has been tinkered!");
-                        progDataTinkered = true;
-                    }
-                    else
-                    {
-                        progDataTinkered = false;
-                        data = Crypto.DecryptString(data, CryptoProgDataKey(slugcat));
-                        string[] seedsplit = Regex.Split(data, "<Seed>");
+                        //LoadProgData:
+                        data = File.ReadAllText(file.FullName, Encoding.UTF8);
+                        string key = data.Substring(0, 32);
+                        data = data.Substring(32, data.Length - 32);
+                        if (Custom.Md5Sum(data) != key)
+                        {
+                            Debug.Log($"{rwMod.ModID} progData file has been tinkered!");
+                            progDataTinkered = true;
+                        }
+                        else
+                        {
+                            progDataTinkered = false;
+                            data = Crypto.DecryptString(data, CryptoProgDataKey(slugcat));
+                            string[] seedsplit = Regex.Split(data, "<Seed>"); // <Seed>####<Seed>otherjunk
+                            if (seedsplit.Length > 1)
+                            {
+                                int.TryParse(seedsplit[1], out int seed);
+                                seedIsGood = seed == expectedSeed;
+                            }
+                        }
                     }
                 }
 
@@ -346,11 +408,6 @@ namespace OptionalUI
         /// If you want to see whether your <see cref="progData"/> is tinkered or not.
         /// </summary>
         public bool progDataTinkered { get; private set; } = false;
-
-        private static int GetSeedOfSlugcat(int slugcat)
-        {
-            return 0;
-        }
 
         /// <summary>
         /// Saves <see cref="progData"/> and <see cref="progMiscData"/>. This is called automatically.

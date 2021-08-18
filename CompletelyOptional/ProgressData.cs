@@ -27,12 +27,12 @@ namespace CompletelyOptional
             {
                 if (oi.hasProgData)
                 {
-                    oi.ProgSaveOrLoad(saveOrLoad);
                     if (!force && saveOrLoad == SaveAndLoad.Save)
                     {
                         oi.saveAsDeath = saveAsDeath;
                         oi.saveAsQuit = saveAsQuit;
                     }
+                    oi.ProgSaveOrLoad(saveOrLoad);
                 }
             }
         }
