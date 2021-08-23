@@ -314,13 +314,14 @@ namespace OptionalUI
 
         private string ReadProgressionFile(string file, int slugNumber, int validSeed, string defaultData)
         {
+            // some locals here have the same name as class stuff and caused me a headache at some point
             if (!directory.Exists) return defaultData;
 
             string targetFile = GetTargetFilename(file, slugNumber);
             
             if(!File.Exists(targetFile)) return defaultData;
 
-            data = File.ReadAllText(targetFile, Encoding.UTF8);
+            string data = File.ReadAllText(targetFile, Encoding.UTF8);
             string key = data.Substring(0, 32);
             data = data.Substring(32, data.Length - 32);
             if (Custom.Md5Sum(data) != key)
