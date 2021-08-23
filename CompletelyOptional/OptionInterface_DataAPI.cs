@@ -113,146 +113,131 @@ namespace OptionalUI
 
 #region progData
 
-        /// <summary>
-        /// Default <see cref="progData"/> of this mod. If this isn't needed, just leave it be.
-        /// </summary>
-        public virtual string defaultProgData
+        private class NoProgDataException : InvalidOperationException
         {
-            get { return string.Empty; }
+            public NoProgDataException(OptionInterface oi) : base($"OptionInterface {oi.rwMod.ModID} hasn't enabled hasProgData") { }
+        }
+
+        private class InvalidSlugcatException : ArgumentException
+        {
+            public InvalidSlugcatException(OptionInterface oi) : base($"OptionInterface {oi.rwMod.ModID} tried to use an invalid Slugcat number") { }
         }
 
         /// <summary>
-        /// Default <see cref="progPersData"/> of this mod. If this isn't needed, just leave it be.
+        /// Progression API: Whether <see cref="saveData"/> or <see cref="miscData"/> is used by the mod or not
         /// </summary>
-        public virtual string defaultProgPersData
-        {
-            get { return string.Empty; }
-        }
+        internal protected bool hasProgData = false;
 
         /// <summary>
-        /// Default <see cref="progMiscData"/> of this mod. If this isn't needed, just leave it be.
+        /// If you want to see whether your <see cref="saveData"/> is tinkered or not.
+        /// When this happens defaultData will be used instead of loading from the file.
         /// </summary>
-        public virtual string defaultProgMiscData
-        {
-            get { return string.Empty; }
-        }
+        public bool progDataTinkered { get; private set; } = false;
+
+
+        private string _saveData;
+        private string _persData;
+        private string _miscData;
 
         /// <summary>
-        /// Currently selected saveslot
-        /// </summary>
-        public int slot { get; private set; } = -1;
-
-        /// <summary>
-        /// Currently selected slugcat
-        /// </summary>
-        public int slugcat { get; private set; } = -1;
-
-        private string _progData;
-        private string _progPersData;
-        private string _progMiscData;
-
-        /// <summary>
-        /// Progression Savedata tied to a specific slugcat. This gets reverted automatically if the Slugcat loses.
+        /// Progression API: Savedata tied to a specific slugcat's playthrough. This gets reverted automatically if the Slugcat loses.
         /// Set this to whatever you want in game. Config Machine will then manage saving automatically.
         /// </summary>
-        public string progData
+        public string saveData
         {
             get
             {
-                if (!hasProgData)
-                { hasProgData = true; slot = OptionScript.Slot; slugcat = OptionScript.Slugcat; LoadProgData(); }
-                else if (slot != OptionScript.Slot || slugcat != OptionScript.Slugcat)
-                { SlotOnChange(); }
-                return _progData;
+                if (!hasProgData) throw new NoProgDataException(this);
+                return _saveData;
             }
             set
             {
-                if (slot != OptionScript.Slot || slugcat != OptionScript.Slugcat)
-                { SlotOnChange(); }
-                if (_progData != value) { hasProgData = true; _progData = value; ProgDataOnChange(); }
+                if (!hasProgData) throw new NoProgDataException(this);
+                if (_saveData != value) { _saveData = value; }
             }
         }
 
         /// <summary>
-        /// Progression Savedata tied to a specific slugcat, death-persistent.
+        /// Progression API: Savedata tied to a specific slugcat's playthrough, death-persistent.
         /// Set this to whatever you want in game. Config Machine will then manage saving automatically.
         /// </summary>
-        public string progPersData
+        public string persData
         {
             get
             {
-                if (!hasProgData)
-                { hasProgData = true; slot = OptionScript.Slot; slugcat = OptionScript.Slugcat; LoadProgData(); }
-                else if (slot != OptionScript.Slot || slugcat != OptionScript.Slugcat)
-                { SlotOnChange(); }
-                return _progPersData;
+                if (!hasProgData) throw new NoProgDataException(this);
+                return _persData;
             }
             set
             {
-                if (slot != OptionScript.Slot || slugcat != OptionScript.Slugcat)
-                { SlotOnChange(); }
-                if (_progPersData != value) { hasProgData = true; _progPersData = value; ProgDataOnChange(); }
+                if (!hasProgData) throw new NoProgDataException(this);
+                if (_persData != value) { _persData = value; }
             }
         }
 
-        public string GetProgDataOfSlugcat(string name)
-        {
-#warning GetProgDataOfSlugcat not implemented
-            throw new NotImplementedException("GetProgDataOfSlugcat not implemented");
-        }
-
-        public string GetProgDataOfSlugcat(int slugcatNumber) => GetProgDataOfSlugcat(GetSlugcatName(slugcatNumber));
 
         /// <summary>
-        /// Progression Savedata shared across all slugcats on the same Saveslot.
+        /// Progression API: Savedata shared across all slugcats on the same Saveslot.
         /// Set this to whatever you want in game. Config Machine will then manage saving automatically.
         /// </summary>
-        public string progMiscData
+        public string miscData
         {
-            get { hasProgData = true; return _progMiscData; }
-            set { if (_progMiscData != value) { hasProgData = true; _progMiscData = value; ProgDataOnChange(); } }
+            get
+            {
+                if (!hasProgData) throw new NoProgDataException(this);
+                return _miscData;
+            }
+            set
+            {
+                if (!hasProgData) throw new NoProgDataException(this);
+                if (_miscData != value) { _miscData = value; }
+            }
         }
 
         /// <summary>
-        /// Event when either <see cref="progData"/> or <see cref="progMiscData"/> is changed.
-        /// This is called when 1. <see cref="LoadProgData"/>, 2. Your mod changes either <see cref="progData"/> or <see cref="progMiscData"/>.
+        /// Progression API: Default <see cref="saveData"/> of this mod.
         /// </summary>
-        public virtual void ProgDataOnChange()
+        public virtual string defaultSaveData
         {
+            get { return string.Empty; }
         }
 
         /// <summary>
-        /// Event that happens when either selected SaveSlot or Slugcat has been changed.
-        /// This automatically saves and loads <see cref="progData"/> and <see cref="progMiscData"/> by default.
+        /// Progression API: Default <see cref="persData"/> of this mod.
         /// </summary>
-        public virtual void SlotOnChange()
+        public virtual string defaultPersData
         {
-            // if (!hasProgData) { slot = OptionScript.Slot; slugcat = OptionScript.Slugcat; return; }
-            // SaveProgData();
-            slot = OptionScript.Slot; slugcat = OptionScript.Slugcat;
-            if (hasProgData) LoadProgData();
+            get { return string.Empty; }
         }
 
         /// <summary>
-        /// Whether <see cref="progData"/> or <see cref="progMiscData"/> is used by the mod or not
+        /// Progression API: Default <see cref="miscData"/> of this mod.
         /// </summary>
-        internal bool hasProgData = false;
-
-        /// <summary>
-        /// Whether the current <see cref="progData"/> is Saved as Death.
-        /// </summary>
-        public bool saveAsDeath { get; internal set; } = false;
-
-        /// <summary>
-        /// Whether the current <see cref="progData"/> is Saved as Quit.
-        /// </summary>
-        public bool saveAsQuit { get; internal set; } = false;
-
-        public static string GetSlugcatName(int slugcat)
+        public virtual string defaultMiscData
         {
-            if (slugcat < 3 && slugcat >= 0) { return ((SlugcatStats.Name)slugcat).ToString(); }
-            if (OptionScript.SlugBaseExists && IsSlugBaseSlugcat(slugcat)) { return GetSlugBaseSlugcatName(slugcat); }
-            else { return ((SlugcatStats.Name)Math.Max(0, slugcat)).ToString(); }
+            get { return string.Empty; }
+        }
+
+
+        #region ProgCRUD
+        // CRUD//ILSW
+        internal void InitSave()
+        {
+            saveData = defaultSaveData;
+        }
+
+        internal void LoadSave(int slugNumber)
+        {
+            if (slugNumber < 0) throw new InvalidSlugcatException(this);
+            saveData = ReadProgressionFile("save", slugNumber, seed, defaultSaveData);
+        }
+
+        internal void SaveSave(int slugNumber)
+        {
+            if (slugNumber < 0) throw new InvalidSlugcatException(this);
+            if (saveData != defaultSaveData)
+                WriteProgressionFile("save", slugNumber, seed, saveData);
+
         }
 
         internal static int GetSlugcatSeed(int slugcat, int slot)
@@ -300,6 +285,209 @@ namespace OptionalUI
             return -1;
         }
 
+        internal void WipeSave(int slugNumber)
+        {
+            if (slugNumber == -1) DeleteAllProgressionFiles("save");
+            else DeleteProgressionFile("save", slugNumber);
+            if(slugNumber == slugcat) InitSave();
+        }
+
+        internal void InitPers()
+        {
+            persData = defaultPersData;
+        }
+
+        internal void LoadPers(int slugNumber)
+        {
+            if (slugNumber < 0) throw new InvalidSlugcatException(this);
+            persData = ReadProgressionFile("pers", slugNumber, seed, defaultPersData);
+        }
+
+        internal void SavePers(int slugNumber)
+        {
+            if (slugNumber < 0) throw new InvalidSlugcatException(this);
+            if (persData != defaultPersData)
+                WriteProgressionFile("pers", slugNumber, seed, persData);
+        }
+
+        internal void WipePers(int slugNumber)
+        {
+            if (slugNumber == -1) DeleteAllProgressionFiles("pers");
+            else DeleteProgressionFile("pers", slugNumber);
+            if (slugNumber == slugcat) InitPers();
+        }
+
+        internal void InitMisc()
+        {
+            miscData = defaultMiscData;
+        }
+
+        internal void LoadMisc()
+        {
+            miscData = ReadProgressionFile("misc", -1, -1, defaultMiscData);
+        }
+
+        internal void SaveMisc()
+        {
+            if (miscData != defaultMiscData)
+                WriteProgressionFile("misc", -1, -1, miscData);
+        }
+
+        internal void WipeMisc()
+        {
+            DeleteProgressionFile("misc", -1);
+            InitMisc();
+        }
+        #endregion ProgCRUD
+
+        #region ProgIO
+        // progData1_White.txt
+        // progPersData1_White.txt
+        // progMiscData1.txt
+
+        private string GetTargetFilename(string file, int slugNumber)
+        {
+            return directory.FullName + Path.DirectorySeparatorChar +
+                $"prog{file}{slot}{(slugNumber >= 0 ? "_" + GetSlugcatName(slugNumber) : string.Empty)}.txt";
+        }
+
+        private string ReadProgressionFile(string file, int slugNumber, int validSeed, string defaultData)
+        {
+            if (!directory.Exists) return defaultData;
+
+            string targetFile = GetTargetFilename(file, slugNumber);
+            
+            if(!File.Exists(targetFile)) return defaultData;
+
+            data = File.ReadAllText(targetFile, Encoding.UTF8);
+            string key = data.Substring(0, 32);
+            data = data.Substring(32, data.Length - 32);
+            if (Custom.Md5Sum(data) != key)
+            {
+                Debug.Log($"{rwMod.ModID} progData file has been tinkered!");
+                progDataTinkered = true;
+            }
+            else
+            {
+                data = Crypto.DecryptString(data, CryptoProgDataKey(slugcat));
+                string[] seedsplit = Regex.Split(data, "<Seed>"); // expected: <Seed>####<Seed>otherjunk
+                if (seedsplit.Length > 1)
+                {
+                    if (int.TryParse(seedsplit[1], out int seed) && seed == validSeed)
+                        return data;
+                }
+            }
+            return defaultData;
+        }
+
+        private void WriteProgressionFile(string file, int slugNumber, int validSeed, string data)
+        {
+            if (!directory.Exists) { directory.Create(); }
+            string targetFile = GetTargetFilename(file, slugNumber);
+            data = $"<Seed>{validSeed}<Seed>{data}";
+
+            string enc = Crypto.EncryptString(data, CryptoProgDataKey(slugNumber));
+            string key = Custom.Md5Sum(enc);
+
+            File.WriteAllText(targetFile, key + enc);
+        }
+
+        private void DeleteProgressionFile(string file, int slugNumber)
+        {
+            if (!directory.Exists) return;
+            string targetFile = GetTargetFilename(file, slugNumber);
+            if (!File.Exists(targetFile)) return;
+            // no backups for now I suppose
+            File.Delete(targetFile);
+        }
+
+        private void DeleteAllProgressionFiles(string file)
+        {
+            if (!directory.Exists) return;
+            foreach (var f in directory.GetFiles($"prog{file}{slot}_*.txt"))
+            {
+                f.Delete();
+            }
+        }
+        #endregion ProgIO
+
+
+
+        internal void SaveProgression(bool saveState, bool savePers, bool saveMisc)
+        {
+            if (saveState) SaveSave(slugcat);
+            if (savePers) SavePers(slugcat);
+            if (saveMisc) SaveMisc();
+        }
+
+        internal void WipeProgression(int saveStateNumber)
+        {
+            WipeSave(saveStateNumber);
+            WipePers(saveStateNumber);
+            WipeMisc();
+        }
+
+        internal void LoadSave(SaveState saveState, bool loadedFromMemory, bool loadedFromStarve)
+        {
+            if (loadedFromMemory && seed == saveState.seed && slugcat == saveState.saveStateNumber) return; // We're good
+
+            seed = saveState.seed;
+            slugcat = saveState.saveStateNumber;
+
+            LoadSave(slugcat);
+            LoadPers(slugcat);
+        }
+
+        internal void SaveSimulatedDeath(bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
+        {
+            SavePers(slugcat);
+        }
+
+
+
+
+
+
+
+        /// <summary>
+        /// Currently selected saveslot
+        /// </summary>
+        public int slot { get; private set; } = -1;
+
+        /// <summary>
+        /// Currently selected slugcat
+        /// </summary>
+        public int slugcat { get; private set; } = -1;
+
+        /// <summary>
+        /// Seed of currently loaded savestate
+        /// Used for validating loaded progression
+        /// </summary>
+        public int seed { get; private set; } = -1;
+
+
+        public string GetProgDataOfSlugcat(string name)
+        {
+#warning GetProgDataOfSlugcat not implemented
+            throw new NotImplementedException("GetProgDataOfSlugcat not implemented");
+        }
+
+        public string GetProgDataOfSlugcat(int slugcatNumber) => GetProgDataOfSlugcat(GetSlugcatName(slugcatNumber));
+
+
+        public static string GetSlugcatName(int slugcat)
+        {
+            if (slugcat < 3 && slugcat >= 0) { return ((SlugcatStats.Name)slugcat).ToString(); }
+            if (OptionScript.SlugBaseExists && IsSlugBaseSlugcat(slugcat)) { return GetSlugBaseSlugcatName(slugcat); }
+            else { return ((SlugcatStats.Name)Math.Max(0, slugcat)).ToString(); }
+        }
+
+#if !STABLE
+        internal static int GetSlugcatSeed(int slugcat)
+        {
+        }
+#endif
+
 #region SlugBase
 
         private static bool IsSlugBaseSlugcat(int slugcat) => SlugBase.PlayerManager.GetCustomPlayer(slugcat) != null;
@@ -327,146 +515,7 @@ namespace OptionalUI
 
 #endregion SlugBase
 
-        // progData1_White.txt
-        // progPersData1_White.txt
-        // progMiscData1.txt
-
-        /// <summary>
-        /// Loads <see cref="progData"/>. This is called automatically.
-        /// Check <see cref="progDataTinkered"/> to see if saved data is tinkered or not.
-        /// </summary>
-        internal void LoadProgData()
-        {
-            _progData = defaultProgData;
-            if (!directory.Exists) { Debug.Log("CompletelyOptional) Missing directory for " + this.rwMod.ModID); directory.Create(); ProgDataOnChange(); return; }
-            try
-            {
-                string data = string.Empty, name = GetSlugcatName(slugcat);
-                string progDataFile = $"progData{slot}_{name}.txt";
-                string progPersFile = $"progPers{slot}_{name}.txt";
-                int expectedSeed = GetSlugcatSeed(slugcat, slot);
-                bool seedIsGood = false;
-                foreach (FileInfo file in directory.GetFiles())
-                {
-                    if (file.Name == progDataFile)
-                    {
-                        //LoadProgData:
-                        data = File.ReadAllText(file.FullName, Encoding.UTF8);
-                        string key = data.Substring(0, 32);
-                        data = data.Substring(32, data.Length - 32);
-                        if (Custom.Md5Sum(data) != key)
-                        {
-                            Debug.Log($"{rwMod.ModID} progData file has been tinkered!");
-                            progDataTinkered = true;
-                        }
-                        else
-                        {
-                            progDataTinkered = false;
-                            data = Crypto.DecryptString(data, CryptoProgDataKey(slugcat));
-                            string[] seedsplit = Regex.Split(data, "<Seed>"); // <Seed>####<Seed>otherjunk
-                            if (seedsplit.Length > 1)
-                            {
-                                int.TryParse(seedsplit[1], out int seed);
-                                seedIsGood = seed == expectedSeed;
-                            }
-                        }
-                    }
-                }
-
-                // data :
-                string[] raw = Regex.Split(data, "<miscData>");
-                if (raw.Length > 1)
-                {
-                    _progMiscData = raw[1];
-                    //Debug.Log("CM: Got misc data :" + raw[1]);
-                }
-                data = raw[0];
-                //Debug.Log("CM: Got raw data :" + raw[0]);
-                raw = Regex.Split(data, "<slugChar>");
-
-#if !STABLE
-                _progData = new string[Math.Max(_progData.Length, raw.Length)];
-                for (int j = 0; j < raw.Length; j++)
-                {
-                    if (j == slugcat && _progData[j] != raw[j])
-                    {
-                        _progData[j] = raw[j];
-                        ProgDataOnChange();
-                    }
-                    else _progData[j] = raw[j];
-                }
-#endif
-                return;
-            }
-            catch (Exception ex)
-            {
-                Debug.LogException(new LoadDataException(ex.ToString()));
-            }
-        }
-
-        /// <summary>
-        /// If you want to see whether your <see cref="progData"/> is tinkered or not.
-        /// </summary>
-        public bool progDataTinkered { get; private set; } = false;
-
-        /// <summary>
-        /// Saves <see cref="progData"/> and <see cref="progMiscData"/>. This is called automatically.
-        /// </summary>
-        /// <returns>Whether the saving is succeeded or not</returns>
-        internal bool SaveProgData()
-        {
-            if (!directory.Exists) { directory.Create(); }
-
-            string data = string.Empty;
-            for (int i = 0; i < _progData.Length; i++) { data += _progData[i] + "<slugChar>"; };
-            data += "<miscData>" + _progMiscData;
-            //Debug.Log("CM: Saving data :" + data);
-            //if (string.IsNullOrEmpty(_data)) { return false; }
-            try
-            {
-                string path = string.Concat(new object[] {
-                directory.FullName,
-                "progData_",
-                slot.ToString(),
-                ".txt"
-                });
-                string enc = Crypto.EncryptString(data, CryptoProgDataKey(9));
-                string key = Custom.Md5Sum(enc);
-
-                File.WriteAllText(path, key + enc);
-
-                return true;
-            }
-            catch (Exception ex) { Debug.LogException(new SaveDataException(ex.ToString())); }
-
-            return false;
-        }
-
         private string CryptoProgDataKey(int slugcat) => "OptionalProgData" + (slugcat < 0 ? "Misc" : slugcat.ToString()) + rwMod.ModID;
-
-        /// <summary>
-        /// Event that happens when the player starts a new save, resets the save, or resumed the game with this mod freshly installed(<paramref name="resume"/>).
-        /// Default is to overwrite <see cref="progData"/> with <see cref="defaultProgData"/>.
-        /// </summary>
-        /// <param name="resume">Whether this is resuming the game with the mod freshly installed(<c>true</c>), or starting a new save/resetting save(<c>false</c>).</param>
-        public virtual void OnNewSave(bool resume)
-        {
-            progData = defaultProgData;
-        }
-
-        /// <summary>
-        /// Do not call this by your own.
-        /// </summary>
-        internal void ProgSaveOrLoad(ProgressData.SaveAndLoad saveOrLoad)
-        {
-            switch (saveOrLoad)
-            {
-                case ProgressData.SaveAndLoad.Save: SaveProgData(); break;
-                case ProgressData.SaveAndLoad.Load: LoadProgData(); break;
-            }
-            if (slot != OptionScript.Slot || slugcat != OptionScript.Slugcat) { SlotOnChange(); }
-        }
-
-#endregion progData
+        #endregion progData
     }
 }

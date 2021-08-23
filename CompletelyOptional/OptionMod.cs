@@ -78,7 +78,7 @@ namespace CompletelyOptional
 
             OptionsMenuPatch.SubPatch();
             On.ProcessManager.ctor += OptionScript.ProcessManagerCtor;
-            ProgressData.SubPatch();
+            // ProgressData.SubPatch(); moved to post-initialization of OIs, makes no sense to hook before the OIs are even instantiated.
 
             go = new GameObject("OptionController");
             script = go.AddComponent<OptionScript>();
