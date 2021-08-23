@@ -74,6 +74,7 @@ namespace OptionalUI
                 }
             }
             catch (Exception ex) { Debug.LogException(new LoadDataException(ex.ToString())); }
+            DataOnChange();
         }
 
         /// <summary>
@@ -109,10 +110,15 @@ namespace OptionalUI
             return false;
         }
 
-#endregion customData
+        #endregion customData
 
-#region progData
-
+        #region progData
+        // Progression API
+        // Data that is stored/retrieved mimicking the game's behavior
+        // save -> SaveState
+        // pers -> DeathPersistentData
+        // misc -> Progression & MiscProgressionData
+        // See https://media.discordapp.net/attachments/849525819855863809/877611189444698113/unknown.png
         private class NoProgDataException : InvalidOperationException
         {
             public NoProgDataException(OptionInterface oi) : base($"OptionInterface {oi.rwMod.ModID} hasn't enabled hasProgData") { }
@@ -240,51 +246,6 @@ namespace OptionalUI
 
         }
 
-        internal static int GetSlugcatSeed(int slugcat, int slot)
-        {
-            // Load from currently loaded save if available and valid
-            SaveState save = OptionScript.rw?.progression?.currentSaveState;
-            if (save != null && save.saveStateNumber == slugcat)
-            {
-                return save.seed;
-            }
-            // Load from slugbase custom save file
-            if (OptionScript.SlugBaseExists && IsSlugBaseSlugcat(slugcat))
-            {
-                return GetSlugBaseSeed(slugcat, slot);
-            }
-            // Load from vanilla save file
-            if (OptionScript.rw.progression.IsThereASavedGame(slugcat))
-            {
-                string[] progLines = OptionScript.rw.progression.GetProgLines();
-                if (progLines.Length != 0)
-                {
-                    for (int i = 0; i < progLines.Length; i++)
-                    {
-                        string[] data = Regex.Split(progLines[i], "<progDivB>");
-                        if (data.Length == 2 && data[0] == "SAVE STATE" && int.Parse(data[1][21].ToString()) == slugcat)
-                        {
-                            List<SaveStateMiner.Target> query = new List<SaveStateMiner.Target>()
-                        {
-                            new SaveStateMiner.Target(">SEED", "<svB>", "<svA>", 20)
-                        };
-                            List<SaveStateMiner.Result> result = SaveStateMiner.Mine(OptionScript.rw, data[1], query);
-                            if (result.Count == 0) break;
-                            try
-                            {
-                                return int.Parse(result[0].data);
-                            }
-                            catch (Exception)
-                            {
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-            return -1;
-        }
-
         internal void WipeSave(int slugNumber)
         {
             if (slugNumber == -1) DeleteAllProgressionFiles("save");
@@ -341,9 +302,9 @@ namespace OptionalUI
         #endregion ProgCRUD
 
         #region ProgIO
-        // progData1_White.txt
-        // progPersData1_White.txt
-        // progMiscData1.txt
+        // progdata1_White.txt
+        // progpers1_White.txt
+        // progmisc1.txt
 
         private string GetTargetFilename(string file, int slugNumber)
         {
@@ -411,10 +372,38 @@ namespace OptionalUI
         }
         #endregion ProgIO
 
+        /// <summary>
+        /// An event called internally whenever CM has changed this OIs progression through one of it's hooks
+        /// This happens when loading, initializing, wiping etc
+        /// Called regardless of there being an actual value change in save/pers/misc data
+        /// </summary>
+        internal protected virtual void ProgressionChanged(bool saveAndPers, bool misc) { }
 
+        internal protected virtual void ProgressionPreSave() { }
+
+
+        // HOOKPOINTS
+        internal void InitProgression() // Called when the slot file isn't found on the game's side.
+        {
+            // To match the game having a fresh start, wipe all ?
+            ProgressionPreSave();
+            WipeSave(-1);
+            WipePers(-1);
+            WipeMisc();
+            ProgressionChanged(true, true);
+        }
+
+        internal void LoadProgression() // Called on load, slot-switch or post-wipe
+        {
+            InitSave();
+            InitPers();
+            LoadMisc();
+            ProgressionChanged(true, true);
+        }
 
         internal void SaveProgression(bool saveState, bool savePers, bool saveMisc)
         {
+            ProgressionPreSave();
             if (saveState) SaveSave(slugcat);
             if (savePers) SavePers(slugcat);
             if (saveMisc) SaveMisc();
@@ -422,23 +411,27 @@ namespace OptionalUI
 
         internal void WipeProgression(int saveStateNumber)
         {
+            ProgressionPreSave();
             WipeSave(saveStateNumber);
             WipePers(saveStateNumber);
-            WipeMisc();
+            if(saveStateNumber == -1)
+                WipeMisc();
+            ProgressionChanged(true, saveStateNumber == -1);
         }
 
         internal void LoadSave(SaveState saveState, bool loadedFromMemory, bool loadedFromStarve)
         {
-            if (loadedFromMemory && seed == saveState.seed && slugcat == saveState.saveStateNumber) return; // We're good
+            if (loadedFromMemory && seed == saveState.seed && slugcat == saveState.saveStateNumber) return; // We're good ? Not too sure when this happens
 
             seed = saveState.seed;
             slugcat = saveState.saveStateNumber;
 
             LoadSave(slugcat);
             LoadPers(slugcat);
+            ProgressionChanged(true, false);
         }
 
-        internal void SaveSimulatedDeath(bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
+        internal protected virtual void SaveSimulatedDeath(bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
         {
             SavePers(slugcat);
         }
@@ -482,13 +475,52 @@ namespace OptionalUI
             else { return ((SlugcatStats.Name)Math.Max(0, slugcat)).ToString(); }
         }
 
-#if !STABLE
-        internal static int GetSlugcatSeed(int slugcat)
+        internal static int GetSlugcatSeed(int slugcat, int slot)
         {
+            // Load from currently loaded save if available and valid
+            SaveState save = OptionScript.rw?.progression?.currentSaveState;
+            if (save != null && save.saveStateNumber == slugcat)
+            {
+                return save.seed;
+            }
+            // Load from slugbase custom save file
+            if (OptionScript.SlugBaseExists && IsSlugBaseSlugcat(slugcat))
+            {
+                return GetSlugBaseSeed(slugcat, slot);
+            }
+            // Load from vanilla save file
+            if (OptionScript.rw.progression.IsThereASavedGame(slugcat))
+            {
+                string[] progLines = OptionScript.rw.progression.GetProgLines();
+                if (progLines.Length != 0)
+                {
+                    for (int i = 0; i < progLines.Length; i++)
+                    {
+                        string[] data = Regex.Split(progLines[i], "<progDivB>");
+                        if (data.Length == 2 && data[0] == "SAVE STATE" && int.Parse(data[1][21].ToString()) == slugcat)
+                        {
+                            List<SaveStateMiner.Target> query = new List<SaveStateMiner.Target>()
+                        {
+                            new SaveStateMiner.Target(">SEED", "<svB>", "<svA>", 20)
+                        };
+                            List<SaveStateMiner.Result> result = SaveStateMiner.Mine(OptionScript.rw, data[1], query);
+                            if (result.Count == 0) break;
+                            try
+                            {
+                                return int.Parse(result[0].data);
+                            }
+                            catch (Exception)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            return -1;
         }
-#endif
 
-#region SlugBase
+        #region SlugBase
 
         private static bool IsSlugBaseSlugcat(int slugcat) => SlugBase.PlayerManager.GetCustomPlayer(slugcat) != null;
         private static string GetSlugBaseSlugcatName(int slugcat) => SlugBase.PlayerManager.GetCustomPlayer(slugcat)?.Name;

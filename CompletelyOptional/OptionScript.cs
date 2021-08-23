@@ -320,7 +320,7 @@ namespace CompletelyOptional
             }
             // Progression of loaded OIs
             ProgressData.SubPatch();
-            if (OptionScript.rw.setup.loadProg) ProgressData.LoadOIsMisc();
+            if (OptionScript.rw.setup.loadProg) ProgressData.LoadOIsProgression();
 
             #endregion PartialityMods
 

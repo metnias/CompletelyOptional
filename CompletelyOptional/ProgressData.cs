@@ -53,14 +53,14 @@ namespace CompletelyOptional
         internal static void PlayerProgression_LoadProgression(On.PlayerProgression.orig_LoadProgression orig, PlayerProgression self)
         {
             orig(self);
-            LoadOIsMisc();
+            LoadOIsProgression();
         }
 
         // Called when there's no file to load
         internal static void PlayerProgression_InitiateProgression(On.PlayerProgression.orig_InitiateProgression orig, PlayerProgression self)
         {
             orig(self);
-            InitiateOIsMisc();
+            InitiateOIsProgression();
         }
 
         internal static void PlayerProgression_WipeAll(On.PlayerProgression.orig_WipeAll orig, PlayerProgression self)
@@ -120,30 +120,26 @@ namespace CompletelyOptional
             if (doLog) UnityEngine.Debug.Log(memberName + " : " + text);
         }
 
-        internal static void LoadOIsMisc()
+        internal static void LoadOIsProgression()
         {
             DebugLog();
             foreach (OptionInterface oi in OptionScript.loadedInterfaces)
             {
                 if (oi.hasProgData)
                 {
-                    oi.LoadMisc();
-                    oi.InitSave();
-                    oi.InitPers();
+                    oi.LoadProgression();
                 }
             }
         }
 
-        internal static void InitiateOIsMisc()
+        internal static void InitiateOIsProgression()
         {
             DebugLog();
             foreach (OptionInterface oi in OptionScript.loadedInterfaces)
             {
                 if (oi.hasProgData)
                 {
-                    oi.InitMisc();
-                    oi.InitSave();
-                    oi.InitPers();
+                    oi.InitProgression();
                 }
             }
         }
