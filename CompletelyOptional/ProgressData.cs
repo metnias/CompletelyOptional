@@ -69,14 +69,16 @@ namespace CompletelyOptional
             orig(self);
         }
 
+        private static bool getOrInitSavePersLock = false;
         // Called with saveAsDeathOrQuit=true from StoryGameSession; =false from loading Red's statistics
         internal static SaveState PlayerProgression_GetOrInitiateSaveState(On.PlayerProgression.orig_GetOrInitiateSaveState orig, PlayerProgression self, int saveStateNumber, RainWorldGame game, ProcessManager.MenuSetup setup, bool saveAsDeathOrQuit)
         {
             bool loadedFromStarve = self.currentSaveState == null && self.starvedSaveState != null && self.starvedSaveState.saveStateNumber == saveStateNumber;
             bool loadedFromMemory = loadedFromStarve || (self.currentSaveState != null && self.currentSaveState.saveStateNumber == saveStateNumber);
 
+            getOrInitSavePersLock = true;
             SaveState saveState = orig(self, saveStateNumber, game, setup, saveAsDeathOrQuit);
-            
+            getOrInitSavePersLock = false;
             LoadOIsSave(saveState, loadedFromMemory, loadedFromStarve);
             if (saveAsDeathOrQuit) SaveOIsPers(true, true);
 
@@ -108,6 +110,7 @@ namespace CompletelyOptional
         internal static void PlayerProgression_SaveDeathPersistentDataOfCurrentState(On.PlayerProgression.orig_SaveDeathPersistentDataOfCurrentState orig, PlayerProgression self, bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
         {
             orig(self, saveAsIfPlayerDied, saveAsIfPlayerQuit);
+            if (getOrInitSavePersLock) return;
             SaveOIsPers(saveAsIfPlayerDied, saveAsIfPlayerQuit);
         }
 
@@ -120,6 +123,28 @@ namespace CompletelyOptional
             if (doLog) UnityEngine.Debug.Log(memberName + " : " + text);
         }
 
+        internal static void RunPreSave()
+        {
+            foreach (OptionInterface oi in OptionScript.loadedInterfaces)
+            {
+                if (oi.hasProgData)
+                {
+                    oi.ProgressionPreSave();
+                }
+            }
+        }
+
+        internal static void RunPostLoaded()
+        {
+            foreach (OptionInterface oi in OptionScript.loadedInterfaces)
+            {
+                if (oi.hasProgData)
+                {
+                    oi.ProgressionLoaded();
+                }
+            }
+        }
+
         internal static void LoadOIsProgression()
         {
             DebugLog();
@@ -130,11 +155,14 @@ namespace CompletelyOptional
                     oi.LoadProgression();
                 }
             }
+            RunPostLoaded();
         }
 
         internal static void InitiateOIsProgression()
         {
             DebugLog();
+
+            RunPreSave();
             foreach (OptionInterface oi in OptionScript.loadedInterfaces)
             {
                 if (oi.hasProgData)
@@ -142,12 +170,14 @@ namespace CompletelyOptional
                     oi.InitProgression();
                 }
             }
+            RunPostLoaded();
         }
 
 
         internal static void WipeOIsProgression(int saveStateNumber)
         {
             DebugLog();
+            RunPreSave();
             foreach (OptionInterface oi in OptionScript.loadedInterfaces)
             {
                 if (oi.hasProgData)
@@ -155,23 +185,27 @@ namespace CompletelyOptional
                     oi.WipeProgression(saveStateNumber); // Has a chance to clear/keep misc data ?
                 }
             }
+            RunPostLoaded();
         }
 
         internal static void LoadOIsSave(SaveState saveState, bool loadedFromMemory, bool loadedFromStarve)
         {
             DebugLog();
+            if (loadedFromMemory) return; // We're good ? Not too sure when this happens
             foreach (OptionInterface oi in OptionScript.loadedInterfaces)
             {
                 if (oi.hasProgData)
                 {
-                    oi.LoadSave(saveState, loadedFromMemory, loadedFromStarve);
+                    oi.LoadSaveState();
                 }
             }
+            RunPostLoaded();
         }
 
         internal static void SaveOIsProgression(bool saveState, bool savePers, bool saveMisc)
         {
             DebugLog();
+            RunPreSave();
             foreach (OptionInterface oi in OptionScript.loadedInterfaces)
             {
                 if (oi.hasProgData)
@@ -184,6 +218,10 @@ namespace CompletelyOptional
         internal static void SaveOIsPers(bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
         {
             DebugLog();
+            if (!(saveAsIfPlayerDied || saveAsIfPlayerQuit))
+            {
+                RunPreSave();
+            }
             foreach (OptionInterface oi in OptionScript.loadedInterfaces)
             {
                 if (oi.hasProgData)

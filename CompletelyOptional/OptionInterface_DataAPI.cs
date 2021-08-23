@@ -377,7 +377,7 @@ namespace OptionalUI
         /// This happens when loading, initializing, wiping etc
         /// Called regardless of there being an actual value change in save/pers/misc data
         /// </summary>
-        internal protected virtual void ProgressionChanged(bool saveAndPers, bool misc) { }
+        internal protected virtual void ProgressionLoaded() { }
 
         internal protected virtual void ProgressionPreSave() { }
 
@@ -386,11 +386,9 @@ namespace OptionalUI
         internal void InitProgression() // Called when the slot file isn't found on the game's side.
         {
             // To match the game having a fresh start, wipe all ?
-            ProgressionPreSave();
             WipeSave(-1);
             WipePers(-1);
             WipeMisc();
-            ProgressionChanged(true, true);
         }
 
         internal void LoadProgression() // Called on load, slot-switch or post-wipe
@@ -398,12 +396,10 @@ namespace OptionalUI
             InitSave();
             InitPers();
             LoadMisc();
-            ProgressionChanged(true, true);
         }
 
         internal void SaveProgression(bool saveState, bool savePers, bool saveMisc)
         {
-            ProgressionPreSave();
             if (saveState) SaveSave(slugcat);
             if (savePers) SavePers(slugcat);
             if (saveMisc) SaveMisc();
@@ -411,21 +407,16 @@ namespace OptionalUI
 
         internal void WipeProgression(int saveStateNumber)
         {
-            ProgressionPreSave();
             WipeSave(saveStateNumber);
             WipePers(saveStateNumber);
             if(saveStateNumber == -1)
                 WipeMisc();
-            ProgressionChanged(true, saveStateNumber == -1);
         }
 
-        internal void LoadSave(SaveState saveState, bool loadedFromMemory, bool loadedFromStarve)
+        internal void LoadSaveState()
         {
-            if (loadedFromMemory && seed == saveState.seed && slugcat == saveState.saveStateNumber) return; // We're good ? Not too sure when this happens
-
             LoadSave(slugcat);
             LoadPers(slugcat);
-            ProgressionChanged(true, false);
         }
 
 
