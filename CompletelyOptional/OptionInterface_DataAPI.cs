@@ -331,11 +331,11 @@ namespace OptionalUI
             else
             {
                 data = Crypto.DecryptString(data, CryptoProgDataKey(slugcat));
-                string[] seedsplit = Regex.Split(data, "<Seed>"); // expected: <Seed>####<Seed>otherjunk
-                if (seedsplit.Length > 1)
+                string[] seedsplit = Regex.Split(data, "<Seed>"); // expected: <Seed>####<Seed>data
+                if (seedsplit.Length >= 3)
                 {
                     if (int.TryParse(seedsplit[1], out int seed) && seed == validSeed)
-                        return data;
+                        return seedsplit[2];
                 }
             }
             return defaultData;
@@ -423,16 +423,16 @@ namespace OptionalUI
         {
             if (loadedFromMemory && seed == saveState.seed && slugcat == saveState.saveStateNumber) return; // We're good ? Not too sure when this happens
 
-            seed = saveState.seed;
-            slugcat = saveState.saveStateNumber;
-
             LoadSave(slugcat);
             LoadPers(slugcat);
             ProgressionChanged(true, false);
         }
 
+
+        
         internal protected virtual void SaveSimulatedDeath(bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
         {
+            // Oh snap this runs before the first LoadSave (before GetOrInitiateSaveState returns)
             SavePers(slugcat);
         }
 
@@ -445,18 +445,18 @@ namespace OptionalUI
         /// <summary>
         /// Currently selected saveslot
         /// </summary>
-        public int slot { get; private set; } = -1;
+        public int slot => OptionScript.Slot;
 
         /// <summary>
         /// Currently selected slugcat
         /// </summary>
-        public int slugcat { get; private set; } = -1;
+        public int slugcat =>  OptionScript.Slugcat;
 
         /// <summary>
         /// Seed of currently loaded savestate
         /// Used for validating loaded progression
         /// </summary>
-        public int seed { get; private set; } = -1;
+        public int seed => OptionScript.rw.progression.currentSaveState != null ? OptionScript.rw.progression.currentSaveState.seed : -1;
 
 
         public string GetProgDataOfSlugcat(string name)
