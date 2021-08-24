@@ -306,10 +306,10 @@ namespace OptionalUI
         // progpers1_White.txt
         // progmisc1.txt
 
-        private string GetTargetFilename(string file, int slugNumber)
+        private string GetTargetFilename(string file, string slugName)
         {
             return directory.FullName + Path.DirectorySeparatorChar +
-                $"prog{file}{slot}{(slugNumber >= 0 ? "_" + GetSlugcatName(slugNumber) : string.Empty)}.txt";
+                $"prog{file}{slot}{(string.IsNullOrEmpty(slugName) ? string.Empty : "_" + slugName)}.txt";
         }
 
         private string ReadProgressionFile(string file, int slugNumber, int validSeed, string defaultData)
@@ -317,7 +317,8 @@ namespace OptionalUI
             // some locals here have the same name as class stuff and caused me a headache at some point
             if (!directory.Exists) return defaultData;
 
-            string targetFile = GetTargetFilename(file, slugNumber);
+            string slugName = GetSlugcatName(slugNumber);
+            string targetFile = GetTargetFilename(file, slugName);
             
             if(!File.Exists(targetFile)) return defaultData;
 
@@ -331,7 +332,7 @@ namespace OptionalUI
             }
             else
             {
-                data = Crypto.DecryptString(data, CryptoProgDataKey(slugcat));
+                data = Crypto.DecryptString(data, CryptoProgDataKey(slugName));
                 string[] seedsplit = Regex.Split(data, "<Seed>"); // expected: <Seed>####<Seed>data
                 if (seedsplit.Length >= 3)
                 {
@@ -345,10 +346,11 @@ namespace OptionalUI
         private void WriteProgressionFile(string file, int slugNumber, int validSeed, string data)
         {
             if (!directory.Exists) { directory.Create(); }
-            string targetFile = GetTargetFilename(file, slugNumber);
+            string slugName = GetSlugcatName(slugNumber);
+            string targetFile = GetTargetFilename(file, slugName);
             data = $"<Seed>{validSeed}<Seed>{data}";
 
-            string enc = Crypto.EncryptString(data, CryptoProgDataKey(slugNumber));
+            string enc = Crypto.EncryptString(data, CryptoProgDataKey(slugName));
             string key = Custom.Md5Sum(enc);
 
             File.WriteAllText(targetFile, key + enc);
@@ -357,7 +359,8 @@ namespace OptionalUI
         private void DeleteProgressionFile(string file, int slugNumber)
         {
             if (!directory.Exists) return;
-            string targetFile = GetTargetFilename(file, slugNumber);
+            string slugName = GetSlugcatName(slugNumber);
+            string targetFile = GetTargetFilename(file, slugName);
             if (!File.Exists(targetFile)) return;
             // no backups for now I suppose
             File.Delete(targetFile);
@@ -451,10 +454,10 @@ namespace OptionalUI
         public int seed => OptionScript.rw.progression.currentSaveState != null ? OptionScript.rw.progression.currentSaveState.seed : -1;
 
 
-        public string GetProgDataOfSlugcat(string name)
+        public string GetProgDataOfSlugcat(string slugName)
         {
-#warning GetProgDataOfSlugcat not implemented
-            throw new NotImplementedException("GetProgDataOfSlugcat not implemented");
+            int slugNumber = GetSlugcatOfName(slugName);
+            return ReadProgressionFile("pers", slugNumber, GetSlugcatSeed(slugNumber, slot), defaultPersData);
         }
 
         public string GetProgDataOfSlugcat(int slugcatNumber) => GetProgDataOfSlugcat(GetSlugcatName(slugcatNumber));
@@ -462,9 +465,21 @@ namespace OptionalUI
 
         public static string GetSlugcatName(int slugcat)
         {
-            if (slugcat < 3 && slugcat >= 0) { return ((SlugcatStats.Name)slugcat).ToString(); }
+            if (slugcat < 0) return null;
+            if (slugcat < 3) { return ((SlugcatStats.Name)slugcat).ToString(); }
             if (OptionScript.SlugBaseExists && IsSlugBaseSlugcat(slugcat)) { return GetSlugBaseSlugcatName(slugcat); }
-            else { return ((SlugcatStats.Name)Math.Max(0, slugcat)).ToString(); }
+            else { return ((SlugcatStats.Name)slugcat).ToString(); }
+        }
+
+        public static int GetSlugcatOfName(string name)
+        {
+            // I tried to keep the same order as GetSlugcatName but...
+            if (string.IsNullOrEmpty(name)) return -1;
+            if (name == "White") return 0;
+            if (name == "Yellow") return 1;
+            if (name == "Red") return 2;
+            if (OptionScript.SlugBaseExists && IsSlugBaseName(name)) { return GetSlugBaseSlugcatOfName(name); }
+            return (int)Enum.Parse(typeof(SlugcatStats.Name), name);
         }
 
         internal static int GetSlugcatSeed(int slugcat, int slot)
@@ -514,7 +529,9 @@ namespace OptionalUI
 
         #region SlugBase
 
+        private static bool IsSlugBaseName(string name) => SlugBase.PlayerManager.GetCustomPlayer(name) != null;
         private static bool IsSlugBaseSlugcat(int slugcat) => SlugBase.PlayerManager.GetCustomPlayer(slugcat) != null;
+        private static int GetSlugBaseSlugcatOfName(string name) => SlugBase.PlayerManager.GetCustomPlayer(name)?.SlugcatIndex ?? -1;
         private static string GetSlugBaseSlugcatName(int slugcat) => SlugBase.PlayerManager.GetCustomPlayer(slugcat)?.Name;
         private static int GetSlugBaseSeed(int slugcat, int slot)
         {
@@ -539,7 +556,7 @@ namespace OptionalUI
 
 #endregion SlugBase
 
-        private string CryptoProgDataKey(int slugcat) => "OptionalProgData" + (slugcat < 0 ? "Misc" : slugcat.ToString()) + rwMod.ModID;
+        private string CryptoProgDataKey(string slugName) => "OptionalProgData" + (string.IsNullOrEmpty(slugName) ? "Misc" : slugName) + rwMod.ModID;
         #endregion progData
     }
 }
