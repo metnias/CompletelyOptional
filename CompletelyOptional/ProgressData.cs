@@ -34,7 +34,7 @@ namespace CompletelyOptional
             // Reverts and clears
             On.PlayerProgression.WipeAll += PlayerProgression_WipeAll;
             On.PlayerProgression.WipeSaveState += PlayerProgression_WipeSaveState;
-            // On.PlayerProgression.Revert +=
+            // On.PlayerProgression.Revert += // reverts temp map data, not sure if relevant since it's not saving it and it'll be loading things from disk again
 
             // Saving
             On.PlayerProgression.SaveDeathPersistentDataOfCurrentState += PlayerProgression_SaveDeathPersistentDataOfCurrentState;
@@ -116,11 +116,11 @@ namespace CompletelyOptional
 
         #endregion HOOKS
 
-        private const bool doLog = true;
+        private static bool doLog = false;
 
-        private static void DebugLog(string text = "", [System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
+        private static void LogMethodName([System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
         {
-            if (doLog) UnityEngine.Debug.Log(memberName + " : " + text);
+            if (doLog) UnityEngine.Debug.Log(memberName);
         }
 
         internal static void RunPreSave()
@@ -147,7 +147,7 @@ namespace CompletelyOptional
 
         internal static void LoadOIsProgression()
         {
-            DebugLog();
+            LogMethodName();
             foreach (OptionInterface oi in OptionScript.loadedInterfaces)
             {
                 if (oi.hasProgData)
@@ -160,7 +160,7 @@ namespace CompletelyOptional
 
         internal static void InitiateOIsProgression()
         {
-            DebugLog();
+            LogMethodName();
 
             RunPreSave();
             foreach (OptionInterface oi in OptionScript.loadedInterfaces)
@@ -176,13 +176,13 @@ namespace CompletelyOptional
 
         internal static void WipeOIsProgression(int saveStateNumber)
         {
-            DebugLog();
+            LogMethodName();
             RunPreSave();
             foreach (OptionInterface oi in OptionScript.loadedInterfaces)
             {
                 if (oi.hasProgData)
                 {
-                    oi.WipeProgression(saveStateNumber); // Has a chance to clear/keep misc data ?
+                    oi.WipeProgression(saveStateNumber); // Todo add a chance to clear/keep misc data ?
                 }
             }
             RunPostLoaded();
@@ -190,7 +190,7 @@ namespace CompletelyOptional
 
         internal static void LoadOIsSave(SaveState saveState, bool loadedFromMemory, bool loadedFromStarve)
         {
-            DebugLog();
+            LogMethodName();
             if (loadedFromMemory) return; // We're good ? Not too sure when this happens
             foreach (OptionInterface oi in OptionScript.loadedInterfaces)
             {
@@ -204,7 +204,7 @@ namespace CompletelyOptional
 
         internal static void SaveOIsProgression(bool saveState, bool savePers, bool saveMisc)
         {
-            DebugLog();
+            LogMethodName();
             RunPreSave();
             foreach (OptionInterface oi in OptionScript.loadedInterfaces)
             {
@@ -217,7 +217,7 @@ namespace CompletelyOptional
 
         internal static void SaveOIsPers(bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
         {
-            DebugLog();
+            LogMethodName();
             if (!(saveAsIfPlayerDied || saveAsIfPlayerQuit))
             {
                 RunPreSave();
@@ -227,7 +227,7 @@ namespace CompletelyOptional
                 if (oi.hasProgData)
                 {
                     if (saveAsIfPlayerDied || saveAsIfPlayerQuit)
-                        oi.SaveSimulatedDeath(saveAsIfPlayerDied, saveAsIfPlayerQuit);
+                        oi.SaveDeath(saveAsIfPlayerDied, saveAsIfPlayerQuit);
                     else
                         oi.SaveProgression(false, true, false);
                 }

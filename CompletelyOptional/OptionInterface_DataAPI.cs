@@ -27,6 +27,7 @@ namespace OptionalUI
         /// Data tied to nothing. Stays even if the user changed Saveslot. Useful for keeping extra data for mod settings.
         /// This won't get saved or loaded automatically and you have to call it by yourself.
         /// Set this to whatever you want and call <see cref="SaveData"/> and <see cref="LoadData"/> when you need.
+        /// Causes a call to <see cref="DataOnChange"/> when its value is changed.
         /// </summary>
         public string data
         {
@@ -35,8 +36,8 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Event when either <see cref="data"/> is changed
-        /// This is called when 1. <see cref="LoadData"/>, 2. Your mod changes <see cref="data"/>.
+        /// Event when either <see cref="data"/> is changed. Override it to add your own behavior.
+        /// This is called when 1. You run <see cref="LoadData"/>, 2. Your mod changes <see cref="data"/>.
         /// </summary>
         public virtual void DataOnChange()
         {
@@ -130,12 +131,13 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Progression API: Whether <see cref="saveData"/> or <see cref="miscData"/> is used by the mod or not
+        /// Progression API: Whether the Progression Data subsystem is used by the mod or not.
+        /// Set this to true to enable saving and loading <see cref="saveData"/>, <see cref="persData"/> and <see cref="miscData"/>
         /// </summary>
         internal protected bool hasProgData = false;
 
         /// <summary>
-        /// If you want to see whether your <see cref="saveData"/> is tinkered or not.
+        /// If you want to see whether your most recently loaded <see cref="saveData"/>, <see cref="persData"/> or <see cref="miscData"/> was tinkered or not.
         /// When this happens defaultData will be used instead of loading from the file.
         /// </summary>
         public bool progDataTinkered { get; private set; } = false;
@@ -147,7 +149,8 @@ namespace OptionalUI
 
         /// <summary>
         /// Progression API: Savedata tied to a specific slugcat's playthrough. This gets reverted automatically if the Slugcat loses.
-        /// Set this to whatever you want in game. Config Machine will then manage saving automatically.
+        /// Enable <see cref="hasProgData"/> to use this. Set this to whatever you want in game. Config Machine will then manage saving automatically.
+        /// Typically saveData is only saved when the slugcat hibernates. Exceptionally, it's saved when the player uses a passage, and on Red's ascension/gameover
         /// </summary>
         public string saveData
         {
@@ -165,7 +168,8 @@ namespace OptionalUI
 
         /// <summary>
         /// Progression API: Savedata tied to a specific slugcat's playthrough, death-persistent.
-        /// Set this to whatever you want in game. Config Machine will then manage saving automatically.
+        /// Enable <see cref="hasProgData"/> to use this. Set this to whatever you want in game. Config Machine will then manage saving automatically.
+        /// Typically persData is saved when 1. going in-game (calls <see cref="SaveDeath"/>) 2. Surviving/dying/quitting/meeting an echo/ascending etc.
         /// </summary>
         public string persData
         {
@@ -181,10 +185,10 @@ namespace OptionalUI
             }
         }
 
-
         /// <summary>
         /// Progression API: Savedata shared across all slugcats on the same Saveslot.
-        /// Set this to whatever you want in game. Config Machine will then manage saving automatically.
+        /// Enable <see cref="hasProgData"/> to use this. Set this to whatever you want in game. Config Machine will then manage saving automatically.
+        /// Typically miscData is saved when saving/starving/dying/meeting an echo/ascending etc, but not when quitting the game to the menu.
         /// </summary>
         public string miscData
         {
@@ -377,13 +381,28 @@ namespace OptionalUI
         #endregion ProgIO
 
         /// <summary>
-        /// An event called internally whenever CM has changed this OIs progression through one of it's hooks
-        /// This happens when loading, initializing, wiping etc
-        /// Called regardless of there being an actual value change in save/pers/misc data
+        /// Progression API: An event called internally whenever CM has loaded this OIs progression through one of it's hooks.
+        /// This happens when loading, initializing, wiping etc. When this event happens, all OIs progrdata has been loaded/initialized.
+        /// Called regardless of there being an actual value change in save/pers/misc data.
         /// </summary>
         internal protected virtual void ProgressionLoaded() { }
 
+        /// <summary>
+        /// Progression API: An event called internally imediatelly before CM would save progression through one of it's hooks.
+        /// This even exists so that the OI can serialize any objects it holds in memory before saving.
+        /// When this is called, other OIs might not have yet serialized theirs however.
+        /// </summary>
         internal protected virtual void ProgressionPreSave() { }
+
+        /// <summary>
+        /// Progression API: An event that happens when loading into the game, starving, quitting outside of the grace period, and death. Saves death-persistent data of a simulated or real death/quit.
+        /// Rain World by default creates a save "as if the player died" when it loads into the game to counter the app unexpectedly closing, so do 'revert' any modifications you wanted to save after calling base() on this method.
+        /// This method defaults to saving <see cref="persData"/>, so do any modifications to that to simulate a death/quit, call base(), and then revert your data.
+        /// </summary>
+        internal protected virtual void SaveDeath(bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
+        {
+            SavePers(slugcat);
+        }
 
 
         // HOOKPOINTS
@@ -423,20 +442,6 @@ namespace OptionalUI
             LoadPers(slugcat);
         }
 
-
-        
-        internal protected virtual void SaveSimulatedDeath(bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
-        {
-            // Oh snap this runs before the first LoadSave (before GetOrInitiateSaveState returns)
-            SavePers(slugcat);
-        }
-
-
-
-
-
-
-
         /// <summary>
         /// Currently selected saveslot
         /// </summary>
@@ -454,15 +459,22 @@ namespace OptionalUI
         public int seed => OptionScript.rw.progression.currentSaveState != null ? OptionScript.rw.progression.currentSaveState.seed : -1;
 
 
+        /// <summary>
+        /// Reads the death-persistent data of the specified slugcat directly from its file, without replacing <see cref="persData"/>
+        /// </summary>
         public string GetProgDataOfSlugcat(string slugName)
         {
             int slugNumber = GetSlugcatOfName(slugName);
             return ReadProgressionFile("pers", slugNumber, GetSlugcatSeed(slugNumber, slot), defaultPersData);
         }
-
+        /// <summary>
+        /// Reads the death-persistent data of the specified slugcat directly from its file, without replacing <see cref="persData"/>
+        /// </summary>
         public string GetProgDataOfSlugcat(int slugcatNumber) => GetProgDataOfSlugcat(GetSlugcatName(slugcatNumber));
 
-
+        /// <summary>
+        /// Helper for getting the text name for a slugcat, which is used for filenames for data
+        /// </summary>
         public static string GetSlugcatName(int slugcat)
         {
             if (slugcat < 0) return null;
@@ -471,6 +483,9 @@ namespace OptionalUI
             else { return ((SlugcatStats.Name)slugcat).ToString(); }
         }
 
+        /// <summary>
+        /// Reverse helper for getting the slugcat of a given text name
+        /// </summary>
         public static int GetSlugcatOfName(string name)
         {
             // I tried to keep the same order as GetSlugcatName but...
