@@ -356,4 +356,24 @@ namespace OptionalUI
             throw new NotImplementedException();
         }
     }
+
+    /// <summary>
+    /// OptionInterface hasn't enabled <see cref="OptionInterface.hasProgData"/>.
+    /// </summary>
+    public class NoProgDataException : InvalidOperationException
+    {
+        public NoProgDataException(OptionInterface oi) : base($"OptionInterface {oi.rwMod.ModID} hasn't enabled hasProgData")
+        {
+        }
+    }
+
+    /// <summary>
+    /// OptionInterface tried to use an invalid Slugcat number.
+    /// </summary>
+    public class InvalidSlugcatException : ArgumentException
+    {
+        public InvalidSlugcatException(OptionInterface oi) : base($"OptionInterface {oi.rwMod.ModID} tried to use an invalid Slugcat number")
+        {
+        }
+    }
 }

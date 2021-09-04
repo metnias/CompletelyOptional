@@ -11,7 +11,7 @@ namespace OptionalUI
 {
     public partial class OptionInterface
     {
-#region customData
+        #region customData
 
         /// <summary>
         /// Default <see cref="data"/> of this mod. If this isn't needed, just leave it be.
@@ -114,34 +114,26 @@ namespace OptionalUI
         #endregion customData
 
         #region progData
-        // Progression API
+
+        // Progression API by Henpemaz
+        // You can see this one's not by me cuz there's no bracket for one-line if statements
         // Data that is stored/retrieved mimicking the game's behavior
         // save -> SaveState
         // pers -> DeathPersistentData
         // misc -> Progression & MiscProgressionData
         // See https://media.discordapp.net/attachments/849525819855863809/877611189444698113/unknown.png
-        private class NoProgDataException : InvalidOperationException
-        {
-            public NoProgDataException(OptionInterface oi) : base($"OptionInterface {oi.rwMod.ModID} hasn't enabled hasProgData") { }
-        }
-
-        private class InvalidSlugcatException : ArgumentException
-        {
-            public InvalidSlugcatException(OptionInterface oi) : base($"OptionInterface {oi.rwMod.ModID} tried to use an invalid Slugcat number") { }
-        }
 
         /// <summary>
         /// Progression API: Whether the Progression Data subsystem is used by the mod or not.
         /// Set this to true to enable saving and loading <see cref="saveData"/>, <see cref="persData"/> and <see cref="miscData"/>
         /// </summary>
-        internal protected bool hasProgData = false;
+        protected bool hasProgData = false;
 
         /// <summary>
         /// If you want to see whether your most recently loaded <see cref="saveData"/>, <see cref="persData"/> or <see cref="miscData"/> was tinkered or not.
         /// When this happens defaultData will be used instead of loading from the file.
         /// </summary>
         public bool progDataTinkered { get; private set; } = false;
-
 
         private string _saveData;
         private string _persData;
@@ -228,8 +220,8 @@ namespace OptionalUI
             get { return string.Empty; }
         }
 
-
         #region ProgCRUD
+
         // CRUD//ILSW
         internal void InitSave()
         {
@@ -247,14 +239,13 @@ namespace OptionalUI
             if (slugNumber < 0) throw new InvalidSlugcatException(this);
             if (saveData != defaultSaveData)
                 WriteProgressionFile("save", slugNumber, seed, saveData);
-
         }
 
         internal void WipeSave(int slugNumber)
         {
             if (slugNumber == -1) DeleteAllProgressionFiles("save");
             else DeleteProgressionFile("save", slugNumber);
-            if(slugNumber == slugcat) InitSave();
+            if (slugNumber == slugcat) InitSave();
         }
 
         internal void InitPers()
@@ -303,6 +294,7 @@ namespace OptionalUI
             DeleteProgressionFile("misc", -1);
             InitMisc();
         }
+
         #endregion ProgCRUD
 
         #region ProgIO
@@ -323,8 +315,8 @@ namespace OptionalUI
 
             string slugName = GetSlugcatName(slugNumber);
             string targetFile = GetTargetFilename(file, slugName);
-            
-            if(!File.Exists(targetFile)) return defaultData;
+
+            if (!File.Exists(targetFile)) return defaultData;
 
             string data = File.ReadAllText(targetFile, Encoding.UTF8);
             string key = data.Substring(0, 32);
@@ -378,6 +370,7 @@ namespace OptionalUI
                 f.Delete();
             }
         }
+
         #endregion ProgIO
 
         /// <summary>
@@ -385,25 +378,26 @@ namespace OptionalUI
         /// This happens when loading, initializing, wiping etc. When this event happens, all OIs progrdata has been loaded/initialized.
         /// Called regardless of there being an actual value change in save/pers/misc data.
         /// </summary>
-        internal protected virtual void ProgressionLoaded() { }
+        protected internal virtual void ProgressionLoaded()
+        { }
 
         /// <summary>
         /// Progression API: An event called internally imediatelly before CM would save progression through one of it's hooks.
         /// This even exists so that the OI can serialize any objects it holds in memory before saving.
         /// When this is called, other OIs might not have yet serialized theirs however.
         /// </summary>
-        internal protected virtual void ProgressionPreSave() { }
+        protected internal virtual void ProgressionPreSave()
+        { }
 
         /// <summary>
         /// Progression API: An event that happens when loading into the game, starving, quitting outside of the grace period, and death. Saves death-persistent data of a simulated or real death/quit.
         /// Rain World by default creates a save "as if the player died" when it loads into the game to counter the app unexpectedly closing, so do 'revert' any modifications you wanted to save after calling base() on this method.
         /// This method defaults to saving <see cref="persData"/>, so do any modifications to that to simulate a death/quit, call base(), and then revert your data.
         /// </summary>
-        internal protected virtual void SaveDeath(bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
+        protected internal virtual void SaveDeath(bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
         {
             SavePers(slugcat);
         }
-
 
         // HOOKPOINTS
         internal void InitProgression() // Called when the slot file isn't found on the game's side.
@@ -432,7 +426,7 @@ namespace OptionalUI
         {
             WipeSave(saveStateNumber);
             WipePers(saveStateNumber);
-            if(saveStateNumber == -1)
+            if (saveStateNumber == -1)
                 WipeMisc();
         }
 
@@ -450,14 +444,13 @@ namespace OptionalUI
         /// <summary>
         /// Currently selected slugcat
         /// </summary>
-        public int slugcat =>  OptionScript.Slugcat;
+        public int slugcat => OptionScript.Slugcat;
 
         /// <summary>
         /// Seed of currently loaded savestate
         /// Used for validating loaded progression
         /// </summary>
         public int seed => OptionScript.rw.progression.currentSaveState != null ? OptionScript.rw.progression.currentSaveState.seed : -1;
-
 
         /// <summary>
         /// Reads the death-persistent data of the specified slugcat directly from its file, without replacing <see cref="persData"/>
@@ -467,6 +460,7 @@ namespace OptionalUI
             int slugNumber = GetSlugcatOfName(slugName);
             return ReadProgressionFile("pers", slugNumber, GetSlugcatSeed(slugNumber, slot), defaultPersData);
         }
+
         /// <summary>
         /// Reads the death-persistent data of the specified slugcat directly from its file, without replacing <see cref="persData"/>
         /// </summary>
@@ -490,11 +484,16 @@ namespace OptionalUI
         {
             // I tried to keep the same order as GetSlugcatName but...
             if (string.IsNullOrEmpty(name)) return -1;
-            if (name == "White") return 0;
-            if (name == "Yellow") return 1;
-            if (name == "Red") return 2;
-            if (OptionScript.SlugBaseExists && IsSlugBaseName(name)) { return GetSlugBaseSlugcatOfName(name); }
-            return (int)Enum.Parse(typeof(SlugcatStats.Name), name);
+            switch (name.ToLower())
+            {
+                case "white": return 0;
+                case "yellow": return 1;
+                case "red": return 2;
+                default:
+                    if (OptionScript.SlugBaseExists && IsSlugBaseName(name)) { return GetSlugBaseSlugcatOfName(name); }
+                    break;
+            }
+            return (int)Enum.Parse(typeof(SlugcatStats.Name), name, true);
         }
 
         internal static int GetSlugcatSeed(int slugcat, int slot)
@@ -545,9 +544,13 @@ namespace OptionalUI
         #region SlugBase
 
         private static bool IsSlugBaseName(string name) => SlugBase.PlayerManager.GetCustomPlayer(name) != null;
+
         private static bool IsSlugBaseSlugcat(int slugcat) => SlugBase.PlayerManager.GetCustomPlayer(slugcat) != null;
+
         private static int GetSlugBaseSlugcatOfName(string name) => SlugBase.PlayerManager.GetCustomPlayer(name)?.SlugcatIndex ?? -1;
+
         private static string GetSlugBaseSlugcatName(int slugcat) => SlugBase.PlayerManager.GetCustomPlayer(slugcat)?.Name;
+
         private static int GetSlugBaseSeed(int slugcat, int slot)
         {
             SlugBase.SlugBaseCharacter ply = SlugBase.PlayerManager.GetCustomPlayer(slugcat);
@@ -569,9 +572,10 @@ namespace OptionalUI
             return -1;
         }
 
-#endregion SlugBase
+        #endregion SlugBase
 
-        private string CryptoProgDataKey(string slugName) => "OptionalProgData" + (string.IsNullOrEmpty(slugName) ? "Misc" : slugName) + rwMod.ModID;
+        protected string CryptoProgDataKey(string slugName) => "OptionalProgData" + (string.IsNullOrEmpty(slugName) ? "Misc" : slugName) + rwMod.ModID;
+
         #endregion progData
     }
 }
