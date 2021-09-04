@@ -318,6 +318,10 @@ namespace CompletelyOptional
                 loadedInterfaceDict.Add(itf.rwMod.ModID, itf);
                 //loadedModsDictionary[item.Key].GetType().GetMember("OI")
             }
+            // Progression of loaded OIs
+            ProgressData.SubPatch();
+            if (OptionScript.rw.setup.loadProg) ProgressData.LoadOIsProgression();
+
             #endregion PartialityMods
 
             #region InternalTest
