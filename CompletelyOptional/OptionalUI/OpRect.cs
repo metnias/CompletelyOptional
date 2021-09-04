@@ -23,11 +23,9 @@ namespace OptionalUI
             this.subObjects.Add(this.rect);
 
             colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            for (int i = 9; i < this.rect.sprites.Length; i++)
-            {
-                this.rect.sprites[i].color = colorEdge;
-            }
             colorFill = Color.black;
+            this.rect.color = colorEdge;
+            this.rect.colorF = colorFill;
 
             this.doesBump = false;
         }

@@ -54,8 +54,8 @@ namespace OptionalUI
 
         internal static uint garbage = 0;
 
-        private string _salt;
-        private int _seed;
+        private readonly string _salt;
+        private readonly int _seed;
 
         /// <summary>
         /// Randomly generated salt to prevent duplicate <see cref="FAtlasElement"/> name

@@ -24,8 +24,8 @@ namespace OptionalUI
 
             this.isTexture = true;
 
-            this.sprite = new FTexture(image, "img");
-            this.sprite.color = this._color;
+            this.sprite = new FTexture(image, "img")
+            { color = this._color };
             this.sprite.SetPosition(Vector2.zero);
             this.sprite.SetAnchor(this._anchor);
             this._size = new Vector2(image.width, image.height);
@@ -51,8 +51,8 @@ namespace OptionalUI
             if (!Futile.atlasManager.DoesContainElementWithName(fAtlasElement))
             { throw new ElementFormatException(this, $"There is no such FAtlasElement called [{fAtlasElement}]"); }
 
-            this.sprite = new FSprite(fAtlasElement, true);
-            this.sprite.color = this._color;
+            this.sprite = new FSprite(fAtlasElement, true)
+            { color = this._color };
             this.sprite.SetPosition(Vector2.zero);
             this.sprite.SetAnchor(this._anchor);
             this._size = this.sprite.element.sourceSize;
@@ -93,12 +93,14 @@ namespace OptionalUI
 
             if (!Futile.atlasManager.DoesContainElementWithName(newElement))
             { Debug.LogError($"CompletelyOptional: There is no such FAtlasElement called [{newElement}]"); return; }
-            this.sprite = new FSprite(newElement, true);
-            this.sprite.color = this._color;
+            this.sprite = new FSprite(newElement, true)
+            {
+                color = this._color,
+                alpha = this._alpha
+            };
             this.myContainer.AddChild(this.sprite);
             this._size = new Vector2(sprite.element.sourceSize.x * _scale.x, sprite.element.sourceSize.y * _scale.y);
             this.sprite.SetAnchor(this._anchor);
-            this.sprite.alpha = this._alpha;
         }
 
         /// <summary>

@@ -216,7 +216,7 @@ namespace CompletelyOptional
                                         break;
                                     }
 
-                                    if (TryAcceptableValueList(entryBase.Description.AcceptableValues, 
+                                    if (TryAcceptableValueList(entryBase.Description.AcceptableValues,
                                         out var valueType, out var values))
                                     {
                                         var items = new List<ListItem>();
@@ -224,20 +224,20 @@ namespace CompletelyOptional
                                         {
                                             var value = values[i];
                                             var name = TomlTypeConverter.ConvertToString(value, valueType);
-                                            var item = new ListItem(name, i);
-                                            item.displayName = value.ToString();
+                                            var item = new ListItem(name, i)
+                                            { displayName = value.ToString() };
                                             items.Add(item);
                                         }
 
                                         elms.Add(new OpComboBox(new Vector2(30f, 600f - h - 45f), 120f, GenerateKey(cds[e]), items, TomlTypeConverter.ConvertToString(entryBase.DefaultValue, valueType)));
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
-                                            { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
+                                        { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
                                         { elms.Add(new OpLabelLong(new Vector2(160f, 600f - h - 60f), new Vector2(420f, 45f), desc)); }
                                         h += 60f;
                                         break;
                                     }
-                                    
+
                                     Debug.Log($"{rwMod.ModID} has unsupported ConfigEntry: {cds[e].Key}({entryBase.SettingType.Name})");
                                     hasUnsupported = true; continue; // Not supported
                             }
@@ -316,7 +316,7 @@ namespace CompletelyOptional
                             case "bool":
                             case "boolean":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<bool> eBool))
-                                { eBool.Value = val == "true" ? true : false; }
+                                { eBool.Value = val == "true"; }
                                 break;
                             case "byte":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<byte> eByte))
@@ -469,7 +469,7 @@ namespace CompletelyOptional
         }
 
         private static bool TryAcceptableValueList(
-            AcceptableValueBase valueBase, 
+            AcceptableValueBase valueBase,
             out Type valueType,
             out object[] values)
         {
@@ -489,7 +489,7 @@ namespace CompletelyOptional
                 .GetMethod(nameof(AcceptableValueListHelper), BindingFlags.Static | BindingFlags.NonPublic)
                 .MakeGenericMethod(valueType);
 
-            values = (object[]) helper.Invoke(null, new object[]{valueBase});
+            values = (object[])helper.Invoke(null, new object[] { valueBase });
             return true;
         }
 

@@ -17,7 +17,7 @@ namespace CompletelyOptional
             On.Menu.OptionsMenu.ShutDownProcess += ShutDownProcessPatch;
         }
 
-#pragma warning disable IDE0060
+        // #pragma warning disable IDE0060
 
         internal static string UpdateInfoTextPatch(On.Menu.OptionsMenu.orig_UpdateInfoText orig, OptionsMenu menu)
         {

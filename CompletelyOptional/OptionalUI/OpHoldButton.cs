@@ -24,23 +24,23 @@ namespace OptionalUI
             color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             if (!_init) { return; }
             circles = new FSprite[5];
-            circles[0] = new FSprite("Futile_White");
-            circles[0].shader = menu.manager.rainWorld.Shaders["VectorCircleFadable"];
-            circles[1] = new FSprite("Futile_White");
-            circles[1].shader = menu.manager.rainWorld.Shaders["VectorCircle"];
-            circles[2] = new FSprite("Futile_White");
-            circles[2].shader = menu.manager.rainWorld.Shaders["HoldButtonCircle"];
-            circles[3] = new FSprite("Futile_White");
-            circles[3].shader = menu.manager.rainWorld.Shaders["VectorCircle"];
-            circles[4] = new FSprite("Futile_White");
-            circles[4].shader = menu.manager.rainWorld.Shaders["VectorCircleFadable"];
+            circles[0] = new FSprite("Futile_White")
+            { shader = menu.manager.rainWorld.Shaders["VectorCircleFadable"] };
+            circles[1] = new FSprite("Futile_White")
+            { shader = menu.manager.rainWorld.Shaders["VectorCircle"] };
+            circles[2] = new FSprite("Futile_White")
+            { shader = menu.manager.rainWorld.Shaders["HoldButtonCircle"] };
+            circles[3] = new FSprite("Futile_White")
+            { shader = menu.manager.rainWorld.Shaders["VectorCircle"] };
+            circles[4] = new FSprite("Futile_White")
+            { shader = menu.manager.rainWorld.Shaders["VectorCircleFadable"] };
             for (int i = 0; i < circles.Length; i++) { myContainer.AddChild(circles[i]); circles[i].SetPosition(55f, 55f); }
             label = new FLabel(LabelTest.GetFont(false), text) { alignment = FLabelAlignment.Center };
             label.SetPosition(new Vector2(55.01f, 55.01f));
             myContainer.AddChild(label);
         }
 
-        private FLabel label;
+        private readonly FLabel label;
         private MenuMicrophone.MenuSoundLoop soundLoop;
         private float filled = 0f, pulse;
         private readonly float fillTime;

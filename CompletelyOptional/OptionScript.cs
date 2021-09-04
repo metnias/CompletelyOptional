@@ -387,9 +387,9 @@ namespace CompletelyOptional
                 {
                     itf = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
 
-                    if (blackList.Contains(itf.rwMod.ModID) || itf.rwMod.ModID.Substring(0, 1) == "_") 
-                    { 
-                        continue; 
+                    if (blackList.Contains(itf.rwMod.ModID) || itf.rwMod.ModID.Substring(0, 1) == "_")
+                    {
+                        continue;
                     }
 
                     Debug.Log($"{itf.rwMod.ModID} threw an exception in LoadOI: {ex.Message}");
@@ -407,7 +407,7 @@ namespace CompletelyOptional
                     itf.Initialize();
                 }
                 catch (Exception ex)
-                { 
+                {
                     // Try-catch better
                     itf = new UnconfiguableOI(itf.rwMod, new GeneralInitializeException(ex));
                     itf.Initialize();
@@ -476,7 +476,7 @@ namespace CompletelyOptional
         }
 
         public static float curFramerate = 60.0f;
-        private static float[] dtHistory = new float[16];
+        private static readonly float[] dtHistory = new float[16];
         private static int dtHistoryMark = 0;
 
         /// <summary>
