@@ -127,7 +127,7 @@ namespace OptionalUI
         /// Progression API: Whether the Progression Data subsystem is used by the mod or not.
         /// Set this to true to enable saving and loading <see cref="saveData"/>, <see cref="persData"/> and <see cref="miscData"/>
         /// </summary>
-        protected bool hasProgData = false;
+        public bool hasProgData = false;
 
         /// <summary>
         /// If you want to see whether your most recently loaded <see cref="saveData"/>, <see cref="persData"/> or <see cref="miscData"/> was tinkered or not.

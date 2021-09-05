@@ -15,12 +15,14 @@ namespace CompletelyOptional
     public static class ProgressData
     {
         private static bool _patched;
+
         internal static void SubPatch()
         {
             if (!_patched)
             { // Only run these hooks once
                 _patched = true;
-            } else return;
+            }
+            else return;
 
             // General progression
             // load or start fresh
@@ -70,6 +72,7 @@ namespace CompletelyOptional
         }
 
         private static bool getOrInitSavePersLock = false;
+
         // Called with saveAsDeathOrQuit=true from StoryGameSession; =false from loading Red's statistics
         internal static SaveState PlayerProgression_GetOrInitiateSaveState(On.PlayerProgression.orig_GetOrInitiateSaveState orig, PlayerProgression self, int saveStateNumber, RainWorldGame game, ProcessManager.MenuSetup setup, bool saveAsDeathOrQuit)
         {
@@ -90,8 +93,8 @@ namespace CompletelyOptional
             orig(self, storyGameCharacter);
             // Bugfix to prevent crazy inconsistency that could happen if played restarted a save they just starved on
             // (vanilla would call 'Wipe' and still load the starve which is clearly a bug)
-            
-            if(self.manager.menuSetup.startGameCondition == ProcessManager.MenuSetup.StoryGameInitCondition.New)
+
+            if (self.manager.menuSetup.startGameCondition == ProcessManager.MenuSetup.StoryGameInitCondition.New)
                 self.manager.rainWorld.progression.starvedSaveState = null;
         }
 
@@ -116,7 +119,7 @@ namespace CompletelyOptional
 
         #endregion HOOKS
 
-        private static bool doLog = false;
+        private static bool doLog => OptionMod.testing;
 
         private static void LogMethodName([System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
         {
@@ -172,7 +175,6 @@ namespace CompletelyOptional
             }
             RunPostLoaded();
         }
-
 
         internal static void WipeOIsProgression(int saveStateNumber)
         {

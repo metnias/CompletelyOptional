@@ -27,8 +27,7 @@ namespace OptionalUI
             }
 
             fixedRad = 30f;
-            throw new NotImplementedException("OpPathSelector might come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
-            /*
+
             if (_init) { return; }
 
             color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
@@ -44,7 +43,8 @@ namespace OptionalUI
             circles[4] = new FSprite("Futile_White")
             { shader = menu.manager.rainWorld.Shaders["VectorCircleFadable"] };
             for (int i = 0; i < circles.Length; i++) { myContainer.AddChild(circles[i]); circles[i].SetPosition(55f, 55f); }
-            */
+
+            throw new NotImplementedException("OpPathSelector might come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
         }
 
         private readonly FSprite[] circles;
