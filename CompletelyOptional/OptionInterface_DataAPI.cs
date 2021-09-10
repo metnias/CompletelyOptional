@@ -13,6 +13,8 @@ namespace OptionalUI
     {
         #region Converter
 
+        private const string converterFormat = "CommaColon";
+
         /// <summary>
         /// Very basic <see cref="Dictionary{TKey, TValue}"/> to <see cref="string"/> converter for <see cref="OptionInterface.data"/>
         /// or <see cref="OptionInterface.saveData"/> etc. See also <seealso cref="StringToDictionary(string)"/> for reversal
@@ -22,6 +24,7 @@ namespace OptionalUI
         public static string DictionaryToString(Dictionary<string, string> data)
         {
             StringBuilder builder = new StringBuilder();
+            builder.Append($"[{converterFormat}]");
             foreach (var pair in data)
             { builder.Append(pair.Key).Append(":").Append(pair.Value).Append(','); }
             string result = builder.ToString();
@@ -33,12 +36,13 @@ namespace OptionalUI
         /// Very basic decoder for string from <see cref="DictionaryToString(Dictionary{string, string})"/>.
         /// This does NOT have an exception handler for wrongly formatted string, by the way.
         /// </summary>
-        /// <param name="file"><see cref="string"/> generated from <see cref="DictionaryToString(Dictionary{string, string})"/></param>
-        public static Dictionary<string, string> StringToDictionary(string file)
+        /// <param name="rawData"><see cref="string"/> generated from <see cref="DictionaryToString(Dictionary{string, string})"/></param>
+        public static Dictionary<string, string> StringToDictionary(string rawData)
         {
             var result = new Dictionary<string, string>();
-            string value = File.ReadAllText(file);
-            string[] items = value.Split(new char[','], StringSplitOptions.RemoveEmptyEntries);
+            if (rawData.StartsWith($"[{converterFormat}]")) { rawData = rawData.Substring(converterFormat.Length + 2); }
+            else { throw new FormatException("rawData is missing header info from CM's built-in converter"); }
+            string[] items = rawData.Split(new char[','], StringSplitOptions.RemoveEmptyEntries);
             for (int i = 0; i < items.Length; i++)
             {
                 string[] item = items[i].Split(new char[':']);
