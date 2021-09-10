@@ -11,6 +11,47 @@ namespace OptionalUI
 {
     public partial class OptionInterface
     {
+        #region Converter
+
+        /// <summary>
+        /// Very basic <see cref="Dictionary{TKey, TValue}"/> to <see cref="string"/> converter for <see cref="OptionInterface.data"/>
+        /// or <see cref="OptionInterface.saveData"/> etc. See also <seealso cref="StringToDictionary(string)"/> for reversal
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static string DictionaryToString(Dictionary<string, string> data)
+        {
+            StringBuilder builder = new StringBuilder();
+            foreach (var pair in data)
+            { builder.Append(pair.Key).Append(":").Append(pair.Value).Append(','); }
+            string result = builder.ToString();
+            result = result.TrimEnd(','); // remove the end comma
+            return result;
+        }
+
+        /// <summary>
+        /// Very basic decoder for string from <see cref="DictionaryToString(Dictionary{string, string})"/>.
+        /// This does NOT have an exception handler for wrongly formatted string, by the way.
+        /// </summary>
+        /// <param name="file"><see cref="string"/> generated from <see cref="DictionaryToString(Dictionary{string, string})"/></param>
+        public static Dictionary<string, string> StringToDictionary(string file)
+        {
+            var result = new Dictionary<string, string>();
+            string value = File.ReadAllText(file);
+            string[] items = value.Split(new char[','], StringSplitOptions.RemoveEmptyEntries);
+            for (int i = 0; i < items.Length; i++)
+            {
+                string[] item = items[i].Split(new char[':']);
+                if (item.Length < 2) { continue; }
+
+                if (result.ContainsKey(item[0])) { result[item[0]] = item[1]; }
+                else { result.Add(item[0], item[1]); }
+            }
+            return result;
+        }
+
+        #endregion Converter
+
         #region customData
 
         /// <summary>
@@ -28,6 +69,7 @@ namespace OptionalUI
         /// This won't get saved or loaded automatically and you have to call it by yourself.
         /// Set this to whatever you want and call <see cref="SaveData"/> and <see cref="LoadData"/> when you need.
         /// Causes a call to <see cref="DataOnChange"/> when its value is changed.
+        /// <para>See also <seealso cref="DictionaryToString(Dictionary{string, string})"/></para>
         /// </summary>
         public string data
         {
@@ -87,6 +129,7 @@ namespace OptionalUI
 
         /// <summary>
         /// Save your raw <see cref="data"/> in file. Call this by your own.
+        /// <para>This is NOT <see cref="saveData"/> which is a part of Progression API</para>
         /// </summary>
         /// <returns>Whether it succeed or not</returns>
         public virtual bool SaveData()
@@ -140,9 +183,11 @@ namespace OptionalUI
         private string _miscData;
 
         /// <summary>
-        /// Progression API: Savedata tied to a specific slugcat's playthrough. This gets reverted automatically if the Slugcat loses.
+        /// Progression API: saveData tied to a specific slugcat's playthrough. This gets reverted automatically if the Slugcat loses.
         /// Enable <see cref="hasProgData"/> to use this. Set this to whatever you want in game. Config Machine will then manage saving automatically.
         /// Typically saveData is only saved when the slugcat hibernates. Exceptionally, it's saved when the player uses a passage, and on Red's ascension/gameover
+        /// <para>This is NOT <see cref="SaveData"/> method which is to be manually called for saving <seealso cref="data"/></para>
+        /// <para>See also <seealso cref="persData"/>, <seealso cref="miscData"/>, and <seealso cref="DictionaryToString(Dictionary{string, string})"/></para>
         /// </summary>
         public string saveData
         {
@@ -162,6 +207,7 @@ namespace OptionalUI
         /// Progression API: Savedata tied to a specific slugcat's playthrough, death-persistent.
         /// Enable <see cref="hasProgData"/> to use this. Set this to whatever you want in game. Config Machine will then manage saving automatically.
         /// Typically persData is saved when 1. going in-game (calls <see cref="SaveDeath"/>) 2. Surviving/dying/quitting/meeting an echo/ascending etc.
+        /// <para>See also <seealso cref="saveData"/>, <seealso cref="miscData"/>, and <seealso cref="DictionaryToString(Dictionary{string, string})"/></para>
         /// </summary>
         public string persData
         {
@@ -181,6 +227,7 @@ namespace OptionalUI
         /// Progression API: Savedata shared across all slugcats on the same Saveslot.
         /// Enable <see cref="hasProgData"/> to use this. Set this to whatever you want in game. Config Machine will then manage saving automatically.
         /// Typically miscData is saved when saving/starving/dying/meeting an echo/ascending etc, but not when quitting the game to the menu.
+        /// <para>See also <seealso cref="saveData"/>, <seealso cref="persData"/>, and <seealso cref="DictionaryToString(Dictionary{string, string})"/></para>
         /// </summary>
         public string miscData
         {
