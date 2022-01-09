@@ -29,9 +29,9 @@ namespace OptionalUI
         /// <returns>Translated text (returns original if translation isn't found.)</returns>
         public string Translate(string orig)
         {
-            if (curLang != OptionScript.curLang)
+            if (curLang != OptionScript.curLang || transConverter == null)
             {
-                curLang = OptionScript.curLang;
+                // curLang = OptionScript.curLang;
                 LoadTranslation();
             }
 
@@ -56,6 +56,7 @@ namespace OptionalUI
 
         private void LoadTranslation()
         {
+			curLang = OptionScript.curLang;
             transConverter = new Dictionary<string, string>();
 
             if (transData == null) { if (!ReadTransTXT()) { return; }; }

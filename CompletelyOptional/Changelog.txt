@@ -1,12 +1,14 @@
 ﻿###1.5.5#!#20210904#!#
 - Reworked OptionInterface's Data API (by Henpemaz)
- + This MAY BREAK backward compatibility with mods that use older Data API
+ + This WILL BREAK backward compatibility with mods that use older progData
  + There are now four types of data in OptionInterface
   x data: Not bound to the game or saveslot; Modders can set this to anything anytime, but have to call LoadData and SaveData manually
   x Progression Data: Requires hasProgData to be true to use
    * saveData: Bound to SaveState (current slugcat)
    * persData: Bound to DeathPersistentData (current slugcat); Stays persistent regardless of death or quit
    * miscData: Bound to ProgressionData (current saveslot); Stays persistent regardless of death/quit or slugcat change
+- Added internal support for Chinese translation using CommunicaitonModule
+ + Chinese Translation for ConfigMachine is planned
 ###1.5.4#!#20210704#!#
 1.5.4.4
 - Fixed OpResourceSelector and OpResourceList breaking with the last fix

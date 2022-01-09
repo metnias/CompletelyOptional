@@ -348,6 +348,7 @@ namespace OptionalUI
         public virtual void Initialize()
         { //Also Reset Config (Initialize w/o LoadConfig), and call ConfigOnChange().
             this.Tabs = null;
+			curLang = "";
             CheckTestTranslation();
         }
 

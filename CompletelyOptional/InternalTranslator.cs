@@ -17,7 +17,7 @@ namespace CompletelyOptional
 
         private static string curLang => OptionScript.curLang;
         private static Dictionary<string, string> converter;
-        public const string allowedCodes = "eng, fre, ita, ger, spa, por, (kor, jap, rus)";
+        public const string allowedCodes = "eng, fre, ita, ger, spa, por, (kor, jap, rus, chi)";
 
         private static Dictionary<string, string> Code2Culture;
 
@@ -35,7 +35,8 @@ namespace CompletelyOptional
                     { "por", "pt-PT" },
                     { "jap", "ja-JP" },
                     { "kor", "ko-KR" },
-                    { "rus", "ru-RU" }
+                    { "rus", "ru-RU" },
+                    { "chi", "zh-CN" }
                 };
             }
             if (Code2Culture.TryGetValue(curLang, out string c)) { return CultureInfo.CreateSpecificCulture(c); }
