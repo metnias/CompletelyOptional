@@ -47,7 +47,11 @@ namespace CompletelyOptional
         /// <summary>
         /// Directory that all the data/configs is saved
         /// </summary>
-        public static DirectoryInfo directory;
+        public static DirectoryInfo directory => new DirectoryInfo(string.Concat(
+                Custom.RootFolderDirectory(),
+                "ModConfigs",
+                Path.DirectorySeparatorChar
+                ));
 
         /// <summary>
         /// GameObject for CompletelyOptional MonoBehavior
@@ -68,13 +72,9 @@ namespace CompletelyOptional
         /// </summary>
         public override void OnEnable()
         {
-            directory = new DirectoryInfo(string.Concat(
-                Custom.RootFolderDirectory(),
-                "ModConfigs",
-                Path.DirectorySeparatorChar
-                ));
-
             base.OnEnable();
+
+            if (!directory.Exists) { directory.Create(); }
 
             OptionsMenuPatch.SubPatch();
             On.ProcessManager.ctor += OptionScript.ProcessManagerCtor;
@@ -131,11 +131,11 @@ namespace CompletelyOptional
         /// <summary>
         /// Path of Levels
         /// </summary>
-        internal static string levelpath = string.Concat(new object[] {
+        internal static string levelpath = string.Concat(
             Custom.RootFolderDirectory(),
             "Levels",
             Path.DirectorySeparatorChar
-        });
+        );
 
         /*
         /// <summary>
@@ -143,7 +143,7 @@ namespace CompletelyOptional
         /// </summary>
         internal static void CopyMusicRoom()
         {
-            string sspath = string.Concat(new object[] {
+            string sspath = string.Concat(
                 "World",
                 Path.DirectorySeparatorChar,
                 "Regions",
@@ -152,7 +152,7 @@ namespace CompletelyOptional
                 Path.DirectorySeparatorChar,
                 "Rooms",
                 Path.DirectorySeparatorChar
-            });
+            );
 
             File.Copy(string.Concat(sspath, "SS_AI.txt"), string.Concat(levelpath, "SoundTest.txt"), true);
             File.Copy(string.Concat(sspath, "SS_AI_1.png"), string.Concat(levelpath, "SoundTest_1.png"), true);

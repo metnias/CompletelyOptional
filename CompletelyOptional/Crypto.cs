@@ -17,7 +17,7 @@ namespace CompletelyOptional
             Debug.Log(value);
             foreach (char c in value)
             {
-                Debug.Log(string.Concat(new object[] { "{0:x4} ", (int)c }));
+                Debug.Log(string.Concat( "{0:x4} ", (int)c ));
             }
         }*/
 

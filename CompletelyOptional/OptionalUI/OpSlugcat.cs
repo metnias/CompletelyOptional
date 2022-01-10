@@ -349,13 +349,13 @@ namespace OptionalUI
                 {
                     //this.bodyChunks[i].Update();
                     /*
-                    Debug.Log(string.Concat(new object[] {
+                    Debug.Log(string.Concat(
                         "index ", i.ToString(), " pos: ",
                         this.bodyChunks[i].pos.x.ToString("N2"), ", ",
                         this.bodyChunks[i].pos.y.ToString("N2"), " / vel: ",
                         this.bodyChunks[i].vel.x.ToString("N2"), ", ",
                         this.bodyChunks[i].vel.y.ToString("N2")
-                    }));
+                    ));
                     */
 
                     this.bodyChunks[i] = VirtualBCUpdate(this.bodyChunks[i], i);

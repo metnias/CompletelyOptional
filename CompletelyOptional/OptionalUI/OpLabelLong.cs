@@ -58,8 +58,8 @@ namespace OptionalUI
             }
             while (this.labels.Count < splits.Count)
             {
-                MenuLabel nl = new MenuLabel(this.menu, this.owner, isVFont ? "A" : "", this.pos, this.size, false);
-                nl.text = "";
+                MenuLabel nl = new MenuLabel(this.menu, this.owner, isVFont ? "A" : "", this.pos, this.size, false)
+                { text = "" };
                 this.labels.Add(nl);
                 this.subObjects.Add(nl);
             }

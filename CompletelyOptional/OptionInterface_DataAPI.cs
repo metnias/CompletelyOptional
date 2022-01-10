@@ -142,10 +142,10 @@ namespace OptionalUI
 
             try
             {
-                string path = string.Concat(new object[] {
+                string path = string.Concat(
                 directory.FullName,
                 "data.txt"
-                });
+                );
                 string enc = Crypto.EncryptString(_data ?? "", CryptoDataKey);
                 string key = Custom.Md5Sum(enc);
 

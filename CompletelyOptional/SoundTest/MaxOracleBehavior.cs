@@ -44,13 +44,12 @@ namespace CompletelyOptional
                     break;
                 }
             }
-            Debug.Log(string.Concat(new object[]
-            {
+            Debug.Log(string.Concat(
             "See player ",
             this.oracle.room.game.GetStorySession.saveState.miscWorldSaveData.SSaiConversationsHad,
             " gn?:",
             this.greenNeuron != null
-            }));
+            ));
             if ((this.greenNeuron != null || (this.player.objectInStomach != null && this.player.objectInStomach.type == AbstractPhysicalObject.AbstractObjectType.NSHSwarmer)))
             {
                 this.oracle.room.game.GetStorySession.saveState.miscWorldSaveData.pebblesSeenGreenNeuron = true;
@@ -701,13 +700,12 @@ namespace CompletelyOptional
 
             private void NextCommunication()
             {
-                Debug.Log(string.Concat(new object[]
-                {
+                Debug.Log(string.Concat(
                 "New com att: ",
                 base.action.ToString(),
                 " ",
                 this.communicationIndex
-                }));
+                ));
                 switch (base.action)
                 {
                     case Action.MeetWhite_Texting:

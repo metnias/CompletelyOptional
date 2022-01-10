@@ -31,8 +31,7 @@ namespace CompletelyOptional
             List<string> keys = new List<string>();
 
             //Get Songs
-            string path = string.Concat(new object[]
-            {
+            string path = string.Concat(
                 Custom.RootFolderDirectory(),
                 Path.DirectorySeparatorChar,
                 "Assets",
@@ -45,7 +44,7 @@ namespace CompletelyOptional
                 Path.DirectorySeparatorChar,
                 "Songs",
                 Path.DirectorySeparatorChar
-            });
+            );
             DirectoryInfo dirSong = new DirectoryInfo(path);
             foreach (FileInfo file in dirSong.GetFiles())
             {

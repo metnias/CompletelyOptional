@@ -455,15 +455,14 @@ namespace CompletelyOptional
             }
         }
 
-        private string musicFolderPath = string.Concat(new object[]
-        {
-        Custom.RootFolderDirectory(),
-        Path.DirectorySeparatorChar,
-        "SoundEffects",
-        Path.DirectorySeparatorChar,
-        "Music",
-        Path.DirectorySeparatorChar
-        });
+        private string musicFolderPath = string.Concat(
+            Custom.RootFolderDirectory(),
+            Path.DirectorySeparatorChar,
+            "SoundEffects",
+            Path.DirectorySeparatorChar,
+            "Music",
+            Path.DirectorySeparatorChar
+        );
 
         //public GameObject gameObj;
         //public Song song;

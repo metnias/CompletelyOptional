@@ -162,7 +162,7 @@ namespace OptionalUI
         /// </summary>
         public OpTab[] Tabs;
 
-        private protected DirectoryInfo directory => new DirectoryInfo(string.Concat(
+        protected DirectoryInfo directory => new DirectoryInfo(string.Concat(
                     OptionMod.directory.FullName,
                     rwMod.ModID,
                     Path.DirectorySeparatorChar
@@ -348,7 +348,7 @@ namespace OptionalUI
         public virtual void Initialize()
         { //Also Reset Config (Initialize w/o LoadConfig), and call ConfigOnChange().
             this.Tabs = null;
-			curLang = "";
+            curLang = "";
             CheckTestTranslation();
         }
 
