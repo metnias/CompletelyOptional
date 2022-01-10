@@ -47,11 +47,7 @@ namespace CompletelyOptional
         /// <summary>
         /// Directory that all the data/configs is saved
         /// </summary>
-        public static DirectoryInfo directory => new DirectoryInfo(string.Concat(
-                Custom.RootFolderDirectory(),
-                "ModConfigs",
-                Path.DirectorySeparatorChar
-                ));
+        public static DirectoryInfo directory;
 
         /// <summary>
         /// GameObject for CompletelyOptional MonoBehavior
@@ -73,8 +69,16 @@ namespace CompletelyOptional
         public override void OnEnable()
         {
             base.OnEnable();
-
-            if (!directory.Exists) { directory.Create(); }
+            directory = new DirectoryInfo(string.Concat(
+                Custom.RootFolderDirectory(),
+                "ModConfigs",
+                Path.DirectorySeparatorChar
+                ));
+            if (!directory.Exists)
+            {
+                directory.Create();
+                directory.Refresh();
+            }
 
             OptionsMenuPatch.SubPatch();
             On.ProcessManager.ctor += OptionScript.ProcessManagerCtor;
