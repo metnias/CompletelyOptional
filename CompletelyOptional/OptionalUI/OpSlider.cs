@@ -50,7 +50,7 @@ namespace OptionalUI
         {
             this.vertical = vertical;
             this.description = InternalTranslator.Translate(this.vertical ?
-                "Hold your mouse and Drag up/down to adjust value" : "Hold your mouse and Drag left/right to adjust value");
+                "Hold your mouse button and Drag up/down to adjust value" : "Hold your mouse button and Drag left/right to adjust value");
             this.min = range.x; this.max = range.y;
             int r = this.max - this.min + 1;
             this.wheelTick = r > 5 ? Math.Max(Mathf.CeilToInt(r / 12f), 4) : 1;

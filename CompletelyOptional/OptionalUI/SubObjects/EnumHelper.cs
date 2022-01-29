@@ -10,7 +10,9 @@ namespace OptionalUI
     {
         public static string GetEnumDesc(Enum value)
         {
+            if (value == null) { return null; }
             var fieldInfo = value.GetType().GetField(value.ToString());
+            if (fieldInfo == null) { return null; }
 
             var attribs = fieldInfo.GetCustomAttributes(typeof(DescriptionAttribute), false) as DescriptionAttribute[];
             if (attribs?.Length > 0)

@@ -513,7 +513,12 @@ namespace OptionalUI
                 this.lblHex.label.color = Color.Lerp(white, grey, this.bumpBehav.Sin());
                 this.cursor.color = Color.Lerp(white, grey, this.bumpBehav.Sin());
             }
-            else { this.lblHex.label.color = grey; }
+            else
+            {
+                if (this.MouseOverHex())
+                { this.lblHex.label.color = Input.GetMouseButton(0) ? darkgrey : Color.Lerp(white, grey, this.bumpBehav.Sin(10f)); }
+                else { this.lblHex.label.color = grey; }
+            }
 
             this.rect.fillAlpha = Mathf.Lerp(0.6f, 0.8f, this.bumpBehav.col);
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
@@ -634,6 +639,13 @@ namespace OptionalUI
             OnChange();
         }
 
+        protected bool MouseOverHex()
+        {
+            if (this.MousePos.y < 3f || this.MousePos.y > 27f) { return false; }
+            if (this.MousePos.x < 60f || this.MousePos.x > 125f) { return false; }
+            return true; // new Vector2(25f, 5f), new Vector2(80f, 20f)
+        }
+
         public override void Update(float dt)
         {
             base.Update(dt);
@@ -689,7 +701,7 @@ namespace OptionalUI
                     this.cursor = null;
                     menu.PlaySound(SoundID.MENU_Player_Unjoin_Game);
                 }
-                else if (Input.GetMouseButton(0) && !this.MouseOver)
+                else if (Input.GetMouseButton(0) && !this.MouseOverHex())
                 {
                     if (mod == 2) { this.SwitchMod(0); }
                     lblHex.text = "#" + value;
@@ -704,8 +716,6 @@ namespace OptionalUI
 
             if (this.MouseOver)
             {
-                bool button = false;
-
                 if (!isDirty) { menu.PlaySound(SoundID.MENU_Button_Select_Mouse); isDirty = true; }
                 if (this.MousePos.y > 135f)
                 { //mod settings
@@ -769,7 +779,6 @@ namespace OptionalUI
                                             menu.PlaySound(SoundID.MENU_Scroll_Tick);
                                             _soundFill += 4;
                                         }
-                                        button = true;
                                         this._value = string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
                                             Mathf.RoundToInt(g * 255f / 100f).ToString("X2"),
                                             Mathf.RoundToInt(b * 255f / 100f).ToString("X2"));
@@ -802,7 +811,6 @@ namespace OptionalUI
                                     {
                                         if (l != lastL)
                                         {
-                                            button = true;
                                             if (!_soundFilled)
                                             {
                                                 menu.PlaySound(SoundID.MENU_Scroll_Tick);
@@ -835,7 +843,6 @@ namespace OptionalUI
                                     {
                                         if (lastH != h || lastS != s)
                                         {
-                                            button = true;
                                             if (!_soundFilled)
                                             {
                                                 menu.PlaySound(SoundID.MENU_Scroll_Tick);
@@ -869,7 +876,6 @@ namespace OptionalUI
                                         if (pi != _i)
                                         {
                                             pi = _i;
-                                            button = true;
                                             if (!_soundFilled)
                                             {
                                                 menu.PlaySound(SoundID.Mouse_Scurry);
@@ -909,7 +915,7 @@ namespace OptionalUI
                     }
                 }
 
-                if (!button && Input.GetMouseButton(0) && !input)
+                if (this.MouseOverHex() && Input.GetMouseButton(0) && !input)
                 {
                     clickDelay += FrameMultiply(60);
                     input = true;
