@@ -220,6 +220,12 @@ namespace CompletelyOptional
         internal static void SaveOIsPers(bool saveAsIfPlayerDied, bool saveAsIfPlayerQuit)
         {
             LogMethodName();
+            // If rw.progression.Revert() happened, the game cannot save here. This is a bug in vanilla and happens when
+            // the process goes from game -> dream -> sleepscreen
+            // processmanager calls Revert when going into dream, sleepscreen tries to call SaveDeathPersistentProgression
+            // to save passage progression shown, but there's nothing in rw.progression.currentSaveState
+            if (OptionScript.rw.progression.currentSaveState == null) { UnityEngine.Debug.Log("CompletelyOptional: No progression to save"); return; }
+
             if (!(saveAsIfPlayerDied || saveAsIfPlayerQuit))
             {
                 RunPreSave();
