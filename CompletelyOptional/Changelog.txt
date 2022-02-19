@@ -7,11 +7,10 @@
    * saveData: Bound to SaveState (current slugcat)
    * persData: Bound to DeathPersistentData (current slugcat); Stays persistent regardless of death or quit
    * miscData: Bound to ProgressionData (current saveslot); Stays persistent regardless of death/quit or slugcat change
+- Added Chinese translation support using CommunicaitonModule
 - OpColorPicker's HEX edit mode now activates when you double-click only where HEX is located
 - Fixed an issue with initial launch when ModConfigs folder doesn't exist, thanks to Henpemaz
-- Added internal support for Chinese translation using CommunicaitonModule
- + Chinese Translation for ConfigMachine is also added
-- Fixed an issue which OpSlider's description is not using translation
+- Fixed an issue which OpSlider's description is not using translation with a certain ctor
 ###1.5.4#!#20210704#!#
 1.5.4.4
 - Fixed OpResourceSelector and OpResourceList breaking with the last fix
