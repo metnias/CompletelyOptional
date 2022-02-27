@@ -114,7 +114,8 @@ namespace OptionalUI
         /// Obsolete! Use RemoveItems instead.
         /// </summary>
         [Obsolete]
-        public void RemoveItem(UIelement item) { _RemoveItem(item); }
+        public void RemoveItem(UIelement item)
+        { _RemoveItem(item); }
 
         /// <summary>
         /// Remove <see cref="UIelement"/>  in this Tab.

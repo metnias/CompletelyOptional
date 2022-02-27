@@ -57,6 +57,7 @@ namespace OptionalUI
 
         //private DyeableRect rectUp, rectDown;
         private FSprite arrUp, arrDown;
+
         private int iMin = int.MinValue, iMax = int.MaxValue;
         private float fMin = -1000000, fMax = 1000000;
         protected internal readonly byte dNum;
@@ -200,6 +201,7 @@ namespace OptionalUI
                             menu.PlaySound(arrowCounter > 0 ? SoundID.MENU_Checkbox_Uncheck : SoundID.MENU_Scroll_Tick, 0f, 1f, 0.7f);
                         }
                         break;
+
                     case 1: // bump up
                     case 2: // bump down
                         this.bumpBehav.flash = 1f;
@@ -214,6 +216,7 @@ namespace OptionalUI
                 }
                 this.bumpBehav.sizeBump = Mathf.Min(2.5f, this.bumpBehav.sizeBump + 1f);
             }
+
             #endregion BumpFlagReaction
         }
 

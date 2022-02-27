@@ -1,7 +1,6 @@
-﻿using OptionalUI;
-using Partiality.Modloader;
+﻿using BepInEx;
+using OptionalUI;
 using RWCustom;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -12,7 +11,7 @@ namespace CompletelyOptional
     /// </summary>
     public class InternalTestOI : OptionInterface
     {
-        public InternalTestOI(PartialityMod mod) : base(mod)
+        public InternalTestOI(BaseUnityPlugin plugin) : base(plugin)
         {
         }
 

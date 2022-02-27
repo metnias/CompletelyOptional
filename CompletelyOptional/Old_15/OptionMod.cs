@@ -9,7 +9,6 @@ using UnityEngine;
 
 [assembly: AssemblyVersion(CompletelyOptional.OptionMod.ver)]
 [assembly: AssemblyFileVersion(CompletelyOptional.OptionMod.ver)]
-
 namespace CompletelyOptional
 {
     /// <summary>

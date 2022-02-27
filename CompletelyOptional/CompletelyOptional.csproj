@@ -36,8 +36,10 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp" />
     <Reference Include="BepInEx" />
-    <Reference Include="HOOKS-Assembly-CSharp" />
-    <Reference Include="Partiality" />
+    <Reference Include="HOOKS-Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\References\RainWorld\HOOKS-Assembly-CSharp.dll</HintPath>
+    </Reference>
     <Reference Include="SlugBase">
       <HintPath>..\..\References\RainWorld\SlugBase.dll</HintPath>
     </Reference>
@@ -52,8 +54,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="COExceptions.cs" />
-    <Compile Include="ConfigMenu.cs" />
+    <Compile Include="ComOptPlugin.cs" />
+    <None Include="Old_15\ConfigMenu.cs" />
     <Compile Include="ConfigTabController.cs" />
+    <Compile Include="EnumExt_ComOpt.cs" />
+    <Compile Include="ModConfigMenu.cs" />
     <Compile Include="OptionalUI\SubObjects\EnumHelper.cs" />
     <Compile Include="GeneratedOI.cs" />
     <Compile Include="InternalTestOI.cs" />
@@ -73,6 +78,7 @@
     <Compile Include="OptionalUI\OpScrollBox.cs" />
     <Compile Include="OptionalUI\SubObjects\BumpBehaviour.cs" />
     <Compile Include="OptionalUI\SubObjects\FTexture.cs" />
+    <Compile Include="OptionalUI\SubObjects\Playlist.cs" />
     <Compile Include="OptionInterface_DataAPI.cs" />
     <Compile Include="OptionInterface_Translator.cs" />
     <Compile Include="UniClipboard.cs" />
@@ -88,8 +94,8 @@
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>
-    <None Include="SoundTest\MaxMusicPlayer.cs" />
-    <None Include="SoundTest\MaxSwarmer.cs" />
+    <None Include="Old_15\SoundTest\MaxMusicPlayer.cs" />
+    <None Include="Old_15\SoundTest\MaxSwarmer.cs" />
     <Compile Include="MenuTab.cs" />
     <Compile Include="OptionalUI\SubObjects\DyeableRect.cs" />
     <Compile Include="OptionalUI\OpCheckBox.cs" />
@@ -113,22 +119,22 @@
     <Compile Include="OptionalUI\UIconfig.cs" />
     <None Include="OptionalUI\UIcreature.cs" />
     <Compile Include="OptionalUI\UIelement.cs" />
-    <None Include="SoundTest\SoundingGameSession.cs" />
-    <None Include="SoundTest\SoundTestOwner.cs" />
-    <None Include="SoundTest\SoundTestPlayerUI.cs" />
-    <None Include="SoundTest\MaxGraphics.cs" />
-    <None Include="SoundTest\MaxOracle.cs" />
-    <None Include="SoundTest\MaxOracleBehavior.cs" />
+    <None Include="Old_15\SoundTest\SoundingGameSession.cs" />
+    <None Include="Old_15\SoundTest\SoundTestOwner.cs" />
+    <None Include="Old_15\SoundTest\SoundTestPlayerUI.cs" />
+    <None Include="Old_15\SoundTest\MaxGraphics.cs" />
+    <None Include="Old_15\SoundTest\MaxOracle.cs" />
+    <None Include="Old_15\SoundTest\MaxOracleBehavior.cs" />
     <None Include="OptionalGameSession.cs" />
-    <Compile Include="OptionMod.cs" />
-    <Compile Include="OptionScript.cs" />
+    <None Include="Old_15\OptionMod.cs" />
+    <None Include="Old_15\OptionScript.cs" />
     <Compile Include="OptionsMenuPatch.cs" />
     <Compile Include="ProgressData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <None Include="SoundTest\SoundTest.cs" />
+    <None Include="Old_15\SoundTest\SoundTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SoundTest\MaxRoom_Settings.txt" />
+    <None Include="Old_15\SoundTest\MaxRoom_Settings.txt" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Changelog.txt" />
@@ -153,11 +159,11 @@ copy /Y "$(TargetDir)$(TargetName).xml" "E:\Game\Rain World\mods\$(TargetName).x
 copy /Y "$(TargetPath)" "E:\SteamLibrary\steamapps\common\Rain World\BepInEx\plugins\$(TargetName).dll"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent Label="copyoutputTopi">copy /Y "$(TargetPath)" "D:\Drive\Repo\References\RainWorld\$(TargetName).dll"
-copy /Y "$(TargetDir)$(TargetName).xml" "D:\Drive\Repo\References\RainWorld\$(TargetName).xml"
-copy /Y "$(TargetPath)" "E:\Game\Rain World\mods\$(TargetName).dll"
-copy /Y "$(TargetDir)$(TargetName).xml" "E:\Game\Rain World\mods\$(TargetName).xml"
-copy /Y "$(TargetPath)" "E:\SteamLibrary\steamapps\common\Rain World\BepInEx\plugins\$(TargetName).dll"</PostBuildEvent>
+    <PostBuildEvent Label="copyoutputTopi">copy /Y "$(TargetPath)" "C:\Drive\Repo\References\RainWorld\$(TargetName).dll"
+copy /Y "$(TargetDir)$(TargetName).xml" "C:\Drive\Repo\References\RainWorld\$(TargetName).xml"
+copy /Y "$(TargetPath)" "D:\Game\Rain World\mods\$(TargetName).dll"
+copy /Y "$(TargetDir)$(TargetName).xml" "D:\Game\Rain World\mods\$(TargetName).xml"
+copy /Y "$(TargetPath)" "D:\SteamLibrary\steamapps\common\Rain World\BepInEx\plugins\$(TargetName).dll"</PostBuildEvent>
   </PropertyGroup>
   <Import Condition="Exists('user.targets')" Project="user.targets" />
 </Project>

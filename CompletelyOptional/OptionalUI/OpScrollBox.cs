@@ -1,10 +1,8 @@
-﻿using System;
+﻿using CompletelyOptional;
+using Menu;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CompletelyOptional;
-using System.Linq;
-using RWCustom;
-using Menu;
 
 namespace OptionalUI
 {
@@ -400,6 +398,7 @@ namespace OptionalUI
         private Vector2 SliderSize => horizontal
             ? new Vector2(Mathf.Max(Mathf.Min(size.x, size.x * size.x / _contentSize), 20f), 15f)
             : new Vector2(15f, Mathf.Max(Mathf.Min(size.y, size.y * size.y / _contentSize), 20f));
+
         private Vector2 SliderPos => horizontal
             ? new Vector2(-scrollOffset * size.x / _contentSize, isTab ? -10f : 5f)
             : new Vector2((isTab ? 15f : 0f) + size.x - 20f, -scrollOffset * size.y / _contentSize);

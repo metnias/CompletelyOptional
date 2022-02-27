@@ -69,14 +69,17 @@ namespace OptionalUI
         }
 
 #pragma warning disable CS0649
+
         /// <summary>
         /// If this is set, this element cannot change its <see cref="size"/>.
         /// </summary>
         protected internal Vector2? fixedSize;
+
         /// <summary>
         /// If this is set, this element cannot change its <see cref="rad"/>.
         /// </summary>
         protected internal float? fixedRad;
+
 #pragma warning restore CS0649
 
         /// <summary>
@@ -106,6 +109,7 @@ namespace OptionalUI
         /// Which <see cref="OpScrollBox"/> this element is in. See also <seealso cref="inScrollBox"/>
         /// </summary>
         protected internal OpScrollBox scrollBox { get; private set; }
+
         /// <summary>
         /// Whether this is inside <see cref="OpScrollBox"/>. See also <seealso cref="scrollBox"/>
         /// </summary>
@@ -284,6 +288,7 @@ namespace OptionalUI
         /// You can alternatively use <c>menu.page[0]</c> for this
         /// </summary>
         protected internal Page owner;
+
         /// <summary>
         /// <see cref="FContainer"/> to add <see cref="FSprite"/>.
         /// </summary>

@@ -1,7 +1,6 @@
 using BepInEx;
 using Menu;
 using OptionalUI;
-using Partiality.Modloader;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -168,6 +167,7 @@ namespace CompletelyOptional
             InternalTranslator.LoadTranslation();
 
             #region PartialityMods
+
             loadedMods = Partiality.PartialityManager.Instance.modManager.loadedMods;
             loadedModsDictionary = new Dictionary<string, PartialityMod>();
             ComModExists = false;
@@ -325,6 +325,7 @@ namespace CompletelyOptional
             #endregion PartialityMods
 
             #region InternalTest
+
             if (OptionMod.testing)
             {
 #pragma warning disable CS0162
@@ -346,6 +347,7 @@ namespace CompletelyOptional
                 loadedInterfaceDict.Add(temp.ModID, itf);
 #pragma warning restore CS0162
             }
+
             #endregion InternalTest
 
             // dual's code
@@ -500,11 +502,13 @@ namespace CompletelyOptional
             isOptionMenu = true;
 
             #region curFramerate
+
             dtHistory[dtHistoryMark] = Time.deltaTime;
             dtHistoryMark--; if (dtHistoryMark < 0) { dtHistoryMark = dtHistory.Length - 1; }
             float sum = 0;
             for (int h = 0; h < dtHistory.Length; h++) { sum += dtHistory[h]; }
             curFramerate = dtHistory.Length / sum;
+
             #endregion curFramerate
 
             if (soundFill > 0) { soundFill--; }

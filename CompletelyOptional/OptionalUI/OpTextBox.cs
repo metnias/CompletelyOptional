@@ -69,7 +69,7 @@ namespace OptionalUI
         /// </summary>
         public DyeableRect rect;
 
-        protected private string _lastValue;
+        protected string _lastValue;
         private readonly FCursor cursor;
         private float cursorAlpha;
 
@@ -197,7 +197,8 @@ namespace OptionalUI
         }
 
         protected internal bool mouseDown;
-        protected private bool KeyboardOn
+
+        protected bool KeyboardOn
         {
             get => this._keyboardOn;
             set
@@ -228,6 +229,7 @@ namespace OptionalUI
                 OnChange();
             }
         }
+
         private bool _keyboardOn = false;
 
         /// <summary>

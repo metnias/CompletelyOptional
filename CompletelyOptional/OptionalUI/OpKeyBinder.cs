@@ -1,6 +1,5 @@
 using CompletelyOptional;
 using Menu;
-using Partiality.Modloader;
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
@@ -14,19 +13,11 @@ namespace OptionalUI
     public class OpKeyBinder : UIconfig, SelectableUIelement
     {
         /// <summary>
-        /// Obsolete ctor!
-        /// </summary>
-        [Obsolete]
-        public OpKeyBinder(Vector2 pos, Vector2 size, string modID, string key, string defaultKey) : this(pos, size, modID, key, defaultKey, false, BindController.AnyController)
-        {
-        }
-
-        /// <summary>
         /// Simple Key Binder. Value is the <see cref="KeyCode"/> in string form.
         /// </summary>
         /// <param name="pos">LeftBottom Position of this UI</param>
         /// <param name="size">Size; minimum size is 30x30.</param>
-        /// <param name="modID">Your <see cref="PartialityMod.ModID"/></param>
+        /// <param name="modID">Your ModID</param>
         /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="defaultKey">Default <see cref="KeyCode"/> name. Set to empty to bind to <see cref="KeyCode.None"/> in default.</param>
         /// <param name="collisionCheck">Whether you will check the key is colliding with other <see cref="OpKeyBinder"/> or not</param>
@@ -50,32 +41,6 @@ namespace OptionalUI
         }
 
         private static readonly string none = (KeyCode.None).ToString();
-
-        /// <summary>
-        /// Obsolete!
-        /// </summary>
-        [Obsolete]
-        public OpKeyBinder(Vector2 pos, Vector2 size, PartialityMod mod, string key, string defaultKey) : this(pos, size, mod.ModID, key, defaultKey)
-        {
-        }
-
-        /// <summary>
-        /// Simple Key Binder. Value is the KeyCode in string form.
-        /// Using string for ModID is recommended.
-        /// </summary>
-        /// <param name="pos">LeftBottom Position of this UI</param>
-        /// <param name="size">Size. minimum size is 30f*30f.</param>
-        /// <param name="mod">Your <see cref="PartialityMod"/></param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
-        /// <param name="defaultKey">Default <see cref="KeyCode"/> name. Set to empty to bind to <see cref="KeyCode.None"/> in default.</param>
-        /// <param name="collisionCheck">Whether you will check the key is colliding with other <see cref="OpKeyBinder"/> or not</param>
-        /// <param name="ctrlerNo">Which Controller this <see cref="OpKeyBinder"/> can bind</param>
-        /// <exception cref="ElementFormatException">Thrown when defaultKey is null or empty</exception>
-        [Obsolete]
-        public OpKeyBinder(Vector2 pos, Vector2 size, PartialityMod mod, string key, string defaultKey, bool collisionCheck = true, BindController ctrlerNo = BindController.AnyController)
-            : this(pos, size, mod.ModID, key, defaultKey, collisionCheck, ctrlerNo)
-        {
-        }
 
         private void Initalize(string defaultKey)
         {

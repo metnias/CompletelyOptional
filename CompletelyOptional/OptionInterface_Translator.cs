@@ -56,7 +56,7 @@ namespace OptionalUI
 
         private void LoadTranslation()
         {
-			curLang = OptionScript.curLang;
+            curLang = OptionScript.curLang;
             transConverter = new Dictionary<string, string>();
 
             if (transData == null) { if (!ReadTransTXT()) { return; }; }

@@ -1,11 +1,10 @@
+using BepInEx;
 using CompletelyOptional;
-using Partiality.Modloader;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using UnityEngine;
-using BepInEx;
 
 namespace OptionalUI
 {
@@ -15,29 +14,6 @@ namespace OptionalUI
     public partial class OptionInterface
     {
         /// <summary>
-        /// OptionInterface for Partiality Mod.
-        /// Create <c>public static [YourOIclass] LoadOI()</c> in your <see cref="PartialityMod"/>.
-        /// ConfigMachine will load your OI after IntroRoll.
-        /// </summary>
-        /// <remarks>Example:
-        /// <code>
-        /// public static MyOptionInterface LoadOI()
-        /// {
-        ///     return new MyOptionInterface(mod: MyMod.instance);
-        /// }
-        /// </code>
-        /// </remarks>
-        /// <param name="mod">Your Partiality mod</param>
-        public OptionInterface(PartialityMod mod)
-        {
-#pragma warning disable CS0612
-            if (mod != null) { this.mod = mod; this.rwMod = new RainWorldMod(mod); }
-#pragma warning restore CS0612
-            else { this.rwMod = new RainWorldMod(); }
-            this.rawConfig = rawConfigDef;
-        }
-
-        /// <summary>
         /// Custom OptionInterface for BepInEx Plugin.
         /// Create <c>public static [YourOIclass] LoadOI()</c> in your <see cref="BaseUnityPlugin"/>.
         /// ConfigMachine will load your OI after IntroRoll.
@@ -46,7 +22,7 @@ namespace OptionalUI
         /// <code>
         /// public static MyOptionInterface LoadOI()
         /// {
-        ///     return new MyOptionInterface(plugin: MyPlugin.instance);
+        ///     return new MyOptionInterface(MyPlugin.instance);
         /// }
         /// </code>
         /// </remarks>
@@ -336,14 +312,7 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// If true, <see cref="Initialize"/> is in Mod Config Menu; if false, we're in IntroRoll and loading Configs.
-        /// Do not edit graphical details of <see cref="UIelement"/>s when this is false.
-        /// </summary>
-        /// <remarks>Example: <c>if (isOptionMenu) { myLabel.label.alpha = 0.5f; }</c></remarks>
-        public static bool isOptionMenu => OptionScript.isOptionMenu;
-
-        /// <summary>
-        /// Write your UI overlay here. See also <seealso cref="isOptionMenu"/>.
+        /// Write your UI overlay here.
         /// </summary>
         public virtual void Initialize()
         { //Also Reset Config (Initialize w/o LoadConfig), and call ConfigOnChange().
@@ -370,49 +339,5 @@ namespace OptionalUI
         public virtual void Signal(UItrigger trigger, string signal)
         {
         }
-
-        #region Obsolete
-
-        /// <summary>
-        /// Returns whether ConfigMachine is loaded or not.
-        /// </summary>
-        /// <remarks>But if it didn't, your dependent mod also won't load so this never gets unused.</remarks>
-        [Obsolete]
-        public static bool ConfigModExist()
-        {
-            List<PartialityMod> loadedMods = Partiality.PartialityManager.Instance.modManager.loadedMods;
-            foreach (PartialityMod mod in loadedMods)
-            {
-                if (mod.ModID == OptionMod.instance.ModID) { return true; }
-            }
-            //slot = OptionScript.Slot;
-            return false;
-        }
-
-        /// <summary>
-        /// The <see cref="PartialityMod"/> using this <see cref="OptionInterface"/>. Unused after v1.5; check <see cref="rwMod"/>
-        /// </summary>
-        [Obsolete]
-        public PartialityMod mod;
-
-        /// <summary>
-        /// Use <see cref="OpColorPicker.HexToColor(string)"/> instead.
-        /// </summary>
-        [Obsolete]
-        public static Color HexToColor(string hex)
-        {
-            return OpColorPicker.HexToColor(hex);
-        }
-
-        /// <summary>
-        /// Use <see cref="OpColorPicker.ColorToHex(Color)"/> instead.
-        /// </summary>
-        [Obsolete]
-        public static string ColorToHex(Color color)
-        {
-            return OpColorPicker.ColorToHex(color);
-        }
-
-        #endregion Obsolete
     }
 }

@@ -1,12 +1,11 @@
-﻿using OptionalUI;
-using BepInEx;
+﻿using BepInEx;
 using BepInEx.Configuration;
-using UnityEngine;
-using Partiality.Modloader;
-using System.Collections.Generic;
-using System;
-using System.Reflection;
+using OptionalUI;
 using RWCustom;
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using UnityEngine;
 
 namespace CompletelyOptional
 {
@@ -35,21 +34,15 @@ namespace CompletelyOptional
         { mode = GenMode.ModderCall; modDescription = description; }
 
         /// <summary>
-        /// This is for using default template, for when you want to use other function of OptionInterface(e.g. <see cref="OptionInterface.Translate(string)"/> but not wanting to set up Config Screen.
-        /// </summary>
-        /// <param name="mod">PartialityMod instance</param>
-        /// <param name="description">Description for your mod</param>
-        public GeneratedOI(PartialityMod mod, string description = "") : base(mod)
-        { mode = GenMode.ModderCall; modDescription = description; }
-
-        /// <summary>
         /// Keeps track on which ctor this OI used
         /// </summary>
         public readonly GenMode mode;
+
         /// <summary>
         /// BaseUnityPlugin.Config
         /// </summary>
         public ConfigFile bepConfig => bepConfigObj as ConfigFile;
+
         protected readonly object bepConfigObj;
 
         public string modDescription;
@@ -110,6 +103,7 @@ namespace CompletelyOptional
                                     }
                                     else { continue; }
                                     break;
+
                                 case "byte": //OpSliderSubtle
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<byte> eByte))
                                     {
@@ -123,6 +117,7 @@ namespace CompletelyOptional
                                     }
                                     else { continue; }
                                     break;
+
                                 case "uint": //OpSlider
                                 case "uint32":
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<uint> eUint))
@@ -137,6 +132,7 @@ namespace CompletelyOptional
                                     }
                                     else { continue; }
                                     break;
+
                                 case "int": //OpUpdown
                                 case "int32":
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<int> eInt))
@@ -151,6 +147,7 @@ namespace CompletelyOptional
                                     }
                                     else { continue; }
                                     break;
+
                                 case "float": //OpUpdown
                                 case "single":
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<float> eFloat))
@@ -165,6 +162,7 @@ namespace CompletelyOptional
                                     }
                                     else { continue; }
                                     break;
+
                                 case "string": //OpTextBox or OpColorPicker
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<string> eString))
                                     {
@@ -191,6 +189,7 @@ namespace CompletelyOptional
                                     }
                                     else { continue; }
                                     break;
+
                                 case "keycode": //OpKeyBinder
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<KeyCode> eKeyCode))
                                     {
@@ -203,6 +202,7 @@ namespace CompletelyOptional
                                     }
                                     else { continue; }
                                     break;
+
                                 default:
                                     // if type is enum => OpComboBox
                                     if (entryBase.SettingType.IsEnum)
@@ -318,33 +318,40 @@ namespace CompletelyOptional
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<bool> eBool))
                                 { eBool.Value = val == "true"; }
                                 break;
+
                             case "byte":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<byte> eByte))
                                 { eByte.Value = byte.Parse(val); }
                                 break;
+
                             case "uint":
                             case "uint32":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<uint> eUint))
                                 { eUint.Value = uint.Parse(val); }
                                 break;
+
                             case "int":
                             case "int32":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<int> eInt))
                                 { eInt.Value = int.Parse(val); }
                                 break;
+
                             case "float":
                             case "single":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<float> eFloat))
                                 { eFloat.Value = float.Parse(val); }
                                 break;
+
                             case "string":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<string> eString))
                                 { eString.Value = val; }
                                 break;
+
                             case "keycode":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<KeyCode> eKeyCode))
                                 { eKeyCode.Value = (KeyCode)Enum.Parse(typeof(KeyCode), val); }
                                 break;
+
                             default:
                                 entBase.SetSerializedValue(val);
                                 break;
@@ -385,33 +392,40 @@ namespace CompletelyOptional
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<bool> eBool))
                                 { obj.value = eBool.Value ? "true" : "false"; }
                                 break;
+
                             case "byte":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<byte> eByte))
                                 { obj.value = eByte.Value.ToString(); }
                                 break;
+
                             case "uint":
                             case "uint32":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<uint> eUint))
                                 { obj.value = eUint.Value.ToString(); }
                                 break;
+
                             case "int":
                             case "int32":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<int> eInt))
                                 { obj.value = eInt.Value.ToString(); }
                                 break;
+
                             case "float":
                             case "single":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<float> eFloat))
                                 { obj.value = eFloat.Value.ToString(); }
                                 break;
+
                             case "string":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<string> eString))
                                 { obj.value = eString.Value; }
                                 break;
+
                             case "keycode":
                                 if (bepConfig.TryGetEntry(def, out ConfigEntry<KeyCode> eKeyCode))
                                 { obj.value = eKeyCode.Value.ToString(); }
                                 break;
+
                             default:
                                 obj.value = entBase.GetSerializedValue();
                                 break;

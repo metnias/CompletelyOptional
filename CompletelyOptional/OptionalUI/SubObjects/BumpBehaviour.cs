@@ -58,6 +58,7 @@ namespace OptionalUI
             get { if (!_mouseOver.HasValue) { return this.owner.MouseOver; } return _mouseOver.Value; }
             set { _mouseOver = value; }
         }
+
         private bool? _mouseOver = null;
 
         /// <summary>

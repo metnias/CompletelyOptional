@@ -1,6 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
 using System.Reflection;
-using System;
+using UnityEngine;
 
 namespace CompletelyOptional
 {
@@ -10,6 +10,7 @@ namespace CompletelyOptional
     public static class UniClipboard
     {
         private static IBoard _board;
+
         private static IBoard board
         {
             get

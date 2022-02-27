@@ -1,9 +1,8 @@
+using BepInEx;
 using OptionalUI;
-using Partiality.Modloader;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using BepInEx;
 
 namespace CompletelyOptional
 {
@@ -13,12 +12,6 @@ namespace CompletelyOptional
     /// </summary>
     internal class UnconfiguableOI : OptionInterface
     {
-        public UnconfiguableOI(PartialityMod mod, Reason type) : base(mod)
-        { this.reason = type; }
-
-        public UnconfiguableOI(PartialityMod mod, Exception exception) : base(mod)
-        { CtorInitError(exception); }
-
         public UnconfiguableOI(BaseUnityPlugin plugin, Reason type) : base(plugin)
         { this.reason = type; }
 

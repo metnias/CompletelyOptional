@@ -1,5 +1,4 @@
 ﻿using Menu;
-using RWCustom;
 using UnityEngine;
 
 namespace OptionalUI
@@ -33,7 +32,8 @@ namespace OptionalUI
         /// <summary>
         /// Text inside the button
         /// </summary>
-        public string text { get { return this.label.text; } set { this.label.text = value; OnChange(); } }
+        public string text
+        { get { return this.label.text; } set { this.label.text = value; OnChange(); } }
 
         /// <summary>
         /// The colour of Rectangle Edge and Text

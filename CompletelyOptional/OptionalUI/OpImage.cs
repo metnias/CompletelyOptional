@@ -139,6 +139,7 @@ namespace OptionalUI
                 }
             }
         }
+
         private Vector2 _scale = new Vector2(1f, 1f);
 
         public FSprite sprite;
@@ -164,6 +165,7 @@ namespace OptionalUI
                 }
             }
         }
+
         private float _alpha = 1f;
 
         /// <summary>
@@ -182,6 +184,7 @@ namespace OptionalUI
                 }
             }
         }
+
         private Color _color = Color.white;
 
         public override void OnChange()

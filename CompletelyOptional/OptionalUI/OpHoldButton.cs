@@ -1,5 +1,4 @@
-﻿using Menu;
-using RWCustom;
+﻿using RWCustom;
 using UnityEngine;
 
 namespace OptionalUI
@@ -44,14 +43,19 @@ namespace OptionalUI
         private MenuMicrophone.MenuSoundLoop soundLoop;
         private float filled = 0f, pulse;
         private readonly float fillTime;
+
         // private bool fillInstant => fillTime == 0f;
         private bool hasSignalled = false;
+
         private int releaseCounter;
         private readonly FSprite[] circles;
+
         /// <summary>
         /// Text to be displayed
         /// </summary>
-        public string text { get { return _text; } set { if (_text != value) { _text = value; OnChange(); } } }
+        public string text
+        { get { return _text; } set { if (_text != value) { _text = value; OnChange(); } } }
+
         private string _text;
 
         /// <summary>
@@ -161,10 +165,12 @@ namespace OptionalUI
         #region ProgressButton
 
         private bool isProgress = false;
+
         /// <summary>
         /// Progress of this ProgressButton in percentage (0f - 100f). See also <see cref="SetProgress(float)"/>
         /// </summary>
         public float progress { get; private set; }
+
         /// <summary>
         /// The number of numbers after decimal points. Maximum is 4.
         /// <para>Example: 0 => '50%', 1 => '50.0%', 2 => '50.00%'</para>

@@ -15,7 +15,7 @@ namespace CompletelyOptional
     {
         private static string[] data = null;
 
-        private static string curLang => OptionScript.curLang;
+        private static string curLang => ComOptPlugin.curLang;
         private static Dictionary<string, string> converter;
         public const string allowedCodes = "eng, fre, ita, ger, spa, por, (kor, jap, rus, chi)";
 

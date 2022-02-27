@@ -1,9 +1,9 @@
-﻿using Menu;
+﻿using CompletelyOptional;
+using Menu;
+using RWCustom;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using CompletelyOptional;
-using RWCustom;
 
 namespace OptionalUI
 {
@@ -235,6 +235,7 @@ namespace OptionalUI
         /// How long the DropBox should be. Default is 5 items long.
         /// </summary>
         public int listHeight = 5;
+
         protected int _listHeight => Custom.IntClamp(listHeight, 1, itemList.Length);
 
         protected float ScrollPos(int listSize) => this.rectList.pos.y + 10f + (this.rectList.size.y - 20f - this.rectScroll.size.y) * ((listSize - lblList.Length) - this.listTop) / (listSize - lblList.Length);

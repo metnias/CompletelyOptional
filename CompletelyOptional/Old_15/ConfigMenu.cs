@@ -1,12 +1,10 @@
 using Menu;
 using Music;
 using OptionalUI;
-using Partiality.Modloader;
 using RWCustom;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using UnityEngine;
 
 namespace CompletelyOptional
@@ -25,8 +23,8 @@ namespace CompletelyOptional
             this.manager.upcomingProcess = null;
 
             this.pages.Add(new Page(this, null, "hub", 0));
-            OptionScript.configMenu = this;
-            OptionScript.tabs = new Dictionary<string, OpTab>();
+            ComOptScript.configMenu = this;
+            ComOptScript.tabs = new Dictionary<string, OpTab>();
 
             if (this.manager.musicPlayer == null)
             {
@@ -94,7 +92,7 @@ namespace CompletelyOptional
         /// </summary>
         public static bool freezeMenu;
 
-        public static OptionScript script;
+        public static ComOptScript script;
         public static bool gamepad;
 
         private static readonly int[] bgList =

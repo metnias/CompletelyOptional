@@ -1,32 +1,12 @@
-﻿using Partiality.Modloader;
-using BepInEx;
-using System.Reflection;
+﻿using BepInEx;
 using System;
 using System.Linq;
+using System.Reflection;
 
 namespace OptionalUI
 {
     public struct RainWorldMod
     {
-        public RainWorldMod(PartialityMod mod)
-        {
-            this.type = Type.PartialityMod;
-            this.mod = mod;
-            this.ModID = mod.ModID;
-            this.author = string.IsNullOrEmpty(mod.author) ? authorNull : mod.author;
-            this.description = authorNull;
-            this.Version = mod.Version;
-            try
-            {
-                Assembly assm = Assembly.GetAssembly(mod.GetType());
-                if (assm.GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false).FirstOrDefault() is AssemblyDescriptionAttribute descAttr && !string.IsNullOrEmpty(descAttr.Description))
-                {
-                    description = descAttr.Description;
-                }
-            }
-            catch (Exception) { }
-        }
-
         public RainWorldMod(BaseUnityPlugin plugin)
         {
             this.type = Type.BepInExPlugin;
@@ -58,12 +38,12 @@ namespace OptionalUI
         public readonly Type type;
         public string ModID, author, Version, description;
         public readonly object mod;
+
         // public PartialityMod PartialityMod => mod as PartialityMod;
         public const string authorNull = "NULL";
 
         public enum Type
         {
-            PartialityMod,
             BepInExPlugin
         }
     }
