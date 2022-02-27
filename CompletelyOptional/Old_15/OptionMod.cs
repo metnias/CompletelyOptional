@@ -16,7 +16,7 @@ namespace CompletelyOptional
     /// </summary>
     public class OptionMod : PartialityMod
     {
-        public const string ver = "1.5.5.0";
+        public const string ver = "1.5.5.2";
 
         public OptionMod()
         {
@@ -36,7 +36,7 @@ namespace CompletelyOptional
 
         // Version - increase this by 1 when you upload a new version of the mod.
         // The first upload should be with version 0, the next version 1, the next version 2, etc.
-        public int version = 58;
+        public int version = 59;
 
         // Public key in base64 - don't touch!
         public string keyE = "AQAB";
