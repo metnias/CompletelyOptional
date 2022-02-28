@@ -3,6 +3,7 @@ using BepInEx.Logging;
 using RWCustom;
 using System.IO;
 using System.Reflection;
+using UnityEngine;
 
 [assembly: AssemblyVersion(CompletelyOptional.ComOptPlugin.ver)]
 [assembly: AssemblyFileVersion(CompletelyOptional.ComOptPlugin.ver)]
@@ -61,6 +62,24 @@ namespace CompletelyOptional
             OptionsMenuPatch.SubPatch();
             // ProgressData.SubPatch(); moved to post-initialization of OIs, makes no sense to hook before the OIs are even instantiated.
         }
+
+        #region curFramerate
+
+        public static float curFramerate = 60.0f;
+
+        private static readonly float[] dtHistory = new float[16];
+        private static int dtHistoryMark = 0;
+
+        public void Update()
+        {
+            dtHistory[dtHistoryMark] = Time.deltaTime;
+            dtHistoryMark--; if (dtHistoryMark < 0) { dtHistoryMark = dtHistory.Length - 1; }
+            float sum = 0;
+            for (int h = 0; h < dtHistory.Length; h++) { sum += dtHistory[h]; }
+            curFramerate = dtHistory.Length / sum;
+        }
+
+        #endregion curFramerate
 
         #region Logger
 

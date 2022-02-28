@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpSimpleImageButton : OpSimpleButton, SelectableUIelement
+    public class OpSimpleImageButton : OpSimpleButton, FocusableUIelement
     {
         /// <summary>
         /// SimpleButton that uses <see cref="FAtlasElement"/> instead of text

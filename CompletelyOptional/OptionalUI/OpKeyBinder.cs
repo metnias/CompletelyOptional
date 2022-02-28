@@ -10,7 +10,7 @@ namespace OptionalUI
     /// <summary>
     /// Simple Key Binder
     /// </summary>
-    public class OpKeyBinder : UIconfig, SelectableUIelement
+    public class OpKeyBinder : UIconfig, FocusableUIelement
     {
         /// <summary>
         /// Simple Key Binder. Value is the <see cref="KeyCode"/> in string form.
@@ -91,11 +91,11 @@ namespace OptionalUI
         /// </summary>
         protected bool collisionCheck;
 
-        bool SelectableUIelement.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
+        bool FocusableUIelement.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
 
-        bool SelectableUIelement.CurrentlySelectableMouse { get { return !this.disabled; } }
+        bool FocusableUIelement.CurrentlyFocusableMouse { get { return !this.disabled; } }
 
-        bool SelectableUIelement.CurrentlySelectableNonMouse { get { return !this.disabled; } }
+        bool FocusableUIelement.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
 
         private static Dictionary<string, string> BoundKey
         {

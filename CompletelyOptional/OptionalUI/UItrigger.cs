@@ -6,7 +6,7 @@ namespace OptionalUI
     /// <summary>
     /// Special kind of <see cref="UIelement"/> that can trigger <see cref="OptionInterface.Signal(UItrigger, string)"/>
     /// </summary>
-    public abstract class UItrigger : UIelement, SelectableUIelement
+    public abstract class UItrigger : UIelement, FocusableUIelement
     {
         /// <summary>
         /// Special kind of Rectangular <see cref="UIelement"/> that can trigger <see cref="OptionInterface.Signal(UItrigger, string)"/>
@@ -76,11 +76,11 @@ namespace OptionalUI
         /// </summary>
         public bool disabled => this.greyedOut || this.isHidden;
 
-        bool SelectableUIelement.IsMouseOverMe { get { return this.MouseOver; } }
+        bool FocusableUIelement.IsMouseOverMe { get { return this.MouseOver; } }
 
-        bool SelectableUIelement.CurrentlySelectableMouse { get { return !this.disabled; } }
+        bool FocusableUIelement.CurrentlyFocusableMouse { get { return !this.disabled; } }
 
-        bool SelectableUIelement.CurrentlySelectableNonMouse { get { return !this.disabled; } }
+        bool FocusableUIelement.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
 
         /// <summary>
         /// Calls <see cref="OptionInterface.Signal(UItrigger, string)"/>

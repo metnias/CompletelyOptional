@@ -18,6 +18,7 @@ namespace CompletelyOptional
             ComOptPlugin.LogInfo("ModConfigMenu ctor called");
 
             // Initialize
+            instance = this;
             InternalTranslator.LoadTranslation();
             LabelTest.Initialize(this);
             redUnlocked = (this.manager.rainWorld.progression.miscProgressionData.redUnlocked ||
@@ -34,6 +35,7 @@ namespace CompletelyOptional
                 this.manager.sideProcesses.Add(this.manager.musicPlayer);
             }
             this.manager.musicPlayer.MenuRequestsSong(randomSong, 1f, 2f);
+            this.mySoundLoopID = SoundID.MENU_Main_Menu_LOOP;
 
             // Show Background
             if (!ComOptPlugin.testing)
@@ -65,20 +67,32 @@ namespace CompletelyOptional
             };
             this.pages[0].Container.AddChild(this.darkSprite);
 
-            // ModList:
-            // ABC button, Mod button shows Name(Left) and Version(right)
-            // if name is too long, add ...
-            // Tab: It will now have ^ and v instead of having 20 Limit
-            // Also can have a tab that doesn't have button
-            // PickUp: Focus/Select, Throw: Unfocus/Leave, Select: Control View
+            // UIContainer
+            mContainer = new MenuContainer(this, this.pages[0]);
+            this.pages[0].subObjects.Add(mContainer);
         }
 
+        public static ModConfigMenu instance;
+
+        /// <summary>
+        /// Screensized Dark Screen for fading
+        /// </summary>
         private FSprite darkSprite;
 
-        /* View Modes:
-         * Mod List: Display Unsaved change in button colour
-         * Mod OUI
-         */
+        /// <summary>
+        /// Container that connects and stores UIelements for Mod Configs
+        /// </summary>
+        internal MenuContainer mContainer;
+
+        public override string UpdateInfoText()
+        {
+            return base.UpdateInfoText();
+        }
+
+        public override void ShutDownProcess()
+        {
+            base.ShutDownProcess();
+        }
 
         #region Aesthetics
 

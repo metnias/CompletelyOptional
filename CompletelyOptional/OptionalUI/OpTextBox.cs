@@ -8,7 +8,7 @@ namespace OptionalUI
     /// <summary>
     /// Simple TextBox for general purpose.
     /// </summary>
-    public class OpTextBox : UIconfig, SelectableUIelement
+    public class OpTextBox : UIconfig, FocusableUIelement
     {
         /// <summary>
         /// Simple TextBox.
@@ -88,11 +88,11 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
-        bool SelectableUIelement.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
+        bool FocusableUIelement.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
 
-        bool SelectableUIelement.CurrentlySelectableMouse { get { return !this.disabled; } }
+        bool FocusableUIelement.CurrentlyFocusableMouse { get { return !this.disabled; } }
 
-        bool SelectableUIelement.CurrentlySelectableNonMouse { get { return !this.disabled; } }
+        bool FocusableUIelement.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
 
         public override void GrafUpdate(float dt)
         {

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpSliderSubtle : OpSlider, SelectableUIelement
+    public class OpSliderSubtle : OpSlider, FocusableUIelement
     {
         /// <summary>
         /// SubtleSlider that let you input integer in small range

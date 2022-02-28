@@ -58,6 +58,8 @@
     <None Include="Old_15\ConfigMenu.cs" />
     <Compile Include="ConfigTabController.cs" />
     <Compile Include="EnumExt_ComOpt.cs" />
+    <Compile Include="MenuContainer.cs" />
+    <Compile Include="MenuModList.cs" />
     <Compile Include="ModConfigMenu.cs" />
     <Compile Include="OptionalUI\SubObjects\EnumHelper.cs" />
     <Compile Include="GeneratedOI.cs" />
@@ -115,7 +117,7 @@
     <None Include="OptionalUI\OpSlugcat.cs" />
     <Compile Include="OptionalUI\OpTab.cs" />
     <Compile Include="OptionalUI\OpTextBox.cs" />
-    <Compile Include="OptionalUI\SubObjects\SelectableUIElement.cs" />
+    <Compile Include="OptionalUI\SubObjects\FocusableUIelement.cs" />
     <Compile Include="OptionalUI\UIconfig.cs" />
     <None Include="OptionalUI\UIcreature.cs" />
     <Compile Include="OptionalUI\UIelement.cs" />

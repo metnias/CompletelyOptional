@@ -15,18 +15,17 @@ namespace OptionalUI
         {
             menu = false;
             this.items = new List<UIelement>();
+            this.focusables = new List<UIelement>();
             this.isHidden = true;
             this.name = name;
             this.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorCanvas = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
         }
 
-        public List<SelectableUIelement> selectables;
-
         /// <summary>
         /// Do NOT mess with this on your own.
         /// </summary>
-        public OptionInterface owner;
+        public OptionInterface owner { get; internal set; }
 
         /// <summary>
         /// Colour of Tab Button. <see cref="Menu.Menu.MenuColors.MediumGrey"/> in default.
@@ -41,73 +40,52 @@ namespace OptionalUI
         /// <summary>
         /// Do NOT use this.
         /// </summary>
-        public bool menu;
+        public bool menu { get; internal set; }
 
         /// <summary>
         /// Name of this that will display on the bottom.
         /// </summary>
         public readonly string name;
 
-        /// <summary>
-        /// Do NOT mess with this on your own.
-        /// </summary>
-        public bool isHidden;
+        public bool isHidden { get; internal set; }
 
-#pragma warning disable CA1822 // Mark members as static
-
-        /// <summary>
-        /// Use <see cref="OptionInterface.IsConfigScreen"/> instead.
-        /// </summary>
-        [Obsolete]
-        public bool init => CompletelyOptional.OptionScript.isOptionMenu;
-
-#pragma warning restore CA1822 // Mark members as static
-
-        public List<UIelement> items;
+        internal void GrafUpdate(float timeStacker)
+        {
+            foreach (UIelement item in this.items)
+            { item.GrafUpdate(timeStacker); }
+        }
 
         /// <summary>
         /// Update for OpTab. Automatically called. Don't call this by yourself.
         /// </summary>
         /// <param name="dt">deltaTime</param>
-        public void Update(float dt)
+        internal void Update()
         {
-            if (this.isHidden || !CompletelyOptional.OptionScript.init) { return; }
-
             foreach (UIelement item in this.items)
-            { item.Update(dt); }
+            { item.Update(); }
         }
 
         #region ItemManager
 
-        /// <summary>
-        /// Obsolete! Use <see cref="AddItems(UIelement[])"/> instead.
-        /// </summary>
-        [Obsolete]
-        public void AddItem(UIelement item)
-        {
-            this._AddItem(item);
-        }
+        public List<UIelement> items;
+        public List<UIelement> focusables;
 
-        private void _AddItem(UIelement item)
+        private void _AddItem(UIelement element)
         {
-            if (this.items.Contains(item)) { return; }
-            if (item.tab != null && item.tab != this) { RemoveItemsFromTab(item); }
-            this.items.Add(item);
-            item.SetTab(this);
-            if (OptionScript.isOptionMenu && ConfigMenu.currentTab == this)
-            {
-                foreach (MenuObject obj in item.subObjects) { OptionScript.configMenu.pages[0].subObjects.Add(obj); }
-                OptionScript.configMenu.pages[0].Container.AddChild(item.myContainer);
-            }
+            if (this.items.Contains(element)) { return; }
+            if (element.tab != null && element.tab != this) { RemoveItemsFromTab(element); }
+            this.items.Add(element);
+            if (element is FocusableUIelement) { this.focusables.Add(element); }
+            element.SetTab(this);
         }
 
         /// <summary>
         /// Add <see cref="UIelement"/> to this Tab.
         /// If the item is already in other tab, this will call <see cref="RemoveItemsFromTab(UIelement[])"/> automatically
         /// </summary>
-        public void AddItems(params UIelement[] items)
+        public void AddItems(params UIelement[] elements)
         {
-            foreach (UIelement item in items) { this._AddItem(item); }
+            foreach (UIelement item in elements) { this._AddItem(item); }
         }
 
         /// <summary>
@@ -141,6 +119,7 @@ namespace OptionalUI
             if (item.inScrollBox) { item.RemoveFromScrollBox(); }
             while (this.items.Contains(item))
             { this.items.Remove(item); }
+            while (this.focusables.Contains(item)) { this.focusables.Remove(item); }
             item.SetTab(null);
         }
 
@@ -187,9 +166,9 @@ namespace OptionalUI
         #endregion ItemManager
 
         /// <summary>
-        /// Hide this tab. Automatically called. Do NOT call this by yourself.
+        /// Hide this tab. Automatically called.
         /// </summary>
-        public void Hide()
+        internal void Hide()
         {
             this.isHidden = true;
             foreach (UIelement element in this.items)
@@ -197,9 +176,9 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Show this tab. Automatically called. Do NOT call this by yourself.
+        /// Show this tab. Automatically called.
         /// </summary>
-        public void Show()
+        internal void Show()
         {
             this.isHidden = false;
             foreach (UIelement element in this.items)
@@ -207,9 +186,9 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Called by Config Machine. You don't need to care about this.
+        /// Called by Config Machine.
         /// </summary>
-        public Dictionary<string, string> GetTabDictionary()
+        internal Dictionary<string, string> GetTabDictionary()
         {
             Dictionary<string, string> config = new Dictionary<string, string>();
 
@@ -230,9 +209,9 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Called by Config Machine. You don't need to care about this.
+        /// Called by Config Machine.
         /// </summary>
-        public Dictionary<string, UIconfig> GetTabObject()
+        internal Dictionary<string, UIconfig> GetTabObject()
         {
             Dictionary<string, UIconfig> config = new Dictionary<string, UIconfig>();
 
@@ -252,7 +231,7 @@ namespace OptionalUI
             return config;
         }
 
-        public void Unload()
+        internal void Unload()
         {
             foreach (UIelement item in this.items)
             { item.Unload(); }

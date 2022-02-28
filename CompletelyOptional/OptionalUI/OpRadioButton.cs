@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpRadioButton : UIelement, SelectableUIelement
+    public class OpRadioButton : UIelement, FocusableUIelement
     {
         /// <summary>
         /// This returns value in "true" of "false", although this is NOT a <see cref="UIconfig"/> thus this value won't be saved.
@@ -64,11 +64,11 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
-        bool SelectableUIelement.IsMouseOverMe { get { return this.MouseOver; } }
+        bool FocusableUIelement.IsMouseOverMe { get { return this.MouseOver; } }
 
-        bool SelectableUIelement.CurrentlySelectableMouse { get { return !this.greyedOut && !this.isHidden; } }
+        bool FocusableUIelement.CurrentlyFocusableMouse { get { return !this.greyedOut && !this.isHidden; } }
 
-        bool SelectableUIelement.CurrentlySelectableNonMouse { get { return !this.greyedOut && !this.isHidden; } }
+        bool FocusableUIelement.CurrentlyFocusableNonMouse { get { return !this.greyedOut && !this.isHidden; } }
 
         /// <summary>
         /// Mimics <see cref="Menu.ButtonBehavior"/> of vanilla Rain World UIs

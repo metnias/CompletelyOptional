@@ -6,7 +6,7 @@ namespace OptionalUI
     /// <summary>
     /// Circular Hold Button which can also be used as ProgressButton
     /// </summary>
-    public class OpHoldButton : UItrigger, SelectableUIelement
+    public class OpHoldButton : UItrigger, FocusableUIelement
     {
         /// <summary>
         /// Circular Hold Button which can also be used as ProgressButton

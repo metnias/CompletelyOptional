@@ -23,21 +23,14 @@ namespace OptionalUI
             this.isRectangular = true;
             this._pos = pos + _offset;
             this._size = size;
-            if (_init)
-            {
-                this.menu = OptionScript.configMenu;
-                this.owner = OptionScript.configMenu.pages[0];
-                this.subObjects = new List<PositionedMenuObject>();
-                this.nextSelectable = new PositionedMenuObject[4];
-                this.myContainer = new FContainer();
-                this.myContainer.SetPosition(this.ScreenPos);
-                this.myContainer.scaleX = 1f;
-                this.myContainer.scaleY = 1f;
-            }
+            this.menu = ModConfigMenu.instance;
+            this.myContainer = new FContainer();
+            this.myContainer.SetPosition(this.ScreenPos);
+            this.myContainer.scaleX = 1f;
+            this.myContainer.scaleY = 1f;
+            this.inScrollBox = false;
             this.description = "";
             this.hidden = false;
-
-            //CompletelyOptional.OptionScript.uielements.Add(this);
         }
 
         /// <summary>
@@ -50,25 +43,15 @@ namespace OptionalUI
             this.isRectangular = false;
             this._pos = pos + _offset;
             this._rad = rad;
-            if (_init)
-            {
-                this.menu = OptionScript.configMenu;
-                this.owner = OptionScript.configMenu.pages[0];
-                this.subObjects = new List<PositionedMenuObject>();
-                this.nextSelectable = new PositionedMenuObject[4];
-                this.myContainer = new FContainer();
-                this.myContainer.SetPosition(this.ScreenPos);
-                this.myContainer.scaleX = 1f;
-                this.myContainer.scaleY = 1f;
-                this.inScrollBox = false;
-            }
+            this.menu = ModConfigMenu.instance;
+            this.myContainer = new FContainer();
+            this.myContainer.SetPosition(this.ScreenPos);
+            this.myContainer.scaleX = 1f;
+            this.myContainer.scaleY = 1f;
+            this.inScrollBox = false;
             this.description = "";
             this.hidden = false;
-
-            //CompletelyOptional.OptionScript.uielements.Add(this);
         }
-
-#pragma warning disable CS0649
 
         /// <summary>
         /// If this is set, this element cannot change its <see cref="size"/>.
@@ -80,29 +63,27 @@ namespace OptionalUI
         /// </summary>
         protected internal float? fixedRad;
 
-#pragma warning restore CS0649
-
         /// <summary>
         /// This will be called by OpScrollBox automatically.
         /// </summary>
         internal bool AddToScrollBox(OpScrollBox scrollBox)
         {
             if (OpScrollBox.ChildBlacklist.Contains<Type>(this.GetType())) { Debug.LogError(this.GetType().Name + " instances may not be added to a scrollbox!"); return false; }
-            if (this.inScrollBox) { Debug.LogError("This item is already in an OpScrollBox! The later call is ignored."); return false; }
+            if (this.inScrollBox) { ComOptPlugin.LogError("This item is already in an OpScrollBox! The later call is ignored."); return false; }
             this.inScrollBox = true;
             this.scrollBox = scrollBox;
             this._pos += this.scrollBox.childOffset;
-            if (_init) { this.OnChange(); }
+            this.OnChange();
             return true;
         }
 
         internal void RemoveFromScrollBox()
         {
-            if (!this.inScrollBox) { Debug.LogError("This item is not in an OpScrollBox! This call will be ignored."); return; }
+            if (!this.inScrollBox) { ComOptPlugin.LogError("This item is not in an OpScrollBox! This call will be ignored."); return; }
             this._pos -= this.scrollBox.childOffset;
             this.inScrollBox = false;
             this.scrollBox = null;
-            if (_init) { this.OnChange(); }
+            this.OnChange();
         }
 
         /// <summary>
@@ -125,19 +106,7 @@ namespace OptionalUI
         /// <summary>
         /// Offset from BottomLeft of the screen.
         /// </summary>
-        [Obsolete]
-        public static Vector2 offset => _offset;
-
-        /// <summary>
-        /// Offset from BottomLeft of the screen.
-        /// </summary>
-        protected internal static readonly Vector2 _offset = new Vector2(558.00f, 120.01f);
-
-        /// <summary>
-        /// Prevent Sound Engine from Crashing. Use <see cref="OptionInterface.soundFill"/> one instead.
-        /// </summary>
-        [Obsolete]
-        public static int soundFill => _soundFill;
+        public static readonly Vector2 _offset = new Vector2(558.00f, 120.01f);
 
         /// <summary>
         /// Add number (in proportion with sound effect's length) to this whenever you're playing soundeffect. See also <seealso cref="_soundFilled"/>
@@ -155,26 +124,9 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Whether the Sound Engine is full or not. Use <see cref="OptionInterface.soundFilled"/> instead.
-        /// </summary>
-        [Obsolete]
-        public static bool soundFilled => _soundFilled;
-
-        /// <summary>
         /// Whether the sound engine is full or not. See also <seealso cref="_soundFill"/>
         /// </summary>
         protected internal static bool _soundFilled => _soundFill > FrameMultiply(80);
-
-        /// <summary>
-        /// Whether this is in ConfigMenu or not. Use <see cref="OptionInterface.isOptionMenu"/> instead.
-        /// </summary>
-        [Obsolete]
-        public static bool init => OptionScript.isOptionMenu;
-
-        /// <summary>
-        /// Whether this is initialized in ConfigMenu or not.
-        /// </summary>
-        protected internal static bool _init => OptionScript.isOptionMenu;
 
         /// <summary>
         /// For grabbing LeftBottom Position of this element from LeftBottom of <see cref="OpTab"/> or <see cref="OpScrollBox"/>, without offset.
@@ -203,13 +155,13 @@ namespace OptionalUI
                     if (_pos != value + scrollBox.childOffset + _offset)
                     {
                         _pos = value + scrollBox.childOffset + _offset;
-                        if (_init) { OnChange(); }
+                        OnChange();
                     }
                 }
                 else if (_pos != value + _offset)
                 {
                     _pos = value + _offset;
-                    if (_init) { OnChange(); }
+                    OnChange();
                 }
             }
         }
@@ -239,7 +191,7 @@ namespace OptionalUI
                 {
                     _size = new Vector2(Mathf.Max(value.x, 0f), Mathf.Max(value.y, 0f));
                 }
-                if (_init) { OnChange(); }
+                OnChange();
             }
         }
 
@@ -262,17 +214,12 @@ namespace OptionalUI
                 else if (_rad != value)
                 {
                     _rad = Mathf.Max(value, 0f);
-                    if (_init) { OnChange(); }
+                    OnChange();
                 }
             }
         }
 
         protected internal float _rad;
-
-        /// <summary>
-        /// <see cref="Menu.Menu"/> instance this element is in. Used for adding <see cref="MenuObject"/>s.
-        /// </summary>
-        protected internal Menu.Menu menu;
 
         /// <summary>
         /// Whether the element is Rectangular(true) or Circular(false)
@@ -285,9 +232,14 @@ namespace OptionalUI
         protected internal OpTab tab;
 
         /// <summary>
-        /// You can alternatively use <c>menu.page[0]</c> for this
+        /// <see cref="Menu.Menu"/> instance this element is in.
         /// </summary>
-        protected internal Page owner;
+        protected internal Menu.Menu menu;
+
+        /// <summary>
+        /// You can alternatively use <c>menu.pages[0]</c> for this
+        /// </summary>
+        protected internal Page owner => menu.pages[0];
 
         /// <summary>
         /// <see cref="FContainer"/> to add <see cref="FSprite"/>.
@@ -317,19 +269,11 @@ namespace OptionalUI
         public bool isHidden => hidden || this.tab?.isHidden == true || this.scrollBox?.isHidden == true;
 
         /// <summary>
-        /// MenuObject this element have.
-        /// </summary>
-        public List<PositionedMenuObject> subObjects;
-
-        public PositionedMenuObject[] nextSelectable;
-
-        /// <summary>
         /// Called whenever this UIelement needs graphical change.
         /// RePosition and ReSize subObjects.
         /// </summary>
         public virtual void OnChange()
         {
-            if (!_init) { return; }
             this.myContainer.SetPosition(this.ScreenPos);
         }
 
@@ -382,28 +326,20 @@ namespace OptionalUI
         /// <summary>
         /// Update method that happens every frame.
         /// </summary>
-        /// <param name="dt">deltaTime</param>
-        public virtual void Update(float dt)
+        public virtual void Update()
         {
-            if (!_init) { return; }
-            foreach (MenuObject obj in this.subObjects)
-            {
-                obj.Update();
-                if (!isHidden) { obj.GrafUpdate(dt); }
-            }
-            if (!isHidden) { GrafUpdate(dt); }
             showDesc = !isHidden && this.MouseOver && !string.IsNullOrEmpty(this.description);
-            if (showDesc && !(this is UIconfig) && !(this is UItrigger))
-            { ConfigMenu.description = this.description; }
+            // if (showDesc && !(this is UIconfig) && !(this is UItrigger))
+            // { ConfigMenu.description = this.description; }
         }
 
         protected internal bool showDesc;
 
         /// <summary>
-        /// Update method that happens every frame, but this is only for graphical detail for visiblity of Update code.
+        /// Update for graphical detail.
         /// </summary>
-        /// <param name="dt">deltaTime</param>
-        public virtual void GrafUpdate(float dt)
+        /// <param name="timeStacker">timeStacker</param>
+        public virtual void GrafUpdate(float timeStacker)
         {
             this.myContainer.SetPosition(this.ScreenPos);
         }
@@ -413,8 +349,6 @@ namespace OptionalUI
         /// </summary>
         public virtual void Unload() // This should be protected internal, but i'm afraid that'd break compatibility
         {
-            foreach (MenuObject o in this.subObjects) { o.RemoveSprites(); }
-            this.subObjects.Clear();
             this.myContainer.RemoveAllChildren();
             this.myContainer.RemoveFromContainer();
         }
@@ -440,7 +374,7 @@ namespace OptionalUI
         /// <summary>
         /// Frame multiplier for Many More Fixes' framerate unlock feature. See also <see cref="FrameMultiply(int)"/>
         /// </summary>
-        public static float frameMulti => Mathf.Max(1.00f, OptionScript.curFramerate / 60.0f);
+        public static float frameMulti => Mathf.Max(1.00f, ComOptPlugin.curFramerate / 60.0f);
 
         /// <summary>
         /// Multiplies frame count by <see cref="frameMulti"/> to accommodate with Many More Fixes' framerate unlock feature.

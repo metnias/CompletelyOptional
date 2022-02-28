@@ -12,15 +12,17 @@ namespace CompletelyOptional
     /// <summary>
     /// Special kind of OpTab for ConfigMenu. You don't need this.
     /// </summary>
-    public class MenuTab : OpTab
+    internal class MenuTab : OpTab
     {
-        public MenuTab() : base("")
+        internal MenuTab() : base("")
         {
             isHidden = false;
             _initLog = false; logMode = false;
             _lblInfoDesc = InternalTranslator.Translate("Click to Display Config Machine ChangeLog");
             _sbDesc = InternalTranslator.Translate("Display <ModID>");
         }
+
+        internal MenuModList modList;
 
         private static ConfigTabController TabCtrler => ConfigMenu.tabCtrler;
         public OpLabel lblInfoButton;
