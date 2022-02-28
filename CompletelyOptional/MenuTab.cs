@@ -30,9 +30,9 @@ namespace CompletelyOptional
         private bool _initLog; private bool _pressInfoBtn;
         public static bool logMode { get; private set; }
 
-        public new void Update(float dt)
+        public new void Update()
         {
-            foreach (UIelement item in this.items) { item.Update(dt); }
+            foreach (UIelement item in this.items) { item.Update(); }
 
             if (!logMode)
             {

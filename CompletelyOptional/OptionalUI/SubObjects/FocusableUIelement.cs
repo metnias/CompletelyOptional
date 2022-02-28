@@ -2,7 +2,15 @@
 {
     public interface FocusableUIelement
     {
-        bool IsMouseOverMe { get; }
+        /// <summary>
+        /// Whether this is focused
+        /// </summary>
+        bool Focused { get; set; }
+
+        /// <summary>
+        /// Whether its change is prevented
+        /// </summary>
+        bool GreyedOut { get; set; }
 
         bool CurrentlyFocusableMouse { get; }
 

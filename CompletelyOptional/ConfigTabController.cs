@@ -8,7 +8,7 @@ namespace CompletelyOptional
     /// <summary>
     /// Special UI used internally in CM for switching tabs
     /// </summary>
-    public class ConfigTabController : UIelement
+    internal class ConfigTabController : UIelement
     {
         public ConfigTabController(Vector2 pos, Vector2 size, MenuTab tab, ConfigMenu menu) : base(pos, size)
         {
@@ -21,7 +21,10 @@ namespace CompletelyOptional
             OnChange();
         }
 
-        public MenuTab menuTab;
+        // Add Up/Down arrow
+        // Tab buttons now have flexible size (unnamed tab will be 100f)
+
+        internal MenuTab menuTab;
         public ConfigMenu cfgMenu;
 
         public List<UIelement> subElements;

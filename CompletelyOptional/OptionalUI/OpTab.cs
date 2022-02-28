@@ -13,38 +13,26 @@ namespace OptionalUI
         /// </summary>
         public OpTab(string name = "")
         {
-            menu = false;
             this.items = new List<UIelement>();
             this.focusables = new List<UIelement>();
             this.isHidden = true;
             this.name = name;
-            this.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
+            this.colorButton = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorCanvas = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
         }
 
-        /// <summary>
-        /// Do NOT mess with this on your own.
-        /// </summary>
         public OptionInterface owner { get; internal set; }
 
         /// <summary>
         /// Colour of Tab Button. <see cref="Menu.Menu.MenuColors.MediumGrey"/> in default.
         /// </summary>
-        public Color color;
+        public Color colorButton;
 
         /// <summary>
         /// Colour of the Canvas. <see cref="Menu.Menu.MenuColors.MediumGrey"/> in default.
         /// </summary>
         public Color colorCanvas;
 
-        /// <summary>
-        /// Do NOT use this.
-        /// </summary>
-        public bool menu { get; internal set; }
-
-        /// <summary>
-        /// Name of this that will display on the bottom.
-        /// </summary>
         public readonly string name;
 
         public bool isHidden { get; internal set; }
@@ -58,7 +46,6 @@ namespace OptionalUI
         /// <summary>
         /// Update for OpTab. Automatically called. Don't call this by yourself.
         /// </summary>
-        /// <param name="dt">deltaTime</param>
         internal void Update()
         {
             foreach (UIelement item in this.items)

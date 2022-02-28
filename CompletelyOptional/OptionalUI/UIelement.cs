@@ -13,6 +13,10 @@ namespace OptionalUI
     /// </summary>
     public abstract class UIelement
     {
+        // Codes for Modders who only uses provided elements
+
+        #region Shallow
+
         /// <summary>
         /// Rectangular UIelement.
         /// </summary>
@@ -54,90 +58,10 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// If this is set, this element cannot change its <see cref="size"/>.
-        /// </summary>
-        protected internal Vector2? fixedSize;
-
-        /// <summary>
-        /// If this is set, this element cannot change its <see cref="rad"/>.
-        /// </summary>
-        protected internal float? fixedRad;
-
-        /// <summary>
-        /// This will be called by OpScrollBox automatically.
-        /// </summary>
-        internal bool AddToScrollBox(OpScrollBox scrollBox)
-        {
-            if (OpScrollBox.ChildBlacklist.Contains<Type>(this.GetType())) { Debug.LogError(this.GetType().Name + " instances may not be added to a scrollbox!"); return false; }
-            if (this.inScrollBox) { ComOptPlugin.LogError("This item is already in an OpScrollBox! The later call is ignored."); return false; }
-            this.inScrollBox = true;
-            this.scrollBox = scrollBox;
-            this._pos += this.scrollBox.childOffset;
-            this.OnChange();
-            return true;
-        }
-
-        internal void RemoveFromScrollBox()
-        {
-            if (!this.inScrollBox) { ComOptPlugin.LogError("This item is not in an OpScrollBox! This call will be ignored."); return; }
-            this._pos -= this.scrollBox.childOffset;
-            this.inScrollBox = false;
-            this.scrollBox = null;
-            this.OnChange();
-        }
-
-        /// <summary>
-        /// Which <see cref="OpScrollBox"/> this element is in. See also <seealso cref="inScrollBox"/>
-        /// </summary>
-        protected internal OpScrollBox scrollBox { get; private set; }
-
-        /// <summary>
-        /// Whether this is inside <see cref="OpScrollBox"/>. See also <seealso cref="scrollBox"/>
-        /// </summary>
-        protected internal bool inScrollBox { get; private set; }
-
-        /// <summary>
         /// Resets <see cref="UIelement"/>.
         /// </summary>
         public virtual void Reset()
         {
-        }
-
-        /// <summary>
-        /// Offset from BottomLeft of the screen.
-        /// </summary>
-        public static readonly Vector2 _offset = new Vector2(558.00f, 120.01f);
-
-        /// <summary>
-        /// Add number (in proportion with sound effect's length) to this whenever you're playing soundeffect. See also <seealso cref="_soundFilled"/>
-        /// </summary>
-        protected internal static int _soundFill
-        {
-            get { return OptionScript.soundFill; }
-            set
-            {
-                if (OptionScript.soundFill < value)
-                { OptionScript.soundFill += FrameMultiply(value - OptionScript.soundFill); }
-                else
-                { OptionScript.soundFill = value; }
-            }
-        }
-
-        /// <summary>
-        /// Whether the sound engine is full or not. See also <seealso cref="_soundFill"/>
-        /// </summary>
-        protected internal static bool _soundFilled => _soundFill > FrameMultiply(80);
-
-        /// <summary>
-        /// For grabbing LeftBottom Position of this element from LeftBottom of <see cref="OpTab"/> or <see cref="OpScrollBox"/>, without offset.
-        /// </summary>
-        /// <seealso cref="pos"/>
-        public Vector2 GetPos()
-        {
-            if (inScrollBox)
-            { return _pos - scrollBox.childOffset - _offset; }
-            else
-            { return _pos - _offset; }
         }
 
         /// <summary>
@@ -166,7 +90,17 @@ namespace OptionalUI
             }
         }
 
-        protected internal Vector2 _pos;
+        /// <summary>
+        /// For grabbing LeftBottom Position of this element from LeftBottom of <see cref="OpTab"/> or <see cref="OpScrollBox"/>, without offset.
+        /// </summary>
+        /// <seealso cref="pos"/>
+        public Vector2 GetPos()
+        {
+            if (inScrollBox)
+            { return _pos - scrollBox.childOffset - _offset; }
+            else
+            { return _pos - _offset; }
+        }
 
         /// <summary>
         /// Size of this element. Changing this will call <see cref="OnChange"/> automatically.
@@ -195,8 +129,6 @@ namespace OptionalUI
             }
         }
 
-        protected internal Vector2 _size;
-
         /// <summary>
         /// Radius of the element. Changing this will call <see cref="OnChange"/> automatically.
         /// </summary>
@@ -219,12 +151,35 @@ namespace OptionalUI
             }
         }
 
+        /// <summary>
+        /// Infotext that will be shown at the bottom of the screen.
+        /// </summary>
+        public string description;
+
+        #endregion Shallow
+
+        // Codes for modders who makes custom UIelement
+
+        #region Deep
+
+        protected internal Vector2 _pos;
+        protected internal Vector2 _size;
         protected internal float _rad;
 
         /// <summary>
-        /// Whether the element is Rectangular(true) or Circular(false)
+        /// If this is set, this element cannot change its <see cref="size"/>.
         /// </summary>
-        public readonly bool isRectangular;
+        protected internal Vector2? fixedSize;
+
+        /// <summary>
+        /// If this is set, this element cannot change its <see cref="rad"/>.
+        /// </summary>
+        protected internal float? fixedRad;
+
+        /// <summary>
+        /// Offset from BottomLeft of the screen.
+        /// </summary>
+        public static readonly Vector2 _offset = new Vector2(558.00f, 120.01f);
 
         /// <summary>
         /// OpTab this element is belong to.
@@ -247,6 +202,100 @@ namespace OptionalUI
         protected internal FContainer myContainer;
 
         /// <summary>
+        /// Whether mousecursor is over this element or not.
+        /// </summary>
+        protected internal virtual bool MouseOver
+        {
+            get
+            {
+                if (this.isRectangular)
+                {
+                    return this.MousePos.x > 0f && this.MousePos.y > 0f && this.MousePos.x < this.size.x && this.MousePos.y < this.size.y;
+                }
+                else
+                {
+                    return Custom.DistLess(new Vector2(rad, rad), this.MousePos, rad);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Mouse Position on <see cref="UIelement"/>. The BottomLeft(<see cref="pos"/>) is (0f, 0f).
+        /// </summary>
+        protected internal Vector2 MousePos
+        {
+            get
+            {
+                Vector2 p = new Vector2(this.menu.mousePosition.x - this.ScreenPos.x, this.menu.mousePosition.y - this.ScreenPos.y);
+                if (this.inScrollBox)
+                { p += this.scrollBox.camPos - (this.scrollBox.horizontal ? Vector2.right : Vector2.up) * this.scrollBox.scrollOffset - this.scrollBox.pos; }
+                return p;
+            }
+        }
+
+        /// <summary>
+        /// Called when exiting ConfigMenu.
+        /// </summary>
+        protected internal virtual void Unload()
+        {
+            this.myContainer.RemoveAllChildren();
+            this.myContainer.RemoveFromContainer();
+        }
+
+        protected internal Vector2 ScreenPos
+        {
+            get
+            {
+                if (this.owner == null) { return this._pos; }
+                return owner.ScreenPos + this._pos;
+            }
+        }
+
+        /// <summary>
+        /// Frame multiplier for Many More Fixes' framerate unlock feature. See also <see cref="FrameMultiply(int)"/>
+        /// </summary>
+        public static float frameMulti => Mathf.Max(1.00f, ComOptPlugin.curFramerate / 60.0f);
+
+        /// <summary>
+        /// Multiplies frame count by <see cref="frameMulti"/> to accommodate with Many More Fixes' framerate unlock feature.
+        /// </summary>
+        public static int FrameMultiply(int origFrameCount) => Mathf.RoundToInt(origFrameCount * frameMulti);
+
+        /// <summary>
+        /// Multiplies deltaTime for tick multiplier
+        /// </summary>
+        public static float DTMultiply(float deltaTime) => 60.0f * deltaTime;
+
+        #endregion Deep
+
+        // Codes just for ConfigMachine
+
+        #region Internal
+
+        /// <summary>
+        /// This will be called by OpScrollBox automatically.
+        /// </summary>
+        internal bool AddToScrollBox(OpScrollBox scrollBox)
+        {
+            if (OpScrollBox.ChildBlacklist.Contains<Type>(this.GetType())) { Debug.LogError(this.GetType().Name + " instances may not be added to a scrollbox!"); return false; }
+            if (this.inScrollBox) { ComOptPlugin.LogError("This item is already in an OpScrollBox! The later call is ignored."); return false; }
+            this.inScrollBox = true;
+            this.scrollBox = scrollBox;
+            this._pos += this.scrollBox.childOffset;
+            this.OnChange();
+            return true;
+        }
+
+        internal void RemoveFromScrollBox()
+        {
+            if (!this.inScrollBox) { ComOptPlugin.LogError("This item is not in an OpScrollBox! This call will be ignored."); return; }
+            this._pos -= this.scrollBox.childOffset;
+            this.inScrollBox = false;
+            this.scrollBox = null;
+            this.OnChange();
+        }
+
+        /// <summary>
         /// Do not use this. Instead, use <see cref="OpTab.AddItems(UIelement[])"/> and <see cref="OpTab.RemoveItems(UIelement[])"/>.
         /// </summary>
         /// <param name="newTab">new OpTab this item will be belong to</param>
@@ -255,6 +304,29 @@ namespace OptionalUI
             if (this.tab != null && newTab != null) { this.tab.RemoveItems(this); }
             this.tab = newTab;
         }
+
+        internal Vector2 CenterPos()
+        {
+            if (this.isRectangular) { return this.ScreenPos + this.size / 2f; }
+            return this.ScreenPos + (this.rad / 2f * Vector2.one);
+        }
+
+        #endregion Internal
+
+        /// <summary>
+        /// Which <see cref="OpScrollBox"/> this element is in. See also <seealso cref="inScrollBox"/>
+        /// </summary>
+        protected internal OpScrollBox scrollBox { get; private set; }
+
+        /// <summary>
+        /// Whether this is inside <see cref="OpScrollBox"/>. See also <seealso cref="scrollBox"/>
+        /// </summary>
+        protected internal bool inScrollBox { get; private set; }
+
+        /// <summary>
+        /// Whether the element is Rectangular(true) or Circular(false)
+        /// </summary>
+        public readonly bool isRectangular;
 
         /// <summary>
         /// Whether this is Hidden manually by Modder.
@@ -277,52 +349,6 @@ namespace OptionalUI
             this.myContainer.SetPosition(this.ScreenPos);
         }
 
-        protected internal Vector2 ScreenPos
-        {
-            get
-            {
-                if (this.owner == null) { return this._pos; }
-                return owner.ScreenPos + this._pos;
-            }
-        }
-
-        /// <summary>
-        /// Whether mousecursor is over this element or not.
-        /// </summary>
-        public virtual bool MouseOver
-        {
-            get
-            {
-                if (this.isRectangular)
-                {
-                    return this.MousePos.x > 0f && this.MousePos.y > 0f && this.MousePos.x < this.size.x && this.MousePos.y < this.size.y;
-                }
-                else
-                {
-                    return Custom.DistLess(new Vector2(rad, rad), this.MousePos, rad);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Mouse Position on <see cref="UIelement"/>. The BottomLeft(<see cref="pos"/>) is (0f, 0f).
-        /// </summary>
-        public Vector2 MousePos
-        {
-            get
-            {
-                Vector2 p = new Vector2(this.menu.mousePosition.x - this.ScreenPos.x, this.menu.mousePosition.y - this.ScreenPos.y);
-                if (this.inScrollBox)
-                { p += this.scrollBox.camPos - (this.scrollBox.horizontal ? Vector2.right : Vector2.up) * this.scrollBox.scrollOffset - this.scrollBox.pos; }
-                return p;
-            }
-        }
-
-        /// <summary>
-        /// Infotext that will be shown at the bottom of the screen.
-        /// </summary>
-        public string description;
-
         /// <summary>
         /// Update method that happens every frame.
         /// </summary>
@@ -341,16 +367,6 @@ namespace OptionalUI
         /// <param name="timeStacker">timeStacker</param>
         public virtual void GrafUpdate(float timeStacker)
         {
-            this.myContainer.SetPosition(this.ScreenPos);
-        }
-
-        /// <summary>
-        /// Called when exiting ConfigMenu.
-        /// </summary>
-        public virtual void Unload() // This should be protected internal, but i'm afraid that'd break compatibility
-        {
-            this.myContainer.RemoveAllChildren();
-            this.myContainer.RemoveFromContainer();
         }
 
         /// <summary>
@@ -370,20 +386,5 @@ namespace OptionalUI
             this.myContainer.isVisible = true;
             this.hidden = false;
         }
-
-        /// <summary>
-        /// Frame multiplier for Many More Fixes' framerate unlock feature. See also <see cref="FrameMultiply(int)"/>
-        /// </summary>
-        public static float frameMulti => Mathf.Max(1.00f, ComOptPlugin.curFramerate / 60.0f);
-
-        /// <summary>
-        /// Multiplies frame count by <see cref="frameMulti"/> to accommodate with Many More Fixes' framerate unlock feature.
-        /// </summary>
-        public static int FrameMultiply(int origFrameCount) => Mathf.RoundToInt(origFrameCount * frameMulti);
-
-        /// <summary>
-        /// Multiplies deltaTime for tick multiplier
-        /// </summary>
-        public static float DTMultiply(float deltaTime) => 60.0f * deltaTime;
     }
 }

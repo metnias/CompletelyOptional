@@ -136,10 +136,5 @@ namespace CompletelyOptional
         public static bool redUnlocked { get; private set; }
 
         #endregion Aesthetics
-
-        /// <summary>
-        /// Whether to play sound or not
-        /// </summary>
-        public static bool mute { get; internal set; }
     }
 }

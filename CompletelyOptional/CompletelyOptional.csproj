@@ -58,6 +58,7 @@
     <None Include="Old_15\ConfigMenu.cs" />
     <Compile Include="ConfigTabController.cs" />
     <Compile Include="EnumExt_ComOpt.cs" />
+    <Compile Include="ListTab.cs" />
     <Compile Include="MenuContainer.cs" />
     <Compile Include="MenuModList.cs" />
     <Compile Include="ModConfigMenu.cs" />
