@@ -12,6 +12,16 @@ namespace OptionalUI
         {
         }
 
+        private bool _focused = false;
+
+        bool FocusableUIelement.Focused { get => _focused; set => _focused = value; }
+
+        bool FocusableUIelement.GreyedOut => false;
+
+        bool FocusableUIelement.CurrentlyFocusableMouse => true;
+
+        bool FocusableUIelement.CurrentlyFocusableNonMouse => true;
+
         // ModList:
         // ABC button, Mod button shows Name(Left) and Version(right)
         // Save first mod for each letter, and scroll to it

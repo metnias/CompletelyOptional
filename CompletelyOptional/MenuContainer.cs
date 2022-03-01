@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Menu;
-using OptionalUI;
+using CompletelyOptional;
 using RWCustom;
 using UnityEngine;
 
-namespace CompletelyOptional
+namespace OptionalUI
 {
     /// <summary>
     /// Contains all UIelement, connects UIelements and Rain World Menu
@@ -36,8 +36,14 @@ namespace CompletelyOptional
             get
             {
                 List<UIelement> list = new List<UIelement>();
-                list.AddRange(this.menuTab.focusables);
-                if (this.activeTab != null) { list.AddRange(this.activeTab.focusables); }
+                foreach (UIelement item in this.menuTab.focusables)
+                { if (!item.isInactive) { list.Add(item); } }
+                if (this.activeTab != null)
+                {
+                    foreach (UIelement item in this.activeTab.focusables)
+                    { if (!item.isInactive) { list.Add(item); } }
+                }
+
                 List<UIelement> res = new List<UIelement>();
                 if (menu.manager.menuesMouseMode)
                 {
@@ -141,7 +147,7 @@ namespace CompletelyOptional
                         }
                         else if (!(focusedElement.tab is MenuTab)) // Move to TabController
                         {
-                            if (this.menuTab.tabController.tabCount > 1) { focusedElement = this.menuTab.tabController; }
+                            if (this.menuTab.tabCtrler.tabCount > 1) { focusedElement = this.menuTab.tabCtrler; }
                             else { focusedElement = this.menuTab.modList; }
                         }
                         else if (focusedElement is ConfigTabController) // Move to Mod List
@@ -154,7 +160,7 @@ namespace CompletelyOptional
                         }
                         if (moved)
                         {
-                            this.PlaySound((focusedElement as FocusableUIelement).GreyedOut
+                            PlaySound((focusedElement as FocusableUIelement).GreyedOut
                                 ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                         }
                     }
@@ -180,7 +186,7 @@ namespace CompletelyOptional
             if (element != null && element != this.focusedElement)
             {
                 this.focusedElement = element;
-                this.PlaySound((this.focusedElement as FocusableUIelement).GreyedOut
+                PlaySound((this.focusedElement as FocusableUIelement).GreyedOut
                     ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
             }
         }
@@ -239,27 +245,27 @@ namespace CompletelyOptional
         /// <summary>
         /// Restricted <see cref="Menu.Menu.PlaySound(SoundID)"/> to prevent sound glitch
         /// </summary>
-        public void PlaySound(SoundID soundID)
+        public static void PlaySound(SoundID soundID)
         {
-            if (_soundFilled || menu.manager.rainWorld.options.soundEffectsVolume == 0f) { return; }
+            if (_soundFilled || ModConfigMenu.instance.manager.rainWorld.options.soundEffectsVolume == 0f) { return; }
             _soundFill += GetSoundFill(soundID);
-            menu.PlaySound(soundID);
+            ModConfigMenu.instance.PlaySound(soundID);
         }
 
         /// <summary>
         /// Restricted <see cref="Menu.Menu.PlaySound(SoundID, float, float, float)"/> to prevent sound glitch
         /// </summary>
-        public void PlaySound(SoundID soundID, float pan, float vol, float pitch)
+        public static void PlaySound(SoundID soundID, float pan, float vol, float pitch)
         {
-            if (_soundFilled || menu.manager.rainWorld.options.soundEffectsVolume == 0f) { return; }
+            if (_soundFilled || ModConfigMenu.instance.manager.rainWorld.options.soundEffectsVolume == 0f) { return; }
             _soundFill += GetSoundFill(soundID);
-            menu.PlaySound(soundID, pan, vol, pitch);
+            ModConfigMenu.instance.PlaySound(soundID, pan, vol, pitch);
         }
 
-        private int GetSoundFill(SoundID soundID)
+        private static int GetSoundFill(SoundID soundID)
         {
-            SoundLoader.SoundData soundData = menu.manager.menuMic.GetSoundData(soundID, -1);
-            AudioClip clip = menu.manager.menuMic.soundLoader.GetAudioClip(soundData.audioClip);
+            SoundLoader.SoundData soundData = ModConfigMenu.instance.manager.menuMic.GetSoundData(soundID, -1);
+            AudioClip clip = ModConfigMenu.instance.manager.menuMic.soundLoader.GetAudioClip(soundData.audioClip);
             if (clip == null) { return 0; }
             return Mathf.CeilToInt(clip.length * 60.0f) + 1;
         }

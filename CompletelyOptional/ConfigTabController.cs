@@ -243,11 +243,11 @@ namespace CompletelyOptional
             public Color colorCanvas => ConfigMenu.currentInterface.Tabs[this.index].colorCanvas;
             public bool greyedOut => this.ctrl.greyedOut;
 
-            public override void GrafUpdate(float dt)
+            public override void GrafUpdate(float timeStacker)
             {
-                base.GrafUpdate(dt);
+                base.GrafUpdate(timeStacker);
                 this.bumpBehav.greyedOut = this.greyedOut;
-                this.bumpBehav.Update(dt);
+                this.bumpBehav.Update(timeStacker);
 
                 if (!this.active && (greyedOut || !this.MouseOver)) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f); }
                 else { this.darken = Mathf.Min(1f, this.darken + 0.1f); }
@@ -257,14 +257,13 @@ namespace CompletelyOptional
             internal float darken;
             public string name => ConfigMenu.currentInterface.Tabs[index].name;
 
-            public override void Update(float dt)
+            public override void Update()
             {
                 foreach (MenuObject obj in this.subObjects)
                 {
                     obj.Update();
                     if (!this.ctrl.hidden) { obj.GrafUpdate(dt); }
                 }
-                this.GrafUpdate(dt);
 
                 if (greyedOut || this.ctrl.hidden) { return; }
                 if (MouseOver)

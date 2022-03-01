@@ -342,7 +342,6 @@ namespace OptionalUI
         private void UpdateSprite()
         {
             // Create an image to display the box's contents
-            if (!_init) { return; }
 
             if (insideSprite == null)
             {
@@ -428,7 +427,7 @@ namespace OptionalUI
             UpdateCam();
         }
 
-        public override void Update(float dt)
+        public override void Update()
         {
             // Check redraw conditions
             if ((redrawFlags & RedrawEvents.Always) != 0)
@@ -507,7 +506,7 @@ namespace OptionalUI
                     if (targetScrollOffset != scrollOffset)
                     {
                         hasMoved = true; this.hasScrolled = true;
-                        if (!_soundFilled) { _soundFill += 6; this.menu.PlaySound(SoundID.MENU_Scroll_Tick); }
+                        MenuContainer.PlaySound(SoundID.MENU_Scroll_Tick);
                         if (this.bumpScroll != null)
                         {
                             this.bumpScroll.flash = Mathf.Min(1f, this.bumpScroll.flash + 0.2f);
@@ -536,7 +535,7 @@ namespace OptionalUI
                 this.OnChange();
             }
 
-            base.Update(dt);
+            base.Update();
 
             // Redraw if this has scrolled
             if (scrollOffset != _lastScrollOffset)
@@ -638,7 +637,7 @@ namespace OptionalUI
             if (_labelNotify != null) { this._labelNotify.label.isVisible = true; }
         }
 
-        public override void Unload()
+        protected internal override void Unload()
         {
             base.Unload();
             if (_cam)

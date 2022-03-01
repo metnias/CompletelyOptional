@@ -44,7 +44,7 @@ namespace OptionalUI
         /// <summary>
         /// Whether this UItrigger is greyedOut or not
         /// </summary>
-        public bool greyedOut = false;
+        private bool _greyedOut = false;
 
         /// <summary>
         /// Whether this is held or not.
@@ -76,18 +76,20 @@ namespace OptionalUI
         /// </summary>
         public bool disabled => this.greyedOut || this.isInactive;
 
-        bool FocusableUIelement.IsMouseOverMe { get { return this.MouseOver; } }
+        bool FocusableUIelement.CurrentlyFocusableMouse => !this.disabled;
 
-        bool FocusableUIelement.CurrentlyFocusableMouse { get { return !this.disabled; } }
+        bool FocusableUIelement.CurrentlyFocusableNonMouse => true;
 
-        bool FocusableUIelement.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
+        public bool FocusableUIelement.Focused { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+
+        public bool FocusableUIelement.GreyedOut { get => _greyedOut; set => _greyedOut = value; }
 
         /// <summary>
         /// Calls <see cref="OptionInterface.Signal(UItrigger, string)"/>
         /// </summary>
         public virtual void Signal()
         {
-            if (_init) { this.tab.owner.Signal(this, this.signal); }
+            this.tab.owner.Signal(this, this.signal);
         }
 
         public override void GrafUpdate(float dt)

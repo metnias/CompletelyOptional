@@ -20,6 +20,19 @@ namespace CompletelyOptional
 
             // Initialize
             instance = this;
+            Dictionary<int, string> ID2Code = new Dictionary<int, string>()
+            {
+                { 0 , "eng" },
+                { 1 , "fre" },
+                { 2 , "ita" },
+                { 3 , "ger" },
+                { 4 , "spa" },
+                { 5 , "por" },
+                { 6 , "jap" },
+                { 7 , "kor" }
+            };
+            if (ID2Code.TryGetValue(this.manager.rainWorld.options.language, out string code)) { curLang = code; }
+            else { curLang = "eng"; }
             InternalTranslator.LoadTranslation();
             LabelTest.Initialize(this);
             redUnlocked = (this.manager.rainWorld.progression.miscProgressionData.redUnlocked ||
@@ -75,6 +88,11 @@ namespace CompletelyOptional
             mContainer = new MenuContainer(this, this.pages[0]);
             this.pages[0].subObjects.Add(mContainer);
         }
+
+        /// <summary>
+        /// Current Language of the game, including ComMod ones
+        /// </summary>
+        internal static string curLang;
 
         /// <summary>
         /// Blacklisted mod from config menu.

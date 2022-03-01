@@ -11,8 +11,9 @@ namespace OptionalUI
         /// <summary>
         /// Tab. 600 pxl * 600 pxl.
         /// </summary>
-        public OpTab(string name = "")
+        public OpTab(OptionInterface owner, string name = "")
         {
+            this.owner = owner;
             this.items = new List<UIelement>();
             this.focusables = new List<UIelement>();
             this.isInactive = true;
@@ -21,7 +22,7 @@ namespace OptionalUI
             this.colorCanvas = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
         }
 
-        public OptionInterface owner { get; internal set; }
+        public readonly OptionInterface owner;
 
         /// <summary>
         /// Colour of Tab Button. <see cref="Menu.Menu.MenuColors.MediumGrey"/> in default.
