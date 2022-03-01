@@ -353,7 +353,7 @@ namespace OptionalUI
                 lblHSL.label.color = ctxt;
                 lblPLT.label.color = ctxt;
 
-                this.rect.color = ctxt;
+                this.rect.colorEdge = ctxt;
 
                 RecalculateTexture();
                 this.cdis1.isVisible = false;
@@ -420,7 +420,7 @@ namespace OptionalUI
                 lblB.label.color = ctxt;
                 lblP.label.color = ctxt;
 
-                this.rect.color = ctxt;
+                this.rect.colorEdge = ctxt;
 
                 RecalculateTexture();
                 OnChange();
@@ -453,7 +453,7 @@ namespace OptionalUI
             Color darkgrey = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.DarkGrey);
             if (greyedOut)
             {
-                this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
+                this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 return;
             }
             Color grey = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
@@ -522,7 +522,7 @@ namespace OptionalUI
 
             this.rect.fillAlpha = Mathf.Lerp(0.6f, 0.8f, this.bumpBehav.col);
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
-            this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
+            this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
         }
 
         private bool mouseDown;

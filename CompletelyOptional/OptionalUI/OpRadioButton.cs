@@ -88,8 +88,8 @@ namespace OptionalUI
                 if (valueBool) { this.symbolSprite.alpha = 1f; }
                 else { this.symbolSprite.alpha = 0f; }
                 this.symbolSprite.color = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorEdge));
-                this.rect.color = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorEdge));
-                this.rect.colorF = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorFill));
+                this.rect.colorEdge = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorEdge));
+                this.rect.colorFill = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorFill));
                 return;
             }
 
@@ -103,14 +103,14 @@ namespace OptionalUI
             else
             { this.symbolHalfVisible = 0f; }
 
-            this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
+            this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
 
             if (this.valueBool) { this.symbolSprite.alpha = 1f; }
             else { this.symbolSprite.alpha = this.symbolHalfVisible * 0.2f; }
 
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
-            this.rect.colorF = this.colorFill;
+            this.rect.colorFill = this.colorFill;
         }
 
         /// <summary>

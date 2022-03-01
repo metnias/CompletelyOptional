@@ -71,18 +71,18 @@ namespace OptionalUI
         public BumpBehaviour bumpBehav { get; private set; }
 
         /// <summary>
-        /// Either this is <see cref="greyedOut"/> or <see cref="UIelement.isInactive"/>.
-        /// Prevents its interaction in <see cref="Update(float)"/>.
+        /// Either this is <see cref="FocusableUIelement.GreyedOut"/> or <see cref="UIelement.isInactive"/>.
+        /// Prevents its interaction in <see cref="Update()"/>.
         /// </summary>
-        public bool disabled => this.greyedOut || this.isInactive;
+        public bool disabled => this._greyedOut || this.isInactive;
 
         bool FocusableUIelement.CurrentlyFocusableMouse => !this.disabled;
 
         bool FocusableUIelement.CurrentlyFocusableNonMouse => true;
 
-        public bool FocusableUIelement.Focused { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
+        bool FocusableUIelement.Focused { get => throw new System.NotImplementedException(); set => throw new System.NotImplementedException(); }
 
-        public bool FocusableUIelement.GreyedOut { get => _greyedOut; set => _greyedOut = value; }
+        bool FocusableUIelement.GreyedOut { get => _greyedOut; }
 
         /// <summary>
         /// Calls <see cref="OptionInterface.Signal(UItrigger, string)"/>
@@ -92,19 +92,18 @@ namespace OptionalUI
             this.tab.owner.Signal(this, this.signal);
         }
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
+            base.GrafUpdate(timeStacker);
+            this.bumpBehav.Update(timeStacker);
         }
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            if (!_init) { return; }
-            base.Update(dt);
-            this.bumpBehav.Update(dt);
+            base.Update();
 
-            if (this.held && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(dt); }
-            if (showDesc && !this.greyedOut) { ConfigMenu.description = this.description; }
+            if (this.held && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(); }
+            if (showDesc && !this._greyedOut) { ConfigMenu.description = this.description; }
         }
     }
 }

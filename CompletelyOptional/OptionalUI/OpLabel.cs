@@ -44,14 +44,13 @@ namespace OptionalUI
             //this.lineLength = Mathf.FloorToInt((size.x - 10f) / 6f);
             string cleanText = Regex.Replace(_text, @"\s+", "");
             this.isVFont = cleanText.Length > 0 && !LabelTest.HasNonASCIIChars(cleanText);
-            if (!_init) { return; }
             this.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this._alignment = alignment;
             if (!this.IsLong)
             {
-                this.label = new MenuLabel(menu, owner, _text, this.pos, this.size, this._bigText);
-                this.label.label.color = this.color;
-                this.subObjects.Add(this.label);
+                this.label = new FLabel(LabelTest.GetFont(this._bigText), _text);
+                this.label.color = this.color;
+                this.myContainer.AddChild(this.label);
                 OnChange();
             }
         }
@@ -113,9 +112,9 @@ namespace OptionalUI
         protected internal bool IsLong => this is OpLabelLong;
 
         /// <summary>
-        /// Access MenuLabel. Be aware: when IsConfigScreen is false, accessing this will throw NullRefException.
+        /// Access <see cref="FLabel"/>
         /// </summary>
-        public MenuLabel label;
+        public FLabel label;
 
         protected internal readonly bool _bigText;
 

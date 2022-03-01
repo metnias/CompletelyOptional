@@ -223,15 +223,15 @@ namespace OptionalUI
             {
                 _back = new DyeableRect(this.menu, this.owner, pos, size);
                 subObjects.Add(_back);
-                _back.color = colorEdge;
+                _back.colorEdge = colorEdge;
             }
             if (hasSlideBar)
             {
                 bumpScroll = new BumpBehaviour(this);
                 _slideBar = new DyeableRect(this.menu, this.owner, pos, SliderSize);
                 subObjects.Add(_slideBar);
-                _slideBar.color = colorEdge;
-                _slideBar.colorF = Color.Lerp(colorEdge, colorFill, 0.5f);
+                _slideBar.colorEdge = colorEdge;
+                _slideBar.colorFill = Color.Lerp(colorEdge, colorFill, 0.5f);
                 _slideBar.fillAlpha = 0.5f;
             }
 
@@ -506,7 +506,7 @@ namespace OptionalUI
                     if (targetScrollOffset != scrollOffset)
                     {
                         hasMoved = true; this.hasScrolled = true;
-                        MenuContainer.PlaySound(SoundID.MENU_Scroll_Tick);
+                        ConfigContainer.PlaySound(SoundID.MENU_Scroll_Tick);
                         if (this.bumpScroll != null)
                         {
                             this.bumpScroll.flash = Mathf.Min(1f, this.bumpScroll.flash + 0.2f);
@@ -563,8 +563,8 @@ namespace OptionalUI
 
             if (_back != null)
             {
-                _back.colorF = this.colorFill;
-                _back.color = doesBackBump ? this.bumpBehav.GetColor(this.colorEdge) : this.colorEdge;
+                _back.colorFill = this.colorFill;
+                _back.colorEdge = doesBackBump ? this.bumpBehav.GetColor(this.colorEdge) : this.colorEdge;
                 _back.fillAlpha = fillAlpha;
                 _back.addSize = doesBackBump ? new Vector2(4f, 4f) * this.bumpBehav.AddSize : Vector2.zero;
                 _back.addSize += new Vector2(2f, 2f);
@@ -577,21 +577,21 @@ namespace OptionalUI
                 this.bumpScroll.greyedOut = this.ScrollLocked;
                 this.bumpScroll.Update(dt);
 
-                if (this._draggingSlider) { _slideBar.colorF = this.bumpScroll.GetColor(this.colorEdge); _slideBar.fillAlpha = 1f; }
+                if (this._draggingSlider) { _slideBar.colorFill = this.bumpScroll.GetColor(this.colorEdge); _slideBar.fillAlpha = 1f; }
                 else
                 {
                     if (this.hasScrolled || this.ScrollLocked)
                     {
-                        _slideBar.colorF = this.bumpScroll.GetColor(this.colorFill);
+                        _slideBar.colorFill = this.bumpScroll.GetColor(this.colorFill);
                         _slideBar.fillAlpha = this.bumpScroll.FillAlpha;
                     }
                     else
                     {
-                        _slideBar.colorF = this.bumpScroll.GetColor(this.colorEdge);
+                        _slideBar.colorFill = this.bumpScroll.GetColor(this.colorEdge);
                         _slideBar.fillAlpha = 0.3f + 0.6f * sin;
                     }
                 }
-                _slideBar.color = this.bumpScroll.GetColor(this.colorEdge);
+                _slideBar.colorEdge = this.bumpScroll.GetColor(this.colorEdge);
                 _slideBar.size = SliderSize;
                 _slideBar.addSize = new Vector2(2f, 2f) * this.bumpScroll.AddSize;
                 _slideBar.pos = pos + SliderPos;

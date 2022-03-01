@@ -71,16 +71,16 @@ namespace OptionalUI
                 if (this.MouseOver && !this.greyedOut)
                 { ConfigMenu.description = this.description; }
 
-                this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
-                this.rect.colorF = DyeableRect.MidToVeryDark(this.colorEdge);
+                this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
+                this.rect.colorFill = DyeableRect.MidToVeryDark(this.colorEdge);
                 this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
                 this.rect.fillAlpha = this.bumpBehav.FillAlpha;
                 return;
             }
             ConfigMenu.description = this.description;
 
-            this.rect.color = this.colorEdge;
-            this.rect.colorF = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
+            this.rect.colorEdge = this.colorEdge;
+            this.rect.colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
             this.rect.addSize = Vector2.zero;
             this.rect.fillAlpha = 1f;
         }

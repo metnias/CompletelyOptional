@@ -102,8 +102,8 @@ namespace OptionalUI
                 KeyboardOn = false;
                 this.label.label.color = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorText));
                 this.cursor.alpha = 0f;
-                this.rect.color = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorEdge));
-                this.rect.colorF = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorFill));
+                this.rect.colorEdge = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorEdge));
+                this.rect.colorFill = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorFill));
                 return;
             }
             Color white = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
@@ -118,8 +118,8 @@ namespace OptionalUI
 
             this.bumpBehav.col = this.col;
             this.rect.fillAlpha = Mathf.Lerp(0.5f, 0.8f, this.bumpBehav.col);
-            this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
-            this.rect.colorF = this.colorFill;
+            this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
+            this.rect.colorFill = this.colorFill;
             this.label.label.color = Color.Lerp(this.colorText, white, Mathf.Clamp(this.bumpBehav.flash, 0f, 1f));
         }
 

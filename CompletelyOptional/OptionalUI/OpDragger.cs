@@ -107,19 +107,19 @@ namespace OptionalUI
             if (greyedOut)
             {
                 this.label.label.color = this.bumpBehav.GetColor(this.colorText);
-                this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
-                this.rect.colorF = this.bumpBehav.GetColor(this.colorFill);
+                this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
+                this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
                 return;
             }
 
-            this.rect.colorF = this.colorFill;
+            this.rect.colorFill = this.colorFill;
             this.greyFade = Custom.LerpAndTick(this.greyFade, (!CompletelyOptional.ConfigMenu.freezeMenu || this.held) ? 0f : 1f, 0.05f, 0.025f * DTMultiply(dt));
 
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
 
             this.label.label.color = this.bumpBehav.GetColor(this.colorText);
-            this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
+            this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
         }
 
         private float greyFade;

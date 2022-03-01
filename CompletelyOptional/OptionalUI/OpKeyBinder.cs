@@ -204,12 +204,12 @@ namespace OptionalUI
         {
             base.GrafUpdate(dt);
 
-            this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
+            this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
             this.sprite.color = this.bumpBehav.GetColor(this.colorEdge);
 
             if (greyedOut)
             {
-                this.rect.colorF = this.bumpBehav.GetColor(this.colorFill);
+                this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
                 if (string.IsNullOrEmpty(this._desError))
                 { this.label.label.color = this.bumpBehav.GetColor(this.colorEdge); }
                 else
@@ -217,7 +217,7 @@ namespace OptionalUI
                 return;
             }
 
-            this.rect.colorF = this.colorFill;
+            this.rect.colorFill = this.colorFill;
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
 

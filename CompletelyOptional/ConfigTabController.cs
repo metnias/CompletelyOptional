@@ -167,18 +167,18 @@ namespace CompletelyOptional
             }
         }
 
-        public override void Hide()
+        protected internal override void Deactivate()
         {
-            base.Hide();
+            base.Deactivate();
             foreach (UIelement element in this.subElements)
-            { element.Hide(); }
+            { element.Deactivate(); }
         }
 
-        public override void Show()
+        protected internal override void Reactivate()
         {
-            base.Show();
+            base.Reactivate();
             foreach (UIelement element in this.subElements)
-            { element.Show(); }
+            { element.Reactivate(); }
         }
 
         protected internal override void Unload()
@@ -337,9 +337,9 @@ namespace CompletelyOptional
                 {
                     Color cg = this.active ? this.color : DyeableRect.Grayscale(this.color);
                     cg = Color.Lerp(DyeableRect.MidToDark(cg), cg, this.darken);
-                    this.rect.color = cg;
-                    this.rect.colorF = DyeableRect.MidToVeryDark(cg);
-                    this.rectH.color = cg;
+                    this.rect.colorEdge = cg;
+                    this.rect.colorFill = DyeableRect.MidToVeryDark(cg);
+                    this.rectH.colorEdge = cg;
                     this.label.label.color = cg;
                     return;
                 }
@@ -347,8 +347,8 @@ namespace CompletelyOptional
                 Color color = this.bumpBehav.GetColor(this.color);
                 this.label.label.color = Color.Lerp(DyeableRect.MidToDark(color), color, Mathf.Lerp(this.darken, 1f, 0.6f));
                 color = Color.Lerp(DyeableRect.MidToDark(color), color, this.darken);
-                this.rect.color = color;
-                this.rect.colorF = DyeableRect.MidToVeryDark(color);
+                this.rect.colorEdge = color;
+                this.rect.colorFill = DyeableRect.MidToVeryDark(color);
 
                 this.rect.fillAlpha = this.bumpBehav.FillAlpha;
                 float addSize = this.active ? 1f : this.bumpBehav.AddSize;
@@ -356,7 +356,7 @@ namespace CompletelyOptional
                 this.rect.pos = this.pos + new Vector2(-this.rect.addSize.x * 0.5f, 0f);
                 this.label.pos.x = this.pos.x - addSize * 4f;
 
-                this.rectH.color = color;
+                this.rectH.colorEdge = color;
                 this.rectH.addSize = new Vector2(4f, -4f) * addSize;
                 this.rectH.pos = this.pos + new Vector2(-this.rectH.addSize.x * 0.5f, 0f);
                 float highlight = this.MouseOver ? (0.5f + 0.5f * this.bumpBehav.Sin(10f)) * addSize : 0f;
@@ -404,9 +404,9 @@ namespace CompletelyOptional
                 {
                     Color cg = this.active ? this.color : DyeableRect.Grayscale(this.color);
                     cg = Color.Lerp(DyeableRect.MidToDark(cg), cg, this.darken);
-                    this.rect.color = cg;
-                    this.rect.colorF = DyeableRect.MidToVeryDark(cg);
-                    this.rectH.color = cg;
+                    this.rect.colorEdge = cg;
+                    this.rect.colorFill = DyeableRect.MidToVeryDark(cg);
+                    this.rectH.colorEdge = cg;
                     this.label.label.color = cg;
                     return;
                 }
@@ -414,8 +414,8 @@ namespace CompletelyOptional
                 Color color = this.bumpBehav.GetColor(this.color);
                 this.label.label.color = Color.Lerp(DyeableRect.MidToDark(color), color, Mathf.Lerp(this.darken, 1f, 0.6f));
                 color = Color.Lerp(DyeableRect.MidToDark(color), color, this.darken);
-                this.rect.color = color;
-                this.rect.colorF = DyeableRect.MidToVeryDark(color);
+                this.rect.colorEdge = color;
+                this.rect.colorFill = DyeableRect.MidToVeryDark(color);
 
                 this.rect.fillAlpha = this.bumpBehav.FillAlpha;
                 float addSize = this.active ? 1f : this.bumpBehav.AddSize;
@@ -423,7 +423,7 @@ namespace CompletelyOptional
                 this.rect.pos = this.pos + new Vector2(-this.rect.addSize.x * 0.5f, 0f);
                 this.label.pos.x = this.pos.x - addSize * 4f;
 
-                this.rectH.color = color;
+                this.rectH.colorEdge = color;
                 this.rectH.addSize = new Vector2(4f, -4f) * addSize;
                 this.rectH.pos = this.pos + new Vector2(-this.rectH.addSize.x * 0.5f, 0f);
                 float highlight = this.MouseOver ? (0.5f + 0.5f * this.bumpBehav.Sin(10f)) * addSize : 0f;

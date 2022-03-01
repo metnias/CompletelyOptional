@@ -165,7 +165,7 @@ namespace OptionalUI
         {
             this.isInactive = false;
             foreach (UIelement element in this.items)
-            { element.Activate(); }
+            { element.Reactivate(); }
         }
 
         /// <summary>

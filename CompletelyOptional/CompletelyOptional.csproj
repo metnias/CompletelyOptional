@@ -59,7 +59,7 @@
     <Compile Include="ConfigTabController.cs" />
     <Compile Include="EnumExt_ComOpt.cs" />
     <Compile Include="ListTab.cs" />
-    <Compile Include="MenuContainer.cs" />
+    <Compile Include="ConfigContainer.cs" />
     <Compile Include="MenuModList.cs" />
     <Compile Include="ModConfigMenu.cs" />
     <Compile Include="OptionalUI\OpSimpleHoldButton.cs" />
@@ -82,6 +82,7 @@
     <Compile Include="OptionalUI\OpScrollBox.cs" />
     <Compile Include="OptionalUI\SubObjects\BumpBehaviour.cs" />
     <Compile Include="OptionalUI\SubObjects\FTexture.cs" />
+    <Compile Include="OptionalUI\SubObjects\MenuColorEffect.cs" />
     <Compile Include="OptionalUI\SubObjects\Playlist.cs" />
     <Compile Include="OptionInterface_DataAPI.cs" />
     <Compile Include="OptionInterface_Translator.cs" />

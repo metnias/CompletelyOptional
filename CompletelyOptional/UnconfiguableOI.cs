@@ -133,7 +133,7 @@ namespace CompletelyOptional
                     break;
 
                 case Reason.InitError:
-                    blue = new OpRect(new Vector2(30f, 20f), new Vector2(540f, 420f)) { alpha = 0.7f, colorFill = new Color(0.121568627f, 0.40392156862f, 0.69411764705f, 1f) };
+                    blue = new OpRect(new Vector2(30f, 20f), new Vector2(540f, 420f)) { fillAlpha = 0.7f, colorFill = new Color(0.121568627f, 0.40392156862f, 0.69411764705f, 1f) };
 
                     Color white = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
                     oof = new OpLabel(new Vector2(100f, 380f), new Vector2(30f, 40f), ":(", FLabelAlignment.Left, true) { color = white };

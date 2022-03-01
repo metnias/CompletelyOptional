@@ -15,7 +15,7 @@ namespace OptionalUI
         public BumpBehaviour(UIelement owner)
         {
             this.owner = owner;
-            this._greyedOut = false; this._held = false;
+            this._greyedOut = null; this._held = false;
         }
 
         /// <summary>
@@ -32,8 +32,7 @@ namespace OptionalUI
             get
             {
                 if (_greyedOut.HasValue) { return _greyedOut.Value; }
-                if (owner is UIconfig c) { return c.greyedOut; }
-                if (owner is UItrigger t) { return t.greyedOut; }
+                if (owner is FocusableUIelement fc) { return fc.GreyedOut; }
                 return false;
             }
             set { _greyedOut = value; }
@@ -68,13 +67,13 @@ namespace OptionalUI
         /// <returns>Reactive Color</returns>
         public Color GetColor(Color orig)
         {
-            if (greyedOut) { return DyeableRect.Grayscale(DyeableRect.MidToVeryDark(orig)); }
+            if (greyedOut) { return MenuColorEffect.Greyscale(MenuColorEffect.MidToVeryDark(orig)); }
 
             return Color.Lerp(orig, Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White), Mathf.Max(Mathf.Min(this.col, this.held ? 0.5f : 0.8f) / 2f, Mathf.Clamp01(this.flash)));
         }
 
         /// <summary>
-        /// This will be called automatically with <see cref="UIconfig.Update(float)"/> or <see cref="UItrigger.Update(float)"/>
+        /// This will be called automatically with <see cref="UIconfig.Update()"/> or <see cref="UItrigger.Update()"/>
         /// </summary>
         public void Update(float dt)
         {

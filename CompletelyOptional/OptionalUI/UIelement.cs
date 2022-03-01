@@ -67,7 +67,7 @@ namespace OptionalUI
         /// <summary>
         /// Hide this element. Called manually by Modders
         /// </summary>
-        public virtual void Hide()
+        public void Hide()
         {
             this.hidden = true;
             this.Deactivate();
@@ -76,10 +76,10 @@ namespace OptionalUI
         /// <summary>
         /// Show this element.  Called manually by Modders
         /// </summary>
-        public virtual void Show()
+        public void Show()
         {
             this.hidden = false;
-            this.Activate();
+            this.Reactivate();
         }
 
         /// <summary>
@@ -387,12 +387,12 @@ namespace OptionalUI
         /// </summary>
         public bool isInactive => hidden || this.tab?.isInactive == true || this.scrollBox?.isInactive == true;
 
-        internal void Deactivate()
+        protected internal virtual void Deactivate()
         {
             this.myContainer.isVisible = false;
         }
 
-        internal void Activate()
+        protected internal virtual void Reactivate()
         {
             if (!this.hidden) { this.myContainer.isVisible = true; }
         }

@@ -166,18 +166,18 @@ namespace OptionalUI
             base.GrafUpdate(dt);
 
             this.bumpBehav.greyedOut = this.greyedOut;
-            this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
+            this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
-            this.rect.colorF = greyedOut ? this.bumpBehav.GetColor(this.colorFill) : this.colorFill;
+            this.rect.colorFill = greyedOut ? this.bumpBehav.GetColor(this.colorFill) : this.colorFill;
 
-            Color c = this.held ? DyeableRect.MidToDark(this.rect.color) : this.rect.color;
+            Color c = this.held ? DyeableRect.MidToDark(this.rect.colorEdge) : this.rect.colorEdge;
             if (!IsListBox)
             {
                 this.sprArrow.color = c;
-                this.lblText.label.color = this.searchMode ? this.rect.color : c;
+                this.lblText.label.color = this.searchMode ? this.rect.colorEdge : c;
             }
-            this.lblText.label.color = this.searchMode ? this.rect.color : c;
+            this.lblText.label.color = this.searchMode ? this.rect.colorEdge : c;
 
             if (!IsListBox && !held) { this.lblText.text = string.IsNullOrEmpty(this.value) ? "------" : GetDisplayValue(); return; }
 
@@ -185,15 +185,15 @@ namespace OptionalUI
             this.rectList.pos = new Vector2(this.pos.x, this.pos.y + (downward ? -this.rectList.size.y : this.size.y));
             if (IsListBox && downward) { this.rectList.pos.y += this.rectList.size.y; }
             this.rectList.addSize = new Vector2(4f, 4f) * bumpList.AddSize;
-            this.rectList.color = bumpList.GetColor(this.colorEdge);
-            this.rectList.colorF = this.colorFill;
+            this.rectList.colorEdge = bumpList.GetColor(this.colorEdge);
+            this.rectList.colorFill = this.colorFill;
             this.rectList.fillAlpha = IsListBox ? bumpList.FillAlpha : Mathf.Lerp(0.5f, 0.7f, bumpList.col);
 
             for (int i = 0; i < this.lblList.Length; i++)
             {
                 this.lblList[i].text = this.searchMode ? (this.searchList.Count > this.listTop + i ? this.searchList[this.listTop + i].displayName : "")
                     : this.itemList[this.listTop + i].displayName;
-                this.lblList[i].label.color = this.lblList[i].text == this.value ? c : this.rectList.color;
+                this.lblList[i].label.color = this.lblList[i].text == this.value ? c : this.rectList.colorEdge;
                 if (i == listHover)
                 {
                     this.lblList[i].label.color = Color.Lerp(this.lblList[i].label.color,
@@ -224,8 +224,8 @@ namespace OptionalUI
                 else
                 { this.rectScroll.pos.y = Custom.LerpAndTick(this.rectScroll.pos.y, ScrollPos(listSize), bumpScroll.held ? 0.6f : 0.2f, (bumpScroll.held ? 0.6f : 0.2f) * DTMultiply(dt)); }
                 this.rectScroll.addSize = new Vector2(2f, 2f) * bumpScroll.AddSize;
-                this.rectScroll.color = bumpScroll.GetColor(this.colorEdge);
-                this.rectScroll.colorF = bumpScroll.held ? this.rectScroll.color : this.colorFill;
+                this.rectScroll.colorEdge = bumpScroll.GetColor(this.colorEdge);
+                this.rectScroll.colorFill = bumpScroll.held ? this.rectScroll.colorEdge : this.colorFill;
                 this.rectScroll.fillAlpha = bumpScroll.held ? 1f : bumpScroll.FillAlpha;
             }
             else { this.rectScroll.Hide(); }

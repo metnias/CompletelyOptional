@@ -79,8 +79,8 @@ namespace OptionalUI
                 if (valueBool) { this.symbolSprite.alpha = 1f; }
                 else { this.symbolSprite.alpha = 0f; }
                 this.symbolSprite.color = this.bumpBehav.GetColor(this.colorEdge);
-                this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
-                this.rect.colorF = this.bumpBehav.GetColor(this.colorFill);
+                this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
+                this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
                 return;
             }
 
@@ -96,14 +96,14 @@ namespace OptionalUI
                 this.symbolSprite.color = ce;
             }
 
-            this.rect.color = ce;
+            this.rect.colorEdge = ce;
 
             if (this.valueBool) { this.symbolSprite.alpha = 1f - this.symbolHalfVisible * 0.2f; }
             else { this.symbolSprite.alpha = this.symbolHalfVisible * 0.2f; }
 
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
-            this.rect.colorF = this.colorFill;
+            this.rect.colorFill = this.colorFill;
         }
 
         public override void Update(float dt)

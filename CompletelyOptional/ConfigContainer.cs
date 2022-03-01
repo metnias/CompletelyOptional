@@ -12,9 +12,9 @@ namespace OptionalUI
     /// <summary>
     /// Contains all UIelement, connects UIelements and Rain World Menu
     /// </summary>
-    public class MenuContainer : Menu.MenuObject
+    public class ConfigContainer : Menu.MenuObject
     {
-        public MenuContainer(Menu.Menu menu, MenuObject owner) : base(menu, owner)
+        public ConfigContainer(Menu.Menu menu, MenuObject owner) : base(menu, owner)
         {
             menuTab = new MenuTab();
             _soundFill = 0;

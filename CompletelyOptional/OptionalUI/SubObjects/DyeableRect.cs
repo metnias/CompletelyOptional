@@ -5,112 +5,265 @@ using UnityEngine;
 namespace OptionalUI
 {
     /// <summary>
-    /// A special <see cref="RoundedRect"/> that can be coloured easily.
-    /// If you are making custom <see cref="UIelement"/> that has this, Add this to <see cref="UIelement.subObjects"/>.
+    /// A group of FSprite in the shape of RoundedRect that can be coloured easily.
     /// </summary>
-    public class DyeableRect : RoundedRect
+    public class DyeableRect
     {
         /// <summary>
-        /// A special <see cref="RoundedRect"/> that can be coloured easily.
-        /// If you are making custom <see cref="UIelement"/> that has this, Add this to <see cref="UIelement.subObjects"/>.
+        /// A group of FSprite in the shape of RoundedRect that can be coloured easily.
+        /// <para>Add <see cref="Update"/> and <see cref="GrafUpdate(float)"/>
+        /// in your custom <see cref="UIelement.Update"/> and <see cref="UIelement.GrafUpdate(float)"/> when using this.</para>
         /// </summary>
         /// <remarks>Example for custom <see cref="UIelement"/> constructor: <code>
-        /// this.rect = new DyeableRect(menu, owner, this.pos, this.size, true);
-        /// this.subObjects.Add(this.rect);
+        /// this.rect = new DyeableRect(myContainer, this.pos, this.size, true);
         /// </code></remarks>
-        public DyeableRect(Menu.Menu menu, MenuObject owner, Vector2 pos, Vector2 size, bool filled = true) : base(menu, owner, pos, size, filled)
+        public DyeableRect(FContainer container, Vector2 pos, Vector2 size, bool filled = true)
         {
-            this.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            this.colorF = Color.black;
+            this.container = container;
+            this.pos = pos;
+            this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
+            this.colorFill = Color.black;
             this.filled = filled;
-            this.tab = false;
+            //this.tab = false;
+
+            // Init Sprite
+            this.sprites = new FSprite[(!filled) ? 8 : 17];
+            for (int i = 0; i < 4; i++)
+            {
+                this.sprites[this.SideSprite(i)] = new FSprite("pixel", true);
+                this.sprites[this.SideSprite(i)].scaleY = 2f;
+                this.sprites[this.SideSprite(i)].scaleX = 2f;
+                this.sprites[this.CornerSprite(i)] = new FSprite("UIroundedCorner", true);
+                if (filled)
+                {
+                    this.sprites[this.FillSideSprite(i)] = new FSprite("pixel", true);
+                    this.sprites[this.FillSideSprite(i)].scaleY = 6f;
+                    this.sprites[this.FillSideSprite(i)].scaleX = 6f;
+                    this.sprites[this.FillCornerSprite(i)] = new FSprite("UIroundedCornerInside", true);
+                }
+            }
+            this.sprites[this.SideSprite(0)].anchorY = 0f;
+            this.sprites[this.SideSprite(2)].anchorY = 0f;
+            this.sprites[this.SideSprite(1)].anchorX = 0f;
+            this.sprites[this.SideSprite(3)].anchorX = 0f;
+            this.sprites[this.CornerSprite(0)].scaleY = -1f;
+            this.sprites[this.CornerSprite(2)].scaleX = -1f;
+            this.sprites[this.CornerSprite(3)].scaleY = -1f;
+            this.sprites[this.CornerSprite(3)].scaleX = -1f;
             if (filled)
             {
-                tabInvisible = new List<FSprite>
+                this.sprites[MainFillSprite] = new FSprite("pixel", true);
+                this.sprites[MainFillSprite].anchorY = 0f;
+                this.sprites[MainFillSprite].anchorX = 0f;
+                this.sprites[this.FillSideSprite(0)].anchorY = 0f;
+                this.sprites[this.FillSideSprite(2)].anchorY = 0f;
+                this.sprites[this.FillSideSprite(1)].anchorX = 0f;
+                this.sprites[this.FillSideSprite(3)].anchorX = 0f;
+                this.sprites[this.FillCornerSprite(0)].scaleY = -1f;
+                this.sprites[this.FillCornerSprite(2)].scaleX = -1f;
+                this.sprites[this.FillCornerSprite(3)].scaleY = -1f;
+                this.sprites[this.FillCornerSprite(3)].scaleX = -1f;
+                for (int j = 0; j < 9; j++)
                 {
-                    this.sprites[2],
-                    this.sprites[6],
-                    this.sprites[7],
-                    this.sprites[11],
-                    this.sprites[15],
-                    this.sprites[16]
-                };
+                    this.sprites[j].color = new Color(0f, 0f, 0f);
+                    this.sprites[j].alpha = 0.75f;
+                }
             }
-            else
+            for (int k = 0; k < this.sprites.Length; k++)
             {
-                tabInvisible = new List<FSprite>
-                {
-                    this.sprites[2], //3
-                    this.sprites[6],
-                    this.sprites[7]
-                };
+                this.container.AddChild(this.sprites[k]);
             }
         }
 
-        private const float midDark = 0.4435f;
-        private const float midVDark = 0.2217f;
+        protected internal FSprite[] sprites;
 
-        public static Color MidToDark(Color mid) => new Color(mid.r * midDark, mid.g * midDark, mid.b * midDark, mid.a);
+        protected internal readonly FContainer container;
 
-        public static Color MidToVeryDark(Color mid) => new Color(mid.r * midVDark, mid.g * midVDark, mid.b * midVDark, mid.a);
+        protected internal int SideSprite(int side) => ((!this.filled) ? 0 : 9) + side;
 
-        public static Color Grayscale(Color orig) => new Color(orig.grayscale, orig.grayscale, orig.grayscale, orig.a);
+        protected internal int CornerSprite(int corner) => ((!this.filled) ? 0 : 9) + 4 + corner;
 
-        private int SideSprite(int side) => ((!this.filled) ? 0 : 9) + side;
+        protected internal int FillSideSprite(int side) => side;
 
-        private int CornerSprite(int corner) => ((!this.filled) ? 0 : 9) + 4 + corner;
+        protected internal int FillCornerSprite(int corner) => 4 + corner;
 
-        private int FillSideSprite(int side) => side;
-
-        private int FillCornerSprite(int corner) => 4 + corner;
-
-        private const int MainFillSprite = 8;
-
-        //public int[] visibleIndex = { 0, 1, 3, 4, 5, 8, 9, 10, 12, 13, 14 };
-        private readonly List<FSprite> tabInvisible;
+        protected internal const int MainFillSprite = 8;
 
         /// <summary>
         /// Edge Color of this Rect. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.
         /// </summary>
-        public Color color;
+        public Color colorEdge;
 
         /// <summary>
         /// Fill Color of this Rect. Default is <see cref="Menu.Menu.MenuColors.Black"/>.
         /// </summary>
-        public Color colorF;
+        public Color colorFill;
+
+        /// <summary>
+        /// Relative pos from <see cref="FContainer"/> origin this is in
+        /// </summary>
+        public Vector2 pos;
+
+        /// <summary>
+        /// The size of rectangular
+        /// </summary>
+        public Vector2 size;
 
         private readonly bool filled;
 
         /// <summary>
-        /// whether you cut right side or not.
+        /// Extra size for bump effect
         /// </summary>
-        public bool tab;
+        public Vector2 addSize;
+
+        private Vector2 lastAddSize;
 
         /// <summary>
-        /// Called automatically.
+        /// whether you cut right side or not.
         /// </summary>
-        public override void GrafUpdate(float timeStacker)
+        public HiddenSide hiddenSide;
+
+        public enum HiddenSide
         {
-            base.GrafUpdate(timeStacker);
-            if (tab) { foreach (FSprite edge in tabInvisible) { edge.isVisible = false; } }
-            for (int i = 0; i < 4; i++)
+            None,
+            Left,
+            Right,
+            Top,
+            Bottom
+        }
+
+        public float fillAlpha;
+
+        private float lastFillAlpha;
+
+        /// <summary>
+        /// Call this in <see cref="UIelement.Update()"/>
+        /// </summary>
+        public void Update()
+        {
+            lastFillAlpha = fillAlpha;
+            lastAddSize = addSize;
+        }
+
+        private int[] sideSprites()
+        {
+            switch (hiddenSide)
             {
-                this.sprites[this.SideSprite(i)].color = this.color;
-                this.sprites[this.CornerSprite(i)].color = this.color;
+                case HiddenSide.Left:
+                    return filled ? new int[] { 0, 4, 5, 9, 13, 14 } : new int[] { 0, 4, 5 }; // needs testing
+
+                case HiddenSide.Right:
+                    return filled ? new int[] { 2, 6, 7, 11, 15, 16 } : new int[] { 2, 6, 7 };
+
+                case HiddenSide.Top:
+                    return filled ? new int[] { 1, 5, 6, 10, 14, 15 } : new int[] { 1, 5, 6 }; // needs testing
+
+                case HiddenSide.Bottom:
+                    return filled ? new int[] { 3, 4, 7, 12, 13, 16 } : new int[] { 3, 4, 7 }; // needs testing
             }
-            if (this.filled)
-            {
-                this.sprites[MainFillSprite].color = this.colorF;
-                for (int i = 0; i < 4; i++)
-                {
-                    this.sprites[this.FillSideSprite(i)].color = this.colorF;
-                    this.sprites[this.FillCornerSprite(i)].color = this.colorF;
-                }
-            }
+            return new int[0];
         }
 
         /// <summary>
-        /// Useful for hiding this in <see cref="UIelement.Hide"/>
+        /// Call this in <see cref="UIelement.GrafUpdate(float)"/>
+        /// </summary>
+        public void GrafUpdate(float timeStacker)
+        {
+            #region RoundedRect
+
+            pos -= Vector2.Lerp(this.lastAddSize, this.addSize, timeStacker) / 2f;
+            size += Vector2.Lerp(this.lastAddSize, this.addSize, timeStacker);
+            pos.x = Mathf.Floor(pos.x) + 0.41f;
+            pos.y = Mathf.Floor(pos.y) + 0.41f;
+            this.sprites[this.SideSprite(0)].x = pos.x + 1f;
+            this.sprites[this.SideSprite(0)].y = pos.y + 7f;
+            this.sprites[this.SideSprite(0)].scaleY = size.y - 14f;
+            this.sprites[this.SideSprite(1)].x = pos.x + 7f;
+            this.sprites[this.SideSprite(1)].y = pos.y + size.y - 1f;
+            this.sprites[this.SideSprite(1)].scaleX = size.x - 14f;
+            this.sprites[this.SideSprite(2)].x = pos.x + size.x - 1f;
+            this.sprites[this.SideSprite(2)].y = pos.y + 7f;
+            this.sprites[this.SideSprite(2)].scaleY = size.y - 14f;
+            this.sprites[this.SideSprite(3)].x = pos.x + 7f;
+            this.sprites[this.SideSprite(3)].y = pos.y + 1f;
+            this.sprites[this.SideSprite(3)].scaleX = size.x - 14f;
+            this.sprites[this.CornerSprite(0)].x = pos.x + 3.5f;
+            this.sprites[this.CornerSprite(0)].y = pos.y + 3.5f;
+            this.sprites[this.CornerSprite(1)].x = pos.x + 3.5f;
+            this.sprites[this.CornerSprite(1)].y = pos.y + size.y - 3.5f;
+            this.sprites[this.CornerSprite(2)].x = pos.x + size.x - 3.5f;
+            this.sprites[this.CornerSprite(2)].y = pos.y + size.y - 3.5f;
+            this.sprites[this.CornerSprite(3)].x = pos.x + size.x - 3.5f;
+            this.sprites[this.CornerSprite(3)].y = pos.y + 3.5f;
+            Color color = new Color(1f, 1f, 1f);
+            for (int i = 0; i < 4; i++)
+            {
+                this.sprites[this.SideSprite(i)].color = color;
+                this.sprites[this.CornerSprite(i)].color = color;
+            }
+            if (this.filled)
+            {
+                this.sprites[this.FillSideSprite(0)].x = pos.x + 4f;
+                this.sprites[this.FillSideSprite(0)].y = pos.y + 7f;
+                this.sprites[this.FillSideSprite(0)].scaleY = size.y - 14f;
+                this.sprites[this.FillSideSprite(1)].x = pos.x + 7f;
+                this.sprites[this.FillSideSprite(1)].y = pos.y + size.y - 4f;
+                this.sprites[this.FillSideSprite(1)].scaleX = size.x - 14f;
+                this.sprites[this.FillSideSprite(2)].x = pos.x + size.x - 4f;
+                this.sprites[this.FillSideSprite(2)].y = pos.y + 7f;
+                this.sprites[this.FillSideSprite(2)].scaleY = size.y - 14f;
+                this.sprites[this.FillSideSprite(3)].x = pos.x + 7f;
+                this.sprites[this.FillSideSprite(3)].y = pos.y + 4f;
+                this.sprites[this.FillSideSprite(3)].scaleX = size.x - 14f;
+                this.sprites[this.FillCornerSprite(0)].x = pos.x + 3.5f;
+                this.sprites[this.FillCornerSprite(0)].y = pos.y + 3.5f;
+                this.sprites[this.FillCornerSprite(1)].x = pos.x + 3.5f;
+                this.sprites[this.FillCornerSprite(1)].y = pos.y + size.y - 3.5f;
+                this.sprites[this.FillCornerSprite(2)].x = pos.x + size.x - 3.5f;
+                this.sprites[this.FillCornerSprite(2)].y = pos.y + size.y - 3.5f;
+                this.sprites[this.FillCornerSprite(3)].x = pos.x + size.x - 3.5f;
+                this.sprites[this.FillCornerSprite(3)].y = pos.y + 3.5f;
+                this.sprites[MainFillSprite].x = pos.x + 7f;
+                this.sprites[MainFillSprite].y = pos.y + 7f;
+                this.sprites[MainFillSprite].scaleX = size.x - 14f;
+                this.sprites[MainFillSprite].scaleY = size.y - 14f;
+                for (int j = 0; j < 9; j++)
+                {
+                    this.sprites[j].alpha = Mathf.Lerp(this.lastFillAlpha, this.fillAlpha, timeStacker);
+                }
+            }
+
+            #endregion RoundedRect
+
+            if (hiddenSide != HiddenSide.None)
+            {
+                int[] hide = sideSprites();
+                for (int i = 0; i < hide.Length; i++)
+                { this.sprites[hide[i]].isVisible = false; }
+            }
+
+            #region Dye
+
+            for (int i = 0; i < 4; i++)
+            {
+                this.sprites[this.SideSprite(i)].color = this.colorEdge;
+                this.sprites[this.CornerSprite(i)].color = this.colorEdge;
+            }
+            if (this.filled)
+            {
+                this.sprites[MainFillSprite].color = this.colorFill;
+                for (int i = 0; i < 4; i++)
+                {
+                    this.sprites[this.FillSideSprite(i)].color = this.colorFill;
+                    this.sprites[this.FillCornerSprite(i)].color = this.colorFill;
+                }
+            }
+
+            #endregion Dye
+        }
+
+        /// <summary>
+        /// Useful for hiding this in <see cref="UIelement.Deactivate"/>
         /// </summary>
         public void Hide()
         {
@@ -118,28 +271,17 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Usefull for unhiding this in <see cref="UIelement.Show"/>
+        /// Usefull for unhiding this in <see cref="UIelement.Reactivate"/>
         /// </summary>
         public void Show()
         {
             foreach (FSprite s in this.sprites) { s.isVisible = true; }
-            if (tab) { foreach (FSprite edge in tabInvisible) { edge.isVisible = false; } }
+            if (hiddenSide != HiddenSide.None)
+            {
+                int[] hide = sideSprites();
+                for (int i = 0; i < hide.Length; i++)
+                { this.sprites[hide[i]].isVisible = false; }
+            }
         }
     }
-
-    /*  public interface iHaveDyeRect
-    {
-        /// <summary>
-        /// DyeableRect instance
-        /// </summary>
-        DyeableRect rect { get; set; }
-        /// <summary>
-        /// Edge Color of DyeableRect
-        /// </summary>
-        Color colorEdge { get; set; }
-        /// <summary>
-        /// Fill Color of DyeableRect
-        /// </summary>
-        Color colorFill { get; set; }
-    }*/
 }

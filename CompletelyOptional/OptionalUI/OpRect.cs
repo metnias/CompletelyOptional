@@ -15,24 +15,23 @@ namespace OptionalUI
         /// <param name="alpha">0f ~ 1f (default: 0.3f)</param>
         public OpRect(Vector2 pos, Vector2 size, float alpha = 0.3f) : base(pos, size)
         {
-            this.alpha = alpha;
-            if (!_init) { return; }
-
-            this.rect = new DyeableRect(menu, owner, this.pos, size, true);
-            this.subObjects.Add(this.rect);
-
-            colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            colorFill = Color.black;
-            this.rect.color = colorEdge;
-            this.rect.colorF = colorFill;
-
+            this.fillAlpha = alpha;
             this.doesBump = false;
+            colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
+            colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
+
+            this.rect = new DyeableRect(this.myContainer, this.pos, size, true)
+            {
+                colorEdge = this.colorEdge,
+                colorFill = this.colorFill,
+                fillAlpha = this.fillAlpha
+            };
         }
 
         /// <summary>
         /// <see cref="DyeableRect"/> of this <see cref="UIelement"/>.
         /// </summary>
-        public DyeableRect rect;
+        public readonly DyeableRect rect;
 
         /// <summary>
         /// If you want this Rect to react with MouseOver, set this true.
@@ -52,62 +51,65 @@ namespace OptionalUI
         /// <summary>
         /// fillAlpha of <see cref="DyeableRect"/>. (Ignored when <see cref="doesBump"/> is true)
         /// </summary>
-        public float alpha;
+        public float fillAlpha;
 
         /// <summary>
         /// When <see cref="doesBump"/> is true, this gets used.
         /// </summary>
         public BumpBehaviour bumpBehav { get; private set; }
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
+            base.GrafUpdate(timeStacker);
 
-            this.rect.colorF = this.colorFill;
+            this.rect.colorFill = this.colorFill;
 
             if (!doesBump)
             {
-                this.rect.fillAlpha = this.alpha;
-                this.rect.color = this.colorEdge;
+                this.rect.fillAlpha = this.fillAlpha;
+                this.rect.colorEdge = this.colorEdge;
+
+                this.rect.GrafUpdate(timeStacker);
                 return;
             }
             if (this.bumpBehav == null) { this.bumpBehav = new BumpBehaviour(this); }
-            this.bumpBehav.Update(dt);
+            this.bumpBehav.Update(timeStacker);
 
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
-            this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
+            this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
+
+            this.rect.GrafUpdate(timeStacker);
         }
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            if (!_init) { return; }
-            base.Update(dt);
+            base.Update();
+            this.rect.Update();
         }
 
         public override void OnChange()
         {
             base.OnChange();
-            if (!_init) { return; }
             this.rect.pos = this.pos;
             this.rect.size = this.size;
         }
 
-        public override void Unload()
+        protected internal override void Unload()
         {
             base.Unload();
             //this.subObjects.Remove(this.rect);
         }
 
-        public override void Hide()
+        protected internal override void Deactivate()
         {
-            base.Hide();
+            base.Deactivate();
             this.rect.Hide();
         }
 
-        public override void Show()
+        protected internal override void Reactivate()
         {
-            base.Show();
+            base.Reactivate();
             this.rect.Show();
         }
     }

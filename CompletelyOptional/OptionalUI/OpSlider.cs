@@ -242,8 +242,8 @@ namespace OptionalUI
             {
                 foreach (FSprite s in this.lineSprites) { s.color = this.bumpBehav.GetColor(this.colorLine); }
                 if (subtleSlider) return;
-                this.rect.colorF = this.bumpBehav.GetColor(this.colorFill);
-                this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
+                this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
+                this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 this.label.label.color = this.bumpBehav.GetColor(this.colorEdge);
                 if (this.MouseOver) { this.label.label.alpha = Mathf.Min(0.5f, this.label.label.alpha + 0.05f); }
                 else { this.label.label.alpha = Mathf.Max(0f, this.label.label.alpha - 0.1f); }
@@ -256,16 +256,16 @@ namespace OptionalUI
                 { this.label.label.alpha = Mathf.Min(this.label.label.alpha + 0.1f, 1f); }
                 else { this.label.label.alpha = Mathf.Max(this.label.label.alpha - 0.15f, 0f); }
 
-                this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
-                if (this.held) { this.rect.colorF = this.bumpBehav.GetColor(this.colorEdge); }
-                else { this.rect.colorF = this.bumpBehav.GetColor(this.colorFill); }
+                this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
+                if (this.held) { this.rect.colorFill = this.bumpBehav.GetColor(this.colorEdge); }
+                else { this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill); }
 
                 this.rect.fillAlpha = this.held ? 1f : this.bumpBehav.FillAlpha;
             }
 
             Color color = this.bumpBehav.GetColor(this.colorLine);
             foreach (FSprite l in this.lineSprites) { l.color = color; }
-            if (!subtleSlider) { this.label.label.color = Color.Lerp(this.rect.color, Color.white, 0.5f); }
+            if (!subtleSlider) { this.label.label.color = Color.Lerp(this.rect.colorEdge, Color.white, 0.5f); }
         }
 
         protected internal virtual void LineVisibility(Vector2 cutPos, Vector2 cutSize)

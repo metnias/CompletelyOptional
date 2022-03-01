@@ -72,23 +72,23 @@ namespace OptionalUI
             if (greyedOut)
             {
                 if (!IsImageButton) { this.label.label.color = this.bumpBehav.GetColor(this.colorEdge); }
-                this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
-                this.rect.colorF = this.bumpBehav.GetColor(this.colorFill);
-                this.rectH.color = this.bumpBehav.GetColor(this.colorEdge);
+                this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
+                this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
+                this.rectH.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 return;
             }
 
             if (!IsImageButton) { this.label.label.color = this.bumpBehav.GetColor(this.colorEdge); }
 
-            this.rectH.color = this.bumpBehav.GetColor(this.colorEdge);
+            this.rectH.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
             this.rectH.addSize = new Vector2(-2f, -2f) * this.bumpBehav.AddSize;
             float highlight = this.MouseOver && !this.held ? (0.5f + 0.5f * this.bumpBehav.Sin(10f)) * this.bumpBehav.AddSize : 0f;
             for (int j = 0; j < 8; j++) { this.rectH.sprites[j].alpha = highlight; }
 
-            this.rect.color = this.bumpBehav.GetColor(this.colorEdge);
+            this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(6f, 6f) * this.bumpBehav.AddSize;
-            this.rect.colorF = this.colorFill;
+            this.rect.colorFill = this.colorFill;
         }
 
         public override void Update(float dt)
