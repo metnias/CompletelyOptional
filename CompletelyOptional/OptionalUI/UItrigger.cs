@@ -71,10 +71,10 @@ namespace OptionalUI
         public BumpBehaviour bumpBehav { get; private set; }
 
         /// <summary>
-        /// Either this is <see cref="greyedOut"/> or <see cref="UIelement.isHidden"/>.
+        /// Either this is <see cref="greyedOut"/> or <see cref="UIelement.isInactive"/>.
         /// Prevents its interaction in <see cref="Update(float)"/>.
         /// </summary>
-        public bool disabled => this.greyedOut || this.isHidden;
+        public bool disabled => this.greyedOut || this.isInactive;
 
         bool FocusableUIelement.IsMouseOverMe { get { return this.MouseOver; } }
 

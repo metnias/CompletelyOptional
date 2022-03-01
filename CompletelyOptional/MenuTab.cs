@@ -16,19 +16,14 @@ namespace CompletelyOptional
     {
         internal MenuTab() : base("")
         {
-            isHidden = false;
-            _initLog = false; logMode = false;
-            _lblInfoDesc = InternalTranslator.Translate("Click to Display Config Machine ChangeLog");
-            _sbDesc = InternalTranslator.Translate("Display <ModID>");
+            isInactive = false;
+            modList = new MenuModList();
+            tabCtrler = new ConfigTabController(this);
         }
 
         internal MenuModList modList;
 
-        private static ConfigTabController TabCtrler => ConfigMenu.tabCtrler;
-        public OpLabel lblInfoButton;
-        private readonly string _lblInfoDesc, _sbDesc;
-        private bool _initLog; private bool _pressInfoBtn;
-        public static bool logMode { get; private set; }
+        internal ConfigTabController tabCtrler;
 
         public new void Update()
         {

@@ -66,9 +66,9 @@ namespace OptionalUI
 
         bool FocusableUIelement.IsMouseOverMe { get { return this.MouseOver; } }
 
-        bool FocusableUIelement.CurrentlyFocusableMouse { get { return !this.greyedOut && !this.isHidden; } }
+        bool FocusableUIelement.CurrentlyFocusableMouse { get { return !this.greyedOut && !this.isInactive; } }
 
-        bool FocusableUIelement.CurrentlyFocusableNonMouse { get { return !this.greyedOut && !this.isHidden; } }
+        bool FocusableUIelement.CurrentlyFocusableNonMouse { get { return !this.greyedOut && !this.isInactive; } }
 
         /// <summary>
         /// Mimics <see cref="Menu.ButtonBehavior"/> of vanilla Rain World UIs
@@ -78,7 +78,7 @@ namespace OptionalUI
         public override void GrafUpdate(float dt)
         {
             base.GrafUpdate(dt);
-            if (this.isHidden) { return; }
+            if (this.isInactive) { return; }
 
             this.bumpBehav.greyedOut = this.greyedOut;
             this.bumpBehav.Update(dt);
@@ -122,7 +122,7 @@ namespace OptionalUI
         {
             base.Update(dt);
             this.bumpBehav.greyedOut = greyedOut;
-            if (greyedOut || isHidden) { return; }
+            if (greyedOut || isInactive) { return; }
 
             if (this.MouseOver)
             {

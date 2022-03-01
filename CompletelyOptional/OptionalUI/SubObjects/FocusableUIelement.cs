@@ -10,7 +10,7 @@
         /// <summary>
         /// Whether its change is prevented
         /// </summary>
-        bool GreyedOut { get; set; }
+        bool GreyedOut { get; }
 
         bool CurrentlyFocusableMouse { get; }
 

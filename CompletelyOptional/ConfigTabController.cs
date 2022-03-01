@@ -8,28 +8,36 @@ namespace CompletelyOptional
     /// <summary>
     /// Special UI used internally in CM for switching tabs
     /// </summary>
-    internal class ConfigTabController : UIelement
+    internal class ConfigTabController : UIelement, FocusableUIelement
     {
-        public ConfigTabController(Vector2 pos, Vector2 size, MenuTab tab, ConfigMenu menu) : base(pos, size)
+        public ConfigTabController(MenuTab tab) : base(new Vector2(503f, 120f) - UIelement._offset, new Vector2(40f, 600f))
         {
             this.menuTab = tab;
-            this.cfgMenu = menu;
+            this.cfgMenu = ModConfigMenu.instance;
             this.mode = TabMode.NULL;
             subElements = new List<UIelement>();
-            this.greyedOut = false;
+            omit = omit < 0f ? LabelTest.GetWidth("...", false) : omit;
 
             OnChange();
         }
 
         // Add Up/Down arrow
-        // Tab buttons now have flexible size (unnamed tab will be 100f)
 
         internal MenuTab menuTab;
-        public ConfigMenu cfgMenu;
+        internal ModConfigMenu cfgMenu;
 
-        public List<UIelement> subElements;
+        internal List<UIelement> subElements;
 
-        public bool greyedOut;
+        private static float omit = -1f;
+
+        bool FocusableUIelement.Focused { get => _focused; set => _focused = value; }
+        bool FocusableUIelement.GreyedOut => false;
+
+        bool FocusableUIelement.CurrentlyFocusableMouse => true;
+
+        bool FocusableUIelement.CurrentlyFocusableNonMouse => true;
+
+        private bool _focused;
 
         public int index
         {
@@ -72,12 +80,12 @@ namespace CompletelyOptional
 
         private TabMode mode;
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            base.Update(dt);
+            base.Update();
             foreach (UIelement element in this.subElements)
             {
-                element.Update(dt);
+                element.Update();
                 if (element is Selector selector && selector.active)
                 {
                     ConfigMenu.instance.modCanvasBound.colorEdge = selector.colorCanvas;
@@ -173,7 +181,7 @@ namespace CompletelyOptional
             { element.Show(); }
         }
 
-        public override void Unload()
+        protected internal override void Unload()
         {
             base.Unload();
             switch (this.mode)

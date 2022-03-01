@@ -101,10 +101,10 @@ namespace OptionalUI
         public bool greyedOut;
 
         /// <summary>
-        /// Either this is <see cref="greyedOut"/> or <see cref="UIelement.isHidden"/>.
+        /// Either this is <see cref="greyedOut"/> or <see cref="UIelement.isInactive"/>.
         /// Prevents its interaction in <see cref="Update(float)"/>.
         /// </summary>
-        protected internal bool disabled => greyedOut || isHidden;
+        protected internal bool disabled => greyedOut || isInactive;
 
         /// <summary>
         /// If you want to change value directly without running <see cref="OnChange"/>.

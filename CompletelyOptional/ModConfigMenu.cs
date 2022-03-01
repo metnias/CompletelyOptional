@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using BepInEx;
 using Menu;
 using Music;
 using OptionalUI;
@@ -67,10 +68,100 @@ namespace CompletelyOptional
             };
             this.pages[0].Container.AddChild(this.darkSprite);
 
+            // Load OptionInterfaces
+            if (!_loadedOIs) { LoadOIs(); }
+
             // UIContainer
             mContainer = new MenuContainer(this, this.pages[0]);
             this.pages[0].subObjects.Add(mContainer);
         }
+
+        /// <summary>
+        /// Blacklisted mod from config menu.
+        /// </summary>
+        internal static string[] blackList = new string[]
+        {
+            "CompletelyOptional",
+            "ConfigMachine",
+            //"RustyMachine",
+            "PolishedMachine",
+            //"Enum Extender",
+            "ComMod",
+            "CommunicationModule",
+            "BepInEx-Partiality-Wrapper",
+            "BepInEx.Partiality.Wrapper",
+            "PartialityWrapper",
+            "Partiality Wrapper",
+            "LogFix",
+            "Log Fix"
+        };
+
+        private void LoadOIs()
+        {
+            loadedInterfaces = new List<OptionInterface>();
+            loadedInterfaceDict = new Dictionary<string, OptionInterface>();
+
+            // Load Plugins
+            BaseUnityPlugin[] plugins = UnityEngine.Object.FindObjectsOfType<BaseUnityPlugin>();
+            foreach (BaseUnityPlugin plugin in plugins)
+            {
+                OptionInterface oi;
+
+                // Load OI
+                try
+                {
+                    var method = plugin.GetType().GetMethod("LoadOI");
+                    if (method == null || method.GetParameters().Length > 0 || method.ContainsGenericParameters)
+                    {
+                        // Mod didn't attempt to interface with CompletelyOptional, don't bother logging it.
+                        oi = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+                    }
+                    else if (method.Invoke(plugin, null) is OptionInterface itf)
+                    {
+                        oi = itf;
+                        //Your code
+                        ComOptPlugin.LogInfo($"Loaded OptionInterface from {oi.rwMod.ModID} (type: {oi.GetType()})");
+                    }
+                    else
+                    {
+                        oi = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+                        ComOptPlugin.LogInfo($"{oi.rwMod.ModID} did not return an OptionInterface in LoadOI.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    oi = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+
+                    if (blackList.Contains(oi.rwMod.ModID) || oi.rwMod.ModID.Substring(0, 1) == "_")
+                    { continue; }
+
+                    ComOptPlugin.LogWarning($"{oi.rwMod.ModID} threw an exception in LoadOI: {ex.Message}");
+                }
+
+                if (oi is UnconfiguableOI && plugin.Config.Keys.Count > 0)
+                {
+                    // Use BepInEx Configuration
+                    oi = new GeneratedOI(oi.rwMod, plugin.Config);
+                }
+
+                loadedInterfaces.Add(oi);
+                loadedInterfaceDict.Add(oi.rwMod.ModID, oi);
+            }
+            _loadedOIs = true;
+        }
+
+        private static bool _loadedOIs = false;
+
+        /// <summary>
+        /// List of OptionInterface Instances
+        /// </summary>
+        internal static List<OptionInterface> loadedInterfaces;
+
+        /// <summary>
+        /// Loaded OptionInterface Instances.
+        /// Key: ModID, Value: OI Instance
+        /// </summary>
+        internal static Dictionary<string, OptionInterface> loadedInterfaceDict;
 
         public static ModConfigMenu instance;
 
@@ -92,6 +183,11 @@ namespace CompletelyOptional
         public override void ShutDownProcess()
         {
             base.ShutDownProcess();
+        }
+
+        public override void Singal(MenuObject sender, string message)
+        {
+            base.Singal(sender, message);
         }
 
         #region Aesthetics

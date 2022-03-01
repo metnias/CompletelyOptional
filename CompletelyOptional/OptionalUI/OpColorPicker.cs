@@ -649,7 +649,7 @@ namespace OptionalUI
         public override void Update(float dt)
         {
             base.Update(dt);
-            if (isHidden) { return; }
+            if (isInactive) { return; }
             this.cdis1.isVisible = false;
             this.cdis1.color = this.cdis0.color;
 

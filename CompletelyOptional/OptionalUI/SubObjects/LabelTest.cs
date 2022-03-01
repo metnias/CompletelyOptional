@@ -14,24 +14,14 @@ namespace OptionalUI
         private static MenuLabel tester;
         private static MenuLabel testerB;
 
-        /// <summary>
-        /// Initializes this class; Do NOT call this on your own
-        /// </summary>
         internal static void Initialize(Menu.Menu menu)
         {
+            if (tester != null) { tester.RemoveSprites(); tester = null; }
+            if (testerB != null) { testerB.RemoveSprites(); testerB = null; }
             tester = new MenuLabel(menu, menu.pages[0], "", new Vector2(10000f, 10000f), new Vector2(10000f, 100f), false);
             tester.label.alpha = 0f; tester.label.RemoveFromContainer();
             testerB = new MenuLabel(menu, menu.pages[0], "", new Vector2(10000f, 10500f), new Vector2(10000f, 300f), true);
             testerB.label.alpha = 0f; testerB.label.RemoveFromContainer();
-
-            if (OptionScript.ComModExists)
-            {
-                float s = 1f / (int)OptionScript.ComMod.GetType().GetField("pMulti", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(OptionScript.ComMod);
-                tester.label.scale = s;
-                s = 1f / (int)OptionScript.ComMod.GetType().GetField("pdMulti", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static).GetValue(OptionScript.ComMod);
-                testerB.label.scale = s;
-                //Debug.Log($"ComMod detected: s:{s}, sd:{sd}");
-            }
 
             if (!hasChecked)
             {
@@ -49,7 +39,7 @@ namespace OptionalUI
                 _charLimB = Mathf.FloorToInt(60000f / (_lineHeightB * _charMeanB));
                 _font = (string)typeof(FLabel).GetField("_fontName", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(tester.label);
                 _fontB = (string)typeof(FLabel).GetField("_fontName", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(testerB.label);
-                Debug.Log($"CompletelyOptional) Label th: {_textHeight:0.0} thB: {_textHeightB:0.00} / lh: {_lineHeight:0.0} lhB: {_lineHeightB:0.0} / cm: {_charMean:0.0} cmB: {_charMeanB:0.0} / cl: {_charLim} clB: {_charLimB}");
+                CompletelyOptional.ComOptPlugin.LogInfo($"Label th: {_textHeight:0.0} thB: {_textHeightB:0.00} / lh: {_lineHeight:0.0} lhB: {_lineHeightB:0.0} / cm: {_charMean:0.0} cmB: {_charMeanB:0.0} / cl: {_charLim} clB: {_charLimB}");
             }
         }
 
@@ -123,6 +113,31 @@ namespace OptionalUI
             foreach (var item in font.GetQuadInfoForText(text, new FTextParams()))
             { width = Mathf.Max(width, item.bounds.width); }
             return width;
+        }
+
+        /// <summary>
+        /// Trim Text to width
+        /// </summary>
+        /// <param name="text">Text you want to trim</param>
+        /// <param name="width">Wanted width</param>
+        /// <param name="bigText">Whether the font is big variant or not</param>
+        /// <returns></returns>
+        public static string TrimText(string text, float width, bool bigText = false)
+        {
+            float curWidth = GetWidth(text, bigText);
+            if (curWidth < width) { return text; }
+            bool forwards = curWidth > width * 2f;
+            if (curWidth > width * 2f)
+            {
+                for (int i = 0; i < text.Length; i++)
+                { if (GetWidth(text.Substring(0, i), bigText) < width) { return text.Substring(0, i); } }
+            }
+            else
+            {
+                for (int i = text.Length - 1; i > 0; i--)
+                { if (GetWidth(text.Substring(0, i), bigText) < width) { return text.Substring(0, i); } }
+            }
+            return text.Substring(0, 1);
         }
 
         /// <summary>

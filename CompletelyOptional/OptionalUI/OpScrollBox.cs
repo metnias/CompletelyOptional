@@ -552,7 +552,7 @@ namespace OptionalUI
         public override void GrafUpdate(float dt)
         {
             base.GrafUpdate(dt);
-            if (this.isHidden) { return; }
+            if (this.isInactive) { return; }
             this.bumpBehav.Update(dt);
 
             float sin = 1f;
@@ -648,7 +648,7 @@ namespace OptionalUI
 
         private void UpdateCam()
         {
-            if (this.isHidden) { return; }
+            if (this.isInactive) { return; }
             _cam.aspect = size.x / size.y;
             _cam.orthographic = true;
             _cam.orthographicSize = size.y / 2f;

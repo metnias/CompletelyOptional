@@ -20,6 +20,8 @@ namespace CompletelyOptional
             _soundFill = 0;
             focusedElement = null;
             lastFocusedElement = null;
+
+            focusedElement = menuTab.backButton;
         }
 
         internal MenuTab menuTab;
@@ -168,7 +170,11 @@ namespace CompletelyOptional
         private UIelement focusedElement;
         private UIelement lastFocusedElement;
 
-        private void FocusNewElement(IntVector2 direction)
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="direction"></param>
+        public void FocusNewElement(IntVector2 direction)
         {
             UIelement element = this.FocusCandidate(direction);
             if (element != null && element != this.focusedElement)

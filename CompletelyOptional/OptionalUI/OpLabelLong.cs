@@ -112,7 +112,7 @@ namespace OptionalUI
         public override void GrafUpdate(float dt)
         {
             base.GrafUpdate(dt);
-            if (!_init || isHidden) { return; }
+            if (!_init || isInactive) { return; }
             Color c;
             if (this.bumpBehav == null) { c = this.color; }
             else { c = this.bumpBehav.GetColor(this.color); }

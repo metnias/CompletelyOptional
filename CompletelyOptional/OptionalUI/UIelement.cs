@@ -65,6 +65,24 @@ namespace OptionalUI
         }
 
         /// <summary>
+        /// Hide this element. Called manually by Modders
+        /// </summary>
+        public virtual void Hide()
+        {
+            this.hidden = true;
+            this.Deactivate();
+        }
+
+        /// <summary>
+        /// Show this element.  Called manually by Modders
+        /// </summary>
+        public virtual void Show()
+        {
+            this.hidden = false;
+            this.Activate();
+        }
+
+        /// <summary>
         /// For setting LeftBottom Position of this element from LeftBottom of <see cref="OpTab"/> or <see cref="OpScrollBox"/>.
         /// <para>For grabbing position without offset, use <see cref="GetPos"/>.</para>
         /// </summary>
@@ -162,6 +180,33 @@ namespace OptionalUI
 
         #region Deep
 
+        /// <summary>
+        /// Called whenever this UIelement needs graphical change.
+        /// RePosition and ReSize subObjects.
+        /// </summary>
+        public virtual void OnChange()
+        {
+            this.myContainer.SetPosition(this.ScreenPos);
+        }
+
+        /// <summary>
+        /// Update method that happens every frame.
+        /// </summary>
+        public virtual void Update()
+        {
+            showDesc = !isInactive && this.MouseOver && !string.IsNullOrEmpty(this.description);
+            // if (showDesc && !(this is UIconfig) && !(this is UItrigger))
+            // { ConfigMenu.description = this.description; }
+        }
+
+        /// <summary>
+        /// Update for graphical detail.
+        /// </summary>
+        /// <param name="timeStacker">timeStacker</param>
+        public virtual void GrafUpdate(float timeStacker)
+        {
+        }
+
         protected internal Vector2 _pos;
         protected internal Vector2 _size;
         protected internal float _rad;
@@ -232,6 +277,16 @@ namespace OptionalUI
                 return p;
             }
         }
+
+        /// <summary>
+        /// Which <see cref="OpScrollBox"/> this element is in. See also <seealso cref="inScrollBox"/>
+        /// </summary>
+        protected internal OpScrollBox scrollBox { get; private set; }
+
+        /// <summary>
+        /// Whether this is inside <see cref="OpScrollBox"/>. See also <seealso cref="scrollBox"/>
+        /// </summary>
+        protected internal bool inScrollBox { get; private set; }
 
         /// <summary>
         /// Called when exiting ConfigMenu.
@@ -311,17 +366,9 @@ namespace OptionalUI
             return this.ScreenPos + (this.rad / 2f * Vector2.one);
         }
 
+        protected internal bool showDesc;
+
         #endregion Internal
-
-        /// <summary>
-        /// Which <see cref="OpScrollBox"/> this element is in. See also <seealso cref="inScrollBox"/>
-        /// </summary>
-        protected internal OpScrollBox scrollBox { get; private set; }
-
-        /// <summary>
-        /// Whether this is inside <see cref="OpScrollBox"/>. See also <seealso cref="scrollBox"/>
-        /// </summary>
-        protected internal bool inScrollBox { get; private set; }
 
         /// <summary>
         /// Whether the element is Rectangular(true) or Circular(false)
@@ -331,60 +378,23 @@ namespace OptionalUI
         /// <summary>
         /// Whether this is Hidden manually by Modder.
         /// Use <see cref="Hide"/> and <see cref="Show"/> to manipulate this.
-        /// <para>To check whether this is actually hidden/invisible, use <see cref="isHidden"/></para>
+        /// <para>To check whether this is actually inactive/invisible, use <see cref="isInactive"/></para>
         /// </summary>
         public bool hidden { get; private set; }
 
         /// <summary>
         /// Whether this is actually Hidden. See also <seealso cref="hidden"/>
         /// </summary>
-        public bool isHidden => hidden || this.tab?.isHidden == true || this.scrollBox?.isHidden == true;
+        public bool isInactive => hidden || this.tab?.isInactive == true || this.scrollBox?.isInactive == true;
 
-        /// <summary>
-        /// Called whenever this UIelement needs graphical change.
-        /// RePosition and ReSize subObjects.
-        /// </summary>
-        public virtual void OnChange()
-        {
-            this.myContainer.SetPosition(this.ScreenPos);
-        }
-
-        /// <summary>
-        /// Update method that happens every frame.
-        /// </summary>
-        public virtual void Update()
-        {
-            showDesc = !isHidden && this.MouseOver && !string.IsNullOrEmpty(this.description);
-            // if (showDesc && !(this is UIconfig) && !(this is UItrigger))
-            // { ConfigMenu.description = this.description; }
-        }
-
-        protected internal bool showDesc;
-
-        /// <summary>
-        /// Update for graphical detail.
-        /// </summary>
-        /// <param name="timeStacker">timeStacker</param>
-        public virtual void GrafUpdate(float timeStacker)
-        {
-        }
-
-        /// <summary>
-        /// Hide this element
-        /// </summary>
-        public virtual void Hide()
+        internal void Deactivate()
         {
             this.myContainer.isVisible = false;
-            if (!this.tab.isHidden) { this.hidden = true; }
         }
 
-        /// <summary>
-        /// Show this element
-        /// </summary>
-        public virtual void Show()
+        internal void Activate()
         {
-            this.myContainer.isVisible = true;
-            this.hidden = false;
+            if (!this.hidden) { this.myContainer.isVisible = true; }
         }
     }
 }

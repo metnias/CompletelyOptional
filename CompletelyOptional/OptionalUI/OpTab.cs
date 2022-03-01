@@ -15,7 +15,7 @@ namespace OptionalUI
         {
             this.items = new List<UIelement>();
             this.focusables = new List<UIelement>();
-            this.isHidden = true;
+            this.isInactive = true;
             this.name = name;
             this.colorButton = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorCanvas = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
@@ -33,9 +33,15 @@ namespace OptionalUI
         /// </summary>
         public Color colorCanvas;
 
+        /// <summary>
+        /// Name displayed on tab button and description
+        /// </summary>
         public readonly string name;
 
-        public bool isHidden { get; internal set; }
+        /// <summary>
+        /// Whether this tab is inactive or active
+        /// </summary>
+        public bool isInactive { get; internal set; }
 
         internal void GrafUpdate(float timeStacker)
         {
@@ -76,13 +82,6 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Obsolete! Use RemoveItems instead.
-        /// </summary>
-        [Obsolete]
-        public void RemoveItem(UIelement item)
-        { _RemoveItem(item); }
-
-        /// <summary>
         /// Remove <see cref="UIelement"/>  in this Tab.
         /// This will also remove them from <see cref="OpScrollBox"/> if <see cref="UIelement.inScrollBox"/>.
         /// See also <seealso cref="RemoveItemsFromTab(UIelement[])"/>
@@ -90,15 +89,6 @@ namespace OptionalUI
         public void RemoveItems(params UIelement[] items)
         {
             foreach (UIelement item in items) { this._RemoveItem(item); }
-        }
-
-        /// <summary>
-        /// Remove <see cref="UIelement"/> from its Tab.
-        /// This will also remove them from <see cref="OpScrollBox"/> if <see cref="UIelement.inScrollBox"/>.
-        /// </summary>
-        public static void RemoveItemsFromTab(params UIelement[] items)
-        {
-            foreach (UIelement item in items) { item.tab._RemoveItem(item); }
         }
 
         private void _RemoveItem(UIelement item)
@@ -137,6 +127,15 @@ namespace OptionalUI
         }
 
         /// <summary>
+        /// Remove <see cref="UIelement"/> from its Tab.
+        /// This will also remove them from <see cref="OpScrollBox"/> if <see cref="UIelement.inScrollBox"/>.
+        /// </summary>
+        public static void RemoveItemsFromTab(params UIelement[] items)
+        {
+            foreach (UIelement item in items) { item.tab._RemoveItem(item); }
+        }
+
+        /// <summary>
         /// Set <see cref="UIconfig.greyedOut"/> and <see cref="UItrigger.greyedOut"/> in bulk.
         /// This will ignore if the item is neither of those
         /// </summary>
@@ -152,24 +151,20 @@ namespace OptionalUI
 
         #endregion ItemManager
 
-        /// <summary>
-        /// Hide this tab. Automatically called.
-        /// </summary>
-        internal void Hide()
+        #region Internal
+
+        internal void Deactivate()
         {
-            this.isHidden = true;
+            this.isInactive = true;
             foreach (UIelement element in this.items)
-            { element.Hide(); }
+            { element.Deactivate(); }
         }
 
-        /// <summary>
-        /// Show this tab. Automatically called.
-        /// </summary>
-        internal void Show()
+        internal void Activate()
         {
-            this.isHidden = false;
+            this.isInactive = false;
             foreach (UIelement element in this.items)
-            { if (!element.hidden) { element.Show(); } }
+            { element.Activate(); }
         }
 
         /// <summary>
@@ -195,9 +190,6 @@ namespace OptionalUI
             return config;
         }
 
-        /// <summary>
-        /// Called by Config Machine.
-        /// </summary>
         internal Dictionary<string, UIconfig> GetTabObject()
         {
             Dictionary<string, UIconfig> config = new Dictionary<string, UIconfig>();
@@ -223,5 +215,7 @@ namespace OptionalUI
             foreach (UIelement item in this.items)
             { item.Unload(); }
         }
+
+        #endregion Internal
     }
 }
