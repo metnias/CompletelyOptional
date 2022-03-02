@@ -48,8 +48,12 @@ namespace OptionalUI
             this._alignment = alignment;
             if (!this.IsLong)
             {
-                this.label = new FLabel(LabelTest.GetFont(this._bigText), _text);
-                this.label.color = this.color;
+                this.label = new FLabel(LabelTest.GetFont(this._bigText, this.isVFont), _text)
+                {
+                    alignment = this._alignment,
+                    color = this.color,
+                    y = -10000f
+                };
                 this.myContainer.AddChild(this.label);
                 OnChange();
             }
@@ -68,8 +72,7 @@ namespace OptionalUI
         {
             this._text = text.Length < LabelTest.CharLimit(_bigText) / 3 ? text : text.Substring(0, LabelTest.CharLimit(_bigText) / 3);
             this._size = new Vector2((this._bigText ? 10f : 7f) * text.Length + 10f, this._bigText ? 30f : 20f);
-            if (!_init) { return; }
-            this.label.size = this._size;
+
             this.label.text = this._text;
             OnChange();
         }
@@ -103,8 +106,8 @@ namespace OptionalUI
         /// </summary>
         public LabelVAlignment verticalAlignment
         {
-            get { return _verticalAlignment; }
-            set { if (_verticalAlignment != value) { _verticalAlignment = value; if (_init) { OnChange(); } } }
+            get => _verticalAlignment;
+            set { if (_verticalAlignment != value) { _verticalAlignment = value; OnChange(); } }
         }
 
         private LabelVAlignment _verticalAlignment;
@@ -126,18 +129,8 @@ namespace OptionalUI
         //private int lineLength;
         public FLabelAlignment alignment
         {
-            get
-            {
-                return _alignment;
-            }
-            set
-            {
-                if (_alignment != value)
-                {
-                    _alignment = value;
-                    OnChange();
-                }
-            }
+            get => _alignment;
+            set { if (_alignment != value) { _alignment = value; OnChange(); } }
         }
 
         protected internal FLabelAlignment _alignment;
@@ -159,21 +152,56 @@ namespace OptionalUI
 
         protected readonly bool isVFont;
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
-            if (!_init || isInactive) { return; }
-            if (this.bumpBehav?.owner == this) { this.bumpBehav.Update(dt); }
+            base.GrafUpdate(timeStacker);
+
+            switch (this._alignment)
+            {
+                default:
+                case FLabelAlignment.Center:
+                    this.label.alignment = FLabelAlignment.Center;
+                    this.label.x = this.DrawPos(timeStacker).x + this.size.x / 2f;
+                    break;
+
+                case FLabelAlignment.Left:
+                    this.label.alignment = FLabelAlignment.Left;
+                    this.label.x = this.DrawPos(timeStacker).x;
+                    break;
+
+                case FLabelAlignment.Right:
+                    this.label.alignment = FLabelAlignment.Right;
+                    this.label.x = this.DrawPos(timeStacker).x + this.size.x;
+                    break;
+            }
+
+            float lh = LabelTest.LineHeight(_bigText, isVFont) * GetLineCount();
+            switch (this._verticalAlignment)
+            { // Needs testing
+                default:
+                case LabelVAlignment.Center:
+                    this.label.y = this.DrawPos(timeStacker).y + this.size.y / 2f;
+                    break;
+
+                case LabelVAlignment.Top:
+                    this.label.y = this.DrawPos(timeStacker).y + this.size.y - lh;
+                    break;
+
+                case LabelVAlignment.Bottom:
+                    this.label.y = this.DrawPos(timeStacker).y + lh / 2f;
+                    break;
+            }
+
+            if (this.bumpBehav?.owner == this) { this.bumpBehav.Update(timeStacker); }
             if (this.IsLong) { return; }
-            if (this.bumpBehav == null) { this.label.label.color = this.color; }
-            else { this.label.label.color = this.bumpBehav.GetColor(this.color); }
+            if (this.bumpBehav == null) { this.label.color = this.color; }
+            else { this.label.color = this.bumpBehav.GetColor(this.color); }
         }
 
         public override void OnChange()
         {
-            this._size = new Vector2(Mathf.Max(this._size.x, 20f), Mathf.Max(this._size.y, 20f));
+            this._size = new Vector2(Mathf.Max(this._size.x, 20f), Mathf.Max(this._size.y, 20f)); // Minimum size
             base.OnChange();
-            if (!_init) { return; }
 
             if (string.IsNullOrEmpty(this._text)) { this._displayText = ""; goto displaySkip; }
             if (!this.autoWrap)
@@ -210,43 +238,6 @@ namespace OptionalUI
                 if (sp > 0) { _displayText = _displayText.Substring(0, sp); }
             }
             this.label.text = this._displayText;
-            this.label.size = this.size;
-            switch (this._alignment)
-            {
-                default:
-                case FLabelAlignment.Center:
-                    this.label.label.alignment = FLabelAlignment.Center;
-                    this.label.pos = this.pos;
-                    break;
-
-                case FLabelAlignment.Left:
-                    this.label.label.alignment = FLabelAlignment.Left;
-                    this.label.pos = this.pos - new Vector2(this.size.x * 0.5f, 0f);
-                    break;
-
-                case FLabelAlignment.Right:
-                    this.label.label.alignment = FLabelAlignment.Right;
-                    this.label.pos = this.pos + new Vector2(this.size.x * 0.5f, 0f);
-                    break;
-            }
-
-            float lh = LabelTest.LineHeight(_bigText, isVFont) * GetLineCount();
-            switch (this._verticalAlignment)
-            {
-                default:
-                case LabelVAlignment.Center:
-                    break;
-
-                case LabelVAlignment.Top:
-                    this.label.size.y = lh;
-                    this.label.pos.y = this.pos.y + this.size.y - lh;
-                    break;
-
-                case LabelVAlignment.Bottom:
-                    this.label.size.y = lh;
-                    this.label.pos.y = this.pos.y + lh;
-                    break;
-            }
         }
 
         /// <summary>
@@ -255,37 +246,13 @@ namespace OptionalUI
         /// </summary>
         public string text
         {
-            get { return _text; }
-            set
-            {
-                if (_text != value)
-                {
-                    _text = value;
-                    OnChange();
-                }
-            }
+            get => _text;
+            set { if (_text != value) { _text = value; OnChange(); } }
         }
 
         protected internal string _text;
         protected internal string _displayText;
 
         public int GetLineCount() => _displayText.Split('\n').Length;
-
-        public override void Hide()
-        {
-            base.Hide();
-            if (!this.IsLong) { this.label.label.isVisible = false; }
-        }
-
-        public override void Show()
-        {
-            base.Show();
-            if (!this.IsLong) { this.label.label.isVisible = true; }
-        }
-
-        public override void Unload()
-        {
-            base.Unload();
-        }
     }
 }

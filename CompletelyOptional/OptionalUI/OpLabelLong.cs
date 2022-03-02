@@ -15,12 +15,13 @@ namespace OptionalUI
         /// <param name="text">Text you want to display</param>
         /// <param name="autoWrap">Whether you want to wrap text automatically.</param>
         /// <param name="alignment">Alignment. Left/Center/Right. Left is default.</param>
-        public OpLabelLong(Vector2 pos, Vector2 size, string text = "TEXT", bool autoWrap = true, FLabelAlignment alignment = FLabelAlignment.Left) : base(pos, size, text, alignment, false)
+        public OpLabelLong(Vector2 pos, Vector2 size, string text = "TEXT", bool autoWrap = true, FLabelAlignment alignment = FLabelAlignment.Left)
+            : base(pos, size, text, alignment, false)
         {
             this.autoWrap = autoWrap;
-            this.labels = new List<MenuLabel>();
+            this.labels = new List<FLabel>();
             this.allowOverflow = true;
-            if (!_init) { return; }
+            lineHeight = LabelTest.LineHeight(false, isVFont);
             OnChange();
         }
 
@@ -30,15 +31,13 @@ namespace OptionalUI
         public bool allowOverflow;
 
         /// <summary>
-        /// The List of <see cref="MenuLabel"/> for this
+        /// The List of <see cref="FLabel"/> for this
         /// </summary>
-        public List<MenuLabel> labels;
+        public List<FLabel> labels;
 
         public override void OnChange()
         {
-            if (this.labels == null || !_init) { return; }
             base.OnChange();
-            float lineHeight = LabelTest.LineHeight(false, isVFont);
             string[] lines = this._displayText.Replace(Environment.NewLine, "\n").Split(new char[] { '\n' });
             List<string> splits = new List<string>() { string.Empty };
             int num = 0, lblTxt = 0, lineMax = this.allowOverflow ? int.MaxValue : Mathf.FloorToInt(this.size.y / lineHeight);
@@ -57,78 +56,84 @@ namespace OptionalUI
             }
             while (this.labels.Count < splits.Count)
             {
-                MenuLabel nl = new MenuLabel(this.menu, this.owner, isVFont ? "A" : "", this.pos, this.size, false)
-                { text = "" };
+                FLabel nl = new FLabel(LabelTest.GetFont(this._bigText, this.isVFont), "")
+                {
+                    text = "",
+                    alignment = this._alignment,
+                    color = this.color,
+                    y = -10000f
+                };
                 this.labels.Add(nl);
-                this.subObjects.Add(nl);
+                this.myContainer.AddChild(nl);
             }
-            num = 0; // linebreak sum
-            float lh = lineHeight * GetLineCount();
             for (int b = 0; b < labels.Count; b++)
             {
                 if (splits.Count <= b) { this.labels[b].text = string.Empty; continue; }
-                int ln = 0; string[] s = splits[b].Split('\n');
+                this.labels[b].text = splits[b];
+            }
+        }
+
+        private float lineHeight; // lineHeight of current font
+
+        public override void GrafUpdate(float timeStacker)
+        {
+            base.GrafUpdate(timeStacker);
+
+            #region Aligning
+
+            int lsum = 0; // linebreak sum
+            float lh = lineHeight * GetLineCount();
+            for (int b = 0; b < labels.Count; b++)
+            {
+                int ln = 0; string[] s = this.labels[b].text.Split('\n');
                 for (int i = 0; i < s.Length; i++) { if (!string.IsNullOrEmpty(s[i])) { ln++; } }
                 switch (this._alignment)
                 {
                     default:
                     case FLabelAlignment.Center:
-                        this.labels[b].label.alignment = FLabelAlignment.Center;
-                        this.labels[b].pos.x = this.pos.x;
+                        this.labels[b].alignment = FLabelAlignment.Center;
+                        this.labels[b].x = this.DrawPos(timeStacker).x + this.size.x / 2f;
                         break;
 
                     case FLabelAlignment.Left:
-                        this.labels[b].label.alignment = FLabelAlignment.Left;
-                        this.labels[b].pos.x = this.pos.x - this.size.x * 0.5f;
+                        this.labels[b].alignment = FLabelAlignment.Left;
+                        this.labels[b].x = this.DrawPos(timeStacker).x;
                         break;
 
                     case FLabelAlignment.Right:
-                        this.labels[b].label.alignment = FLabelAlignment.Right;
-                        this.labels[b].pos.x = this.pos.x + this.size.x * 0.5f;
+                        this.labels[b].alignment = FLabelAlignment.Right;
+                        this.labels[b].x = this.DrawPos(timeStacker).x + this.size.x;
                         break;
                 }
-                this.labels[b].size.x = this._size.x;
-                this.labels[b].size.y = ln * lineHeight;
-                num += ln;
+                float sizeY = ln * lineHeight;
+                lsum += ln;
                 switch (this.verticalAlignment)
-                {
+                { // Needs testing
                     default:
                     case LabelVAlignment.Top:
-                        this.labels[b].pos.y = this.pos.y + this.size.y - num * lineHeight;
+                        this.labels[b].y = this.DrawPos(timeStacker).y + this.size.y / 2f + sizeY - lsum * lineHeight;
                         break;
 
                     case LabelVAlignment.Bottom:
-                        this.labels[b].pos.y = this.pos.y + lh - num * lineHeight;
+                        this.labels[b].y = this.DrawPos(timeStacker).y + this.size.y / 2f + lh - lsum * lineHeight;
                         break;
 
                     case LabelVAlignment.Center:
-                        this.labels[b].pos.y = this.pos.y + (this.size.y + lh) / 2f - num * lineHeight;
+                        this.labels[b].y = this.DrawPos(timeStacker).y + this.size.y / 2f + (sizeY + lh) / 2f - lsum * lineHeight;
                         break;
                 }
-                this.labels[b].text = splits[b];
             }
-        }
 
-        public override void GrafUpdate(float dt)
-        {
-            base.GrafUpdate(dt);
-            if (!_init || isInactive) { return; }
+            #endregion Aligning
+
+            #region Colouring
+
             Color c;
             if (this.bumpBehav == null) { c = this.color; }
             else { c = this.bumpBehav.GetColor(this.color); }
-            foreach (MenuLabel l in labels) { l.label.color = c; }
-        }
+            foreach (FLabel l in labels) { l.color = c; }
 
-        public override void Hide()
-        {
-            base.Hide();
-            foreach (MenuLabel l in labels) { l.label.isVisible = false; }
-        }
-
-        public override void Show()
-        {
-            base.Show();
-            foreach (MenuLabel l in labels) { l.label.isVisible = true; }
+            #endregion Colouring
         }
     }
 }

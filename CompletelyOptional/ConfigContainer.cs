@@ -95,7 +95,7 @@ namespace OptionalUI
                             this.focusedElement = list[j];
                             if (this.focusedElement != lastFocus)
                             {
-                                this.PlaySound((this.focusedElement as FocusableUIelement).GreyedOut
+                                PlaySound((this.focusedElement as FocusableUIelement).GreyedOut
                                     ? SoundID.MENU_Greyed_Out_Button_Select_Mouse : SoundID.MENU_Button_Select_Mouse);
                             }
                             break;

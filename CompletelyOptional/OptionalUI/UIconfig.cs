@@ -83,7 +83,7 @@ namespace OptionalUI
                 if (_held != value)
                 {
                     _held = value;
-                    ConfigMenu.freezeMenu = value;
+                    ConfigContainer.freezeMenu = value;
                 }
             }
         }
@@ -181,22 +181,21 @@ namespace OptionalUI
         /// <summary>
         /// Separates Graphical update for code-visiblilty.
         /// </summary>
-        /// <param name="dt">deltaTime</param>
-        public override void GrafUpdate(float dt)
+        /// <param name="timeStacker">timeStacker</param>
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
+            base.GrafUpdate(timeStacker);
+            this.bumpBehav.Update(timeStacker);
         }
 
         /// <summary>
         /// Update method that happens every frame.
         /// </summary>
         /// <param name="dt">deltaTime</param>
-        public override void Update(float dt)
+        public override void Update()
         {
-            if (!_init) { return; }
-            base.Update(dt);
-            this.bumpBehav.Update(dt);
-            if (this.held && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(dt); }
+            base.Update();
+            if (held && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(); }
             if (showDesc && !this.greyedOut) { ConfigMenu.description = this.description; }
         }
 

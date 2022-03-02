@@ -194,6 +194,7 @@ namespace OptionalUI
         /// </summary>
         public virtual void Update()
         {
+            this.ScreenLastPos = ScreenPos;
             showDesc = !isInactive && this.MouseOver && !string.IsNullOrEmpty(this.description);
             // if (showDesc && !(this is UIconfig) && !(this is UItrigger))
             // { ConfigMenu.description = this.description; }
@@ -206,6 +207,8 @@ namespace OptionalUI
         public virtual void GrafUpdate(float timeStacker)
         {
         }
+
+        protected internal Vector2 DrawPos(float timeStacker) => Vector2.Lerp(this.ScreenLastPos, this.ScreenPos, timeStacker);
 
         protected internal Vector2 _pos;
         protected internal Vector2 _size;
@@ -306,6 +309,8 @@ namespace OptionalUI
             }
         }
 
+        protected internal Vector2 ScreenLastPos;
+
         /// <summary>
         /// Frame multiplier for Many More Fixes' framerate unlock feature. See also <see cref="FrameMultiply(int)"/>
         /// </summary>
@@ -376,22 +381,28 @@ namespace OptionalUI
         public readonly bool isRectangular;
 
         /// <summary>
-        /// Whether this is Hidden manually by Modder.
+        /// Whether the Modder has hide/inactivate this manually.
         /// Use <see cref="Hide"/> and <see cref="Show"/> to manipulate this.
         /// <para>To check whether this is actually inactive/invisible, use <see cref="isInactive"/></para>
         /// </summary>
         public bool hidden { get; private set; }
 
         /// <summary>
-        /// Whether this is actually Hidden. See also <seealso cref="hidden"/>
+        /// Whether this is actually not Active/is hidden. See also <seealso cref="hidden"/>
         /// </summary>
         public bool isInactive => hidden || this.tab?.isInactive == true || this.scrollBox?.isInactive == true;
 
+        /// <summary>
+        /// Actually deactivate/hide this UIelement.
+        /// </summary>
         protected internal virtual void Deactivate()
         {
             this.myContainer.isVisible = false;
         }
 
+        /// <summary>
+        /// Actually reactivate/unhide this UIelement.
+        /// </summary>
         protected internal virtual void Reactivate()
         {
             if (!this.hidden) { this.myContainer.isVisible = true; }

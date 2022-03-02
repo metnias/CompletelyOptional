@@ -11,7 +11,7 @@ namespace CompletelyOptional
     /// </summary>
     internal class ListTab : OpTab
     {
-        internal ListTab() : base()
+        internal ListTab() : base(null)
         {
         }
     }
