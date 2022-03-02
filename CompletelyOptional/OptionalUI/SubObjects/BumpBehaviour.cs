@@ -32,7 +32,7 @@ namespace OptionalUI
             get
             {
                 if (_greyedOut.HasValue) { return _greyedOut.Value; }
-                if (owner is FocusableUIelement fc) { return fc.GreyedOut; }
+                if (owner is ICanBeFocused fc) { return fc.GreyedOut; }
                 return false;
             }
             set { _greyedOut = value; }

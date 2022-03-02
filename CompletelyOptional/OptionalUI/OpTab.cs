@@ -66,7 +66,7 @@ namespace OptionalUI
             if (this.items.Contains(element)) { return; }
             if (element.tab != null && element.tab != this) { RemoveItemsFromTab(element); }
             this.items.Add(element);
-            if (element is FocusableUIelement) { this.focusables.Add(element); }
+            if (element is ICanBeFocused) { this.focusables.Add(element); }
             element.SetTab(this);
         }
 

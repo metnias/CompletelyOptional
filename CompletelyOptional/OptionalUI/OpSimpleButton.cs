@@ -2,7 +2,7 @@
 
 namespace OptionalUI
 {
-    public class OpSimpleButton : UItrigger, FocusableUIelement
+    public class OpSimpleButton : UItrigger, ICanBeFocused
     {
         /// <summary>
         /// Simple Rectangular Botton
@@ -116,7 +116,7 @@ namespace OptionalUI
             }
             else
             {
-                if ((this as FocusableUIelement).Focused)
+                if ((this as ICanBeFocused).Focused)
                 {
                     if (this.held)
                     {

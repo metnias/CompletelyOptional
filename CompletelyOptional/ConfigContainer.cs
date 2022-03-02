@@ -87,12 +87,12 @@ namespace OptionalUI
                     List<UIelement> list = this.focusables;
                     for (int j = 0; j < list.Count; j++)
                     {
-                        if ((list[j] as FocusableUIelement).CurrentlyFocusableMouse && list[j].MouseOver)
+                        if ((list[j] as ICanBeFocused).CurrentlyFocusableMouse && list[j].MouseOver)
                         {
                             this.focusedElement = list[j];
                             if (this.focusedElement != lastFocus)
                             {
-                                PlaySound((this.focusedElement as FocusableUIelement).GreyedOut
+                                PlaySound((this.focusedElement as ICanBeFocused).GreyedOut
                                     ? SoundID.MENU_Greyed_Out_Button_Select_Mouse : SoundID.MENU_Button_Select_Mouse);
                             }
                             break;
@@ -157,7 +157,7 @@ namespace OptionalUI
                         }
                         if (moved)
                         {
-                            PlaySound((focusedElement as FocusableUIelement).GreyedOut
+                            PlaySound((focusedElement as ICanBeFocused).GreyedOut
                                 ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                         }
                     }
@@ -168,7 +168,7 @@ namespace OptionalUI
             }
             if (holdElement)
             {
-                if (this.focusedElement != null && !(this.focusedElement as FocusableUIelement).GreyedOut) { this.focusedElement.Update(); }
+                if (this.focusedElement != null && !(this.focusedElement as ICanBeFocused).GreyedOut) { this.focusedElement.Update(); }
                 else { holdElement = false; }
             }
             if (!holdElement)
@@ -178,21 +178,21 @@ namespace OptionalUI
             }
         }
 
-        private UIelement focusedElement;
+        public UIelement focusedElement { get; private set; }
         private UIelement lastFocusedElement;
 
         /// <summary>
         /// Change <see cref="focusedElement"/>
         /// </summary>
-        /// <param name="element"><see cref="FocusableUIelement"/> for new focus</param>
+        /// <param name="element"><see cref="ICanBeFocused"/> for new focus</param>
         public void FocusNewElement(UIelement element)
         {
-            if (!(element is FocusableUIelement))
-            { ComOptPlugin.LogWarning($"{element.GetType()} is not FocusableUIelement. FocusNewElement ignored."); return; }
+            if (!(element is ICanBeFocused))
+            { ComOptPlugin.LogWarning($"{element.GetType()} is not ICanBeFocused. FocusNewElement ignored."); return; }
             if (element != null && element != this.focusedElement)
             {
                 this.focusedElement = element;
-                PlaySound((this.focusedElement as FocusableUIelement).GreyedOut
+                PlaySound((this.focusedElement as ICanBeFocused).GreyedOut
                     ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                 // Always play Gamepad sound even in Mouse mode, as this is called by either Gamepad or Modder
             }
@@ -214,7 +214,7 @@ namespace OptionalUI
             { // current mod button
                 return this.activeTab.focusables[0];
             }
-            if (!(this.focusedElement is FocusableUIelement))
+            if (!(this.focusedElement is ICanBeFocused))
             {
                 return this.lastFocusedElement;
             }
@@ -224,9 +224,9 @@ namespace OptionalUI
             float likelihood = float.MaxValue;
             for (int i = 0; i < candidates.Count; i++)
             {
-                if (candidates[i] is FocusableUIelement
-                    && (candidates[i] as FocusableUIelement).CurrentlyFocusableNonMouse
-                    && (candidates[i] as FocusableUIelement) != this.focusedElement)
+                if (candidates[i] is ICanBeFocused
+                    && (candidates[i] as ICanBeFocused).CurrentlyFocusableNonMouse
+                    && (candidates[i] as ICanBeFocused) != this.focusedElement)
                 {
                     Vector2 cndCenter = candidates[i].CenterPos();
                     // if (direction.y == 0 || cndCenter.y < curCenter.y != direction.y < 0)

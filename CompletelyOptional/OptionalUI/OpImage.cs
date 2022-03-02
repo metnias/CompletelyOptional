@@ -16,11 +16,6 @@ namespace OptionalUI
         public OpImage(Vector2 pos, Texture2D image) : base(pos, new Vector2(image.width, image.height))
         {
             if (image == null) { throw new ElementFormatException(this, "There is no Texture2D for OpImage"); }
-            if (!_init)
-            {
-                this.sprite = new FSprite("pixel", true);
-                return;
-            }
 
             this.isTexture = true;
 
@@ -40,12 +35,6 @@ namespace OptionalUI
         /// <exception cref="ElementFormatException">Thrown when there is no <see cref="FAtlasElement"/> with the name</exception>
         public OpImage(Vector2 pos, string fAtlasElement) : base(pos, Vector2.zero)
         {
-            if (!_init)
-            {
-                this.sprite = new FSprite("pixel", true);
-                return;
-            }
-
             this.isTexture = false;
 
             if (!Futile.atlasManager.DoesContainElementWithName(fAtlasElement))
@@ -66,7 +55,6 @@ namespace OptionalUI
         /// <param name="newImage">New image to display</param>
         public void ChangeImage(Texture2D newImage)
         {
-            if (!_init) { return; }
             if (!isTexture) { throw new InvalidActionException(this, "You must construct this with Texture2D to use this function"); }
             if (newImage == null) { Debug.LogError("CompletelyOptional: newImage is null in OpImage.ChangeImage!"); return; }
 
@@ -86,7 +74,6 @@ namespace OptionalUI
         /// <exception cref="InvalidActionException">Thrown when you called this with <see cref="Texture2D"/> version of <see cref="OpImage"/></exception>
         public void ChangeElement(string newElement)
         {
-            if (!_init) { return; }
             if (isTexture) { throw new InvalidActionException(this, "You must construct this with a name of FAtlasElement to use this function"); }
             if (newElement == null) { Debug.LogError("CompletelyOptional: newElement is null in OpImage.ChangeElement!"); return; }
             myContainer.RemoveAllChildren();
@@ -117,7 +104,7 @@ namespace OptionalUI
                 if (_anchor != value)
                 {
                     _anchor = value;
-                    if (_init) { this.sprite.SetAnchor(_anchor); }
+                    this.sprite.SetAnchor(_anchor);
                 }
             }
         }
@@ -135,7 +122,7 @@ namespace OptionalUI
                 if (_scale != value)
                 {
                     _scale = value;
-                    if (_init) { OnChange(); }
+                    OnChange();
                 }
             }
         }
@@ -190,7 +177,7 @@ namespace OptionalUI
         public override void OnChange()
         {
             base.OnChange();
-            if (!_init) { return; }
+
             sprite.alpha = _alpha;
             sprite.color = _color;
             sprite.SetPosition(Vector2.zero);
@@ -221,7 +208,7 @@ namespace OptionalUI
             sprite.isVisible = true;
         } */
 
-        public override void Unload()
+        protected internal override void Unload()
         {
             base.Unload();
             if (isTexture)

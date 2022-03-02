@@ -1,6 +1,6 @@
 ﻿namespace OptionalUI
 {
-    public interface FocusableUIelement
+    public interface ICanBeFocused
     {
         /// <summary>
         /// Whether this is focused

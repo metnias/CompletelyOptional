@@ -8,7 +8,7 @@ namespace CompletelyOptional
     /// <summary>
     /// Special UI used internally in CM for switching tabs
     /// </summary>
-    internal class ConfigTabController : UIelement, FocusableUIelement
+    internal class ConfigTabController : UIelement, ICanBeFocused
     {
         public ConfigTabController(MenuTab tab) : base(new Vector2(503f, 120f) - UIelement._offset, new Vector2(40f, 600f))
         {
@@ -30,12 +30,12 @@ namespace CompletelyOptional
 
         private static float omit = -1f;
 
-        bool FocusableUIelement.Focused { get => _focused; set => _focused = value; }
-        bool FocusableUIelement.GreyedOut => false;
+        bool ICanBeFocused.Focused { get => _focused; set => _focused = value; }
+        bool ICanBeFocused.GreyedOut => false;
 
-        bool FocusableUIelement.CurrentlyFocusableMouse => true;
+        bool ICanBeFocused.CurrentlyFocusableMouse => true;
 
-        bool FocusableUIelement.CurrentlyFocusableNonMouse => true;
+        bool ICanBeFocused.CurrentlyFocusableNonMouse => true;
 
         private bool _focused;
 

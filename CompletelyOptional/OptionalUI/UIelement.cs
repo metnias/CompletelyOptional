@@ -194,7 +194,7 @@ namespace OptionalUI
         {
             this.ScreenLastPos = ScreenPos;
             showDesc = !string.IsNullOrEmpty(this.description) && !isInactive
-                && (this.MouseOver || (this is FocusableUIelement && (this as FocusableUIelement).Focused));
+                && (this.MouseOver || (this is ICanBeFocused && (this as ICanBeFocused).Focused));
             if (showDesc) { menu.ShowDescription(this.description); }
         }
 

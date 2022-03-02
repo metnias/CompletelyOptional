@@ -83,7 +83,9 @@ namespace OptionalUI
                 if (_held != value)
                 {
                     _held = value;
-                    ConfigContainer.freezeMenu = value;
+                    if (value) { menu.cfgContainer.FocusNewElement(this); }
+                    else if (menu.cfgContainer.focusedElement != this) { return; }
+                    ConfigContainer.holdElement = value;
                 }
             }
         }
@@ -181,12 +183,12 @@ namespace OptionalUI
         {
             base.GrafUpdate(timeStacker);
             this.bumpBehav.Update(timeStacker);
+            if (held && this.inScrollBox) { this.scrollBox.GrafUpdate(timeStacker); }
         }
 
         /// <summary>
         /// Update method that happens every frame.
         /// </summary>
-        /// <param name="dt">deltaTime</param>
         public override void Update()
         {
             base.Update();
@@ -205,10 +207,10 @@ namespace OptionalUI
             return this.value;
         }
 
-        public override void Hide()
+        protected internal override void Deactivate()
         {
             this.held = false;
-            base.Hide();
+            base.Deactivate();
         }
     }
 }

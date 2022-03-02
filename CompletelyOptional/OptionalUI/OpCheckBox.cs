@@ -7,7 +7,7 @@ namespace OptionalUI
     /// <summary>
     /// Simple CheckBox.
     /// </summary>
-    public class OpCheckBox : UIconfig, FocusableUIelement
+    public class OpCheckBox : UIconfig, ICanBeFocused
     {
         /// <summary>
         /// Simple CheckBox which returns "true" of "false". The fixedSize is 24x24.
@@ -64,11 +64,11 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
-        bool FocusableUIelement.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
+        bool ICanBeFocused.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
 
-        bool FocusableUIelement.CurrentlyFocusableMouse { get { return !this.disabled; } }
+        bool ICanBeFocused.CurrentlyFocusableMouse { get { return !this.disabled; } }
 
-        bool FocusableUIelement.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
+        bool ICanBeFocused.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
 
         public override void GrafUpdate(float dt)
         {

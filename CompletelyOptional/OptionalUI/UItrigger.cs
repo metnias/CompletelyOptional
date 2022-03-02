@@ -5,7 +5,7 @@ namespace OptionalUI
     /// <summary>
     /// Special kind of <see cref="UIelement"/> that can trigger <see cref="OptionInterface.Signal(UItrigger, string)"/>
     /// </summary>
-    public abstract class UItrigger : UIelement, FocusableUIelement
+    public abstract class UItrigger : UIelement, ICanBeFocused
     {
         /// <summary>
         /// Special kind of Rectangular <see cref="UIelement"/> that can trigger <see cref="OptionInterface.Signal(UItrigger, string)"/>
@@ -57,6 +57,8 @@ namespace OptionalUI
                 if (_held != value)
                 {
                     _held = value;
+                    if (value) { menu.cfgContainer.FocusNewElement(this); }
+                    else if (menu.cfgContainer.focusedElement != this) { return; }
                     ConfigContainer.holdElement = value;
                 }
             }
@@ -70,18 +72,18 @@ namespace OptionalUI
         public BumpBehaviour bumpBehav { get; private set; }
 
         /// <summary>
-        /// Either this is <see cref="FocusableUIelement.GreyedOut"/> or <see cref="UIelement.isInactive"/>.
+        /// Either this is <see cref="ICanBeFocused.GreyedOut"/> or <see cref="UIelement.isInactive"/>.
         /// Prevents its interaction in <see cref="Update()"/>.
         /// </summary>
         public bool disabled => this.greyedOut || this.isInactive;
 
-        bool FocusableUIelement.CurrentlyFocusableMouse => !this.disabled;
+        bool ICanBeFocused.CurrentlyFocusableMouse => !this.disabled;
 
-        bool FocusableUIelement.CurrentlyFocusableNonMouse => true;
+        bool ICanBeFocused.CurrentlyFocusableNonMouse => true;
 
-        bool FocusableUIelement.Focused { get => focused; set => focused = value; }
+        bool ICanBeFocused.Focused { get => focused; set => focused = value; }
 
-        bool FocusableUIelement.GreyedOut { get => greyedOut; }
+        bool ICanBeFocused.GreyedOut { get => greyedOut; }
 
         /// <summary>
         /// Calls <see cref="OptionInterface.Signal(UItrigger, string)"/>
@@ -95,13 +97,19 @@ namespace OptionalUI
         {
             base.GrafUpdate(timeStacker);
             this.bumpBehav.Update(timeStacker);
+            if (held && this.inScrollBox) { this.scrollBox.GrafUpdate(timeStacker); }
         }
 
         public override void Update()
         {
             base.Update();
-
             if (this.held && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(); }
+        }
+
+        protected internal override void Deactivate()
+        {
+            this.held = false;
+            base.Deactivate();
         }
     }
 }

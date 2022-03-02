@@ -10,7 +10,7 @@ namespace OptionalUI
     /// <summary>
     /// Slider that let you input integer more visually.
     /// </summary>
-    public class OpSlider : UIconfig, FocusableUIelement
+    public class OpSlider : UIconfig, ICanBeFocused
     {
         /// <summary>
         /// Slider that let you input integer more visually.
@@ -132,11 +132,11 @@ namespace OptionalUI
         internal DyeableRect rect;
         internal MenuLabel label;
 
-        bool FocusableUIelement.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
+        bool ICanBeFocused.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
 
-        bool FocusableUIelement.CurrentlyFocusableMouse { get { return !this.disabled; } }
+        bool ICanBeFocused.CurrentlyFocusableMouse { get { return !this.disabled; } }
 
-        bool FocusableUIelement.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
+        bool ICanBeFocused.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
 
         /// <summary>
         /// Text and Edge Colour of DyeableRect. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.

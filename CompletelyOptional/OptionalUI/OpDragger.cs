@@ -8,7 +8,7 @@ namespace OptionalUI
     /// <summary>
     /// Dragger to adjust int value easily.
     /// </summary>
-    public class OpDragger : UIconfig, FocusableUIelement
+    public class OpDragger : UIconfig, ICanBeFocused
     {
         /// <summary>
         /// Dragger to adjust int value in a cramped space. The fixedSize is 24x24.
@@ -126,11 +126,11 @@ namespace OptionalUI
 
         private float savMouse; private int savValue;
 
-        bool FocusableUIelement.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
+        bool ICanBeFocused.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
 
-        bool FocusableUIelement.CurrentlyFocusableMouse { get { return !this.disabled; } }
+        bool ICanBeFocused.CurrentlyFocusableMouse { get { return !this.disabled; } }
 
-        bool FocusableUIelement.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
+        bool ICanBeFocused.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
 
         public override void Update(float dt)
         {

@@ -2,7 +2,7 @@
 
 namespace OptionalUI
 {
-    internal class MenuModList : UIelement, FocusableUIelement
+    internal class MenuModList : UIelement, ICanBeFocused
     {
         public MenuModList() : base(new Vector2(193f, 240f) - UIelement._offset, new Vector2(280f, 495f))
         {
@@ -10,13 +10,13 @@ namespace OptionalUI
 
         private bool _focused = false;
 
-        bool FocusableUIelement.Focused { get => _focused; set => _focused = value; }
+        bool ICanBeFocused.Focused { get => _focused; set => _focused = value; }
 
-        bool FocusableUIelement.GreyedOut => false;
+        bool ICanBeFocused.GreyedOut => false;
 
-        bool FocusableUIelement.CurrentlyFocusableMouse => true;
+        bool ICanBeFocused.CurrentlyFocusableMouse => true;
 
-        bool FocusableUIelement.CurrentlyFocusableNonMouse => true;
+        bool ICanBeFocused.CurrentlyFocusableNonMouse => true;
 
         // ModList:
         // ABC button, Mod button shows Name(Left) and Version(right)

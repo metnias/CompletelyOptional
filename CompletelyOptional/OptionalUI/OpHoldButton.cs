@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpHoldButton : UItrigger, FocusableUIelement
+    public class OpHoldButton : UItrigger, ICanBeFocused
     {
         /// <summary>
         /// Circular Hold Button which can also be used as ProgressButton

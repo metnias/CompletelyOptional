@@ -119,7 +119,7 @@
     <None Include="OptionalUI\OpSlugcat.cs" />
     <Compile Include="OptionalUI\OpTab.cs" />
     <Compile Include="OptionalUI\OpTextBox.cs" />
-    <Compile Include="OptionalUI\SubObjects\FocusableUIelement.cs" />
+    <Compile Include="OptionalUI\SubObjects\ICanBeFocused.cs" />
     <Compile Include="OptionalUI\UIconfig.cs" />
     <None Include="OptionalUI\UIcreature.cs" />
     <Compile Include="OptionalUI\UIelement.cs" />
