@@ -10,7 +10,6 @@ namespace OptionalUI
         /// <summary>
         /// Special kind of Rectangular <see cref="UIelement"/> that can trigger <see cref="OptionInterface.Signal(UItrigger, string)"/>
         /// </summary>
-        /// <remarks>If using <see cref="UItrigger"/> causes crash, check if you are running <see cref="OptionInterface.Update(float)"/></remarks>
         /// <param name="pos">BottomLeft Position</param>
         /// <param name="size">Size</param>
         /// <param name="signal">Non-exclusive signal key</param>
@@ -24,7 +23,6 @@ namespace OptionalUI
         /// <summary>
         /// Special kind of Circular <see cref="UIelement"/> that can trigger <see cref="OptionInterface.Signal(UItrigger, string)"/>
         /// </summary>
-        /// <remarks>If using <see cref="UItrigger"/> causes crash, check if you are running <see cref="OptionInterface.Update(float)"/></remarks>
         /// <param name="pos">BottomLeft Position</param>
         /// <param name="rad">Radius</param>
         /// <param name="signal">Non-exclusive signal key</param>
@@ -59,7 +57,7 @@ namespace OptionalUI
                 if (_held != value)
                 {
                     _held = value;
-                    ConfigMenu.freezeMenu = value;
+                    ConfigContainer.holdElement = value;
                 }
             }
         }

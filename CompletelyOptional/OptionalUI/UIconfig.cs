@@ -130,7 +130,7 @@ namespace OptionalUI
             {
                 if (_value != value)
                 {
-                    if (!cosmetic) { ModConfigMenu.instance.cfgContainer.NotifyConfigChange(this, _value, value); }
+                    if (!cosmetic) { menu.cfgContainer.NotifyConfigChange(this, _value, value); }
                     _value = value;
                     OnChange();
                 }

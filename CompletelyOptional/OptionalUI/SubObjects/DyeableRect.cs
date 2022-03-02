@@ -77,15 +77,25 @@ namespace OptionalUI
 
         protected internal readonly FContainer container;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="side">Left, Top, Right, Bottom</param>
+        /// <returns></returns>
         protected internal int SideSprite(int side) => ((!this.filled) ? 0 : 9) + side;
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="corner">BottomLeft, TopLeft, TopRight, BottomRight</param>
+        /// <returns></returns>
         protected internal int CornerSprite(int corner) => ((!this.filled) ? 0 : 9) + 4 + corner;
 
-        protected internal int FillSideSprite(int side) => side;
+        internal int FillSideSprite(int side) => side;
 
-        protected internal int FillCornerSprite(int corner) => 4 + corner;
+        internal int FillCornerSprite(int corner) => 4 + corner;
 
-        protected internal const int MainFillSprite = 8;
+        internal const int MainFillSprite = 8;
 
         /// <summary>
         /// Edge Color of this Rect. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.
@@ -148,16 +158,16 @@ namespace OptionalUI
             switch (hiddenSide)
             {
                 case HiddenSide.Left:
-                    return filled ? new int[] { 0, 4, 5, 9, 13, 14 } : new int[] { 0, 4, 5 }; // needs testing
+                    return filled ? new int[] { 0, 4, 5, 9, 13, 14 } : new int[] { 0, 4, 5 };
 
                 case HiddenSide.Right:
                     return filled ? new int[] { 2, 6, 7, 11, 15, 16 } : new int[] { 2, 6, 7 };
 
                 case HiddenSide.Top:
-                    return filled ? new int[] { 1, 5, 6, 10, 14, 15 } : new int[] { 1, 5, 6 }; // needs testing
+                    return filled ? new int[] { 1, 5, 6, 10, 14, 15 } : new int[] { 1, 5, 6 };
 
                 case HiddenSide.Bottom:
-                    return filled ? new int[] { 3, 4, 7, 12, 13, 16 } : new int[] { 3, 4, 7 }; // needs testing
+                    return filled ? new int[] { 3, 4, 7, 12, 13, 16 } : new int[] { 3, 4, 7 };
             }
             return new int[0];
         }
@@ -173,25 +183,25 @@ namespace OptionalUI
             size += Vector2.Lerp(this.lastAddSize, this.addSize, timeStacker);
             pos.x = Mathf.Floor(pos.x) + 0.41f;
             pos.y = Mathf.Floor(pos.y) + 0.41f;
-            this.sprites[this.SideSprite(0)].x = pos.x + 1f;
+            this.sprites[this.SideSprite(0)].x = pos.x + 1f; // Left
             this.sprites[this.SideSprite(0)].y = pos.y + 7f;
             this.sprites[this.SideSprite(0)].scaleY = size.y - 14f;
-            this.sprites[this.SideSprite(1)].x = pos.x + 7f;
+            this.sprites[this.SideSprite(1)].x = pos.x + 7f; // Top
             this.sprites[this.SideSprite(1)].y = pos.y + size.y - 1f;
             this.sprites[this.SideSprite(1)].scaleX = size.x - 14f;
-            this.sprites[this.SideSprite(2)].x = pos.x + size.x - 1f;
+            this.sprites[this.SideSprite(2)].x = pos.x + size.x - 1f; // Right
             this.sprites[this.SideSprite(2)].y = pos.y + 7f;
             this.sprites[this.SideSprite(2)].scaleY = size.y - 14f;
-            this.sprites[this.SideSprite(3)].x = pos.x + 7f;
+            this.sprites[this.SideSprite(3)].x = pos.x + 7f; // Bottom
             this.sprites[this.SideSprite(3)].y = pos.y + 1f;
             this.sprites[this.SideSprite(3)].scaleX = size.x - 14f;
-            this.sprites[this.CornerSprite(0)].x = pos.x + 3.5f;
+            this.sprites[this.CornerSprite(0)].x = pos.x + 3.5f; // BottomLeft
             this.sprites[this.CornerSprite(0)].y = pos.y + 3.5f;
-            this.sprites[this.CornerSprite(1)].x = pos.x + 3.5f;
+            this.sprites[this.CornerSprite(1)].x = pos.x + 3.5f; // TopLeft
             this.sprites[this.CornerSprite(1)].y = pos.y + size.y - 3.5f;
-            this.sprites[this.CornerSprite(2)].x = pos.x + size.x - 3.5f;
+            this.sprites[this.CornerSprite(2)].x = pos.x + size.x - 3.5f; // TopRight
             this.sprites[this.CornerSprite(2)].y = pos.y + size.y - 3.5f;
-            this.sprites[this.CornerSprite(3)].x = pos.x + size.x - 3.5f;
+            this.sprites[this.CornerSprite(3)].x = pos.x + size.x - 3.5f; // BottomRight
             this.sprites[this.CornerSprite(3)].y = pos.y + 3.5f;
             Color color = new Color(1f, 1f, 1f);
             for (int i = 0; i < 4; i++)

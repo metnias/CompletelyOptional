@@ -62,7 +62,6 @@
     <Compile Include="ConfigContainer.cs" />
     <Compile Include="MenuModList.cs" />
     <Compile Include="ModConfigMenu.cs" />
-    <Compile Include="OptionalUI\OpSimpleHoldButton.cs" />
     <Compile Include="OptionalUI\SubObjects\EnumHelper.cs" />
     <Compile Include="GeneratedOI.cs" />
     <Compile Include="InternalTestOI.cs" />

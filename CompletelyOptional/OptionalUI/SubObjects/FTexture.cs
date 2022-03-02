@@ -91,7 +91,7 @@ namespace OptionalUI
         {
             if (actual)
             {
-                Debug.Log("FTexture called GarbageCollect");
+                CompletelyOptional.ComOptPlugin.LogMessage("FTexture called GarbageCollect");
                 Resources.UnloadUnusedAssets();
                 System.GC.Collect();
             }

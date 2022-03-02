@@ -59,7 +59,7 @@ namespace CompletelyOptional
             }
         }
 
-        internal class MenuHoldButton : OpSimpleHoldButton
+        internal class MenuHoldButton : OpHoldButton
         {
             public MenuHoldButton(Vector2 pos, Vector2 size, string signal, string text = "") : base(pos, size, signal, text)
             {

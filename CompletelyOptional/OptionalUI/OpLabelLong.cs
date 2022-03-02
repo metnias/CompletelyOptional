@@ -66,10 +66,50 @@ namespace OptionalUI
                 this.labels.Add(nl);
                 this.myContainer.AddChild(nl);
             }
+
+            num = 0; // linebreak sum
+            float lh = lineHeight * GetLineCount();
             for (int b = 0; b < labels.Count; b++)
             {
                 if (splits.Count <= b) { this.labels[b].text = string.Empty; continue; }
                 this.labels[b].text = splits[b];
+                int ln = 0; string[] s = splits[b].Split('\n');
+                for (int i = 0; i < s.Length; i++) { if (!string.IsNullOrEmpty(s[i])) { ln++; } }
+                switch (this._alignment)
+                {
+                    default:
+                    case FLabelAlignment.Center:
+                        this.labels[b].alignment = FLabelAlignment.Center;
+                        this.labels[b].x = this.size.x / 2f;
+                        break;
+
+                    case FLabelAlignment.Left:
+                        this.labels[b].alignment = FLabelAlignment.Left;
+                        this.labels[b].x = 0f;
+                        break;
+
+                    case FLabelAlignment.Right:
+                        this.labels[b].alignment = FLabelAlignment.Right;
+                        this.labels[b].x = this.size.x;
+                        break;
+                }
+                float sizeY = ln * lineHeight;
+                num += ln;
+                switch (this.verticalAlignment)
+                { // Needs testing
+                    default:
+                    case LabelVAlignment.Top:
+                        this.labels[b].y = this.size.y / 2f + sizeY - num * lineHeight;
+                        break;
+
+                    case LabelVAlignment.Bottom:
+                        this.labels[b].y = this.size.y / 2f + lh - num * lineHeight;
+                        break;
+
+                    case LabelVAlignment.Center:
+                        this.labels[b].y = this.size.y / 2f + (sizeY + lh) / 2f - num * lineHeight;
+                        break;
+                }
             }
         }
 
@@ -79,61 +119,10 @@ namespace OptionalUI
         {
             base.GrafUpdate(timeStacker);
 
-            #region Aligning
-
-            int lsum = 0; // linebreak sum
-            float lh = lineHeight * GetLineCount();
-            for (int b = 0; b < labels.Count; b++)
-            {
-                int ln = 0; string[] s = this.labels[b].text.Split('\n');
-                for (int i = 0; i < s.Length; i++) { if (!string.IsNullOrEmpty(s[i])) { ln++; } }
-                switch (this._alignment)
-                {
-                    default:
-                    case FLabelAlignment.Center:
-                        this.labels[b].alignment = FLabelAlignment.Center;
-                        this.labels[b].x = this.DrawPos(timeStacker).x + this.size.x / 2f;
-                        break;
-
-                    case FLabelAlignment.Left:
-                        this.labels[b].alignment = FLabelAlignment.Left;
-                        this.labels[b].x = this.DrawPos(timeStacker).x;
-                        break;
-
-                    case FLabelAlignment.Right:
-                        this.labels[b].alignment = FLabelAlignment.Right;
-                        this.labels[b].x = this.DrawPos(timeStacker).x + this.size.x;
-                        break;
-                }
-                float sizeY = ln * lineHeight;
-                lsum += ln;
-                switch (this.verticalAlignment)
-                { // Needs testing
-                    default:
-                    case LabelVAlignment.Top:
-                        this.labels[b].y = this.DrawPos(timeStacker).y + this.size.y / 2f + sizeY - lsum * lineHeight;
-                        break;
-
-                    case LabelVAlignment.Bottom:
-                        this.labels[b].y = this.DrawPos(timeStacker).y + this.size.y / 2f + lh - lsum * lineHeight;
-                        break;
-
-                    case LabelVAlignment.Center:
-                        this.labels[b].y = this.DrawPos(timeStacker).y + this.size.y / 2f + (sizeY + lh) / 2f - lsum * lineHeight;
-                        break;
-                }
-            }
-
-            #endregion Aligning
-
-            #region Colouring
-
             Color c;
             if (this.bumpBehav == null) { c = this.color; }
             else { c = this.bumpBehav.GetColor(this.color); }
             foreach (FLabel l in labels) { l.color = c; }
-
-            #endregion Colouring
         }
     }
 }

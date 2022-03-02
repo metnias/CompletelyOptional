@@ -15,17 +15,11 @@ namespace OptionalUI
         /// <exception cref="ElementFormatException">Thrown when <paramref name="fAtlasElement"/> is Invalid</exception>
         public OpSimpleImageButton(Vector2 pos, Vector2 size, string signal, string fAtlasElement) : base(pos, size, signal, "")
         {
-            if (!_init)
-            {
-                this.sprite = new FSprite("pixel", true);
-                return;
-            }
-
             FAtlasElement element;
             try
             { element = Futile.atlasManager.GetElementWithName(fAtlasElement); }
             catch (Exception ex)
-            { throw new ElementFormatException(this, string.Concat("There is no such FAtlasElement called ", fAtlasElement, " : ", Environment.NewLine, ex.ToString())); }
+            { throw new ElementFormatException(this, $"There is no such FAtlasElement called {fAtlasElement} : {Environment.NewLine}{ex}"); }
 
             this.sprite = new FSprite(element.name, true);
             this.myContainer.AddChild(this.sprite);
@@ -47,11 +41,6 @@ namespace OptionalUI
         public OpSimpleImageButton(Vector2 pos, Vector2 size, string signal, Texture2D image) : base(pos, size, signal, "")
         {
             if (image == null) { throw new ElementFormatException(this, "There is no Texture2D for OpSimpleImageButton"); }
-            if (!_init)
-            {
-                this.sprite = new FSprite("pixel", true);
-                return;
-            }
 
             this.sprite = new FTexture(image, "sib" + signal);
             this.sprite.SetAnchor(0.5f, 0.5f);
@@ -69,27 +58,15 @@ namespace OptionalUI
 
         private readonly bool isTexture;
 
-        public override void Hide()
-        {
-            base.Hide();
-            sprite.isVisible = false;
-        }
-
-        public override void Show()
-        {
-            base.Show();
-            sprite.isVisible = true;
-        }
-
         public override void OnChange()
         {
             base.OnChange();
             this.sprite.SetPosition(this.size.x / 2f, this.size.y / 2f);
         }
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
+            base.GrafUpdate(timeStacker);
             if (!this.isTexture) { this.sprite.color = this.bumpBehav.GetColor(this.colorEdge); }
         }
 
@@ -100,7 +77,6 @@ namespace OptionalUI
         /// <exception cref="InvalidActionException">Thrown when you called this with <see cref="FAtlasElement"/> version of the button</exception>
         public void ChangeImage(Texture2D newImage)
         {
-            if (!_init) { return; }
             if (!isTexture) { throw new InvalidActionException(this, "You must construct this with Texture2D to use this function", signal); }
             if (newImage == null) { Debug.LogError("CompletelyOptional: newImage is null in OpSimpleImageButton.ChangeImage!"); return; }
 
@@ -109,7 +85,7 @@ namespace OptionalUI
             this.myContainer.AddChild(this.sprite);
         }
 
-        public override void Unload()
+        protected internal override void Unload()
         {
             base.Unload();
             if (isTexture) { (this.sprite as FTexture).Destroy(); }

@@ -15,6 +15,7 @@ namespace OptionalUI
         {
             menuTab = new MenuTab();
             _soundFill = 0;
+            holdElement = false;
             lastFocusedElement = menuTab.backButton;
             focusedElement = menuTab.backButton;
             history = new Stack<ConfigHistory>();
@@ -25,7 +26,7 @@ namespace OptionalUI
         private int scrollInitDelay;
         private int scrollDelay;
 
-        public bool holdElement;
+        public static bool holdElement;
 
         private List<UIelement> focusables
         {
@@ -101,10 +102,10 @@ namespace OptionalUI
             }
             else
             { // Controller/Keyboard Mode
-                if (!this.holdElement)
+                if (!holdElement)
                 {
-                    if (menu.input.pckp && !menu.lastInput.pckp) // Hold Element
-                    { this.holdElement = true; }
+                    if (menu.input.jmp && !menu.lastInput.jmp) // Hold Element
+                    { holdElement = true; }
                     else // Switch Focus
                     {
                         if (menu.input.y != 0 && menu.lastInput.y != menu.input.y)
@@ -165,8 +166,16 @@ namespace OptionalUI
                     }
                 }
             }
-            menuTab.Update();
-            if (activeTab != null) { activeTab.Update(); }
+            if (holdElement)
+            {
+                if (this.focusedElement != null && !(this.focusedElement as FocusableUIelement).GreyedOut) { this.focusedElement.Update(); }
+                else { holdElement = false; }
+            }
+            if (!holdElement)
+            {
+                menuTab.Update();
+                if (activeTab != null) { activeTab.Update(); }
+            }
         }
 
         private UIelement focusedElement;

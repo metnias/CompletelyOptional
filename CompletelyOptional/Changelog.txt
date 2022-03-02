@@ -1,16 +1,15 @@
 ﻿###2.0 CompletelyOptional Update#!#20220330#!#
 Note: o(planned) v(finished)
 MenuTab rewrite
-OpSimpleButton Rewrite
 o Rewrote ConfigMachine to BepInEx Plugin, removed support for Partiality Mods
 o Use only BepInEx.Configuration for saving configs
  o So OI won't get even called until MOD CONFIG screen is loaded (As BepInEx will load the settings instead)
 o Clean up OptionInterface so only things the modders need are there
  o UIelements now support Controller and Keyboard control
-  o Grab/Throw to focus/unfocus, joystick in 4 direction from center of element to other element
+  o Jump/Throw to focus/unfocus, joystick in 4 direction from center of element to other element
  o Removed usages of MenuObject in UIelements
   o This allows more controlled sorting
-o Added undo function (framework)
+o Added Undo function (framework)
 ###1.5.5#!#20220130#!#
 - Reworked OptionInterface's Data API (by Henpemaz)
  + This WILL BREAK backward compatibility with mods that use older progData

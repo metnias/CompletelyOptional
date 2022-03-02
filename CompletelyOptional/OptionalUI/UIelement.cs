@@ -185,7 +185,6 @@ namespace OptionalUI
         /// </summary>
         public virtual void OnChange()
         {
-            this.myContainer.SetPosition(this.ScreenPos);
         }
 
         /// <summary>
@@ -196,7 +195,7 @@ namespace OptionalUI
             this.ScreenLastPos = ScreenPos;
             showDesc = !string.IsNullOrEmpty(this.description) && !isInactive
                 && (this.MouseOver || (this is FocusableUIelement && (this as FocusableUIelement).Focused));
-            if (showDesc) { ModConfigMenu.ShowDescription(this.description); }
+            if (showDesc) { menu.ShowDescription(this.description); }
         }
 
         /// <summary>
@@ -205,6 +204,7 @@ namespace OptionalUI
         /// <param name="timeStacker">timeStacker</param>
         public virtual void GrafUpdate(float timeStacker)
         {
+            this.myContainer.SetPosition(DrawPos(timeStacker));
         }
 
         /// <summary>
@@ -244,9 +244,9 @@ namespace OptionalUI
         protected internal OpTab tab;
 
         /// <summary>
-        /// <see cref="Menu.Menu"/> instance this element is in.
+        /// <see cref="ModConfigMenu"/> instance this element is in.
         /// </summary>
-        protected internal Menu.Menu menu;
+        protected internal ModConfigMenu menu;
 
         /// <summary>
         /// You can alternatively use <c>menu.pages[0]</c> for this
@@ -321,6 +321,18 @@ namespace OptionalUI
         protected internal Vector2 ScreenLastPos;
 
         /// <summary>
+        /// Set <see cref="FLabel"/>'s pos in the Center of the size
+        /// </summary>
+        /// <param name="label"><see cref="FLabel"/> to be placed</param>
+        /// <param name="pos">Leftbottom position of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
+        /// <param name="size">An arbitary rectangular for this label to be in its center</param>
+        protected internal void SetLabelPos(FLabel label, Vector2 pos, Vector2 size)
+        {
+            label.x = pos.x + size.x / 2f;
+            label.y = size.y / 2f;
+        }
+
+        /// <summary>
         /// Frame multiplier for Many More Fixes' framerate unlock feature. See also <see cref="FrameMultiply(int)"/>
         /// </summary>
         public static float frameMulti => Mathf.Max(1.00f, ComOptPlugin.curFramerate / 60.0f);
@@ -331,9 +343,19 @@ namespace OptionalUI
         public static int FrameMultiply(int origFrameCount) => Mathf.RoundToInt(origFrameCount * frameMulti);
 
         /// <summary>
-        /// Multiplies deltaTime for tick multiplier
+        /// Whether the menu is using Mouse mode or Controller/Keyboard mode
         /// </summary>
-        public static float DTMultiply(float deltaTime) => 60.0f * deltaTime;
+        public bool MenuMouseMode => menu.manager.menuesMouseMode;
+
+        /// <summary>
+        /// User's <see cref="Player.InputPackage"/> for Controller/Keyboard support
+        /// </summary>
+        public Player.InputPackage CtlrInput => menu.input;
+
+        /// <summary>
+        /// User's <see cref="Player.InputPackage"/> in the last frame for Controller/Keyboard support
+        /// </summary>
+        public Player.InputPackage LastCtlrInput => menu.lastInput;
 
         #endregion Deep
 

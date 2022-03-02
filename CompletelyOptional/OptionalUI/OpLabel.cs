@@ -155,42 +155,6 @@ namespace OptionalUI
         {
             base.GrafUpdate(timeStacker);
 
-            switch (this._alignment)
-            {
-                default:
-                case FLabelAlignment.Center:
-                    this.label.alignment = FLabelAlignment.Center;
-                    this.label.x = this.DrawPos(timeStacker).x + this.size.x / 2f;
-                    break;
-
-                case FLabelAlignment.Left:
-                    this.label.alignment = FLabelAlignment.Left;
-                    this.label.x = this.DrawPos(timeStacker).x;
-                    break;
-
-                case FLabelAlignment.Right:
-                    this.label.alignment = FLabelAlignment.Right;
-                    this.label.x = this.DrawPos(timeStacker).x + this.size.x;
-                    break;
-            }
-
-            float lh = LabelTest.LineHeight(_bigText, isVFont) * GetLineCount();
-            switch (this._verticalAlignment)
-            { // Needs testing
-                default:
-                case LabelVAlignment.Center:
-                    this.label.y = this.DrawPos(timeStacker).y + this.size.y / 2f;
-                    break;
-
-                case LabelVAlignment.Top:
-                    this.label.y = this.DrawPos(timeStacker).y + this.size.y - lh;
-                    break;
-
-                case LabelVAlignment.Bottom:
-                    this.label.y = this.DrawPos(timeStacker).y + lh / 2f;
-                    break;
-            }
-
             if (this.bumpBehav?.owner == this) { this.bumpBehav.Update(timeStacker); }
             if (this.IsLong) { return; }
             if (this.bumpBehav == null) { this.label.color = this.color; }
@@ -237,6 +201,42 @@ namespace OptionalUI
                 if (sp > 0) { _displayText = _displayText.Substring(0, sp); }
             }
             this.label.text = this._displayText;
+
+            switch (this._alignment)
+            {
+                default:
+                case FLabelAlignment.Center:
+                    this.label.alignment = FLabelAlignment.Center;
+                    this.label.x = this.size.x / 2f;
+                    break;
+
+                case FLabelAlignment.Left:
+                    this.label.alignment = FLabelAlignment.Left;
+                    this.label.x = 0f;
+                    break;
+
+                case FLabelAlignment.Right:
+                    this.label.alignment = FLabelAlignment.Right;
+                    this.label.x = this.size.x;
+                    break;
+            }
+
+            float lh = LabelTest.LineHeight(_bigText, isVFont) * GetLineCount();
+            switch (this._verticalAlignment)
+            { // Needs testing
+                default:
+                case LabelVAlignment.Center:
+                    this.label.y = this.size.y / 2f;
+                    break;
+
+                case LabelVAlignment.Top:
+                    this.label.y = this.size.y - lh;
+                    break;
+
+                case LabelVAlignment.Bottom:
+                    this.label.y = lh / 2f;
+                    break;
+            }
         }
 
         /// <summary>

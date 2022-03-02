@@ -14,7 +14,7 @@ namespace OptionalUI
         public OpSimpleButton(Vector2 pos, Vector2 size, string signal, string text = "") : base(pos, size, signal)
         {
             this._size = new Vector2(Mathf.Max(24f, size.x), Mathf.Max(24f, size.y));
-            if (!_init) { return; }
+
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
             this.rect = new DyeableRect(this.myContainer, this.pos, this.size, true);
@@ -49,36 +49,32 @@ namespace OptionalUI
 
         public override void OnChange()
         {
-            this._size = new Vector2(Mathf.Max(24f, this.size.x), Mathf.Max(24f, this.size.y));
+            this._size = new Vector2(Mathf.Max(24f, this.size.x), Mathf.Max(24f, this.size.y)); // Min Size
             base.OnChange();
             this.rect.pos = this.pos;
             this.rect.size = this.size;
             this.rectH.pos = this.pos;
             this.rectH.size = this.size;
-            if (!IsImageButton)
-            {
-                this.label.pos = this.pos;
-                this.label.size = this.size;
-            }
         }
 
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);
 
-            this.rect.GrafUpdate(timeStacker);
-            this.rectH.GrafUpdate(timeStacker);
+            this.rect.GrafUpdate(timeStacker); this.rectH.GrafUpdate(timeStacker);
 
+            if (!IsImageButton)
+            {
+                this.label.color = this.bumpBehav.GetColor(this.colorEdge);
+                this.SetLabelPos(this.label, Vector2.zero, this.size);
+            }
             if (greyedOut)
             {
-                if (!IsImageButton) { this.label.color = this.bumpBehav.GetColor(this.colorEdge); }
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
                 this.rectH.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 return;
             }
-
-            if (!IsImageButton) { this.label.label.color = this.bumpBehav.GetColor(this.colorEdge); }
 
             this.rectH.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
             this.rectH.addSize = new Vector2(-2f, -2f) * this.bumpBehav.AddSize;
@@ -91,45 +87,49 @@ namespace OptionalUI
             this.rect.colorFill = this.colorFill;
         }
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            base.Update(dt);
+            base.Update();
+            this.rect.Update(); this.rectH.Update();
             if (disabled) { return; }
 
-            if (this.MouseOver)
+            if (MenuMouseMode)
             {
-                if (Input.GetMouseButton(0))
-                { this.held = true; }
-                else
+                if (this.MouseOver)
+                {
+                    if (Input.GetMouseButton(0))
+                    { this.held = true; }
+                    else
+                    {
+                        if (this.held)
+                        {
+                            this.held = false;
+                            PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);
+                            this.Signal();
+                        }
+                    }
+                }
+                else if (!Input.GetMouseButton(0))
+                {
+                    this.held = false;
+                }
+            }
+            else
+            {
+                if ((this as FocusableUIelement).Focused)
                 {
                     if (this.held)
                     {
-                        this.held = false;
-                        this.menu.PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);
-                        this.Signal();
+                        if (!CtlrInput.jmp)
+                        {
+                            this.held = false;
+                            PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);
+                            this.Signal();
+                        }
                     }
+                    if (CtlrInput.jmp && !LastCtlrInput.jmp) { this.held = true; }
                 }
             }
-            else if (!Input.GetMouseButton(0))
-            {
-                this.held = false;
-            }
-        }
-
-        public override void Hide()
-        {
-            base.Hide();
-            if (!_init) { return; }
-            this.rect.Hide(); this.rectH.Hide();
-            if (!IsImageButton) { this.label.label.isVisible = false; }
-        }
-
-        public override void Show()
-        {
-            base.Show();
-            if (!_init) { return; }
-            this.rect.Show(); this.rectH.Show();
-            if (!IsImageButton) { this.label.label.isVisible = true; }
         }
     }
 }

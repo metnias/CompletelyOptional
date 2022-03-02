@@ -175,7 +175,7 @@ namespace CompletelyOptional
         /// <summary>
         /// Send Menu description text to display
         /// </summary>
-        public static void ShowDescription(string description) => instance.description = description;
+        public void ShowDescription(string description) => this.description = description;
 
         /// <summary>
         /// List of OptionInterface Instances
