@@ -1,5 +1,4 @@
-﻿using CompletelyOptional;
-using System;
+﻿using System;
 using UnityEngine;
 
 namespace OptionalUI

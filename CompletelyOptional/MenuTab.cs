@@ -1,10 +1,4 @@
-using Menu;
 using OptionalUI;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace CompletelyOptional

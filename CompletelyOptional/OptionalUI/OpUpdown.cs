@@ -180,11 +180,7 @@ namespace OptionalUI
                     scrollHeldPos = MousePos;
                     scrollHeldTickPos = scrollHeldPos.y;
                     arrowCounter = -1;
-                    if (!_soundFilled)
-                    {
-                        _soundFill += 8;
-                        menu.PlaySound(SoundID.MENU_First_Scroll_Tick);
-                    }
+                    PlaySound(SoundID.MENU_First_Scroll_Tick);
                 }
             }
 
@@ -195,21 +191,13 @@ namespace OptionalUI
                 switch (bumpFlag)
                 {
                     case 0: // bump fail
-                        if (!_soundFilled)
-                        {
-                            _soundFill += arrowCounter > 0 ? 8 : 6;
-                            menu.PlaySound(arrowCounter > 0 ? SoundID.MENU_Checkbox_Uncheck : SoundID.MENU_Scroll_Tick, 0f, 1f, 0.7f);
-                        }
+                        PlaySound(arrowCounter > 0 ? SoundID.MENU_Checkbox_Uncheck : SoundID.MENU_Scroll_Tick, 0f, 1f, 0.7f);
                         break;
 
                     case 1: // bump up
                     case 2: // bump down
                         this.bumpBehav.flash = 1f;
-                        if (!_soundFilled)
-                        {
-                            _soundFill += arrowCounter > 0 ? 8 : 6;
-                            menu.PlaySound(arrowCounter > 0 ? SoundID.MENU_Checkbox_Uncheck : SoundID.MENU_Scroll_Tick);
-                        }
+                        PlaySound(arrowCounter > 0 ? SoundID.MENU_Checkbox_Uncheck : SoundID.MENU_Scroll_Tick);
                         if (bumpFlag == 1) { bumpUp.flash += 0.7f; }
                         else { bumpDown.flash += 0.7f; }
                         break;

@@ -10,6 +10,7 @@ o Clean up OptionInterface so only things the modders need are there
   o Grab/Throw to focus/unfocus, joystick in 4 direction from center of element to other element
  o Removed usages of MenuObject in UIelements
   o This allows more controlled sorting
+o Added undo function (framework)
 ###1.5.5#!#20220130#!#
 - Reworked OptionInterface's Data API (by Henpemaz)
  + This WILL BREAK backward compatibility with mods that use older progData

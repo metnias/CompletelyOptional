@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace OptionalUI
 {
@@ -34,12 +30,18 @@ namespace OptionalUI
         /// <summary>
         /// Button for ModList
         /// </summary>
-        internal class ModButton
+        internal class ModButton : OpSimpleButton
         {
+            public ModButton(Vector2 pos, Vector2 size, string signal, string text = "") : base(pos, size, signal, text)
+            {
+            }
         }
 
-        internal class AlphabetButton
+        internal class AlphabetButton : OpLabel
         {
+            public AlphabetButton(Vector2 pos, Vector2 size, string text = "TEXT") : base(pos, size, text, FLabelAlignment.Center, false)
+            {
+            }
         }
     }
 }

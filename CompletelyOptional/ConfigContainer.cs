@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using CompletelyOptional;
 using Menu;
-using CompletelyOptional;
 using RWCustom;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace OptionalUI
@@ -18,10 +15,9 @@ namespace OptionalUI
         {
             menuTab = new MenuTab();
             _soundFill = 0;
-            focusedElement = null;
-            lastFocusedElement = null;
-
+            lastFocusedElement = menuTab.backButton;
             focusedElement = menuTab.backButton;
+            history = new Stack<ConfigHistory>();
         }
 
         internal MenuTab menuTab;
@@ -112,9 +108,9 @@ namespace OptionalUI
                     else // Switch Focus
                     {
                         if (menu.input.y != 0 && menu.lastInput.y != menu.input.y)
-                        { this.FocusNewElement(new IntVector2(0, menu.input.y)); }
+                        { this.FocusNewElementInDirection(new IntVector2(0, menu.input.y)); }
                         else if (menu.input.x != 0 && menu.lastInput.x != menu.input.x)
-                        { this.FocusNewElement(new IntVector2(menu.input.x, 0)); }
+                        { this.FocusNewElementInDirection(new IntVector2(menu.input.x, 0)); }
                         if (menu.input.y != 0 && menu.lastInput.y == menu.input.y && menu.input.x == 0)
                         { this.scrollInitDelay++; }
                         else if (menu.input.x != 0 && menu.lastInput.x == menu.input.y && menu.input.y == 0)
@@ -128,9 +124,9 @@ namespace OptionalUI
                             {
                                 this.scrollDelay = 0;
                                 if (menu.input.y != 0 && menu.lastInput.y == menu.input.y)
-                                { this.FocusNewElement(new IntVector2(0, menu.input.y)); }
+                                { this.FocusNewElementInDirection(new IntVector2(0, menu.input.y)); }
                                 else if (menu.input.x != 0 && menu.lastInput.x == menu.input.x)
-                                { this.FocusNewElement(new IntVector2(menu.input.x, 0)); }
+                                { this.FocusNewElementInDirection(new IntVector2(menu.input.x, 0)); }
                             }
                         }
                         else { this.scrollDelay = 0; }
@@ -177,18 +173,30 @@ namespace OptionalUI
         private UIelement lastFocusedElement;
 
         /// <summary>
-        ///
+        /// Change <see cref="focusedElement"/>
         /// </summary>
-        /// <param name="direction"></param>
-        public void FocusNewElement(IntVector2 direction)
+        /// <param name="element"><see cref="FocusableUIelement"/> for new focus</param>
+        public void FocusNewElement(UIelement element)
         {
-            UIelement element = this.FocusCandidate(direction);
+            if (!(element is FocusableUIelement))
+            { ComOptPlugin.LogWarning($"{element.GetType()} is not FocusableUIelement. FocusNewElement ignored."); return; }
             if (element != null && element != this.focusedElement)
             {
                 this.focusedElement = element;
                 PlaySound((this.focusedElement as FocusableUIelement).GreyedOut
                     ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
+                // Always play Gamepad sound even in Mouse mode, as this is called by either Gamepad or Modder
             }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="direction"></param>
+        internal void FocusNewElementInDirection(IntVector2 direction)
+        {
+            UIelement element = this.FocusCandidate(direction);
+            this.FocusNewElement(element);
         }
 
         private UIelement FocusCandidate(IntVector2 direction)
@@ -240,6 +248,39 @@ namespace OptionalUI
             return result;
         }
 
+        /// <summary>
+        /// Notify config change to Menu
+        /// </summary>
+        /// <param name="config">Changed <see cref="UIconfig"/></param>
+        /// <param name="oldValue">Original <see cref="UIconfig.value"/> before the change</param>
+        /// <param name="value">New <see cref="UIconfig.value"/></param>
+        internal void NotifyConfigChange(UIconfig config, string oldValue, string value)
+        {
+            if (history.Count > 0)
+            {
+                ConfigHistory last = history.Peek();
+                if (last.config.key == config.key)
+                {
+                    oldValue = history.Pop().origValue;
+                    if (oldValue == value) { return; } // User-reverted config; Remove history
+                }
+            }
+            history.Push(new ConfigHistory() { config = config, origValue = oldValue });
+            // configChanged = true; == history.Count > 0
+            // cfgContainer.menuTab.saveButton.text = InternalTranslator.Translate("APPLY");
+        }
+
+        /// <summary>
+        /// History for undo
+        /// </summary>
+        private Stack<ConfigHistory> history;
+
+        private struct ConfigHistory
+        {
+            public UIconfig config;
+            public string origValue;
+        }
+
         #region Sound
 
         /// <summary>
@@ -278,7 +319,7 @@ namespace OptionalUI
         /// <summary>
         /// Whether the sound engine is full or not. See also <seealso cref="_soundFill"/>
         /// </summary>
-        private static bool _soundFilled => _soundFill > UIelement.FrameMultiply(80);
+        private static bool _soundFilled => _soundFill > UIelement.FrameMultiply(80) || mute;
 
         /// <summary>
         /// Whether to play sound or not

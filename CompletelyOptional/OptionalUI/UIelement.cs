@@ -2,7 +2,6 @@ using CompletelyOptional;
 using Menu;
 using RWCustom;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -195,9 +194,9 @@ namespace OptionalUI
         public virtual void Update()
         {
             this.ScreenLastPos = ScreenPos;
-            showDesc = !isInactive && this.MouseOver && !string.IsNullOrEmpty(this.description);
-            // if (showDesc && !(this is UIconfig) && !(this is UItrigger))
-            // { ConfigMenu.description = this.description; }
+            showDesc = !string.IsNullOrEmpty(this.description) && !isInactive
+                && (this.MouseOver || (this is FocusableUIelement && (this as FocusableUIelement).Focused));
+            if (showDesc) { ModConfigMenu.ShowDescription(this.description); }
         }
 
         /// <summary>
@@ -207,6 +206,16 @@ namespace OptionalUI
         public virtual void GrafUpdate(float timeStacker)
         {
         }
+
+        /// <summary>
+        /// Restricted <see cref="Menu.Menu.PlaySound(SoundID)"/> to prevent sound glitch
+        /// </summary>
+        public static void PlaySound(SoundID soundID) => ConfigContainer.PlaySound(soundID);
+
+        /// <summary>
+        /// Restricted <see cref="Menu.Menu.PlaySound(SoundID, float, float, float)"/> to prevent sound glitch
+        /// </summary>
+        public static void PlaySound(SoundID soundID, float pan, float vol, float pitch) => ConfigContainer.PlaySound(soundID, pan, vol, pitch);
 
         protected internal Vector2 DrawPos(float timeStacker) => Vector2.Lerp(this.ScreenLastPos, this.ScreenPos, timeStacker);
 

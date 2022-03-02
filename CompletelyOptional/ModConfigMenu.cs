@@ -1,13 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using BepInEx;
+﻿using BepInEx;
 using Menu;
 using Music;
 using OptionalUI;
 using RWCustom;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace CompletelyOptional
@@ -20,6 +19,7 @@ namespace CompletelyOptional
 
             // Initialize
             instance = this;
+            description = ""; lastDescription = "";
             Dictionary<int, string> ID2Code = new Dictionary<int, string>()
             {
                 { 0 , "eng" },
@@ -85,8 +85,8 @@ namespace CompletelyOptional
             if (!_loadedOIs) { LoadOIs(); }
 
             // UIContainer
-            mContainer = new MenuContainer(this, this.pages[0]);
-            this.pages[0].subObjects.Add(mContainer);
+            cfgContainer = new ConfigContainer(this, this.pages[0]);
+            this.pages[0].subObjects.Add(cfgContainer);
         }
 
         /// <summary>
@@ -170,6 +170,13 @@ namespace CompletelyOptional
 
         private static bool _loadedOIs = false;
 
+        private string description, lastDescription;
+
+        /// <summary>
+        /// Send Menu description text to display
+        /// </summary>
+        public static void ShowDescription(string description) => instance.description = description;
+
         /// <summary>
         /// List of OptionInterface Instances
         /// </summary>
@@ -191,7 +198,85 @@ namespace CompletelyOptional
         /// <summary>
         /// Container that connects and stores UIelements for Mod Configs
         /// </summary>
-        internal MenuContainer mContainer;
+        internal ConfigContainer cfgContainer;
+
+        public override void Update()
+        {
+            if (!string.IsNullOrEmpty(description) && string.IsNullOrEmpty(this.UpdateInfoText()))
+            {
+                this.infoLabelFade = 1f;
+                this.infoLabel.text = description;
+                if (lastDescription != description)
+                {
+                    this.infolabelDirty = false;
+                    this.infoLabelSin = 0f;
+                }
+            }
+            lastDescription = description;
+            /* //SoonTM
+            if (!string.IsNullOrEmpty(alert))
+            {
+                this.alertLabelFade = 2f; this.lastAlertLabelFade = 2f;
+                this.alertLabelSin = 0f;
+                this.alertLabel.text = alert;
+                alert = null;
+            }
+            this.lastAlertLabelFade = this.alertLabelFade;
+            this.alertLabelFade = Mathf.Max(0f, this.alertLabelFade - 1f / Mathf.Lerp(1f, 100f, Mathf.Clamp01(this.alertLabelFade)));
+            this.alertLabelSin += this.alertLabelFade; */
+
+            base.Update(); //keep buttons to be sane
+
+            /*
+            if (fadein && this.scene != null && (int)this.scene.sceneID < 12 && (int)this.scene.sceneID > 6)
+            { //clamp offset
+                this.scene.camPos = new Vector2(this.scene.camPos.x * 0.7f, this.scene.camPos.y * 0.7f);
+            }
+
+            if (this.fadeSprite != null)
+            {
+                if (!fadein)
+                {
+                    this.fadeoutFrame++;
+                    if (this.fadeoutFrame > 40)
+                    {
+                        //if not loaded yet ==> this.fadeoutFrame = 30; return;
+                        this.fadeoutFrame = 20;
+                        this.fadein = true;
+                        if (currentInterface == null) { this.Initialize(); }
+                        if (reset) { ResetCurrentConfigForReal(); }
+                    }
+                }
+                else
+                {
+                    this.fadeoutFrame--;
+                    if (this.fadeoutFrame < 1)
+                    {
+                        this.fadeoutFrame = 0;
+                        this.fadeSprite.RemoveFromContainer();
+                        this.fadeSprite = null;
+                        return;
+                    }
+                }
+                this.OpenMenu();
+                return;
+            }
+            else
+            {
+                if (OptionScript.configChanged && this.backButton != null)
+                { this.backButton.menuLabel.text = InternalTranslator.Translate("CANCEL"); }
+                else
+                { this.backButton.menuLabel.text = InternalTranslator.Translate("BACK"); }
+            }
+            */
+
+            // Play new song
+            if (this.manager.musicPlayer != null)
+            {
+                if (this.manager.musicPlayer.song == null && this.manager.musicPlayer.nextSong == null)
+                { this.manager.musicPlayer.MenuRequestsSong(randomSong, 1f, 2f); }
+            }
+        }
 
         public override string UpdateInfoText()
         {

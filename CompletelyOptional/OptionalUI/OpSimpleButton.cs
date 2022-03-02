@@ -1,5 +1,4 @@
-﻿using Menu;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace OptionalUI
 {
@@ -18,14 +17,12 @@ namespace OptionalUI
             if (!_init) { return; }
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
-            this.rect = new DyeableRect(this.menu, this.owner, this.pos, this.size, true);
-            this.subObjects.Add(this.rect);
-            this.rectH = new DyeableRect(this.menu, this.owner, this.pos, this.size, false);
-            this.subObjects.Add(this.rectH);
+            this.rect = new DyeableRect(this.myContainer, this.pos, this.size, true);
+            this.rectH = new DyeableRect(this.myContainer, this.pos, this.size, false);
             if (!IsImageButton)
             {
-                this.label = new MenuLabel(this.menu, this.owner, text, this.pos, this.size, false);
-                this.subObjects.Add(this.label);
+                this.label = new FLabel(LabelTest.GetFont(false, !LabelTest.HasNonASCIIChars(text)), text);
+                this.myContainer.AddChild(this.label);
             }
         }
 
@@ -45,7 +42,7 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
-        protected internal readonly MenuLabel label;
+        protected internal readonly FLabel label;
         protected internal readonly DyeableRect rect, rectH;
 
         internal bool IsImageButton => this is OpSimpleImageButton;
@@ -65,13 +62,16 @@ namespace OptionalUI
             }
         }
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
+            base.GrafUpdate(timeStacker);
+
+            this.rect.GrafUpdate(timeStacker);
+            this.rectH.GrafUpdate(timeStacker);
 
             if (greyedOut)
             {
-                if (!IsImageButton) { this.label.label.color = this.bumpBehav.GetColor(this.colorEdge); }
+                if (!IsImageButton) { this.label.color = this.bumpBehav.GetColor(this.colorEdge); }
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
                 this.rectH.colorEdge = this.bumpBehav.GetColor(this.colorEdge);

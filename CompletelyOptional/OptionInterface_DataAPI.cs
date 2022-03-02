@@ -502,7 +502,7 @@ namespace OptionalUI
         /// Seed of currently loaded savestate
         /// Used for validating loaded progression
         /// </summary>
-        public int seed => OptionScript.rw.progression.currentSaveState != null ? OptionScript.rw.progression.currentSaveState.seed : -1;
+        public int seed => ComOptPlugin.rw.progression.currentSaveState != null ? OptionScript.rw.progression.currentSaveState.seed : -1;
 
         /// <summary>
         /// Reads the death-persistent data of the specified slugcat directly from its file, without replacing <see cref="persData"/>

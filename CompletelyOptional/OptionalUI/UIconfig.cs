@@ -130,8 +130,9 @@ namespace OptionalUI
             {
                 if (_value != value)
                 {
+                    if (!cosmetic) { ModConfigMenu.instance.cfgContainer.NotifyConfigChange(this, _value, value); }
                     _value = value;
-                    if (_init) { OnChange(); }
+                    OnChange();
                 }
             }
         }
@@ -170,12 +171,6 @@ namespace OptionalUI
         public override void OnChange()
         {
             base.OnChange();
-            if (!_init) { return; }
-            if (!cosmetic)
-            {
-                OptionScript.configChanged = true;
-                (menu as ConfigMenu).saveButton.menuLabel.text = InternalTranslator.Translate("APPLY");
-            }
         }
 
         /// <summary>
@@ -196,7 +191,6 @@ namespace OptionalUI
         {
             base.Update();
             if (held && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(); }
-            if (showDesc && !this.greyedOut) { ConfigMenu.description = this.description; }
         }
 
         protected internal virtual bool CopyFromClipboard(string value)

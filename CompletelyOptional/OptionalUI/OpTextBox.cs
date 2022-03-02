@@ -399,7 +399,6 @@ namespace OptionalUI
         {
             this._size = new Vector2(Mathf.Max(IsUpdown ? 40f : 30f, this._size.x), IsUpdown ? 30f : 24f);
             base.OnChange();
-            if (!_init) { return; }
 
             if (!this.password)
             {

@@ -1,5 +1,4 @@
-﻿using CompletelyOptional;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace OptionalUI
 {
@@ -105,7 +104,6 @@ namespace OptionalUI
             base.Update();
 
             if (this.held && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(); }
-            if (showDesc && !this.greyedOut) { ConfigMenu.description = this.description; }
         }
     }
 }

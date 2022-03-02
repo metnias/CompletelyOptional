@@ -73,48 +73,6 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Is this ConfigScreen or not.
-        /// If you are editing <see cref="Menu.MenuObject"/> in <see cref="UIelement"/>s,
-        /// make sure that those codes don't run when this is false.
-        /// Or it will throw <see cref="NullReferenceException"/>.
-        /// </summary>
-        public static bool IsConfigScreen
-        {
-            get { return OptionScript.init; }
-        }
-
-        /// <summary>
-        /// How much the Sound Engine is full. This exists to prevent cramping Unity Sound thingly and causing sound artifacts. See also <seealso cref="soundFilled"/>
-        /// </summary>
-        /// <remarks>Example: <code>
-        /// if (!soundFilled)
-        /// {
-        ///     soundFill += 5;
-        ///     menu.PlaySound(SoundID.MENU_Scroll_Tick);
-        /// }
-        /// </code>
-        /// </remarks>
-        public static int soundFill
-        {
-            get
-            {
-                return OptionScript.soundFill;
-            }
-            set
-            {
-                if (OptionScript.soundFill < value)
-                { OptionScript.soundFill += UIelement.FrameMultiply(value - OptionScript.soundFill); }
-                else
-                { OptionScript.soundFill = value; }
-            }
-        }
-
-        /// <summary>
-        /// Whether the Sound Engine is full or not. See also <seealso cref="soundFill"/> for example.
-        /// </summary>
-        public static bool soundFilled => soundFill > UIelement.FrameMultiply(80) || ConfigMenu.mute;
-
-        /// <summary>
         /// Whether the mod is configurable or not.
         /// You can just replace this to <c>return true;</c> or <c>false</c> to save computing time.
         /// </summary>
@@ -296,16 +254,13 @@ namespace OptionalUI
         /// </summary>
         public virtual void ConfigOnChange()
         {
-            if (isOptionMenu)
+            foreach (OpTab tab in Tabs)
             {
-                foreach (OpTab tab in Tabs)
+                foreach (UIelement item in tab.items)
                 {
-                    foreach (UIelement item in tab.items)
+                    if (item is UIconfig && (item as UIconfig).cosmetic)
                     {
-                        if (item is UIconfig && (item as UIconfig).cosmetic)
-                        {
-                            item.Reset();
-                        }
+                        item.Reset();
                     }
                 }
             }
@@ -324,10 +279,8 @@ namespace OptionalUI
         /// <summary>
         /// Event that's called every frame. Do not call this by your own.
         /// </summary>
-        /// <param name="dt">deltaTime</param>
-        public virtual void Update(float dt)
+        public virtual void Update()
         {
-            foreach (OpTab tab in this.Tabs) { tab.owner = this; }
         }
 
         /// <summary>
