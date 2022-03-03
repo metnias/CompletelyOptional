@@ -71,8 +71,6 @@ namespace CompletelyOptional
 
         private static int tabButtonCount => Custom.IntClamp(TabCount, 1, 10);
 
-        // 자리비움 x(
-
         private int _tabCount = -1;
 
         public override void GrafUpdate(float timeStacker)
@@ -89,72 +87,28 @@ namespace CompletelyOptional
         {
             base.Update();
             rectCanvas.Update(); rectPpty.Update();
+
+            if (TabCount != _tabCount) { OnChange(); }
+
             // If this gets focus
             // becomes hold automatically
         }
 
         public override void OnChange()
-        { //Selected Tab has changed
+        { //Selected Tab/Tab number has changed
             base.OnChange();
             if (_tabCount != TabCount)
             {
-                Unload();
                 _tabCount = TabCount;
-                if (TabCount() == 1)
-                {
-                    mode = TabMode.single;
-                }
-                else if (TabCount() <= 12)
-                {
-                    mode = TabMode.tab;
-                }
-                else if (TabCount() <= 20)
-                {
-                    mode = TabMode.button;
-                }
-                else
-                {
-                    _index = 0;
-                    throw new TooManyTabsException();
-                }
                 Initialize();
-                _index = 0;
             }
-            else if (_index == index) { return; }
-
-            if (_index != index) { _index = index; }
         }
 
         public void Initialize()
         {
             for (int i = 0; i < 10; i++)
             {
-            }
-            switch (this.mode)
-            {
-                default:
-                case TabMode.single:
-                    //Nothing to draw
-                    break;
-
-                case TabMode.tab:
-                    for (int i = 0; i < _tabCount; i++)
-                    {
-                        TabSelectButton tab = new TabSelectButton(i, this);
-                        this.tabButtons.Add(tab);
-                        menu.pages[0].subObjects.Add(tab.rect);
-                    }
-
-                    break;
-
-                case TabMode.button:
-                    for (int i = 0; i < _tabCount; i++)
-                    {
-                        SelectButton btn = new SelectButton(i, this);
-                        this.tabButtons.Add(btn);
-                        menu.pages[0].subObjects.Add(btn.rect);
-                    }
-                    break;
+                this.tabButtons[i] = new TabSelectButton(i, this);
             }
         }
 
@@ -182,7 +136,8 @@ namespace CompletelyOptional
         {
             internal TabSelectButton(int index, ConfigTabController ctrler) : base(Vector2.zero, Vector2.zero)
             {
-                this.index = index;
+                this.buttonIndex = index;
+                this.tabIndex = index;
                 this.ctrl = ctrler;
                 this.ctrl.menuTab.AddItems(this);
 
@@ -202,15 +157,20 @@ namespace CompletelyOptional
 
             internal bool mouseTop, click;
             internal float darken;
-            public OpTab representingTab => ConfigContainer.activeInterface.Tabs[index];
+            public OpTab representingTab => ConfigContainer.activeInterface.Tabs[tabIndex];
             public string name => representingTab.name;
             public readonly ConfigTabController ctrl;
-            public bool active => ctrl.index == index;
+            public bool active => ctrl.index == tabIndex;
+
+            /// <summary>
+            /// Index of this button
+            /// </summary>
+            public readonly int buttonIndex;
 
             /// <summary>
             /// Index this Object is representing
             /// </summary>
-            public int index;
+            internal int tabIndex;
 
             public readonly BumpBehaviour bumpBehav;
 
@@ -242,7 +202,7 @@ namespace CompletelyOptional
                 else { this.darken = Mathf.Min(1f, this.darken + 0.1f); }
 
                 this.label.rotation = -90f;
-                this.label.text = string.IsNullOrEmpty(this.name) ? index.ToString() : this.name;
+                this.label.text = string.IsNullOrEmpty(this.name) ? tabIndex.ToString() : this.name;
 
                 Color color = this.bumpBehav.GetColor(this.colorButton);
                 this.label.color = Color.Lerp(MenuColorEffect.MidToDark(color), color, Mathf.Lerp(this.darken, 1f, 0.6f));
@@ -254,7 +214,7 @@ namespace CompletelyOptional
                 float addSize = this.active ? 1f : this.bumpBehav.AddSize;
                 this.rect.addSize = new Vector2(8f, 4f) * addSize;
                 this.rect.pos = this.pos + new Vector2(-this.rect.addSize.x * 0.5f, 0f);
-                this.label.pos.x = this.pos.x - addSize * 4f;
+                this.label.x = -addSize * 4f;
 
                 this.rectH.colorEdge = color;
                 this.rectH.addSize = new Vector2(4f, -4f) * addSize;
@@ -277,7 +237,7 @@ namespace CompletelyOptional
                             PlaySound(SoundID.MENU_Button_Select_Mouse);
                         }
                         if (string.IsNullOrEmpty(this.name))
-                        { ModConfigMenu.instance.ShowDescription(InternalTranslator.Translate("Switch to Tab No <TabIndex>").Replace("<TabIndex>", index.ToString())); }
+                        { ModConfigMenu.instance.ShowDescription(InternalTranslator.Translate("Switch to Tab No <TabIndex>").Replace("<TabIndex>", buttonIndex.ToString())); }
                         else
                         { ModConfigMenu.instance.ShowDescription(InternalTranslator.Translate("Switch to Tab <TabName>").Replace("<TabName>", this.name)); }
 
@@ -285,7 +245,7 @@ namespace CompletelyOptional
                         else if (this.click)
                         {
                             this.click = false; this.bumpBehav.held = false;
-                            ctrl.index = this.index;
+                            ctrl.index = this.tabIndex;
                         }
                     }
                     else
