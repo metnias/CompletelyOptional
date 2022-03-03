@@ -30,8 +30,8 @@
      units="px"
      width="1024px"
      inkscape:zoom="1.0998546"
-     inkscape:cx="703.27478"
-     inkscape:cy="399.14367"
+     inkscape:cx="742.37086"
+     inkscape:cy="374.59497"
      inkscape:window-width="2560"
      inkscape:window-height="1377"
      inkscape:window-x="-8"
@@ -455,6 +455,78 @@
          x="242.61717"
          y="-13.299599"
          id="tspan10133">license</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="140.26413"
+       y="-15.854702"
+       id="text4534-0-2"
+       transform="scale(1,-1)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
+         x="140.26413"
+         y="-15.854702"
+         id="tspan10133-7">BACK</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="56.663357"
+       y="-187.03061"
+       id="text4534-0-2-61"
+       transform="scale(1,-1)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
+         x="56.663357"
+         y="-187.03061"
+         id="tspan10133-7-46">Mod ID</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="106.93969"
+       y="-187.23082"
+       id="text4534-0-2-61-7"
+       transform="scale(1,-1)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
+         x="106.93969"
+         y="-187.23082"
+         id="tspan10133-7-46-8">Version</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="180.14267"
+       y="142.30704"
+       id="text4534-0-2-6"
+       transform="matrix(0,1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
+         x="180.14267"
+         y="142.30704"
+         id="tspan10133-7-8">Tab</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="176.8412"
+       y="-15.99194"
+       id="text4534-0-2-5"
+       transform="scale(1,-1)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
+         x="176.8412"
+         y="-15.99194"
+         id="tspan10133-7-4">SAVE</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="207.28964"
+       y="-15.99194"
+       id="text4534-0-2-9"
+       transform="scale(1,-1)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
+         x="207.28964"
+         y="-15.99194"
+         id="tspan10133-7-5">RESET CONFIG</tspan></text>
     <rect
        style="fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:1.05833;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect7610"

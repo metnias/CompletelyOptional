@@ -136,7 +136,6 @@ namespace OptionalUI
             listItf.Sort(CompareOIModID);
             OptItfs = listItf.ToArray();
             OptItfID = new string[OptItfs.Length];
-            OptItfTabs = new List<OpTab>[OptItfs.Length];
             OptItfABC = new int[26];
             uint a = 97; //a
             for (int i = 0; i < OptItfs.Length; i++)
@@ -145,13 +144,9 @@ namespace OptionalUI
                 OptItfID[i] = GenerateID(OptItfs[i].rwMod);
                 string name = ListItem.GetRealName(OptItfs[i].rwMod.ModID);
 
-                // Save Tabs
-                OptItfTabs[i] = new List<OpTab>();
+                // Deactivate Tabs
                 for (int t = 0; t < OptItfs[i].Tabs.Length; t++)
-                {
-                    OptItfTabs[i].Add(OptItfs[i].Tabs[t]);
-                    OptItfs[i].Tabs[t].Deactivate();
-                }
+                { OptItfs[i].Tabs[t].Deactivate(); }
 
                 // Save indexes of mods starting with ABC
                 if (name[0] < (char)a) { continue; }
@@ -253,6 +248,7 @@ namespace OptionalUI
             { ComOptPlugin.LogWarning($"{element.GetType()} is not ICanBeFocused. FocusNewElement ignored."); return; }
             if (element != null && element != this.focusedElement)
             {
+                this.lastFocusedElement = this.focusedElement;
                 this.focusedElement = element;
                 PlaySound((this.focusedElement as ICanBeFocused).GreyedOut
                     ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
@@ -401,7 +397,7 @@ namespace OptionalUI
                         }
                         else if (!(focusedElement.tab is MenuTab)) // Move to TabController
                         {
-                            if (menuTab.tabCtrler.tabCount > 1) { focusedElement = menuTab.tabCtrler; }
+                            if (activeInterface.Tabs.Length > 1) { focusedElement = menuTab.tabCtrler; }
                             else { focusedElement = menuTab.modList; }
                         }
                         else if (focusedElement is ConfigTabController) // Move to Mod List

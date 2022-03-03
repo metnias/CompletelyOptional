@@ -1,5 +1,6 @@
 using Menu;
 using OptionalUI;
+using RWCustom;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,30 +14,34 @@ namespace CompletelyOptional
         public ConfigTabController(MenuTab tab) : base(new Vector2(520f, 120f) - UIelement._offset, new Vector2(40f, 600f))
         {
             this.menuTab = tab;
-            this.cfgMenu = ModConfigMenu.instance;
-            tabButtons = new SelectTab[10];
+            tabButtons = new TabSelectButton[10];
             omit = omit < 0f ? LabelTest.GetWidth("...", false) : omit;
+
+            rectCanvas = new DyeableRect(this.myContainer, new Vector2(543f, 105f) - UIelement._offset - this.pos, new Vector2(630f, 630f), true) { fillAlpha = 0.5f };
+            // author version license: 908 30, 245 86
+            rectPpty = new DyeableRect(this.myContainer, new Vector2(908f, 30f) - UIelement._offset - this.pos, new Vector2(245f, 86f), true) { hiddenSide = DyeableRect.HiddenSide.Top };
 
             OnChange();
         }
 
+        private readonly DyeableRect rectCanvas, rectPpty;
+
         // Add Up/Down arrow
 
         internal MenuTab menuTab;
-        internal ModConfigMenu cfgMenu;
 
-        internal SelectTab[] tabButtons;
+        internal TabSelectButton[] tabButtons;
 
         private static float omit = -1f;
+
+        private bool _focused;
 
         bool ICanBeFocused.Focused { get => _focused; set => _focused = value; }
         bool ICanBeFocused.GreyedOut => false;
 
-        bool ICanBeFocused.CurrentlyFocusableMouse => true;
+        bool ICanBeFocused.CurrentlyFocusableMouse => ConfigContainer.activeInterface.Tabs.Length > 1;
 
-        bool ICanBeFocused.CurrentlyFocusableNonMouse => true;
-
-        private bool _focused;
+        bool ICanBeFocused.CurrentlyFocusableNonMouse => ConfigContainer.activeInterface.Tabs.Length > 1;
 
         internal int index
         {
@@ -59,62 +64,51 @@ namespace CompletelyOptional
             base.Reset();
             OnChange();
             Update();
+            GrafUpdate(0f);
         }
 
-        public static int GetTabCount() => ConfigContainer.activeInterface.Tabs.Length;
+        public static int TabCount => ConfigContainer.activeInterface.Tabs.Length;
+
+        private static int tabButtonCount => Custom.IntClamp(TabCount, 1, 10);
+
+        // 자리비움 x(
 
         private int _tabCount = -1;
 
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);
-            if (MenuTab.logMode || mode == TabMode.NULL)
-            {
-                ConfigMenu.instance.modCanvasBound.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-                ConfigMenu.instance.modCanvasBound.colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.VeryDarkGrey);
-            }
-            else if (mode == TabMode.single)
-            {
-                ConfigMenu.instance.modCanvasBound.colorEdge = ConfigMenu.currentTab.colorCanvas;
-                ConfigMenu.instance.modCanvasBound.colorFill = DyeableRect.MidToVeryDark(ConfigMenu.currentTab.colorCanvas);
-            }
+
+            rectCanvas.colorEdge = ConfigContainer.activeTab.colorCanvas;
+            rectCanvas.colorFill = MenuColorEffect.MidToVeryDark(ConfigContainer.activeTab.colorCanvas);
+
+            rectCanvas.GrafUpdate(timeStacker); rectPpty.GrafUpdate(timeStacker);
         }
 
         public override void Update()
         {
             base.Update();
+            rectCanvas.Update(); rectPpty.Update();
             // If this gets focus
             // becomes hold automatically
-            if ((this as ICanBeFocused).Focused)
-            {
-                foreach (SelectTab btn in this.tabButtons)
-                {
-                    btn.Update();
-                    if (btn.active)
-                    {
-                        ConfigMenu.instance.modCanvasBound.colorEdge = selector.colorCanvas;
-                        ConfigMenu.instance.modCanvasBound.colorFill = DyeableRect.MidToVeryDark(selector.colorCanvas);
-                    }
-                }
-            }
         }
 
         public override void OnChange()
         { //Selected Tab has changed
             base.OnChange();
-            if (_tabCount != GetTabCount())
+            if (_tabCount != TabCount)
             {
                 Unload();
-                _tabCount = GetTabCount();
-                if (GetTabCount() == 1)
+                _tabCount = TabCount;
+                if (TabCount() == 1)
                 {
                     mode = TabMode.single;
                 }
-                else if (GetTabCount() <= 12)
+                else if (TabCount() <= 12)
                 {
                     mode = TabMode.tab;
                 }
-                else if (GetTabCount() <= 20)
+                else if (TabCount() <= 20)
                 {
                     mode = TabMode.button;
                 }
@@ -133,7 +127,9 @@ namespace CompletelyOptional
 
         public void Initialize()
         {
-            this.tabButtons = new List<UIelement>();
+            for (int i = 0; i < 10; i++)
+            {
+            }
             switch (this.mode)
             {
                 default:
@@ -144,7 +140,7 @@ namespace CompletelyOptional
                 case TabMode.tab:
                     for (int i = 0; i < _tabCount; i++)
                     {
-                        SelectTab tab = new SelectTab(i, this);
+                        TabSelectButton tab = new TabSelectButton(i, this);
                         this.tabButtons.Add(tab);
                         menu.pages[0].subObjects.Add(tab.rect);
                     }
@@ -179,47 +175,16 @@ namespace CompletelyOptional
         protected internal override void Unload()
         {
             base.Unload();
-            switch (this.mode)
-            {
-                default:
-                case TabMode.single:
-                    //Nothing drawn
-                    return;
-
-                case TabMode.tab:
-                    foreach (SelectTab tab in this.tabButtons)
-                    {
-                        menu.pages[0].subObjects.Remove(tab.rect);
-                        menu.pages[0].subObjects.Remove(tab.rectH);
-                        menu.pages[0].subObjects.Remove(tab.label);
-                        tab.rect.RemoveSprites();
-                        tab.rectH.RemoveSprites();
-                        tab.label.RemoveSprites();
-                    }
-                    break;
-
-                case TabMode.button:
-                    foreach (SelectButton btn in this.tabButtons)
-                    {
-                        menu.pages[0].subObjects.Remove(btn.rect);
-                        menu.pages[0].subObjects.Remove(btn.rectH);
-                        menu.pages[0].subObjects.Remove(btn.label);
-                        btn.rect.RemoveSprites();
-                        btn.rectH.RemoveSprites();
-                        btn.label.RemoveSprites();
-                    }
-                    break;
-            }
-            foreach (UIelement element in tabButtons)
-            { element.Unload(); }
+            foreach (TabSelectButton btn in tabButtons) { btn.Unload(); }
         }
 
-        internal class SelectTab : UIelement
+        internal class TabSelectButton : UIelement
         {
-            internal SelectTab(int index, ConfigTabController ctrler) : base(Vector2.zero, Vector2.zero)
+            internal TabSelectButton(int index, ConfigTabController ctrler) : base(Vector2.zero, Vector2.zero)
             {
                 this.index = index;
                 this.ctrl = ctrler;
+                this.ctrl.menuTab.AddItems(this);
 
                 this.bumpBehav = new BumpBehaviour(this);
 
@@ -251,7 +216,6 @@ namespace CompletelyOptional
 
             public Color colorButton => representingTab.colorButton;
             public Color colorCanvas => representingTab.colorCanvas;
-            public bool greyedOut => this.ctrl.greyedOut;
 
             /// <summary>
             /// Tab Label
@@ -271,29 +235,17 @@ namespace CompletelyOptional
             public override void GrafUpdate(float timeStacker)
             {
                 base.GrafUpdate(timeStacker);
-                this.bumpBehav.greyedOut = this.greyedOut;
                 this.bumpBehav.Update(timeStacker);
                 this.rect.GrafUpdate(timeStacker); this.rectH.GrafUpdate(timeStacker);
 
-                if (!this.active && (greyedOut || !this.MouseOver)) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f); }
+                if (!this.active && !this.MouseOver) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f); }
                 else { this.darken = Mathf.Min(1f, this.darken + 0.1f); }
 
-                this.label.label.rotation = -90f;
+                this.label.rotation = -90f;
                 this.label.text = string.IsNullOrEmpty(this.name) ? index.ToString() : this.name;
 
-                if (greyedOut)
-                {
-                    Color cg = this.active ? this.colorButton : MenuColorEffect.Greyscale(this.colorButton);
-                    cg = Color.Lerp(MenuColorEffect.MidToDark(cg), cg, this.darken);
-                    this.rect.colorEdge = cg;
-                    this.rect.colorFill = MenuColorEffect.MidToVeryDark(cg);
-                    this.rectH.colorEdge = cg;
-                    this.label.label.color = cg;
-                    return;
-                }
-
                 Color color = this.bumpBehav.GetColor(this.colorButton);
-                this.label.label.color = Color.Lerp(MenuColorEffect.MidToDark(color), color, Mathf.Lerp(this.darken, 1f, 0.6f));
+                this.label.color = Color.Lerp(MenuColorEffect.MidToDark(color), color, Mathf.Lerp(this.darken, 1f, 0.6f));
                 color = Color.Lerp(MenuColorEffect.MidToDark(color), color, this.darken);
                 this.rect.colorEdge = color;
                 this.rect.colorFill = MenuColorEffect.MidToVeryDark(color);
@@ -314,8 +266,6 @@ namespace CompletelyOptional
             public override void Update()
             {
                 this.rect.Update(); this.rectH.Update();
-
-                if (greyedOut || this.ctrl.hidden) { return; }
 
                 if (MenuMouseMode)
                 {

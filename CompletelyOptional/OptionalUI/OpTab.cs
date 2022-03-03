@@ -17,6 +17,8 @@ namespace OptionalUI
             this.name = name;
             this.colorButton = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorCanvas = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
+            // Report
+            if (ConfigContainer.activeInterface == this.owner) { ConfigContainer.menuTab.tabCtrler.OnChange(); }
         }
 
         public readonly OptionInterface owner;
