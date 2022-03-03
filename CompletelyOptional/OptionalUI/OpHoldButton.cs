@@ -31,9 +31,9 @@ namespace OptionalUI
             circles[4] = new FSprite("Futile_White")
             { shader = menu.manager.rainWorld.Shaders["VectorCircleFadable"] };
             for (int i = 0; i < circles.Length; i++) { myContainer.AddChild(circles[i]); circles[i].SetPosition(55f, 55f); }
-            label = new FLabel(LabelTest.GetFont(false), text) { alignment = FLabelAlignment.Center };
+            label = OpLabel.CreateFLabel(text);
             myContainer.AddChild(label);
-            label.SetPosition(new Vector2(55.01f, 55.01f));
+            PlaceLabelAtCenter(label, Vector2.zero, Vector2.one * rad * 2f);
         }
 
         /// <summary>
@@ -63,7 +63,8 @@ namespace OptionalUI
                 scaleY = rect.sprites[DyeableRect.MainFillSprite].scaleY,
                 color = this.color
             };
-            this.label = new FLabel(LabelTest.GetFont(false, !LabelTest.HasNonASCIIChars(text)), text);
+            label = OpLabel.CreateFLabel(text);
+            PlaceLabelAtCenter(label, Vector2.zero, this.size);
             this.myContainer.AddChild(this.label);
             this.myContainer.AddChild(this.rectF);
         }
@@ -97,11 +98,11 @@ namespace OptionalUI
         public override void OnChange()
         {
             base.OnChange();
-            if (!isRectangular) { SetLabelPos(label, Vector2.zero, Vector2.one * rad * 2f); }
+            if (!isRectangular) { PlaceLabelAtCenter(label, Vector2.zero, Vector2.one * rad * 2f); }
             else
             {
                 this._size = new Vector2(Mathf.Max(24f, this.size.x), Mathf.Max(24f, this.size.y)); // Min Size
-                SetLabelPos(label, Vector2.zero, this.size);
+                PlaceLabelAtCenter(label, Vector2.zero, this.size);
                 this.rect.pos = this.pos;
                 this.rect.size = this.size;
                 this.rectH.pos = this.pos;

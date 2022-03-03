@@ -95,9 +95,8 @@ namespace OptionalUI
 
         public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(timeStacker);
             this.bumpBehav.Update(timeStacker);
-            if (held && this.inScrollBox) { this.scrollBox.GrafUpdate(timeStacker); }
+            base.GrafUpdate(timeStacker);
         }
 
         public override void Update()

@@ -181,9 +181,8 @@ namespace OptionalUI
         /// <param name="timeStacker">timeStacker</param>
         public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(timeStacker);
             this.bumpBehav.Update(timeStacker);
-            if (held && this.inScrollBox) { this.scrollBox.GrafUpdate(timeStacker); }
+            base.GrafUpdate(timeStacker);
         }
 
         /// <summary>

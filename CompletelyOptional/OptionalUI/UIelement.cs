@@ -326,7 +326,7 @@ namespace OptionalUI
         /// <param name="label"><see cref="FLabel"/> to be placed</param>
         /// <param name="pos">Leftbottom position of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
         /// <param name="size">An arbitary rectangular for this label to be in its center</param>
-        protected internal void SetLabelPos(FLabel label, Vector2 pos, Vector2 size)
+        protected internal void PlaceLabelAtCenter(FLabel label, Vector2 pos, Vector2 size)
         {
             label.x = pos.x + size.x / 2f;
             label.y = size.y / 2f;

@@ -1,7 +1,10 @@
-﻿using CompletelyOptional;
+﻿using BepInEx;
+using CompletelyOptional;
 using Menu;
 using RWCustom;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace OptionalUI
@@ -13,31 +16,204 @@ namespace OptionalUI
     {
         public ConfigContainer(Menu.Menu menu, MenuObject owner) : base(menu, owner)
         {
-            menuTab = new MenuTab();
+            // Initialize
             _soundFill = 0;
             holdElement = false;
+            history = new Stack<ConfigHistory>();
+
+            // Load OptionInterfaces
+            if (!_loadedOIs) { LoadItfs(); }
+
+            menuTab = new MenuTab();
+            activeItfIndex = 0;
+            activeTabIndex = 0;
+            activeTab = activeInterface.Tabs[activeTabIndex];
+
             lastFocusedElement = menuTab.backButton;
             focusedElement = menuTab.backButton;
-            history = new Stack<ConfigHistory>();
         }
 
-        internal MenuTab menuTab;
-        internal OpTab activeTab;
+        internal static MenuTab menuTab;
+        internal static OpTab activeTab;
+        public static int activeTabIndex { get; private set; }
+        internal static OptionInterface activeInterface => OptItfs[activeItfIndex];
         private int scrollInitDelay;
         private int scrollDelay;
 
-        public static bool holdElement;
+        internal static void ChangeActiveTab(int newIndex)
+        {
+            if (activeTab == null) { activeTab.Deactivate(); }
+            activeTabIndex = newIndex;
+            activeTab = activeInterface.Tabs[activeTabIndex];
+            activeTab.Activate();
+        }
+
+        internal static bool holdElement;
+
+        #region ItfHandler
+
+        /// <summary>
+        /// Blacklisted mod from config menu.
+        /// </summary>
+        internal static string[] blackList = new string[]
+        {
+            "CompletelyOptional",
+            "ConfigMachine",
+            //"RustyMachine",
+            "PolishedMachine",
+            //"Enum Extender",
+            "ComMod",
+            "CommunicationModule",
+            "BepInEx-Partiality-Wrapper",
+            "BepInEx.Partiality.Wrapper",
+            "PartialityWrapper",
+            "Partiality Wrapper",
+            "LogFix",
+            "Log Fix"
+        };
+
+        internal void LoadItfs()
+        {
+            List<OptionInterface> listItf = new List<OptionInterface>();
+            ConfigContainer.mute = true;
+
+            // Load Plugins
+
+            #region Load
+
+            BaseUnityPlugin[] plugins = UnityEngine.Object.FindObjectsOfType<BaseUnityPlugin>();
+            foreach (BaseUnityPlugin plugin in plugins)
+            {
+                OptionInterface oi;
+
+                // Load OI
+                try
+                {
+                    var method = plugin.GetType().GetMethod("LoadOI");
+                    if (method == null || method.GetParameters().Length > 0 || method.ContainsGenericParameters)
+                    {
+                        // Mod didn't attempt to interface with CompletelyOptional, don't bother logging it.
+                        oi = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+                    }
+                    else if (method.Invoke(plugin, null) is OptionInterface itf)
+                    {
+                        oi = itf;
+                        //Your code
+                        ComOptPlugin.LogInfo($"Loaded OptionInterface from {oi.rwMod.ModID} (type: {oi.GetType()})");
+                    }
+                    else
+                    {
+                        oi = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+                        ComOptPlugin.LogInfo($"{oi.rwMod.ModID} did not return an OptionInterface in LoadOI.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    oi = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+
+                    if (blackList.Contains(oi.rwMod.ModID) || oi.rwMod.ModID.Substring(0, 1) == "_")
+                    { continue; }
+
+                    ComOptPlugin.LogWarning($"{oi.rwMod.ModID} threw an exception in LoadOI: {ex.Message}");
+                }
+
+                if (oi is UnconfiguableOI && plugin.Config.Keys.Count > 0)
+                {
+                    // Use BepInEx Configuration
+                    oi = new GeneratedOI(oi.rwMod, plugin.Config);
+                }
+
+                listItf.Add(oi);
+            }
+
+            #endregion Load
+
+            #region Sort
+
+            // Some code that about starred mods here so it would go first
+            // Will think of how to save this list
+
+            listItf.Sort(CompareOIModID);
+            OptItfs = listItf.ToArray();
+            OptItfID = new string[OptItfs.Length];
+            OptItfTabs = new List<OpTab>[OptItfs.Length];
+            OptItfABC = new int[26];
+            uint a = 97; //a
+            for (int i = 0; i < OptItfs.Length; i++)
+            {
+                // Save IDs
+                OptItfID[i] = GenerateID(OptItfs[i].rwMod);
+                string name = ListItem.GetRealName(OptItfs[i].rwMod.ModID);
+
+                // Save Tabs
+                OptItfTabs[i] = new List<OpTab>();
+                for (int t = 0; t < OptItfs[i].Tabs.Length; t++)
+                {
+                    OptItfTabs[i].Add(OptItfs[i].Tabs[t]);
+                    OptItfs[i].Tabs[t].Deactivate();
+                }
+
+                // Save indexes of mods starting with ABC
+                if (name[0] < (char)a) { continue; }
+                if (name[0] == (char)a) { OptItfABC[a - 97] = i; a++; continue; }
+                while (name[0] > (char)a && a < 123)
+                { OptItfABC[a - 97] = -1; a++; }
+            }
+
+            #endregion Sort
+
+            ConfigContainer.mute = false;
+            _loadedOIs = true;
+        }
+
+        private static bool _loadedOIs = false;
+
+        /// <summary>
+        /// Array of OptionInterface Instances
+        /// </summary>
+        internal static OptionInterface[] OptItfs;
+
+        /// <summary>
+        /// Loaded OptionInterface Instances' ModIDs
+        /// </summary>
+        internal static string[] OptItfID;
+
+        internal static int[] OptItfABC;
+        internal static int activeItfIndex { get; private set; }
+
+        internal static string GenerateID(string ModID, string author)
+        {
+            ModID = ModID.Replace(' ', '_');
+            if (string.IsNullOrEmpty(author)) { return ModID; }
+            author = author.Replace(' ', '_');
+            return $"{ModID}-{author}";
+        }
+
+        internal static string GenerateID(RainWorldMod rwMod) => GenerateID(rwMod.ModID, rwMod.author);
+
+        /// <summary>
+        /// Comparator for Sorting OptionInterfaces by ModID
+        /// </summary>
+        private static int CompareOIModID(OptionInterface x, OptionInterface y)
+        {
+            return ListItem.GetRealName(GenerateID(x.rwMod.ModID, x.rwMod.author))
+                  .CompareTo(ListItem.GetRealName(GenerateID(y.rwMod.ModID, y.rwMod.author)));
+        }
+
+        #endregion ItfHandler
+
+        #region FocusHandler
 
         private List<UIelement> focusables
         {
             get
             {
                 List<UIelement> list = new List<UIelement>();
-                foreach (UIelement item in this.menuTab.focusables)
+                foreach (UIelement item in menuTab.focusables)
                 { if (!item.isInactive) { list.Add(item); } }
-                if (this.activeTab != null)
+                if (activeTab != null)
                 {
-                    foreach (UIelement item in this.activeTab.focusables)
+                    foreach (UIelement item in activeTab.focusables)
                     { if (!item.isInactive) { list.Add(item); } }
                 }
 
@@ -64,12 +240,93 @@ namespace OptionalUI
             }
         }
 
+        public UIelement focusedElement { get; private set; }
+        private UIelement lastFocusedElement;
+
+        /// <summary>
+        /// Change <see cref="focusedElement"/>
+        /// </summary>
+        /// <param name="element"><see cref="ICanBeFocused"/> for new focus</param>
+        public void FocusNewElement(UIelement element)
+        {
+            if (!(element is ICanBeFocused))
+            { ComOptPlugin.LogWarning($"{element.GetType()} is not ICanBeFocused. FocusNewElement ignored."); return; }
+            if (element != null && element != this.focusedElement)
+            {
+                this.focusedElement = element;
+                PlaySound((this.focusedElement as ICanBeFocused).GreyedOut
+                    ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
+                // Always play Gamepad sound even in Mouse mode, as this is called by either Gamepad or Modder
+            }
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="direction"></param>
+        internal void FocusNewElementInDirection(IntVector2 direction)
+        {
+            UIelement element = this.FocusCandidate(direction);
+            this.FocusNewElement(element);
+        }
+
+        private UIelement FocusCandidate(IntVector2 direction)
+        {
+            if (this.focusedElement == null)
+            { // current mod button
+                return activeTab.focusables[0];
+            }
+            if (!(this.focusedElement is ICanBeFocused))
+            {
+                return this.lastFocusedElement;
+            }
+            UIelement result = this.lastFocusedElement;
+            Vector2 curCenter = this.focusedElement.CenterPos();
+            List<UIelement> candidates = this.focusables;
+            float likelihood = float.MaxValue;
+            for (int i = 0; i < candidates.Count; i++)
+            {
+                if (candidates[i] is ICanBeFocused
+                    && (candidates[i] as ICanBeFocused).CurrentlyFocusableNonMouse
+                    && (candidates[i] as ICanBeFocused) != this.focusedElement)
+                {
+                    Vector2 cndCenter = candidates[i].CenterPos();
+                    // if (direction.y == 0 || cndCenter.y < curCenter.y != direction.y < 0)
+                    // {
+                    //     bool flag = direction.x != 0 && cndCenter.x < curCenter.x == direction.x < 0;
+                    // }
+                    float dist = Vector2.Distance(curCenter, cndCenter);
+                    Vector2 dir = Custom.DirVec(curCenter, cndCenter);
+                    float angle = 0.5f - 0.5f * Vector2.Dot(dir, direction.ToVector2().normalized);
+                    if (angle > 0.5f)
+                    {
+                        if (angle > 0.8f)
+                        {
+                            angle = 0.5f - 0.5f * Vector2.Dot(-dir, direction.ToVector2().normalized);
+                            dist = Vector2.Distance(curCenter, cndCenter + direction.ToVector2() * ((direction.x == 0) ? 1800f : 2400f));
+                        }
+                        else { dist += 100000f; }
+                    }
+                    angle *= 50f;
+                    float cndLikelihood = (1f + dist) * (1f + angle);
+                    if (cndLikelihood < likelihood)
+                    {
+                        result = candidates[i];
+                        likelihood = cndLikelihood;
+                    }
+                }
+            }
+            return result;
+        }
+
+        #endregion FocusHandler
+
         // Called by ModConfigMenu.GrafUpdate
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);
             menuTab.GrafUpdate(timeStacker);
-            if (activeTab != null) { activeTab.GrafUpdate(timeStacker); }
+            activeTab.GrafUpdate(timeStacker);
         }
 
         // Called by ModConfigMenu.Update
@@ -144,16 +401,16 @@ namespace OptionalUI
                         }
                         else if (!(focusedElement.tab is MenuTab)) // Move to TabController
                         {
-                            if (this.menuTab.tabCtrler.tabCount > 1) { focusedElement = this.menuTab.tabCtrler; }
-                            else { focusedElement = this.menuTab.modList; }
+                            if (menuTab.tabCtrler.tabCount > 1) { focusedElement = menuTab.tabCtrler; }
+                            else { focusedElement = menuTab.modList; }
                         }
                         else if (focusedElement is ConfigTabController) // Move to Mod List
                         {
-                            focusedElement = this.menuTab.modList;
+                            focusedElement = menuTab.modList;
                         }
                         else // Move to Save button
                         {
-                            focusedElement = this.menuTab.saveButton;
+                            focusedElement = menuTab.saveButton;
                         }
                         if (moved)
                         {
@@ -166,6 +423,7 @@ namespace OptionalUI
                     }
                 }
             }
+            activeInterface.Update();
             if (holdElement)
             {
                 if (this.focusedElement != null && !(this.focusedElement as ICanBeFocused).GreyedOut) { this.focusedElement.Update(); }
@@ -174,87 +432,8 @@ namespace OptionalUI
             if (!holdElement)
             {
                 menuTab.Update();
-                if (activeTab != null) { activeTab.Update(); }
+                activeTab.Update();
             }
-        }
-
-        public UIelement focusedElement { get; private set; }
-        private UIelement lastFocusedElement;
-
-        /// <summary>
-        /// Change <see cref="focusedElement"/>
-        /// </summary>
-        /// <param name="element"><see cref="ICanBeFocused"/> for new focus</param>
-        public void FocusNewElement(UIelement element)
-        {
-            if (!(element is ICanBeFocused))
-            { ComOptPlugin.LogWarning($"{element.GetType()} is not ICanBeFocused. FocusNewElement ignored."); return; }
-            if (element != null && element != this.focusedElement)
-            {
-                this.focusedElement = element;
-                PlaySound((this.focusedElement as ICanBeFocused).GreyedOut
-                    ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
-                // Always play Gamepad sound even in Mouse mode, as this is called by either Gamepad or Modder
-            }
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="direction"></param>
-        internal void FocusNewElementInDirection(IntVector2 direction)
-        {
-            UIelement element = this.FocusCandidate(direction);
-            this.FocusNewElement(element);
-        }
-
-        private UIelement FocusCandidate(IntVector2 direction)
-        {
-            if (this.focusedElement == null)
-            { // current mod button
-                return this.activeTab.focusables[0];
-            }
-            if (!(this.focusedElement is ICanBeFocused))
-            {
-                return this.lastFocusedElement;
-            }
-            UIelement result = this.lastFocusedElement;
-            Vector2 curCenter = this.focusedElement.CenterPos();
-            List<UIelement> candidates = this.focusables;
-            float likelihood = float.MaxValue;
-            for (int i = 0; i < candidates.Count; i++)
-            {
-                if (candidates[i] is ICanBeFocused
-                    && (candidates[i] as ICanBeFocused).CurrentlyFocusableNonMouse
-                    && (candidates[i] as ICanBeFocused) != this.focusedElement)
-                {
-                    Vector2 cndCenter = candidates[i].CenterPos();
-                    // if (direction.y == 0 || cndCenter.y < curCenter.y != direction.y < 0)
-                    // {
-                    //     bool flag = direction.x != 0 && cndCenter.x < curCenter.x == direction.x < 0;
-                    // }
-                    float dist = Vector2.Distance(curCenter, cndCenter);
-                    Vector2 dir = Custom.DirVec(curCenter, cndCenter);
-                    float angle = 0.5f - 0.5f * Vector2.Dot(dir, direction.ToVector2().normalized);
-                    if (angle > 0.5f)
-                    {
-                        if (angle > 0.8f)
-                        {
-                            angle = 0.5f - 0.5f * Vector2.Dot(-dir, direction.ToVector2().normalized);
-                            dist = Vector2.Distance(curCenter, cndCenter + direction.ToVector2() * ((direction.x == 0) ? 1800f : 2400f));
-                        }
-                        else { dist += 100000f; }
-                    }
-                    angle *= 50f;
-                    float cndLikelihood = (1f + dist) * (1f + angle);
-                    if (cndLikelihood < likelihood)
-                    {
-                        result = candidates[i];
-                        likelihood = cndLikelihood;
-                    }
-                }
-            }
-            return result;
         }
 
         /// <summary>

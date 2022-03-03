@@ -21,8 +21,9 @@ namespace OptionalUI
             this.rectH = new DyeableRect(this.myContainer, this.pos, this.size, false);
             if (!IsImageButton)
             {
-                this.label = new FLabel(LabelTest.GetFont(false, !LabelTest.HasNonASCIIChars(text)), text);
+                this.label = OpLabel.CreateFLabel(text);
                 this.myContainer.AddChild(this.label);
+                PlaceLabelAtCenter(this.label, Vector2.zero, this.size);
             }
         }
 
@@ -51,6 +52,7 @@ namespace OptionalUI
         {
             this._size = new Vector2(Mathf.Max(24f, this.size.x), Mathf.Max(24f, this.size.y)); // Min Size
             base.OnChange();
+            PlaceLabelAtCenter(this.label, Vector2.zero, this.size);
             this.rect.pos = this.pos;
             this.rect.size = this.size;
             this.rectH.pos = this.pos;
@@ -66,7 +68,7 @@ namespace OptionalUI
             if (!IsImageButton)
             {
                 this.label.color = this.bumpBehav.GetColor(this.colorEdge);
-                this.SetLabelPos(this.label, Vector2.zero, this.size);
+                this.PlaceLabelAtCenter(this.label, Vector2.zero, this.size);
             }
             if (greyedOut)
             {

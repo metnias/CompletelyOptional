@@ -10,12 +10,11 @@ namespace CompletelyOptional
     /// </summary>
     internal class ConfigTabController : UIelement, ICanBeFocused
     {
-        public ConfigTabController(MenuTab tab) : base(new Vector2(503f, 120f) - UIelement._offset, new Vector2(40f, 600f))
+        public ConfigTabController(MenuTab tab) : base(new Vector2(520f, 120f) - UIelement._offset, new Vector2(40f, 600f))
         {
             this.menuTab = tab;
             this.cfgMenu = ModConfigMenu.instance;
-            this.mode = TabMode.NULL;
-            subElements = new List<UIelement>();
+            tabButtons = new SelectTab[10];
             omit = omit < 0f ? LabelTest.GetWidth("...", false) : omit;
 
             OnChange();
@@ -26,7 +25,7 @@ namespace CompletelyOptional
         internal MenuTab menuTab;
         internal ModConfigMenu cfgMenu;
 
-        internal List<UIelement> subElements;
+        internal SelectTab[] tabButtons;
 
         private static float omit = -1f;
 
@@ -39,19 +38,18 @@ namespace CompletelyOptional
 
         private bool _focused;
 
-        public int index
+        internal int index
         {
-            get { return ConfigMenu.selectedTabIndex; }
+            get { return ConfigContainer.activeTabIndex; }
             set
             {
-                if (_index == value)
+                if (ConfigContainer.activeTabIndex == value)
                 {
-                    menu.PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
+                    PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
                     return;
                 }
-                menu.PlaySound(SoundID.MENU_MultipleChoice_Clicked);
-                ConfigMenu.selectedTabIndex = value;
-                ConfigMenu.ChangeSelectedTab();
+                PlaySound(SoundID.MENU_MultipleChoice_Clicked);
+                ConfigContainer.ChangeActiveTab(value);
                 OnChange();
             }
         }
@@ -59,39 +57,17 @@ namespace CompletelyOptional
         public override void Reset()
         {
             base.Reset();
-            _index = 0;
             OnChange();
-            Update(0f);
+            Update();
         }
 
-        private int _index;
-
-        public static int GetTabCount() => ConfigMenu.currentInterface.Tabs.Length;
+        public static int GetTabCount() => ConfigContainer.activeInterface.Tabs.Length;
 
         private int _tabCount = -1;
 
-        private enum TabMode
+        public override void GrafUpdate(float timeStacker)
         {
-            single, //==1
-            tab, //>1, <=12
-            button, //>12
-            NULL
-        }
-
-        private TabMode mode;
-
-        public override void Update()
-        {
-            base.Update();
-            foreach (UIelement element in this.subElements)
-            {
-                element.Update();
-                if (element is Selector selector && selector.active)
-                {
-                    ConfigMenu.instance.modCanvasBound.colorEdge = selector.colorCanvas;
-                    ConfigMenu.instance.modCanvasBound.colorFill = DyeableRect.MidToVeryDark(selector.colorCanvas);
-                }
-            }
+            base.GrafUpdate(timeStacker);
             if (MenuTab.logMode || mode == TabMode.NULL)
             {
                 ConfigMenu.instance.modCanvasBound.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
@@ -101,6 +77,25 @@ namespace CompletelyOptional
             {
                 ConfigMenu.instance.modCanvasBound.colorEdge = ConfigMenu.currentTab.colorCanvas;
                 ConfigMenu.instance.modCanvasBound.colorFill = DyeableRect.MidToVeryDark(ConfigMenu.currentTab.colorCanvas);
+            }
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            // If this gets focus
+            // becomes hold automatically
+            if ((this as ICanBeFocused).Focused)
+            {
+                foreach (SelectTab btn in this.tabButtons)
+                {
+                    btn.Update();
+                    if (btn.active)
+                    {
+                        ConfigMenu.instance.modCanvasBound.colorEdge = selector.colorCanvas;
+                        ConfigMenu.instance.modCanvasBound.colorFill = DyeableRect.MidToVeryDark(selector.colorCanvas);
+                    }
+                }
             }
         }
 
@@ -138,7 +133,7 @@ namespace CompletelyOptional
 
         public void Initialize()
         {
-            this.subElements = new List<UIelement>();
+            this.tabButtons = new List<UIelement>();
             switch (this.mode)
             {
                 default:
@@ -150,7 +145,7 @@ namespace CompletelyOptional
                     for (int i = 0; i < _tabCount; i++)
                     {
                         SelectTab tab = new SelectTab(i, this);
-                        this.subElements.Add(tab);
+                        this.tabButtons.Add(tab);
                         menu.pages[0].subObjects.Add(tab.rect);
                     }
 
@@ -160,7 +155,7 @@ namespace CompletelyOptional
                     for (int i = 0; i < _tabCount; i++)
                     {
                         SelectButton btn = new SelectButton(i, this);
-                        this.subElements.Add(btn);
+                        this.tabButtons.Add(btn);
                         menu.pages[0].subObjects.Add(btn.rect);
                     }
                     break;
@@ -170,14 +165,14 @@ namespace CompletelyOptional
         protected internal override void Deactivate()
         {
             base.Deactivate();
-            foreach (UIelement element in this.subElements)
+            foreach (UIelement element in this.tabButtons)
             { element.Deactivate(); }
         }
 
         protected internal override void Reactivate()
         {
             base.Reactivate();
-            foreach (UIelement element in this.subElements)
+            foreach (UIelement element in this.tabButtons)
             { element.Reactivate(); }
         }
 
@@ -192,7 +187,7 @@ namespace CompletelyOptional
                     return;
 
                 case TabMode.tab:
-                    foreach (SelectTab tab in this.subElements)
+                    foreach (SelectTab tab in this.tabButtons)
                     {
                         menu.pages[0].subObjects.Remove(tab.rect);
                         menu.pages[0].subObjects.Remove(tab.rectH);
@@ -204,7 +199,7 @@ namespace CompletelyOptional
                     break;
 
                 case TabMode.button:
-                    foreach (SelectButton btn in this.subElements)
+                    foreach (SelectButton btn in this.tabButtons)
                     {
                         menu.pages[0].subObjects.Remove(btn.rect);
                         menu.pages[0].subObjects.Remove(btn.rectH);
@@ -215,106 +210,53 @@ namespace CompletelyOptional
                     }
                     break;
             }
-            foreach (UIelement element in subElements)
+            foreach (UIelement element in tabButtons)
             { element.Unload(); }
         }
 
-        public class Selector : UIelement
+        internal class SelectTab : UIelement
         {
-            public Selector(int index, ConfigTabController ctrler) : base(new Vector2(), new Vector2())
+            internal SelectTab(int index, ConfigTabController ctrler) : base(Vector2.zero, Vector2.zero)
             {
                 this.index = index;
                 this.ctrl = ctrler;
 
                 this.bumpBehav = new BumpBehaviour(this);
-            }
 
-            public readonly ConfigTabController ctrl;
-            public bool active => ctrl.index == index;
-
-            /// <summary>
-            /// Index this Object is presenting
-            /// </summary>
-            public readonly int index;
-
-            public readonly BumpBehaviour bumpBehav;
-
-            public Color color => ConfigMenu.currentInterface.Tabs[this.index].color;
-            public Color colorCanvas => ConfigMenu.currentInterface.Tabs[this.index].colorCanvas;
-            public bool greyedOut => this.ctrl.greyedOut;
-
-            public override void GrafUpdate(float timeStacker)
-            {
-                base.GrafUpdate(timeStacker);
-                this.bumpBehav.greyedOut = this.greyedOut;
-                this.bumpBehav.Update(timeStacker);
-
-                if (!this.active && (greyedOut || !this.MouseOver)) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f); }
-                else { this.darken = Mathf.Min(1f, this.darken + 0.1f); }
+                float height = Mathf.Min(120f, 600f / ctrler._tabCount);
+                //ctrler._tabCount
+                this._pos = ctrl.pos + new Vector2(0f, height * (-index - 1) + 603f); //ctrl.pos + new Vector2(17f, height * (ctrler._tabCount - index - 1) + 3f);
+                //Debug.Log(string.Concat("Idx: ", index, " y: ", this._pos.y - ctrl.pos.y));
+                this._size = new Vector2(30f, height - 6f);
+                this.rect = new DyeableRect(myContainer, this.pos, this.size, true) { hiddenSide = DyeableRect.HiddenSide.Right };
+                this.rectH = new DyeableRect(myContainer, this.pos, this.size, false) { hiddenSide = DyeableRect.HiddenSide.Right };
+                this.label = OpLabel.CreateFLabel(this.name);
+                this.label.alignment = FLabelAlignment.Left;
+                this.myContainer.AddChild(this.label);
             }
 
             internal bool mouseTop, click;
             internal float darken;
-            public string name => ConfigMenu.currentInterface.Tabs[index].name;
+            public OpTab representingTab => ConfigContainer.activeInterface.Tabs[index];
+            public string name => representingTab.name;
+            public readonly ConfigTabController ctrl;
+            public bool active => ctrl.index == index;
 
-            public override void Update()
-            {
-                foreach (MenuObject obj in this.subObjects)
-                {
-                    obj.Update();
-                    if (!this.ctrl.hidden) { obj.GrafUpdate(dt); }
-                }
+            /// <summary>
+            /// Index this Object is representing
+            /// </summary>
+            public int index;
 
-                if (greyedOut || this.ctrl.hidden) { return; }
-                if (MouseOver)
-                {
-                    if (!mouseTop)
-                    {
-                        mouseTop = true;
-                        ctrl.cfgMenu.PlaySound(SoundID.MENU_Button_Select_Mouse);
-                    }
-                    if (string.IsNullOrEmpty(this.name))
-                    { ConfigMenu.description = InternalTranslator.Translate("Switch to Tab No <TabIndex>").Replace("<TabIndex>", index.ToString()); }
-                    else
-                    { ConfigMenu.description = InternalTranslator.Translate("Switch to Tab <TabName>").Replace("<TabName>", this.name); }
+            public readonly BumpBehaviour bumpBehav;
 
-                    if (Input.GetMouseButton(0)) { this.click = true; this.bumpBehav.held = true; }
-                    else if (this.click)
-                    {
-                        this.click = false; this.bumpBehav.held = false;
-                        ctrl.index = this.index;
-                    }
-                }
-                else
-                {
-                    mouseTop = false;
-                    if (!Input.GetMouseButton(0)) { this.bumpBehav.held = false; this.click = false; }
-                }
-            }
-        }
-
-        public class SelectTab : Selector
-        {
-            public SelectTab(int index, ConfigTabController ctrler) : base(index, ctrler)
-            {
-                float height = Mathf.Min(120f, 600f / ctrler._tabCount);
-                //ctrler._tabCount
-                this._pos = ctrl.pos + new Vector2(17f, height * (-index - 1) + 603f); //ctrl.pos + new Vector2(17f, height * (ctrler._tabCount - index - 1) + 3f);
-                //Debug.Log(string.Concat("Idx: ", index, " y: ", this._pos.y - ctrl.pos.y));
-                this._size = new Vector2(30f, height - 6f);
-                this.rect = new DyeableRect(menu, owner, this.pos, this.size, true) { tab = true };
-                this.rectH = new DyeableRect(menu, owner, this.pos, this.size, false) { tab = true };
-                this.label = new MenuLabel(menu, owner, this.name, this.pos, this.size, false);
-
-                this.subObjects.Add(this.rect);
-                this.subObjects.Add(this.rectH);
-                this.subObjects.Add(this.label);
-            }
+            public Color colorButton => representingTab.colorButton;
+            public Color colorCanvas => representingTab.colorCanvas;
+            public bool greyedOut => this.ctrl.greyedOut;
 
             /// <summary>
             /// Tab Label
             /// </summary>
-            public MenuLabel label;
+            public FLabel label;
 
             /// <summary>
             /// Tab Boundary
@@ -326,29 +268,35 @@ namespace CompletelyOptional
             /// </summary>
             public DyeableRect rectH;
 
-            public override void GrafUpdate(float dt)
+            public override void GrafUpdate(float timeStacker)
             {
-                base.GrafUpdate(dt);
+                base.GrafUpdate(timeStacker);
+                this.bumpBehav.greyedOut = this.greyedOut;
+                this.bumpBehav.Update(timeStacker);
+                this.rect.GrafUpdate(timeStacker); this.rectH.GrafUpdate(timeStacker);
+
+                if (!this.active && (greyedOut || !this.MouseOver)) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f); }
+                else { this.darken = Mathf.Min(1f, this.darken + 0.1f); }
 
                 this.label.label.rotation = -90f;
                 this.label.text = string.IsNullOrEmpty(this.name) ? index.ToString() : this.name;
 
                 if (greyedOut)
                 {
-                    Color cg = this.active ? this.color : DyeableRect.Grayscale(this.color);
-                    cg = Color.Lerp(DyeableRect.MidToDark(cg), cg, this.darken);
+                    Color cg = this.active ? this.colorButton : MenuColorEffect.Greyscale(this.colorButton);
+                    cg = Color.Lerp(MenuColorEffect.MidToDark(cg), cg, this.darken);
                     this.rect.colorEdge = cg;
-                    this.rect.colorFill = DyeableRect.MidToVeryDark(cg);
+                    this.rect.colorFill = MenuColorEffect.MidToVeryDark(cg);
                     this.rectH.colorEdge = cg;
                     this.label.label.color = cg;
                     return;
                 }
 
-                Color color = this.bumpBehav.GetColor(this.color);
-                this.label.label.color = Color.Lerp(DyeableRect.MidToDark(color), color, Mathf.Lerp(this.darken, 1f, 0.6f));
-                color = Color.Lerp(DyeableRect.MidToDark(color), color, this.darken);
+                Color color = this.bumpBehav.GetColor(this.colorButton);
+                this.label.label.color = Color.Lerp(MenuColorEffect.MidToDark(color), color, Mathf.Lerp(this.darken, 1f, 0.6f));
+                color = Color.Lerp(MenuColorEffect.MidToDark(color), color, this.darken);
                 this.rect.colorEdge = color;
-                this.rect.colorFill = DyeableRect.MidToVeryDark(color);
+                this.rect.colorFill = MenuColorEffect.MidToVeryDark(color);
 
                 this.rect.fillAlpha = this.bumpBehav.FillAlpha;
                 float addSize = this.active ? 1f : this.bumpBehav.AddSize;
@@ -363,81 +311,42 @@ namespace CompletelyOptional
                 for (int j = 0; j < 8; j++) { this.rectH.sprites[j].alpha = active ? 1f : highlight; }
             }
 
-            public override void Hide()
+            public override void Update()
             {
-                this.rect.Hide(); this.rectH.Hide(); this.label.label.isVisible = false;
-            }
+                this.rect.Update(); this.rectH.Update();
 
-            public override void Show()
-            {
-                this.rect.Show(); this.rectH.Show(); this.label.label.isVisible = true;
-            }
-        }
+                if (greyedOut || this.ctrl.hidden) { return; }
 
-        /// <summary>
-        /// When the number of Tab is more than 12. Only first 2 character of <see cref="OpTab.name"/> will be displayed.
-        /// </summary>
-        public class SelectButton : Selector
-        {
-            public SelectButton(int index, ConfigTabController ctrler) : base(index, ctrler)
-            {
-                this._pos = ctrl.pos + new Vector2(18f, 30f * (19 - index) + 3f);
-                this.size = new Vector2(30f, 24f);
-                this.rect = new DyeableRect(menu, owner, this.pos, this.size, true) { tab = true };
-                this.rectH = new DyeableRect(menu, owner, this.pos, this.size, false) { tab = true };
-                this.label = new MenuLabel(menu, owner, this.name, this.pos, this.size, false);
-                this.subObjects.Add(this.rect);
-                this.subObjects.Add(this.rectH);
-                this.subObjects.Add(this.label);
-            }
-
-            public MenuLabel label;
-            public DyeableRect rect, rectH;
-
-            public override void GrafUpdate(float dt)
-            {
-                base.GrafUpdate(dt);
-
-                this.label.text = string.IsNullOrEmpty(this.name) ? index.ToString() : (this.name.Length > 2 ? this.name.Substring(0, 2) : this.name);
-
-                if (greyedOut)
+                if (MenuMouseMode)
                 {
-                    Color cg = this.active ? this.color : DyeableRect.Grayscale(this.color);
-                    cg = Color.Lerp(DyeableRect.MidToDark(cg), cg, this.darken);
-                    this.rect.colorEdge = cg;
-                    this.rect.colorFill = DyeableRect.MidToVeryDark(cg);
-                    this.rectH.colorEdge = cg;
-                    this.label.label.color = cg;
-                    return;
+                    if (MouseOver)
+                    {
+                        if (!mouseTop)
+                        {
+                            mouseTop = true;
+                            PlaySound(SoundID.MENU_Button_Select_Mouse);
+                        }
+                        if (string.IsNullOrEmpty(this.name))
+                        { ModConfigMenu.instance.ShowDescription(InternalTranslator.Translate("Switch to Tab No <TabIndex>").Replace("<TabIndex>", index.ToString())); }
+                        else
+                        { ModConfigMenu.instance.ShowDescription(InternalTranslator.Translate("Switch to Tab <TabName>").Replace("<TabName>", this.name)); }
+
+                        if (Input.GetMouseButton(0)) { this.click = true; this.bumpBehav.held = true; }
+                        else if (this.click)
+                        {
+                            this.click = false; this.bumpBehav.held = false;
+                            ctrl.index = this.index;
+                        }
+                    }
+                    else
+                    {
+                        mouseTop = false;
+                        if (!Input.GetMouseButton(0)) { this.bumpBehav.held = false; this.click = false; }
+                    }
                 }
-
-                Color color = this.bumpBehav.GetColor(this.color);
-                this.label.label.color = Color.Lerp(DyeableRect.MidToDark(color), color, Mathf.Lerp(this.darken, 1f, 0.6f));
-                color = Color.Lerp(DyeableRect.MidToDark(color), color, this.darken);
-                this.rect.colorEdge = color;
-                this.rect.colorFill = DyeableRect.MidToVeryDark(color);
-
-                this.rect.fillAlpha = this.bumpBehav.FillAlpha;
-                float addSize = this.active ? 1f : this.bumpBehav.AddSize;
-                this.rect.addSize = new Vector2(8f, 4f) * addSize;
-                this.rect.pos = this.pos + new Vector2(-this.rect.addSize.x * 0.5f, 0f);
-                this.label.pos.x = this.pos.x - addSize * 4f;
-
-                this.rectH.colorEdge = color;
-                this.rectH.addSize = new Vector2(4f, -4f) * addSize;
-                this.rectH.pos = this.pos + new Vector2(-this.rectH.addSize.x * 0.5f, 0f);
-                float highlight = this.MouseOver ? (0.5f + 0.5f * this.bumpBehav.Sin(10f)) * addSize : 0f;
-                for (int j = 0; j < 8; j++) { this.rectH.sprites[j].alpha = active ? 1f : highlight; }
-            }
-
-            public override void Hide()
-            {
-                this.rect.Hide(); this.rectH.Hide(); this.label.label.isVisible = false;
-            }
-
-            public override void Show()
-            {
-                this.rect.Show(); this.rectH.Show(); this.label.label.isVisible = true;
+                else
+                { // Controller
+                }
             }
         }
     }

@@ -4,9 +4,12 @@ namespace OptionalUI
 {
     internal class MenuModList : UIelement, ICanBeFocused
     {
-        public MenuModList() : base(new Vector2(193f, 240f) - UIelement._offset, new Vector2(280f, 495f))
+        public MenuModList() : base(new Vector2(208f, 40f) - UIelement._offset, new Vector2(250f, 684f))
         {
+            rect = new DyeableRect(this.myContainer, new Vector2(-15f, -10f), new Vector2(280f, 705f));
         }
+
+        private readonly DyeableRect rect;
 
         private bool _focused = false;
 
@@ -33,6 +36,20 @@ namespace OptionalUI
         internal class ModButton : OpSimpleButton
         {
             public ModButton(Vector2 pos, Vector2 size, string signal, string text = "") : base(pos, size, signal, text)
+            {
+            }
+
+            public enum State
+            {
+                Unsupported,
+                Idle,
+                Selected
+            }
+        }
+
+        internal class ListButton : OpSimpleImageButton
+        {
+            public ListButton(Vector2 pos, Vector2 size, string signal, string fAtlasElement) : base(pos, size, signal, fAtlasElement)
             {
             }
         }

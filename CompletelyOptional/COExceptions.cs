@@ -83,30 +83,6 @@ namespace OptionalUI
     }
 
     /// <summary>
-    /// You cannot have more that 20 tabs for single mod
-    /// </summary>
-    [Serializable]
-    public class TooManyTabsException : FormatException
-    {
-        public TooManyTabsException(string message) : base(message)
-        {
-        }
-
-        public TooManyTabsException() : base("TooManyTabsException: OI has 20+ tabs!")
-        {
-        }
-
-        public TooManyTabsException(string message, Exception innerException) : base(message, innerException)
-        {
-        }
-
-        protected TooManyTabsException(System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    /// <summary>
     /// You need at least one OpTab to contain any UIelements
     /// </summary>
     [Serializable]
