@@ -271,7 +271,9 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Useful for hiding this in <see cref="UIelement.Deactivate"/>
+        /// Useful for hiding this alone. See also <seealso cref="Show()"/> for the counterpart.
+        /// <para>If its <see cref="container"/> is <see cref="UIelement.myContainer"/>,
+        /// there's no need to do add this in <see cref="UIelement.Deactivate"/> to hide.</para>
         /// </summary>
         public void Hide()
         {
@@ -279,7 +281,7 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Usefull for unhiding this in <see cref="UIelement.Reactivate"/>
+        /// Used for unhide this. See also <seealso cref="Hide()"/>.
         /// </summary>
         public void Show()
         {

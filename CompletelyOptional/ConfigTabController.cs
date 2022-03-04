@@ -350,11 +350,10 @@ namespace CompletelyOptional
                 string curName = string.IsNullOrEmpty(this.name) ? tabIndex.ToString() : this.name;
                 if (lastName != curName)
                 {
-                    if (LabelTest.GetWidth(curName) < height)
-                    {
-                    }
-
-                    this.label.text = string.IsNullOrEmpty(this.name) ? tabIndex.ToString() : this.name;
+                    lastName = curName;
+                    if (LabelTest.GetWidth(curName) > height) // Omit name too long
+                    { curName = LabelTest.TrimText(curName, height - ConfigTabController.omit) + "..."; }
+                    this.label.text = curName;
                 }
 
                 Color color = this.bumpBehav.GetColor(this.colorButton);

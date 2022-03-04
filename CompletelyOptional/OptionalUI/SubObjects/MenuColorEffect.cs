@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace OptionalUI
 {
@@ -26,5 +27,73 @@ namespace OptionalUI
         /// Convert <see cref="Color"/> to tinted grayscale, like Rain World's Greys
         /// </summary>
         public static Color Greyscale(Color orig) => new Color(orig.grayscale * greyR, orig.grayscale * greyG, orig.grayscale * greyB, orig.a);
+
+        /// <summary>
+        /// Converts HEX <see cref="string"/> to <see cref="Color"/>.
+        /// Useful for grabbing <see cref="Color"/> from <see cref="OptionInterface.config"/>.
+        /// See also <seealso cref="RXColor.GetColorFromHex(uint)"/> if the format is <see cref="uint"/>.
+        /// </summary>
+        /// <remarks>
+        /// Example: <c>myConfig = OpColorPicker.HexToColor(OptionInterface.config[MyModSetting]);</c>
+        /// </remarks>
+        /// <param name="hex">HEX ("FFFFFF")</param>
+        /// <returns>Color (Alpha is always 1f)</returns>
+        /// <exception cref="FormatException">Thrown when input is not correct Color Hex. Use <see cref="IsStringHexColor(string)"/> for checking</exception>
+        public static Color HexToColor(string hex)
+        {
+            if (hex == "000000") { return new Color(0.01f, 0.01f, 0.01f, 1f); }
+            try
+            {
+                float a = hex.Length == 8 ? Convert.ToInt32(hex.Substring(6, 2), 16) / 255f : 1f;
+                return new Color(
+                        Convert.ToInt32(hex.Substring(0, 2), 16) / 255f,
+                        Convert.ToInt32(hex.Substring(2, 2), 16) / 255f,
+                        Convert.ToInt32(hex.Substring(4, 2), 16) / 255f,
+                        a
+                        );
+            }
+            catch { throw new FormatException($"Given input [{hex}] is not correct form of HEX Color"); }
+        }
+
+        /// <summary>
+        /// Checks if the string is valid HEX
+        /// </summary>
+        public static bool IsStringHexColor(string test)
+        {
+            if (test.Length != 6 && test.Length != 8) { return false; }
+            try { HexToColor(test); return true; }
+            catch { return false; }
+        }
+
+        /// <summary>
+        /// Converts <see cref="Color"/> to HEX <see cref="string"/>.
+        /// Useful to set defaultHex in ctor.
+        /// </summary>
+        /// <remarks>
+        /// Example: <c>new OpColorPicker(cpkPos, "MyModSetting", OpColorPicker.ColorToHex(new Color(0.5f, 0.5f, 0.5f)));</c>
+        /// </remarks>
+        /// <param name="color">Original Color</param>
+        /// <returns>Color Hex string</returns>
+        public static string ColorToHex(Color color)
+        {
+            return string.Concat(Mathf.RoundToInt(color.r * 255).ToString("X2"),
+                    Mathf.RoundToInt(color.g * 255).ToString("X2"),
+                    Mathf.RoundToInt(color.b * 255).ToString("X2"));
+        }
+
+        /// <summary>
+        /// Converts HSL to RGB, in case you didn't know <see cref="RXColor"/> library.
+        /// </summary>
+        public static Color HSLtoRGB(RXColorHSL hslColor) => RXColor.ColorFromHSL(hslColor);
+
+        /// <summary>
+        /// Converts HSL to RGB, in case you didn't know <see cref="RXColor"/> library.
+        /// </summary>
+        public static Color HSLtoRGB(float hue, float saturation, float luminosity) => RXColor.ColorFromHSL(hue, saturation, luminosity);
+
+        /// <summary>
+        /// Converts RGB to HSL, in case you didn't know <see cref="RXColor"/> library.
+        /// </summary>
+        public static RXColorHSL ColorToHSL(Color color) => RXColor.HSLFromColor(color);
     }
 }

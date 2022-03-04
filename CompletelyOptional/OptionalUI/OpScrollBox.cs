@@ -26,7 +26,7 @@ namespace OptionalUI
         /// The real position of the box's contents relative to the tab, a considerable distance off-screen.
         /// <para>This value is added to each child's pos automatically when they are added in <see cref="AddItems(UIelement[])"/>.</para>
         /// </summary>
-        internal Vector2 childOffset { get; private set; }
+        internal readonly Vector2 childOffset;
 
         /// <summary>
         /// A list of all items inside this scrollbox.
@@ -70,7 +70,7 @@ namespace OptionalUI
         /// Returns the value of <see cref="ScrollOffset"/> at the topmost or rightmost position of the box.
         /// This value will always be negative or zero.
         /// </summary>
-        public float MaxScroll => -Mathf.Max(_contentSize - size.y, 0f);
+        public float MaxScroll => -Mathf.Max(contentSize - size.y, 0f);
 
         /// <summary>
         /// The target value of <see cref="ScrollOffset"/>. Change this to smoothly animate scrolling.
@@ -78,18 +78,9 @@ namespace OptionalUI
         public float targetScrollOffset;
 
         /// <summary>
-        /// The height/width of the content inside this scrollbox from its constructor.
-        /// Use <see cref="GetContentSize"/> instead.
+        /// The height/width of the content inside this scrollbox.
         /// </summary>
-        [Obsolete]
-        public readonly float contentSize;
-
-        private float _contentSize;
-
-        /// <summary>
-        /// Returns current contentSize. See also <seealso cref="SetContentSize(float, bool)"/>
-        /// </summary>
-        public float GetContentSize() => _contentSize;
+        public float contentSize { get; private set; }
 
         /// <summary>
         /// Resize contentSize of OpScrollBox
@@ -100,17 +91,17 @@ namespace OptionalUI
         public bool SetContentSize(float newSize, bool sortToTop = true)
         {
             float ns = Mathf.Clamp(newSize, horizontal ? size.x : size.y, 10000f);
-            if (Mathf.Approximately(_contentSize, ns)) { return false; }
+            if (Mathf.Approximately(contentSize, ns)) { return false; }
             if (sortToTop)
             {
-                float ofs = ns - _contentSize;
+                float ofs = ns - contentSize;
                 foreach (UIelement item in children) // Move all stuff
                 { item.pos = item.GetPos() + (horizontal ? new Vector2(ofs, 0f) : new Vector2(0f, ofs)); }
-                _contentSize = ns;
+                contentSize = ns;
                 targetScrollOffset += ofs;
                 scrollOffset = targetScrollOffset;
             }
-            else { _contentSize = ns; }
+            else { contentSize = ns; }
             hasScrolled = false; // Add flashing to let user know there's a change
             return true;
         }
@@ -154,12 +145,12 @@ namespace OptionalUI
 
         private readonly Camera _cam;
         private readonly int _camIndex;
-        public readonly Vector2 camPos;
+        internal readonly Vector2 camPos;
         public float scrollOffset { get; private set; }
         private float _scrollVel;
-        private FTexture insideSprite;
+        private FTexture insideTexture;
         private RenderTexture _rt;
-        private readonly DyeableRect _back, _slideBar;
+        private readonly DyeableRect rectBack, rectSlidebar;
 
         //private bool HasMouseFocus => ((_lockMouseFocus ?? MouseOver) && !_draggingSlider) && allowMouseOnContents;
         //private bool? _lockMouseFocus;
@@ -179,15 +170,11 @@ namespace OptionalUI
         {
             this._size.x = Mathf.Min(this._size.x, 800f); this._size.y = Mathf.Min(this._size.y, 800f);
             this.horizontal = horizontal;
-            this._contentSize = Mathf.Clamp(contentSize, horizontal ? size.x : size.y, 10000f);
-#pragma warning disable CS0612
-            this.contentSize = this._contentSize;
-#pragma warning restore CS0612
+            this.contentSize = Mathf.Clamp(contentSize, horizontal ? size.x : size.y, 10000f);
             this.isTab = false; this.hasScrolled = false;
             this.doesBackBump = true;
 
             this.bumpBehav = new BumpBehaviour(this);
-            if (!_init) { return; }
 
             // Create a camera for this scrollbox
             GameObject camObj = new GameObject("OpScrollBox Camera " + _camIndex);
@@ -221,18 +208,16 @@ namespace OptionalUI
             colorFill = Color.black;
             if (hasBack)
             {
-                _back = new DyeableRect(this.menu, this.owner, pos, size);
-                subObjects.Add(_back);
-                _back.colorEdge = colorEdge;
+                rectBack = new DyeableRect(this.myContainer, pos, size);
+                rectBack.colorEdge = colorEdge;
             }
             if (hasSlideBar)
             {
                 bumpScroll = new BumpBehaviour(this);
-                _slideBar = new DyeableRect(this.menu, this.owner, pos, SliderSize);
-                subObjects.Add(_slideBar);
-                _slideBar.colorEdge = colorEdge;
-                _slideBar.colorFill = Color.Lerp(colorEdge, colorFill, 0.5f);
-                _slideBar.fillAlpha = 0.5f;
+                rectSlidebar = new DyeableRect(this.myContainer, pos, SliderSize);
+                rectSlidebar.colorEdge = colorEdge;
+                rectSlidebar.colorFill = Color.Lerp(colorEdge, colorFill, 0.5f);
+                rectSlidebar.fillAlpha = 0.5f;
             }
 
             this.ScrollToTop(true);
@@ -254,15 +239,13 @@ namespace OptionalUI
             : this(Vector2.zero, new Vector2(600f, 600f), contentSize, horizontal, false, hasSlideBar)
         {
             tab.AddItems(this); this.isTab = true;
-            if (!_init) { return; }
-            this._labelNotify = new MenuLabel(this.menu, this.owner,
-                string.Concat(">>> ", InternalTranslator.Translate(hasSlideBar ? "Use Scroll Wheel or Scrollbar to see more" : "Use Scroll Wheel to see more"), " <<<"),
-                new Vector2(200f, 0f) + UIelement._offset, new Vector2(200f, 20f), false);
-            this.subObjects.Add(this._labelNotify);
+
+            this._labelNotify = OpLabel.CreateFLabel(string.Concat(">>> ", InternalTranslator.Translate(hasSlideBar ? "Use Scroll Wheel or Scrollbar to see more" : "Use Scroll Wheel to see more"), " <<<"));
+            PlaceLabelAtCenter(this._labelNotify, new Vector2(200f, 0f), new Vector2(200f, 20f));
         }
 
         private readonly bool isTab; private bool hasScrolled;
-        private MenuLabel _labelNotify;
+        private FLabel _labelNotify;
 
         /// <summary>
         /// if set to false, BackRectangular does not react with mouse over.
@@ -339,19 +322,6 @@ namespace OptionalUI
                 scrollOffset = targetScrollOffset;
         }
 
-        private void UpdateSprite()
-        {
-            // Create an image to display the box's contents
-
-            if (insideSprite == null)
-            {
-                insideSprite = new FTexture(_rt, "sb" + _camIndex) { anchorX = 0f, anchorY = 0f, x = 0f, y = 0f };
-                this.myContainer.AddChild(insideSprite);
-                return;
-            }
-            insideSprite.SetTexture(_rt);
-        }
-
         /// <summary>
         /// UIelements that are forbidden to for <see cref="AddItems(UIelement[])"/>.
         /// </summary>
@@ -395,12 +365,12 @@ namespace OptionalUI
         }
 
         private Vector2 SliderSize => horizontal
-            ? new Vector2(Mathf.Max(Mathf.Min(size.x, size.x * size.x / _contentSize), 20f), 15f)
-            : new Vector2(15f, Mathf.Max(Mathf.Min(size.y, size.y * size.y / _contentSize), 20f));
+            ? new Vector2(Mathf.Max(Mathf.Min(size.x, size.x * size.x / contentSize), 20f), 15f)
+            : new Vector2(15f, Mathf.Max(Mathf.Min(size.y, size.y * size.y / contentSize), 20f));
 
         private Vector2 SliderPos => horizontal
-            ? new Vector2(-scrollOffset * size.x / _contentSize, isTab ? -10f : 5f)
-            : new Vector2((isTab ? 15f : 0f) + size.x - 20f, -scrollOffset * size.y / _contentSize);
+            ? new Vector2(-scrollOffset * size.x / contentSize, isTab ? -10f : 5f)
+            : new Vector2((isTab ? 15f : 0f) + size.x - 20f, -scrollOffset * size.y / contentSize);
 
         private bool _firstUpdate = true;
         private float _dragOffset = 0f;
@@ -429,6 +399,8 @@ namespace OptionalUI
 
         public override void Update()
         {
+            rectBack?.Update(); rectSlidebar?.Update();
+            this.bumpBehav.Update();
             // Check redraw conditions
             if ((redrawFlags & RedrawEvents.Always) != 0)
                 _contentsDirty = true;
@@ -459,14 +431,14 @@ namespace OptionalUI
                 else
                 {
                     float scrollPerc = ((horizontal ? MousePos.x : MousePos.y) + _dragOffset) / ScrollSize;
-                    scrollPerc *= -_contentSize;
+                    scrollPerc *= -contentSize;
                     scrollOffset = scrollPerc;
                     targetScrollOffset = scrollOffset;
                     hasMoved = true;
                     if (!Input.GetMouseButton(0)) { _draggingSlider = false; }
                 }
             }
-            else if ((_slideBar != null) && !ScrollLocked && (MouseOver || isTab))
+            else if ((rectSlidebar != null) && !ScrollLocked && (MouseOver || isTab))
             {
                 if (horizontal)
                 {
@@ -515,7 +487,7 @@ namespace OptionalUI
                     }
                 }
             }
-            scrollOffset = Mathf.SmoothDamp(scrollOffset, targetScrollOffset, ref _scrollVel, 0.15f * DTMultiply(dt));
+            scrollOffset = Mathf.SmoothDamp(scrollOffset, targetScrollOffset, ref _scrollVel, 0.15f * frameMulti);
             // Snap the scrollbox to its target when it is within 0.5 of a pixel
             // This is to keep from rendering the box's contents each frame even when the difference in scroll is not visible
             if (Mathf.Abs(scrollOffset - targetScrollOffset) < 0.5f)
@@ -525,8 +497,8 @@ namespace OptionalUI
             }
 
             // Don't allow overscroll
-            targetScrollOffset = Mathf.Clamp(targetScrollOffset, -Mathf.Max(_contentSize - ScrollSize, 0f), 0f);
-            scrollOffset = Mathf.Clamp(scrollOffset, -Mathf.Max(_contentSize - ScrollSize, 0f), 0f);
+            targetScrollOffset = Mathf.Clamp(targetScrollOffset, -Mathf.Max(contentSize - ScrollSize, 0f), 0f);
+            scrollOffset = Mathf.Clamp(scrollOffset, -Mathf.Max(contentSize - ScrollSize, 0f), 0f);
             MoveCam();
 
             if (hasMoved || _firstUpdate)
@@ -548,68 +520,66 @@ namespace OptionalUI
             _contentsDirty = false;
         }
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
-            if (this.isInactive) { return; }
-            this.bumpBehav.Update(dt);
+            base.GrafUpdate(timeStacker);
+            rectBack?.GrafUpdate(timeStacker); rectSlidebar?.GrafUpdate(timeStacker);
 
             float sin = 1f;
             if (!this.hasScrolled && !this.ScrollLocked)
             {
-                _notifySin += DTMultiply(dt);
+                _notifySin += 1f; // Move to Update
                 sin = 0.5f - 0.5f * Mathf.Sin(this._notifySin / 30f * 3.14159274f);
             }
 
-            if (_back != null)
+            if (rectBack != null)
             {
-                _back.colorFill = this.colorFill;
-                _back.colorEdge = doesBackBump ? this.bumpBehav.GetColor(this.colorEdge) : this.colorEdge;
-                _back.fillAlpha = fillAlpha;
-                _back.addSize = doesBackBump ? new Vector2(4f, 4f) * this.bumpBehav.AddSize : Vector2.zero;
-                _back.addSize += new Vector2(2f, 2f);
-                _back.pos = pos;
-                _back.size = size;
+                rectBack.colorFill = this.colorFill;
+                rectBack.colorEdge = doesBackBump ? this.bumpBehav.GetColor(this.colorEdge) : this.colorEdge;
+                rectBack.fillAlpha = fillAlpha;
+                rectBack.addSize = doesBackBump ? new Vector2(4f, 4f) * this.bumpBehav.AddSize : Vector2.zero;
+                rectBack.addSize += new Vector2(2f, 2f);
+                rectBack.pos = pos;
+                rectBack.size = size;
             }
-            if (_slideBar != null)
+            if (rectSlidebar != null)
             {
                 this.bumpScroll.MouseOver = this.scrollMouseOver;
                 this.bumpScroll.greyedOut = this.ScrollLocked;
-                this.bumpScroll.Update(dt);
+                this.bumpScroll.Update();
 
-                if (this._draggingSlider) { _slideBar.colorFill = this.bumpScroll.GetColor(this.colorEdge); _slideBar.fillAlpha = 1f; }
+                if (this._draggingSlider) { rectSlidebar.colorFill = this.bumpScroll.GetColor(this.colorEdge); rectSlidebar.fillAlpha = 1f; }
                 else
                 {
                     if (this.hasScrolled || this.ScrollLocked)
                     {
-                        _slideBar.colorFill = this.bumpScroll.GetColor(this.colorFill);
-                        _slideBar.fillAlpha = this.bumpScroll.FillAlpha;
+                        rectSlidebar.colorFill = this.bumpScroll.GetColor(this.colorFill);
+                        rectSlidebar.fillAlpha = this.bumpScroll.FillAlpha;
                     }
                     else
                     {
-                        _slideBar.colorFill = this.bumpScroll.GetColor(this.colorEdge);
-                        _slideBar.fillAlpha = 0.3f + 0.6f * sin;
+                        rectSlidebar.colorFill = this.bumpScroll.GetColor(this.colorEdge);
+                        rectSlidebar.fillAlpha = 0.3f + 0.6f * sin;
                     }
                 }
-                _slideBar.colorEdge = this.bumpScroll.GetColor(this.colorEdge);
-                _slideBar.size = SliderSize;
-                _slideBar.addSize = new Vector2(2f, 2f) * this.bumpScroll.AddSize;
-                _slideBar.pos = pos + SliderPos;
+                rectSlidebar.colorEdge = this.bumpScroll.GetColor(this.colorEdge);
+                rectSlidebar.size = SliderSize;
+                rectSlidebar.addSize = new Vector2(2f, 2f) * this.bumpScroll.AddSize;
+                rectSlidebar.pos = pos + SliderPos;
             }
             if (this._labelNotify != null)
             {
-                if (this.ScrollLocked) { this._labelNotify.label.alpha = 0f; }
+                if (this.ScrollLocked) { this._labelNotify.alpha = 0f; }
                 else
                 {
-                    this._labelNotify.label.color = Color.Lerp(Color.white, this.bumpScroll.GetColor(this.colorEdge), 0.5f);
-                    if (!this.hasScrolled) { this._labelNotify.label.alpha = 0.5f + 0.5f * sin; }
+                    this._labelNotify.color = Color.Lerp(Color.white, this.bumpScroll.GetColor(this.colorEdge), 0.5f);
+                    if (!this.hasScrolled) { this._labelNotify.alpha = 0.5f + 0.5f * sin; }
                     else
                     {
-                        this._labelNotify.label.alpha -= 0.03333f * DTMultiply(dt);
-                        if (this._labelNotify.label.alpha < float.Epsilon)
+                        this._labelNotify.alpha -= 0.03333f; // move to Update
+                        if (this._labelNotify.alpha < float.Epsilon)
                         {
-                            this._labelNotify.RemoveSprites();
-                            this.subObjects.Remove(this._labelNotify);
+                            this._labelNotify.RemoveFromContainer();
                             this._labelNotify = null;
                         }
                     }
@@ -619,30 +589,31 @@ namespace OptionalUI
 
         private float _notifySin;
 
-        public override void Hide()
+        protected internal override void Deactivate()
         {
             base.Hide();
+            foreach (UIelement child in children) { child.Deactivate(); }
             _cam.gameObject.SetActive(false);
-            if (_back != null) { this._back.Hide(); }
-            if (_slideBar != null) { this._slideBar.Hide(); }
-            if (_labelNotify != null) { this._labelNotify.label.isVisible = false; }
+            if (rectBack != null) { this.rectBack.Hide(); }
+            if (rectSlidebar != null) { this.rectSlidebar.Hide(); }
+            if (_labelNotify != null) { this._labelNotify.isVisible = false; }
         }
 
-        public override void Show()
+        protected internal override void Reactivate()
         {
-            base.Show();
+            base.Reactivate();
+            foreach (UIelement child in children) { child.Reactivate(); }
             _cam.gameObject.SetActive(true);
-            if (_back != null) { this._back.Show(); }
-            if (_slideBar != null) { this._slideBar.Show(); }
-            if (_labelNotify != null) { this._labelNotify.label.isVisible = true; }
+            if (rectBack != null) { this.rectBack.Show(); }
+            if (rectSlidebar != null) { this.rectSlidebar.Show(); }
+            if (_labelNotify != null) { this._labelNotify.isVisible = true; }
         }
 
         protected internal override void Unload()
         {
             base.Unload();
-            if (_cam)
-                UnityEngine.Object.Destroy(_cam.gameObject);
-            if (insideSprite != null) { insideSprite.Destroy(); }
+            if (_cam) { UnityEngine.Object.Destroy(_cam.gameObject); }
+            if (insideTexture != null) { insideTexture.Destroy(); }
         }
 
         private void UpdateCam()
@@ -666,7 +637,18 @@ namespace OptionalUI
                 { filterMode = FilterMode.Point };
 
                 _cam.targetTexture = _rt;
-                UpdateSprite();
+
+                #region UpdateTexture
+
+                // Create an image to display the box's contents
+                if (insideTexture == null)
+                {
+                    insideTexture = new FTexture(_rt, "sb" + _camIndex) { anchorX = 0f, anchorY = 0f, x = 0f, y = 0f };
+                    this.myContainer.AddChild(insideTexture);
+                }
+                else { insideTexture.SetTexture(_rt); }
+
+                #endregion UpdateTexture
             }
         }
 

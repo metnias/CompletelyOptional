@@ -25,7 +25,7 @@ namespace OptionalUI
             ctor = false; //to prevent OnChange from running before ready
             this.fixedSize = new Vector2(150f, 150f);
             mod = 0;
-            if (!_init)
+
             { //If this is called in main menu, just load the value, not ui.
                 this._value = "XXXXXX";
                 try
@@ -159,58 +159,6 @@ namespace OptionalUI
             if (this.mod != 0) { this.SwitchMod(0); }
         }
 
-        /// <summary>
-        /// Converts HEX <see cref="string"/> to <see cref="Color"/>.
-        /// Useful for grabbing <see cref="Color"/> from <see cref="OptionInterface.config"/>
-        /// </summary>
-        /// <remarks>
-        /// Example: <c>myConfig = OpColorPicker.HexToColor(OptionInterface.config[MyModSetting]);</c>
-        /// </remarks>
-        /// <param name="hex">HEX ("FFFFFF")</param>
-        /// <returns>Color (Alpha is always 1f)</returns>
-        /// <exception cref="FormatException">Thrown when input is not correct Color Hex</exception>
-        public static Color HexToColor(string hex)
-        {
-            if (hex == "000000") { return new Color(0.01f, 0.01f, 0.01f, 1f); }
-            try
-            {
-                float a = hex.Length == 8 ? Convert.ToInt32(hex.Substring(6, 2), 16) / 255f : 1f;
-                return new Color(
-                        Convert.ToInt32(hex.Substring(0, 2), 16) / 255f,
-                        Convert.ToInt32(hex.Substring(2, 2), 16) / 255f,
-                        Convert.ToInt32(hex.Substring(4, 2), 16) / 255f,
-                        a
-                        );
-            }
-            catch { throw new FormatException($"Given input [{hex}] is not correct form of HEX Color"); }
-        }
-
-        /// <summary>
-        /// Checks if the string is valid HEX
-        /// </summary>
-        public static bool IsStringHexColor(string test)
-        {
-            if (test.Length != 6 && test.Length != 8) { return false; }
-            try { HexToColor(test); return true; }
-            catch { return false; }
-        }
-
-        /// <summary>
-        /// Converts <see cref="Color"/> to HEX <see cref="string"/>.
-        /// Useful to set defaultHex in ctor.
-        /// </summary>
-        /// <remarks>
-        /// Example: <c>new OpColorPicker(cpkPos, "MyModSetting", OpColorPicker.ColorToHex(new Color(0.5f, 0.5f, 0.5f)));</c>
-        /// </remarks>
-        /// <param name="color">Original Color</param>
-        /// <returns>Color Hex string</returns>
-        public static string ColorToHex(Color color)
-        {
-            return string.Concat(Mathf.RoundToInt(color.r * 255).ToString("X2"),
-                    Mathf.RoundToInt(color.g * 255).ToString("X2"),
-                    Mathf.RoundToInt(color.b * 255).ToString("X2"));
-        }
-
         private FCursor cursor;
 
         public new string description
@@ -240,84 +188,10 @@ namespace OptionalUI
 
         private string _description;
 
-        public override void Hide()
+        protected internal override void Reactivate()
         {
-            base.Hide();
-            this.rect.Hide();
-            if (this.cursor != null) { this.cursor.isVisible = false; }
-            switch (mod)
-            {
-                case 0:
-                    lblR.label.isVisible = false;
-                    lblG.label.isVisible = false;
-                    lblB.label.isVisible = false;
-
-                    this.rect1.isVisible = false;
-                    this.rect2.isVisible = false;
-                    this.rect3.isVisible = false;
-                    break;
-
-                case 1:
-                    this.rect1.isVisible = false;
-                    this.rect2.isVisible = false;
-                    break;
-
-                case 2:
-                    lblP.label.isVisible = false;
-                    this.rect1.isVisible = false;
-                    this.rectO.isVisible = false;
-                    break;
-            }
-
-            lblHex.label.isVisible = false;
-            lblRGB.label.isVisible = false;
-            lblHSL.label.isVisible = false;
-            lblPLT.label.isVisible = false;
-
-            this.cdis0.isVisible = false;
-            this.cdis1.isVisible = false;
-        }
-
-        public override void Show()
-        {
-            base.Show();
-            this.rect.Show();
-
+            base.Reactivate();
             RecalculateTexture();
-            switch (mod)
-            {
-                case 0:
-                    lblR.label.isVisible = true;
-                    lblG.label.isVisible = true;
-                    lblB.label.isVisible = true;
-
-                    this.rect1.isVisible = true;
-                    this.rect2.isVisible = true;
-                    this.rect3.isVisible = true;
-                    break;
-
-                case 1:
-                    this.rect1.isVisible = true;
-                    this.rect2.isVisible = true;
-                    break;
-
-                case 2:
-                    lblP.label.isVisible = true;
-                    this.rect1.isVisible = true;
-                    this.rectO.isVisible = true;
-                    break;
-            }
-
-            lblHex.label.isVisible = true;
-            lblRGB.label.isVisible = true;
-            lblHSL.label.isVisible = true;
-            lblPLT.label.isVisible = true;
-
-            this.cdis0.isVisible = true;
-            if (this.cdis1.color != this.cdis0.color)
-            {
-                this.cdis1.isVisible = true;
-            }
         }
 
         private int clickDelay;
@@ -334,8 +208,8 @@ namespace OptionalUI
         /// </summary>
         public Color valueColor
         {
-            get { return HexToColor(value); }
-            set { this.value = ColorToHex(value); }
+            get { return MenuColorEffect.HexToColor(value); }
+            set { this.value = MenuColorEffect.ColorToHex(value); }
         }
 
         private MenuLabel lblR, lblG, lblB, lblP;
@@ -646,9 +520,9 @@ namespace OptionalUI
             return true; // new Vector2(25f, 5f), new Vector2(80f, 20f)
         }
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            base.Update(dt);
+            base.Update();
             if (isInactive) { return; }
             this.cdis1.isVisible = false;
             this.cdis1.color = this.cdis0.color;
@@ -1031,7 +905,7 @@ namespace OptionalUI
             set
             {
                 if (base.value == value) { return; }
-                try { HexToColor(value); } catch (Exception e) { Debug.LogError(e); return; }
+                try { MenuColorEffect.HexToColor(value); } catch (Exception e) { Debug.LogError(e); return; }
                 this._value = value;
 
                 r = Mathf.RoundToInt(Convert.ToInt32(value.Substring(0, 2), 16) / 255f * 100f);
@@ -1050,10 +924,7 @@ namespace OptionalUI
                 // if (mod == 2) { mod = 0; }
 
                 OnChange();
-                if (_init && greyedOut)
-                {
-                    GreyOut();
-                }
+                if (greyedOut) { GreyOut(); }
             }
         }
 
@@ -1063,7 +934,7 @@ namespace OptionalUI
         {
             this._size = new Vector2(150f, 150f);
             base.OnChange();
-            if (!ctor || !_init) { return; }
+            if (!ctor) { return; }
 
             this.rect.pos = this.pos;
             this.lblB.pos = this.pos + new Vector2(124f, 30f);
@@ -1200,7 +1071,7 @@ namespace OptionalUI
         /// </summary>
         private int mod = 0;
 
-        public override void Unload()
+        protected internal override void Unload()
         {
             base.Unload();
 
