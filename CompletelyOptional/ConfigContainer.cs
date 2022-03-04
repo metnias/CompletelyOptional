@@ -242,11 +242,12 @@ namespace OptionalUI
         /// Change <see cref="focusedElement"/>
         /// </summary>
         /// <param name="element"><see cref="ICanBeFocused"/> for new focus</param>
-        public void FocusNewElement(UIelement element)
+        internal void FocusNewElement(UIelement element)
         {
+            if (element == null) { return; }
             if (!(element is ICanBeFocused))
             { ComOptPlugin.LogWarning($"{element.GetType()} is not ICanBeFocused. FocusNewElement ignored."); return; }
-            if (element != null && element != this.focusedElement)
+            if (element != this.focusedElement)
             {
                 this.lastFocusedElement = this.focusedElement;
                 this.focusedElement = element;
@@ -257,9 +258,9 @@ namespace OptionalUI
         }
 
         /// <summary>
-        ///
+        /// Request moving focus to new relative direction from currently focused element
         /// </summary>
-        /// <param name="direction"></param>
+        /// <param name="direction">+x is Rightside, +y is Upside</param>
         internal void FocusNewElementInDirection(IntVector2 direction)
         {
             UIelement element = this.FocusCandidate(direction);
@@ -270,7 +271,7 @@ namespace OptionalUI
         {
             if (this.focusedElement == null)
             { // current mod button
-                return activeTab.focusables[0];
+                return menuTab.modList;
             }
             if (!(this.focusedElement is ICanBeFocused))
             {
@@ -371,10 +372,10 @@ namespace OptionalUI
                         { this.scrollInitDelay++; }
                         else
                         { this.scrollInitDelay = 0; }
-                        if (this.scrollInitDelay > 20)
+                        if (this.scrollInitDelay > ModConfigMenu.DASinit)
                         {
                             this.scrollDelay++;
-                            if (this.scrollDelay > 6)
+                            if (this.scrollDelay > ModConfigMenu.DASdelay)
                             {
                                 this.scrollDelay = 0;
                                 if (menu.input.y != 0 && menu.lastInput.y == menu.input.y)

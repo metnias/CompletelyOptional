@@ -75,9 +75,9 @@ namespace OptionalUI
         /// <summary>
         /// This will be called automatically with <see cref="UIconfig.Update()"/> or <see cref="UItrigger.Update()"/>
         /// </summary>
-        public void Update(float dt)
+        public void Update()
         {
-            float dtMulti = UIelement.DTMultiply(dt);
+            float dtMulti = 1f / UIelement.frameMulti;
             this.flash = Custom.LerpAndTick(this.flash, 0f, 0.03f, 0.166666672f * dtMulti);
             if (MouseOver)
             {

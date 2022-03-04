@@ -86,6 +86,18 @@ namespace CompletelyOptional
             this.pages[0].subObjects.Add(cfgContainer);
         }
 
+        private const int _DASinit = 20, _DASdelay = 6;
+
+        /// <summary>
+        /// Delayed Auto Shift initial delay frame
+        /// </summary>
+        public static int DASinit => UIelement.FrameMultiply(_DASinit);
+
+        /// <summary>
+        /// Delayed Auto Shift delay frame after initial one
+        /// </summary>
+        public static int DASdelay => UIelement.FrameMultiply(_DASdelay);
+
         /// <summary>
         /// Current Language of the game, including ComMod ones
         /// </summary>
