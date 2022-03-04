@@ -50,7 +50,7 @@ namespace OptionalUI
             this.subObjects.Add(this.label);
 
             this.cursor = new FCursor();
-            cursor.SetPosition(LabelTest.GetWidth(value, false) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
+            cursor.SetPosition(LabelTest.GetWidth(value) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
             this.myContainer.AddChild(this.cursor);
         }
 
@@ -182,7 +182,7 @@ namespace OptionalUI
                     KeyboardOn = true;
                     this.cursor.isVisible = true;
                     this.cursorAlpha = 1f;
-                    cursor.SetPosition(LabelTest.GetWidth(this.label.text, false) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
+                    cursor.SetPosition(LabelTest.GetWidth(this.label.text) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
                 }
                 else if (!MouseOver && KeyboardOn)
                 { //Shutdown
@@ -420,27 +420,16 @@ namespace OptionalUI
             this.rect.size = this.size;
             this.label.pos = this.pos + new Vector2(5f - this.size.x * 0.5f, IsUpdown ? 13f : 10f);
             this.label.size = new Vector2(this._size.x, 20f);
-            this.cursor.SetPosition(LabelTest.GetWidth(this.label.text, false) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
+            this.cursor.SetPosition(LabelTest.GetWidth(this.label.text) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
         }
 
-        public override void Hide()
+        protected internal override void Deactivate()
         {
-            base.Hide();
+            base.Deactivate();
             this.KeyboardOn = false;
-            this.label.label.isVisible = false;
-            this.cursor.isVisible = false;
-            this.rect.Hide();
         }
 
-        public override void Show()
-        {
-            base.Show();
-
-            this.label.label.isVisible = true;
-            this.rect.Show();
-        }
-
-        public override void Unload()
+        protected internal override void Unload()
         {
             base.Unload();
             //this.subObjects.Remove(this.label);

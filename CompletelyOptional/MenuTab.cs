@@ -12,13 +12,13 @@ namespace CompletelyOptional
         {
             // 171 offset from left
             isInactive = false;
-            modList = new MenuModList();
+            modList = new MenuModList(this);
             tabCtrler = new ConfigTabController(this);
             backButton = new MenuButton(new Vector2(490f, 50f), new Vector2(120f, 30f), backSignal, InternalTranslator.Translate("BACK"));
             saveButton = new MenuButton(new Vector2(630f, 50f), new Vector2(120f, 30f), saveSignal, InternalTranslator.Translate("APPLY"));
             resetButton = new MenuHoldButton(new Vector2(770f, 50f), new Vector2(120f, 30f), resetSignal, InternalTranslator.Translate("RESET CONFIG"));
 
-            this.AddItems(modList, tabCtrler, backButton, saveButton, resetButton);
+            this.AddItems(backButton, saveButton, resetButton);
         }
 
         public new void Update()

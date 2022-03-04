@@ -35,7 +35,12 @@ namespace OptionalUI
 
         internal static MenuTab menuTab;
         internal static OpTab activeTab;
+
+        /// <summary>
+        /// Currently active Tab's Index. To change this, use (smth about OI's interfacing method)
+        /// </summary>
         public static int activeTabIndex { get; private set; }
+
         internal static OptionInterface activeInterface => OptItfs[activeItfIndex];
         private int scrollInitDelay;
         private int scrollDelay;

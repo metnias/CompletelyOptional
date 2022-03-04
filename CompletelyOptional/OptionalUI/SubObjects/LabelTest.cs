@@ -100,7 +100,7 @@ namespace OptionalUI
         /// <param name="text">Text you want to test</param>
         /// <param name="bigText">Whether the font is big variant or not</param>
         /// <returns>Text width in pxl</returns>
-        public static float GetWidth(string text, bool bigText)
+        public static float GetWidth(string text, bool bigText = false)
         {
             /*
             if (!hasChecked) { return CharMean(bigText) * text.Length; }

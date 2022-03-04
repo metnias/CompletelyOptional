@@ -679,7 +679,7 @@ namespace OptionalUI
                         {
                             inputHex += acceptKeys[n].Substring(0, 1).ToUpper();
                             lblHex.text = "#" + inputHex;
-                            this.cursor.SetPosition(80f + LabelTest.GetWidth(inputHex, false), 5f);
+                            this.cursor.SetPosition(80f + LabelTest.GetWidth(inputHex), 5f);
                             if (!_soundFilled && inputHex.Length < 6)
                             {
                                 _soundFill += 12;

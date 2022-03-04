@@ -13,9 +13,9 @@ namespace CompletelyOptional
     {
         public ConfigTabController(MenuTab tab) : base(new Vector2(520f, 120f) - UIelement._offset, new Vector2(40f, 600f))
         {
-            this.menuTab = tab;
+            this.menuTab = tab; this.menuTab.AddItems(this);
             tabButtons = new TabSelectButton[tabButtonLimit];
-            omit = omit < 0f ? LabelTest.GetWidth("...", false) : omit;
+            omit = omit < 0f ? LabelTest.GetWidth("...") : omit;
             topIndex = 0;
             scrollButtons = new TabScrollButton[2];
             scrollButtons[0] = new TabScrollButton(true, this);
@@ -29,9 +29,11 @@ namespace CompletelyOptional
             OnChange();
         }
 
-        private readonly DyeableRect rectCanvas, rectPpty;
+        // Todo: load saved tab no
+        // display specification of mods
+        // add effect for focused and selected
 
-        // Add Up/Down arrow
+        private readonly DyeableRect rectCanvas, rectPpty;
 
         internal MenuTab menuTab;
 
@@ -49,6 +51,10 @@ namespace CompletelyOptional
         bool ICanBeFocused.CurrentlyFocusableMouse => ConfigContainer.activeInterface.Tabs.Length > 1;
 
         bool ICanBeFocused.CurrentlyFocusableNonMouse => ConfigContainer.activeInterface.Tabs.Length > 1;
+
+        Rect ICanBeFocused.FocusRect =>
+            new Rect(tabButtons[focusedIndex].pos.x, tabButtons[focusedIndex].pos.y,
+                tabButtons[focusedIndex].size.x, tabButtons[focusedIndex].size.y);
 
         internal int index
         {
@@ -86,8 +92,6 @@ namespace CompletelyOptional
             rectCanvas.colorFill = MenuColorEffect.MidToVeryDark(ConfigContainer.activeTab.colorCanvas);
 
             rectCanvas.GrafUpdate(timeStacker); rectPpty.GrafUpdate(timeStacker);
-
-            // scroll button
         }
 
         public override void Update()
@@ -100,6 +104,7 @@ namespace CompletelyOptional
             lastScrollBump = scrollBump;
             scrollBump = Mathf.Lerp(scrollBump, 0f, 0.2f);
 
+            // Scroll to Focus
             if (focusedIndex < topIndex)
             {
                 scrollBump = Mathf.Max(scrollBump - 2.5f * (topIndex - focusedIndex), -8f);
@@ -111,89 +116,82 @@ namespace CompletelyOptional
                 topIndex = focusedIndex - tabButtonLimit - 1;
             }
 
-            if (MenuMouseMode)
-            { // Extra two buttons for scroll
-            }
-            else
+            if (!MenuMouseMode && (this as ICanBeFocused).Focused)
             {
-                // hide scroll button
-                if ((this as ICanBeFocused).Focused)
+                if (!ConfigContainer.holdElement)
                 {
-                    if (!ConfigContainer.holdElement)
+                    // If this gets focus
+                    // becomes hold automatically
+                    ConfigContainer.holdElement = true;
+                    focusedIndex = ConfigContainer.activeTabIndex;
+                }
+                else if (!CtlrInput.jmp)
+                {
+                    // X direction
+                    if (CtlrInput.x != 0 && LastCtlrInput.x == 0)
                     {
-                        // If this gets focus
-                        // becomes hold automatically
-                        ConfigContainer.holdElement = true;
-                        focusedIndex = ConfigContainer.activeTabIndex;
+                        ConfigContainer.holdElement = false;
+                        menu.cfgContainer.FocusNewElementInDirection(new IntVector2(CtlrInput.x, 0));
+                        return;
                     }
-                    else if (!CtlrInput.jmp)
+                    // Y direction
+                    if (menu.input.y != 0 && menu.lastInput.y != menu.input.y)
+                    { focusedIndex += System.Math.Sign(menu.input.y); }
+                    if (menu.input.y != 0 && menu.lastInput.y == menu.input.y && menu.input.x == 0)
+                    { this.scrollInitDelay++; }
+                    else
+                    { this.scrollInitDelay = 0; }
+                    if (this.scrollInitDelay > ModConfigMenu.DASinit)
                     {
-                        // X direction
-                        if (CtlrInput.x != 0 && LastCtlrInput.x == 0)
+                        this.scrollDelay++;
+                        if (this.scrollDelay > ModConfigMenu.DASdelay)
                         {
-                            ConfigContainer.holdElement = false;
-                            menu.cfgContainer.FocusNewElementInDirection(new IntVector2(CtlrInput.x, 0));
-                            return;
+                            this.scrollDelay = 0;
+                            if (menu.input.y != 0 && menu.lastInput.y == menu.input.y)
+                            { focusedIndex += System.Math.Sign(menu.input.y); }
                         }
-                        // Y direction
-                        if (menu.input.y != 0 && menu.lastInput.y != menu.input.y)
-                        { focusedIndex += System.Math.Sign(menu.input.y); }
-                        if (menu.input.y != 0 && menu.lastInput.y == menu.input.y && menu.input.x == 0)
-                        { this.scrollInitDelay++; }
-                        else
-                        { this.scrollInitDelay = 0; }
-                        if (this.scrollInitDelay > ModConfigMenu.DASinit)
-                        {
-                            this.scrollDelay++;
-                            if (this.scrollDelay > ModConfigMenu.DASdelay)
-                            {
-                                this.scrollDelay = 0;
-                                if (menu.input.y != 0 && menu.lastInput.y == menu.input.y)
-                                { focusedIndex += System.Math.Sign(menu.input.y); }
-                            }
-                        }
-                        else { this.scrollDelay = 0; }
+                    }
+                    else { this.scrollDelay = 0; }
 
-                        if (focusedIndex < 0)
-                        {
-                            focusedIndex = 0;
-                            if (topIndex > 0)
-                            { // Scroll Up
-                                topIndex--;
-                                PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
-                                scrollBump = Mathf.Max(scrollBump - 4f, -8f);
-                            }
-                            else
-                            { // No more scroll
-                                PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard);
-                                scrollBump = Mathf.Max(scrollBump - 2f, -8f);
-                            }
-                        }
-                        else if (focusedIndex > _tabCount)
-                        { // Escape
-                            ConfigContainer.holdElement = false;
-                            menu.cfgContainer.FocusNewElementInDirection(new IntVector2(0, menu.input.y));
-                            return;
-                        }
-                        else if (focusedIndex > tabButtonLimit)
-                        {
-                            if (topIndex < _tabCount - tabButtonLimit)
-                            { // Scroll Down
-                                topIndex++;
-                                PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
-                                scrollBump = Mathf.Min(scrollBump + 4f, 8f);
-                            }
-                            else
-                            { // Escape to Save Button
-                                ConfigContainer.holdElement = false;
-                                menu.cfgContainer.FocusNewElement(menuTab.saveButton);
-                                return;
-                            }
+                    if (focusedIndex < 0)
+                    {
+                        focusedIndex = 0;
+                        if (topIndex > 0)
+                        { // Scroll Up
+                            topIndex--;
+                            PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
+                            scrollBump = Mathf.Max(scrollBump - 4f, -8f);
                         }
                         else
-                        { // Switch to next button
-                            PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
+                        { // No more scroll
+                            PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard);
+                            scrollBump = Mathf.Max(scrollBump - 2f, -8f);
                         }
+                    }
+                    else if (focusedIndex > _tabCount)
+                    { // Escape
+                        ConfigContainer.holdElement = false;
+                        menu.cfgContainer.FocusNewElementInDirection(new IntVector2(0, menu.input.y));
+                        return;
+                    }
+                    else if (focusedIndex > tabButtonLimit)
+                    {
+                        if (topIndex < _tabCount - tabButtonLimit)
+                        { // Scroll Down
+                            topIndex++;
+                            PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
+                            scrollBump = Mathf.Min(scrollBump + 4f, 8f);
+                        }
+                        else
+                        { // Escape to Save Button
+                            ConfigContainer.holdElement = false;
+                            menu.cfgContainer.FocusNewElement(menuTab.saveButton);
+                            return;
+                        }
+                    }
+                    else
+                    { // Switch to next button
+                        PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                     }
                 }
             }
@@ -220,19 +218,22 @@ namespace CompletelyOptional
                 topIndex = 0;
                 focusedIndex = 0; // change this to saved index
                 if (_tabCount > 0)
-                {
-                    scrollButtons[0].Show(); scrollButtons[1].Show();
-                }
+                { scrollButtons[0].Show(); scrollButtons[1].Show(); }
                 else
-                {
-                    scrollButtons[0].Hide(); scrollButtons[1].Hide();
-                }
+                { scrollButtons[0].Hide(); scrollButtons[1].Hide(); }
                 Initialize();
             }
         }
 
         private void Initialize()
         {
+            scrollBump = 0f; lastScrollBump = 0f;
+            if (_tabCount < 2)
+            { // No tab button
+                foreach (TabSelectButton btn in tabButtons) { btn.Hide(); }
+                return;
+            }
+
             for (int i = 0; i < tabButtonLimit; i++)
             {
                 if (this.tabButtons[i] == null)
@@ -250,7 +251,6 @@ namespace CompletelyOptional
                     { this.tabButtons[i].Reset(); this.tabButtons[i].Show(); }
                 }
             }
-            scrollBump = 0f; lastScrollBump = 0f;
         }
 
         protected internal override void Deactivate()
@@ -329,11 +329,14 @@ namespace CompletelyOptional
             public override void Reset()
             {
                 base.Reset();
-                float height = Mathf.Min(120f, 600f / Custom.IntClamp(ctrl._tabCount, 1, tabButtonLimit));
+                height = Mathf.Min(120f, 600f / Custom.IntClamp(ctrl._tabCount, 1, tabButtonLimit));
                 this._pos = ctrl.pos + new Vector2(0f, height * (-tabIndex - 1) + 603f);
                 this._size = new Vector2(30f, height - 6f);
                 this.GrafUpdate(0f);
             }
+
+            private float height;
+            private string lastName;
 
             public override void GrafUpdate(float timeStacker)
             {
@@ -344,7 +347,15 @@ namespace CompletelyOptional
                 else { this.darken = Mathf.Min(1f, this.darken + 0.1f); }
 
                 this.label.rotation = -90f;
-                this.label.text = string.IsNullOrEmpty(this.name) ? tabIndex.ToString() : this.name;
+                string curName = string.IsNullOrEmpty(this.name) ? tabIndex.ToString() : this.name;
+                if (lastName != curName)
+                {
+                    if (LabelTest.GetWidth(curName) < height)
+                    {
+                    }
+
+                    this.label.text = string.IsNullOrEmpty(this.name) ? tabIndex.ToString() : this.name;
+                }
 
                 Color color = this.bumpBehav.GetColor(this.colorButton);
                 this.label.color = Color.Lerp(MenuColorEffect.MidToDark(color), color, Mathf.Lerp(this.darken, 1f, 0.6f));
@@ -427,12 +438,15 @@ namespace CompletelyOptional
 
         internal class TabScrollButton : UIelement
         {
-            public TabScrollButton(bool up, ConfigTabController ctrl) : base(Vector2.one, new Vector2(30f, 30f))
+            public TabScrollButton(bool up, ConfigTabController ctrl) : base(Vector2.one, new Vector2(30f, 20f))
             {
                 this.up = up;
                 this.ctrl = ctrl;
+                if (up) { this._pos = ctrl.pos + new Vector2(0f, 605f); }
+                else { this._pos = ctrl.pos + new Vector2(0f, -25f); }
                 bumpBehav = new BumpBehaviour(this);
-                this.sprite = new FSprite("Big_Menu_Arrow") { rotation = up ? 0f : 180f, scale = 0.5f };
+                this.sprite = new FSprite("Big_Menu_Arrow")
+                { rotation = up ? 0f : 180f, scale = 0.5f, x = 15f, y = 10f };
                 this.myContainer.AddChild(this.sprite);
             }
 
@@ -445,7 +459,10 @@ namespace CompletelyOptional
             public override void GrafUpdate(float timeStacker)
             {
                 base.GrafUpdate(timeStacker);
-                Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker);
+                if (Mathf.Abs(ctrl.scrollBump) > Mathf.Abs(ctrl.scrollBump))
+                { bumpBehav.flash += 0.6f; }
+                this.sprite.y = 10f + (up ? 1 : -1) * Mathf.Abs(Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker));
+                this.sprite.color = bumpBehav.GetColor(Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey));
             }
 
             public override void Update()
@@ -470,12 +487,12 @@ namespace CompletelyOptional
                                 if (ctrl.topIndex > 0)
                                 { // Scroll Up
                                     ctrl.topIndex--;
-                                    PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
+                                    PlaySound(SoundID.MENU_Button_Select_Mouse);
                                     ctrl.scrollBump = Mathf.Max(ctrl.scrollBump - 4f, -8f);
                                 }
                                 else
                                 { // No more scroll
-                                    PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard);
+                                    PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Mouse);
                                     ctrl.scrollBump = Mathf.Max(ctrl.scrollBump - 2f, -8f);
                                 }
                             }
@@ -484,12 +501,12 @@ namespace CompletelyOptional
                                 if (ctrl.topIndex < ctrl._tabCount - tabButtonLimit)
                                 { // Scroll Down
                                     ctrl.topIndex++;
-                                    PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
+                                    PlaySound(SoundID.MENU_Button_Select_Mouse);
                                     ctrl.scrollBump = Mathf.Min(ctrl.scrollBump + 4f, 8f);
                                 }
                                 else
                                 { // No more scroll
-                                    PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard);
+                                    PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Mouse);
                                     ctrl.scrollBump = Mathf.Min(ctrl.scrollBump + 2f, 8f);
                                     return;
                                 }

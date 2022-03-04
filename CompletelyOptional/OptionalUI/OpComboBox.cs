@@ -171,7 +171,7 @@ namespace OptionalUI
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
             this.rect.colorFill = greyedOut ? this.bumpBehav.GetColor(this.colorFill) : this.colorFill;
 
-            Color c = this.held ? DyeableRect.MidToDark(this.rect.colorEdge) : this.rect.colorEdge;
+            Color c = this.held ? MenuColorEffect.MidToDark(this.rect.colorEdge) : this.rect.colorEdge;
             if (!IsListBox)
             {
                 this.sprArrow.color = c;
@@ -197,7 +197,7 @@ namespace OptionalUI
                 if (i == listHover)
                 {
                     this.lblList[i].label.color = Color.Lerp(this.lblList[i].label.color,
-                        mouseDown || this.lblList[i].text == this.value ? DyeableRect.MidToDark(this.lblList[i].label.color) : Color.white, bumpList.Sin(this.lblList[i].text == GetDisplayValue() ? 60f : 10f));
+                        mouseDown || this.lblList[i].text == this.value ? MenuColorEffect.MidToDark(this.lblList[i].label.color) : Color.white, bumpList.Sin(this.lblList[i].text == GetDisplayValue() ? 60f : 10f));
                 }
                 this.lblList[i].pos = new Vector2(this.pos.x - this.size.x / 2f + 12f, this.pos.y - 25f - 20f * i + (downward ? 0f : this.size.y + this.rectList.size.y));
                 if (IsListBox && downward) { this.lblList[i].pos.y += this.rectList.size.y; }
@@ -206,8 +206,8 @@ namespace OptionalUI
             //lblList[0].text = $"MO:{(MouseOver ? "O" : "X")}, lsMO:{(bumpList.MouseOver ? "O" : "X")}, scMO:{(bumpScroll.MouseOver ? "O" : "X")}, MD:{(mouseDown ? "O" : "X")}"; // Test
             if (this.searchMode)
             {
-                this.searchCursor.SetPosition(LabelTest.GetWidth(this.searchQuery, false) + LabelTest.CharMean(false) * 1.5f, this.size.y * 0.5f - 7f + (IsListBox && downward ? this.rectList.size.y : 0f));
-                this.searchCursor.color = Color.Lerp(this.colorEdge, DyeableRect.MidToDark(this.colorEdge), this.bumpBehav.Sin(this.searchList.Count > 0 ? 10f : 30f));
+                this.searchCursor.SetPosition(LabelTest.GetWidth(this.searchQuery) + LabelTest.CharMean(false) * 1.5f, this.size.y * 0.5f - 7f + (IsListBox && downward ? this.rectList.size.y : 0f));
+                this.searchCursor.color = Color.Lerp(this.colorEdge, MenuColorEffect.MidToDark(this.colorEdge), this.bumpBehav.Sin(this.searchList.Count > 0 ? 10f : 30f));
                 this.searchCursor.alpha = 0.4f + 0.6f * Mathf.Clamp01((float)this.searchIdle / this.searchDelay);
             }
 
