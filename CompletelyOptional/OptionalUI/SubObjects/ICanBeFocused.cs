@@ -26,7 +26,7 @@ namespace OptionalUI
         bool CurrentlyFocusableNonMouse { get; }
     }
 
-    public static class ICanBeFocusedExtend
+    public static class ICanBeFocusedExt
     {
         /// <summary>
         /// Whether this element is focused or not.

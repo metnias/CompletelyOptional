@@ -1,5 +1,5 @@
 using CompletelyOptional;
-using Menu;
+using OptionalUI.ValueTypes;
 using RWCustom;
 using UnityEngine;
 
@@ -8,7 +8,7 @@ namespace OptionalUI
     /// <summary>
     /// Dragger to adjust int value easily.
     /// </summary>
-    public class OpDragger : UIconfig, IValueType.IValueInt
+    public class OpDragger : UIconfig, IValueInt
     {
         /// <summary>
         /// Dragger to adjust int value in a cramped space. The fixedSize is 24x24.
@@ -125,7 +125,7 @@ namespace OptionalUI
 
         private float savMouse; private int savValue;
 
-        string IValueType.IValueFloat.valueString { get => this.value; set => this.value = value; }
+        string IValueFloat.valueString { get => this.value; set => this.value = value; }
 
         public override void Update()
         {

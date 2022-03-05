@@ -1,4 +1,5 @@
 using CompletelyOptional;
+using OptionalUI.ValueTypes;
 using RWCustom;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace OptionalUI
     /// <summary>
     /// Simple CheckBox.
     /// </summary>
-    public class OpCheckBox : UIconfig, IValueType.IValueBool
+    public class OpCheckBox : UIconfig, IValueBool
     {
         /// <summary>
         /// Simple CheckBox which returns "true" of "false". The fixedSize is 24x24.
@@ -61,7 +62,7 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
-        string IValueType.IValueBool.valueString { get => this.value; set => this.value = value; }
+        string IValueBool.valueString { get => this.value; set => this.value = value; }
 
         public override void GrafUpdate(float timeStacker)
         {

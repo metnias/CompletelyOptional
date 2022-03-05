@@ -148,11 +148,7 @@ namespace OptionalUI
                         if (this.value.Length > 0)
                         {
                             this._value = this.value.Substring(0, this.value.Length - 1);
-                            if (!_soundFilled)
-                            {
-                                _soundFill += 12;
-                                menu.PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
-                            }
+                            PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
                             OnChange();
                         }
                         break;
@@ -160,7 +156,7 @@ namespace OptionalUI
                     else if ((c == '\n') || (c == '\r')) // enter/return
                     {
                         KeyboardOn = false;
-                        menu.PlaySound(SoundID.MENU_Checkbox_Check);
+                        PlaySound(SoundID.MENU_Checkbox_Check);
                         break;
                     }
                     else
@@ -178,7 +174,7 @@ namespace OptionalUI
                 mouseDown = true;
                 if (MouseOver && !KeyboardOn)
                 { //Turn on
-                    menu.PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
+                    PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                     KeyboardOn = true;
                     this.cursor.isVisible = true;
                     this.cursorAlpha = 1f;
@@ -187,7 +183,7 @@ namespace OptionalUI
                 else if (!MouseOver && KeyboardOn)
                 { //Shutdown
                     KeyboardOn = false;
-                    menu.PlaySound(SoundID.MENU_Checkbox_Uncheck);
+                    PlaySound(SoundID.MENU_Checkbox_Uncheck);
                 }
             }
             else if (!Input.GetMouseButton(0))
@@ -218,7 +214,7 @@ namespace OptionalUI
                                 {
                                     this._value = this.value.Substring(0, i);
                                     OnChange();
-                                    menu.PlaySound(SoundID.Mouse_Light_Switch_On);
+                                    PlaySound(SoundID.Mouse_Light_Switch_On);
                                     return;
                                 }
                             }
@@ -294,7 +290,7 @@ namespace OptionalUI
         /// <summary>
         /// value in <see cref="int"/> form.
         /// </summary>
-        public int valueInt
+        protected internal int valueInt
         {
             get
             {
@@ -316,7 +312,7 @@ namespace OptionalUI
         /// <summary>
         /// value in <see cref="float"/> form.
         /// </summary>
-        public float valueFloat
+        protected internal float valueFloat
         {
             get
             {
@@ -384,11 +380,7 @@ namespace OptionalUI
             accepted:
                 if (KeyboardOn && Input.anyKey)
                 {
-                    if (!_soundFilled)
-                    {
-                        _soundFill += 8;
-                        menu.PlaySound(SoundID.MENU_Checkbox_Uncheck);
-                    }
+                    PlaySound(SoundID.MENU_Checkbox_Uncheck);
                 }
 
                 OnChange();

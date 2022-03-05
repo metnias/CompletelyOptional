@@ -10,13 +10,20 @@ namespace CompletelyOptional
             menuTab = tab; menuTab.AddItems(this);
             rect = new DyeableRect(this.myContainer, new Vector2(-15f, -10f), new Vector2(280f, 705f));
 
+            #region ScrollBox
+
+            contentSize = Mathf.Max(this.size.y, 30f * ConfigContainer.OptItfs.Length);
+
             GameObject camObj = new GameObject("ComOptModList Camera");
             _cam = camObj.AddComponent<Camera>();
 
             camPos = new Vector2(-15000f, -10000f);
+
+            #endregion ScrollBox
         }
 
         internal MenuTab menuTab;
+        internal ConfigContainer cfgContainer => menu.cfgContainer;
 
         private readonly DyeableRect rect;
 
@@ -30,6 +37,7 @@ namespace CompletelyOptional
 
         #region ScrollBox
 
+        private readonly float contentSize;
         private FTexture insideTexture;
         private RenderTexture _rt;
         private readonly Camera _cam;
@@ -168,7 +176,7 @@ namespace CompletelyOptional
 
         internal class AlphabetButton : OpSimpleButton
         {
-            public AlphabetButton(Vector2 pos, Vector2 size) : base(pos, size, "", "")
+            public AlphabetButton(uint index) : base(Vector2.zero, new Vector2(24f, 24f), "", "")
             {
             }
         }

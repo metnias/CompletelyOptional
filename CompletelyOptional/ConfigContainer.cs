@@ -77,7 +77,7 @@ namespace OptionalUI
             "Log Fix"
         };
 
-        internal void LoadItfs()
+        private void LoadItfs()
         {
             List<OptionInterface> listItf = new List<OptionInterface>();
             ConfigContainer.mute = true;

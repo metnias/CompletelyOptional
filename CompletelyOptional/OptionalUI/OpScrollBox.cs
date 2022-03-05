@@ -385,7 +385,8 @@ namespace OptionalUI
         {
             foreach (UIelement e in this.tab.items)
             {
-                if (e is UIconfig && !(e as UIconfig).disabled && e.MouseOver) { return true; }
+                if (e.isInactive) { continue; }
+                if (e is ICanBeFocused && (e as ICanBeFocused).CurrentlyFocusableMouse && e.MouseOver) { return true; }
             }
             return false;
         }

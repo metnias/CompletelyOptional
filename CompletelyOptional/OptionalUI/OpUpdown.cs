@@ -1,11 +1,12 @@
 ﻿using CompletelyOptional;
+using OptionalUI.ValueTypes;
 using RWCustom;
 using System;
 using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpUpdown : OpTextBox, IValueType.IValueInt
+    public class OpUpdown : OpTextBox, IValueInt
     {
         /// <summary>
         /// Numeric Updown (Spinner)
@@ -254,7 +255,7 @@ namespace OptionalUI
         /// </summary>
         public bool IsInt => this.accept == Accept.Int;
 
-        string IValueType.IValueFloat.valueString { get => this.value; set => this.value = value; }
+        string IValueFloat.valueString { get => this.value; set => this.value = value; }
 
         // overrides
         public void SetValueFloat(float value) => this.valueFloat = value;
