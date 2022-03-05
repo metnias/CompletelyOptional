@@ -118,7 +118,7 @@ namespace CompletelyOptional
 
         #endregion HOOKS
 
-        private static bool doLog => OptionMod.testing;
+        private static bool doLog => ComOptPlugin.testing;
 
         private static void LogMethodName([System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
         {
@@ -127,7 +127,7 @@ namespace CompletelyOptional
 
         internal static void RunPreSave()
         {
-            foreach (OptionInterface oi in OptionScript.loadedInterfaces)
+            foreach (OptionInterface oi in ConfigContainer.OptItfs)
             {
                 if (oi.hasProgData)
                 {
@@ -138,7 +138,7 @@ namespace CompletelyOptional
 
         internal static void RunPostLoaded()
         {
-            foreach (OptionInterface oi in OptionScript.loadedInterfaces)
+            foreach (OptionInterface oi in ConfigContainer.OptItfs)
             {
                 if (oi.hasProgData)
                 {
@@ -150,7 +150,7 @@ namespace CompletelyOptional
         internal static void LoadOIsProgression()
         {
             LogMethodName();
-            foreach (OptionInterface oi in OptionScript.loadedInterfaces)
+            foreach (OptionInterface oi in ConfigContainer.OptItfs)
             {
                 if (oi.hasProgData)
                 {
@@ -165,7 +165,7 @@ namespace CompletelyOptional
             LogMethodName();
 
             RunPreSave();
-            foreach (OptionInterface oi in OptionScript.loadedInterfaces)
+            foreach (OptionInterface oi in ConfigContainer.OptItfs)
             {
                 if (oi.hasProgData)
                 {
@@ -179,7 +179,7 @@ namespace CompletelyOptional
         {
             LogMethodName();
             RunPreSave();
-            foreach (OptionInterface oi in OptionScript.loadedInterfaces)
+            foreach (OptionInterface oi in ConfigContainer.OptItfs)
             {
                 if (oi.hasProgData)
                 {
@@ -193,7 +193,7 @@ namespace CompletelyOptional
         {
             LogMethodName();
             if (loadedFromMemory) return; // We're good ? Not too sure when this happens
-            foreach (OptionInterface oi in OptionScript.loadedInterfaces)
+            foreach (OptionInterface oi in ConfigContainer.OptItfs)
             {
                 if (oi.hasProgData)
                 {
@@ -207,7 +207,7 @@ namespace CompletelyOptional
         {
             LogMethodName();
             RunPreSave();
-            foreach (OptionInterface oi in OptionScript.loadedInterfaces)
+            foreach (OptionInterface oi in ConfigContainer.OptItfs)
             {
                 if (oi.hasProgData)
                 {
@@ -229,7 +229,7 @@ namespace CompletelyOptional
             {
                 RunPreSave();
             }
-            foreach (OptionInterface oi in OptionScript.loadedInterfaces)
+            foreach (OptionInterface oi in ConfigContainer.OptItfs)
             {
                 if (oi.hasProgData)
                 {

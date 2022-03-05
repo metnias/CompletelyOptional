@@ -10,7 +10,7 @@ using UnityEngine;
 namespace OptionalUI
 {
     /// <summary>
-    /// Contains all UIelement, connects UIelements and Rain World Menu
+    /// Contains all OptionInterfaces, and connects UIelements and Rain World Menu
     /// </summary>
     public class ConfigContainer : Menu.MenuObject
     {
