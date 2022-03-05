@@ -62,7 +62,7 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
-        string IValueBool.valueString { get => this.value; set => this.value = value; }
+        string IValueType.valueString { get => this.value; set => this.value = value; }
 
         public override void GrafUpdate(float timeStacker)
         {

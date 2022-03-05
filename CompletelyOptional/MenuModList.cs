@@ -45,7 +45,7 @@ namespace CompletelyOptional
 
         private void UpdateCam()
         {
-            if (this.isInactive) { return; }
+            // if (this.isInactive) { return; }
             _cam.aspect = size.x / size.y;
             _cam.orthographic = true;
             _cam.orthographicSize = size.y / 2f;

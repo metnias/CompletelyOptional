@@ -55,34 +55,34 @@ namespace OptionalUI.ValueTypes
     #region Flags
 
     /// <summary>
-    /// Use this to flag your custom <see cref="UIconfig"/> that uses <see cref="float"/> for <see cref="UIconfig.value"/>, and hook <see cref="valueString"/> to <see cref="UIconfig.value"/>.
+    /// Use this to flag your custom <see cref="UIconfig"/> that uses <see cref="float"/> for <see cref="UIconfig.value"/>, and hook <see cref="IValueType.valueString"/> to <see cref="UIconfig.value"/>.
     /// <para>Allows using <seealso cref="ValueExt.GetValueFloat"/>, <seealso cref="ValueExt.SetValueFloat"/>, and <seealso cref="ValueExt.SetValueInt"/>.</para>
     /// </summary>
-    public interface IValueFloat
-    {
-        /// <summary>
-        /// Hook this to <see cref="UIconfig.value"/>.
-        /// <code>public string valueString { get => this.value; set => this.value = value; }</code>
-        /// </summary>
-        string valueString { get; set; }
-    }
+    public interface IValueFloat : IValueType
+    { }
 
     /// <summary>
-    /// Use this to flag your custom <see cref="UIconfig"/> that uses <see cref="int"/> for <see cref="UIconfig.value"/>, and hook <see cref="IValueFloat.valueString"/> to <see cref="UIconfig.value"/>.
+    /// Use this to flag your custom <see cref="UIconfig"/> that uses <see cref="int"/> for <see cref="UIconfig.value"/>, and hook <see cref="IValueType.valueString"/> to <see cref="UIconfig.value"/>.
     /// <para>Allows using <seealso cref="ValueExt.GetValueInt"/>, <seealso cref="ValueExt.SetValueInt"/>, and <seealso cref="ValueExt.GetValueFloat"/>.</para>
     /// </summary>
     public interface IValueInt : IValueFloat
     { }
 
     /// <summary>
-    /// Use this to flag your custom <see cref="UIconfig"/> that uses <see cref="float"/> for <see cref="UIconfig.value"/>, and hook <see cref="valueString"/> to <see cref="UIconfig.value"/>.
+    /// Use this to flag your custom <see cref="UIconfig"/> that uses <see cref="float"/> for <see cref="UIconfig.value"/>, and hook <see cref="IValueType.valueString"/> to <see cref="UIconfig.value"/>.
     /// <para>Allows using <seealso cref="ValueExt.GetValueFloat"/> and <seealso cref="ValueExt.SetValueFloat"/>.</para>
     /// </summary>
-    public interface IValueBool
+    public interface IValueBool : IValueType
+    { }
+
+    /// <summary>
+    /// Abstract interface for IValueType interfaces
+    /// </summary>
+    public interface IValueType
     {
         /// <summary>
         /// Hook this to <see cref="UIconfig.value"/>.
-        /// <code>public string valueString { get => this.value; set => this.value = value; }</code>
+        /// <code>string IValueType.valueString { get => this.value; set => this.value = value; }</code>
         /// </summary>
         string valueString { get; set; }
     }

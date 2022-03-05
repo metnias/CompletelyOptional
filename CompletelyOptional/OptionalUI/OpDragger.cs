@@ -125,7 +125,7 @@ namespace OptionalUI
 
         private float savMouse; private int savValue;
 
-        string IValueFloat.valueString { get => this.value; set => this.value = value; }
+        string IValueType.valueString { get => this.value; set => this.value = value; }
 
         public override void Update()
         {

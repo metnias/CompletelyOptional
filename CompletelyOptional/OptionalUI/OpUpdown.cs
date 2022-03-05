@@ -255,9 +255,10 @@ namespace OptionalUI
         /// </summary>
         public bool IsInt => this.accept == Accept.Int;
 
-        string IValueFloat.valueString { get => this.value; set => this.value = value; }
+        #region IValueType
 
-        // overrides
+        string IValueType.valueString { get => this.value; set => this.value = value; }
+
         public void SetValueFloat(float value) => this.valueFloat = value;
 
         public float GetValueFloat() => this.valueFloat;
@@ -265,6 +266,8 @@ namespace OptionalUI
         public void SetValueInt(int value) => this.valueInt = value;
 
         public int GetValueInt() => this.valueInt;
+
+        #endregion IValueType
 
         private void ClampValue()
         {

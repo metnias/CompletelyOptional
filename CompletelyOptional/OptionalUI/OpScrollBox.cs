@@ -18,7 +18,7 @@ namespace OptionalUI
     /// The contents will still be redrawn on scroll or when <see cref="MarkDirty()"/> is called.</para>
     /// <para>Adding instances of <see cref="OpScrollBox"/> as children will not function correctly.</para>
     /// </remarks>
-    public class OpScrollBox : UIelement
+    public class OpScrollBox : UIelement, ICanBeFocused
     {
         private static readonly List<Camera> _cameras = new List<Camera>();
 
@@ -378,6 +378,15 @@ namespace OptionalUI
         private float _lastScrollOffset = 1f;
 
         public BumpBehaviour bumpBehav { get; private set; }
+
+        public bool GreyedOut => false;
+
+        public Rect FocusRect => new Rect(this.pos.x, this.pos.y, this.size.x, this.size.y);
+
+        public bool CurrentlyFocusableMouse => true;
+
+        public bool CurrentlyFocusableNonMouse => true;
+
         private readonly BumpBehaviour bumpScroll;
         private bool scrollMouseOver;
 

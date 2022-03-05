@@ -87,7 +87,7 @@ namespace OptionalUI
                 {
                     _held = value;
                     if (value) { menu.cfgContainer.FocusNewElement(this); }
-                    else if (menu.cfgContainer.focusedElement != this) { return; }
+                    else if (!this.Focused()) { return; }
                     ConfigContainer.holdElement = value;
                 }
             }

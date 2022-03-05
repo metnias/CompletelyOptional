@@ -129,7 +129,7 @@ namespace OptionalUI
         internal DyeableRect rect;
         internal FLabel label;
 
-        string IValueFloat.valueString { get => this.value; set => this.value = value; }
+        string IValueType.valueString { get => this.value; set => this.value = value; }
 
         /// <summary>
         /// Text and Edge Colour of DyeableRect. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.
