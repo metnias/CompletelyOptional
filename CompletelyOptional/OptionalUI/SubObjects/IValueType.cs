@@ -50,38 +50,38 @@ namespace OptionalUI
         /// <param name="UIconfig"><see cref="UIconfig"/> that accepts <see cref="bool"/> for its <see cref="UIconfig.value"/>.</param>
         /// <returns>Current <see cref="UIconfig.value"/> in <see cref="bool"/>.</returns>
         public static bool GetValueBool(this IValueBool UIconfig) => UIconfig.valueString == "true";
-    }
 
-    /// <summary>
-    /// Use this to flag your custom <see cref="UIconfig"/> that uses <see cref="float"/> for <see cref="UIconfig.value"/>, and hook <see cref="valueString"/> to <see cref="UIconfig.value"/>.
-    /// <para>Allows using <seealso cref="IValueType.GetValueFloat"/> and <seealso cref="IValueType.SetValueFloat"/>.</para>
-    /// </summary>
-    public interface IValueFloat
-    {
         /// <summary>
-        /// Hook this to <see cref="UIconfig.value"/>.
-        /// <code>public string valueString { get => this.value; set => this.value = value; }</code>
+        /// Use this to flag your custom <see cref="UIconfig"/> that uses <see cref="float"/> for <see cref="UIconfig.value"/>, and hook <see cref="valueString"/> to <see cref="UIconfig.value"/>.
+        /// <para>Allows using <seealso cref="IValueType.GetValueFloat"/>, <seealso cref="IValueType.SetValueFloat"/>, and <seealso cref="IValueType.SetValueInt"/>.</para>
         /// </summary>
-        string valueString { get; set; }
-    }
+        public interface IValueFloat
+        {
+            /// <summary>
+            /// Hook this to <see cref="UIconfig.value"/>.
+            /// <code>public string valueString { get => this.value; set => this.value = value; }</code>
+            /// </summary>
+            string valueString { get; set; }
+        }
 
-    /// <summary>
-    /// Use this to flag your custom <see cref="UIconfig"/> that uses <see cref="int"/> for <see cref="UIconfig.value"/>, and hook <see cref="IValueFloat.valueString"/> to <see cref="UIconfig.value"/>.
-    /// <para>Allows using <seealso cref="IValueType.GetValueInt"/>, <seealso cref="IValueType.SetValueInt"/>, <seealso cref="IValueType.GetValueFloat"/>, and <seealso cref="IValueType.SetValueFloat"/>.</para>
-    /// </summary>
-    public interface IValueInt : IValueFloat
-    { }
-
-    /// <summary>
-    /// Use this to flag your custom <see cref="UIconfig"/> that uses <see cref="float"/> for <see cref="UIconfig.value"/>, and hook <see cref="valueString"/> to <see cref="UIconfig.value"/>.
-    /// <para>Allows using <seealso cref="IValueType.GetValueFloat"/> and <seealso cref="IValueType.SetValueFloat"/>.</para>
-    /// </summary>
-    public interface IValueBool
-    {
         /// <summary>
-        /// Hook this to <see cref="UIconfig.value"/>.
-        /// <code>public string valueString { get => this.value; set => this.value = value; }</code>
+        /// Use this to flag your custom <see cref="UIconfig"/> that uses <see cref="int"/> for <see cref="UIconfig.value"/>, and hook <see cref="IValueFloat.valueString"/> to <see cref="UIconfig.value"/>.
+        /// <para>Allows using <seealso cref="IValueType.GetValueInt"/>, <seealso cref="IValueType.SetValueInt"/>, and <seealso cref="IValueType.GetValueFloat"/>.</para>
         /// </summary>
-        string valueString { get; set; }
+        public interface IValueInt : IValueFloat
+        { }
+
+        /// <summary>
+        /// Use this to flag your custom <see cref="UIconfig"/> that uses <see cref="float"/> for <see cref="UIconfig.value"/>, and hook <see cref="valueString"/> to <see cref="UIconfig.value"/>.
+        /// <para>Allows using <seealso cref="IValueType.GetValueFloat"/> and <seealso cref="IValueType.SetValueFloat"/>.</para>
+        /// </summary>
+        public interface IValueBool
+        {
+            /// <summary>
+            /// Hook this to <see cref="UIconfig.value"/>.
+            /// <code>public string valueString { get => this.value; set => this.value = value; }</code>
+            /// </summary>
+            string valueString { get; set; }
+        }
     }
 }

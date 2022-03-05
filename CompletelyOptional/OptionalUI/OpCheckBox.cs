@@ -7,7 +7,7 @@ namespace OptionalUI
     /// <summary>
     /// Simple CheckBox.
     /// </summary>
-    public class OpCheckBox : UIconfig, IValueBool
+    public class OpCheckBox : UIconfig, IValueType.IValueBool
     {
         /// <summary>
         /// Simple CheckBox which returns "true" of "false". The fixedSize is 24x24.
@@ -61,7 +61,7 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
-        string IValueBool.valueString { get => this.value; set => this.value = value; }
+        string IValueType.IValueBool.valueString { get => this.value; set => this.value = value; }
 
         public override void GrafUpdate(float timeStacker)
         {

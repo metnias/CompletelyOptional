@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpRadioButton : UIelement, ICanBeFocused, IValueBool
+    public class OpRadioButton : UIelement, ICanBeFocused, IValueType.IValueBool
     {
         /// <summary>
         /// This returns value in "true" of "false", although this is NOT a <see cref="UIconfig"/> thus this value won't be saved.
@@ -204,6 +204,6 @@ namespace OptionalUI
             }
         }
 
-        string IValueBool.valueString { get => this.value; set => this.value = value; }
+        string IValueType.IValueBool.valueString { get => this.value; set => this.value = value; }
     }
 }

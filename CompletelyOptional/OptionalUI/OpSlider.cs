@@ -10,7 +10,7 @@ namespace OptionalUI
     /// <summary>
     /// Slider that let you input integer more visually.
     /// </summary>
-    public class OpSlider : UIconfig, IValueInt
+    public class OpSlider : UIconfig, IValueType.IValueInt
     {
         /// <summary>
         /// Slider that let you input integer more visually.
@@ -129,7 +129,7 @@ namespace OptionalUI
         internal DyeableRect rect;
         internal FLabel label;
 
-        string IValueFloat.valueString { get => this.value; set => this.value = value; }
+        string IValueType.IValueFloat.valueString { get => this.value; set => this.value = value; }
 
         /// <summary>
         /// Text and Edge Colour of DyeableRect. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.

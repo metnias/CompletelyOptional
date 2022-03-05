@@ -11,7 +11,7 @@ namespace OptionalUI
     /// Initialize this then <see cref="OpTab.AddItems(UIelement[])"/> to make it functional.
     /// Then Initialize <see cref="OpRadioButton"/> instances, then use <see cref="OpRadioButtonGroup.SetButtons(OpRadioButton[])"/> to bind them.
     /// </remarks>
-    public class OpRadioButtonGroup : UIconfig, IValueInt
+    public class OpRadioButtonGroup : UIconfig, IValueType.IValueInt
     {
         /// <summary>
         /// Ties a number of <see cref="OpRadioButton"/> together, so only one of them can be activated.
@@ -111,7 +111,7 @@ namespace OptionalUI
             }
         }
 
-        string IValueFloat.valueString { get => this.value; set => this.value = value; }
+        string IValueType.IValueFloat.valueString { get => this.value; set => this.value = value; }
 
         protected internal virtual void Switch(int index)
         {
