@@ -73,29 +73,32 @@ namespace OptionalUI
             }
         }
 
-        protected internal FSprite[] sprites;
+        /// <summary>
+        /// <see cref="FSprite"/>s of this rect
+        /// </summary>
+        public readonly FSprite[] sprites;
 
-        protected internal readonly FContainer container;
+        protected readonly FContainer container;
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="side">Left, Top, Right, Bottom</param>
         /// <returns></returns>
-        protected internal int SideSprite(int side) => ((!this.filled) ? 0 : 9) + side;
+        protected int SideSprite(int side) => ((!this.filled) ? 0 : 9) + side;
 
         /// <summary>
         ///
         /// </summary>
         /// <param name="corner">BottomLeft, TopLeft, TopRight, BottomRight</param>
         /// <returns></returns>
-        protected internal int CornerSprite(int corner) => ((!this.filled) ? 0 : 9) + 4 + corner;
+        protected int CornerSprite(int corner) => ((!this.filled) ? 0 : 9) + 4 + corner;
 
-        internal int FillSideSprite(int side) => side;
+        protected internal int FillSideSprite(int side) => side;
 
-        internal int FillCornerSprite(int corner) => 4 + corner;
+        protected internal int FillCornerSprite(int corner) => 4 + corner;
 
-        internal const int MainFillSprite = 8;
+        protected internal const int MainFillSprite = 8;
 
         /// <summary>
         /// Edge Color of this Rect. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.

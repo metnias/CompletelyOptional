@@ -112,7 +112,7 @@ namespace OptionalUI
             {
                 this.label = OpLabel.CreateFLabel(this.value);
                 this.label.alpha = 0f;
-                PlaceLabelAtCenter(this.label, this.rect.pos, new Vector2(40f, 20f));
+                LabelPlaceAtCenter(this.label, this.rect.pos, new Vector2(40f, 20f));
             }
         }
 
@@ -264,7 +264,7 @@ namespace OptionalUI
             if (!tickSlider) { this.label.color = Color.Lerp(this.rect.colorEdge, Color.white, 0.5f); }
         }
 
-        protected internal virtual void LineVisibility(Vector2 cutPos, Vector2 cutSize)
+        protected virtual void LineVisibility(Vector2 cutPos, Vector2 cutSize)
         {
             if (!vertical)
             {

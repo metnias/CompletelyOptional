@@ -33,7 +33,7 @@ namespace OptionalUI
             for (int i = 0; i < circles.Length; i++) { myContainer.AddChild(circles[i]); circles[i].SetPosition(55f, 55f); }
             label = OpLabel.CreateFLabel(text);
             myContainer.AddChild(label);
-            PlaceLabelAtCenter(label, Vector2.zero, Vector2.one * rad * 2f);
+            LabelPlaceAtCenter(label, Vector2.zero, Vector2.one * rad * 2f);
         }
 
         /// <summary>
@@ -64,7 +64,7 @@ namespace OptionalUI
                 color = this.color
             };
             label = OpLabel.CreateFLabel(text);
-            PlaceLabelAtCenter(label, Vector2.zero, this.size);
+            LabelPlaceAtCenter(label, Vector2.zero, this.size);
             this.myContainer.AddChild(this.label);
             this.myContainer.AddChild(this.rectF);
         }
@@ -98,11 +98,11 @@ namespace OptionalUI
         public override void OnChange()
         {
             base.OnChange();
-            if (!isRectangular) { PlaceLabelAtCenter(label, Vector2.zero, Vector2.one * rad * 2f); }
+            if (!isRectangular) { LabelPlaceAtCenter(label, Vector2.zero, Vector2.one * rad * 2f); }
             else
             {
                 this._size = new Vector2(Mathf.Max(24f, this.size.x), Mathf.Max(24f, this.size.y)); // Min Size
-                PlaceLabelAtCenter(label, Vector2.zero, this.size);
+                LabelPlaceAtCenter(label, Vector2.zero, this.size);
                 this.rect.pos = this.pos;
                 this.rect.size = this.size;
                 this.rectH.pos = this.pos;
@@ -191,12 +191,12 @@ namespace OptionalUI
         {
             base.Update();
             if (isRectangular) { this.rect.Update(); this.rectH.Update(); }
-            if (disabled || isProgress)
+            if (greyedOut || isProgress)
             {
                 held = false;
                 filled = 0f;
                 pulse = 0f;
-                bumpBehav.sizeBump = disabled ? 0f : 1f;
+                bumpBehav.sizeBump = greyedOut ? 0f : 1f;
                 bumpBehav.sin = 0f;
                 return;
             }

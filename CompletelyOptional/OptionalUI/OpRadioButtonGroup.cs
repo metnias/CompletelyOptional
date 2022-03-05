@@ -110,7 +110,7 @@ namespace OptionalUI
             }
         }
 
-        string IValueFloat.valueString { get => this.value; set => this.value = value; }
+        string IValueType.valueString { get => this.value; set => this.value = value; }
 
         protected internal virtual void Switch(int index)
         {

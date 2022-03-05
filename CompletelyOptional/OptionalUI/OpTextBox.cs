@@ -33,8 +33,6 @@ namespace OptionalUI
             this.password = false;
             this.mouseDown = false;
 
-            if (!_init) { return; }
-
             //this.keyboardOn = false;
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorText = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
@@ -192,7 +190,7 @@ namespace OptionalUI
             }
         }
 
-        protected internal bool mouseDown;
+        protected bool mouseDown;
 
         protected bool KeyboardOn
         {
@@ -290,7 +288,7 @@ namespace OptionalUI
         /// <summary>
         /// value in <see cref="int"/> form.
         /// </summary>
-        protected internal int valueInt
+        protected int valueInt
         {
             get
             {
@@ -312,7 +310,7 @@ namespace OptionalUI
         /// <summary>
         /// value in <see cref="float"/> form.
         /// </summary>
-        protected internal float valueFloat
+        protected float valueFloat
         {
             get
             {

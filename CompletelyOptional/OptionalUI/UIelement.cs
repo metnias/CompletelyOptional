@@ -209,9 +209,9 @@ namespace OptionalUI
         /// </summary>
         public virtual void Update()
         {
-            this.ScreenLastPos = ScreenPos;
-            showDesc = !string.IsNullOrEmpty(this.description) && !isInactive
-                && (this.MouseOver || (this is ICanBeFocused && (this as ICanBeFocused).Focused()));
+            this.lastScreenPos = ScreenPos;
+            bool showDesc = !string.IsNullOrEmpty(this.description) && !isInactive
+                 && (this.MouseOver || (this is ICanBeFocused && (this as ICanBeFocused).Focused()));
             if (showDesc) { menu.ShowDescription(this.description); }
         }
 
@@ -234,21 +234,21 @@ namespace OptionalUI
         /// </summary>
         public static void PlaySound(SoundID soundID, float pan, float vol, float pitch) => ConfigContainer.PlaySound(soundID, pan, vol, pitch);
 
-        protected internal Vector2 DrawPos(float timeStacker) => Vector2.Lerp(this.ScreenLastPos, this.ScreenPos, timeStacker);
+        protected Vector2 DrawPos(float timeStacker) => Vector2.Lerp(this.lastScreenPos, this.ScreenPos, timeStacker);
 
-        protected internal Vector2 _pos;
-        protected internal Vector2 _size;
-        protected internal float _rad;
+        protected Vector2 _pos;
+        protected Vector2 _size;
+        protected float _rad;
 
         /// <summary>
         /// If this is set, this element cannot change its <see cref="size"/>.
         /// </summary>
-        protected internal Vector2? fixedSize;
+        protected Vector2? fixedSize;
 
         /// <summary>
         /// If this is set, this element cannot change its <see cref="rad"/>.
         /// </summary>
-        protected internal float? fixedRad;
+        protected float? fixedRad;
 
         /// <summary>
         /// Offset from BottomLeft of the screen.
@@ -263,17 +263,17 @@ namespace OptionalUI
         /// <summary>
         /// <see cref="ModConfigMenu"/> instance this element is in.
         /// </summary>
-        protected internal ModConfigMenu menu;
+        protected ModConfigMenu menu;
 
         /// <summary>
         /// You can alternatively use <c>menu.pages[0]</c> for this
         /// </summary>
-        protected internal Page owner => menu.pages[0];
+        protected Page owner => menu.pages[0];
 
         /// <summary>
         /// <see cref="FContainer"/> to add <see cref="FSprite"/>.
         /// </summary>
-        protected internal FContainer myContainer;
+        protected FContainer myContainer;
 
         /// <summary>
         /// Whether mousecursor is over this element or not.
@@ -335,7 +335,7 @@ namespace OptionalUI
             }
         }
 
-        protected internal Vector2 ScreenLastPos;
+        private Vector2 lastScreenPos;
 
         /// <summary>
         /// Set <see cref="FLabel"/>'s pos in the Center of the size
@@ -343,7 +343,7 @@ namespace OptionalUI
         /// <param name="label"><see cref="FLabel"/> to be placed</param>
         /// <param name="pos">Leftbottom position of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
         /// <param name="size">An arbitary rectangular for this label to be in its center</param>
-        protected internal void PlaceLabelAtCenter(FLabel label, Vector2 pos, Vector2 size)
+        protected static void LabelPlaceAtCenter(FLabel label, Vector2 pos, Vector2 size)
         {
             label.x = pos.x + size.x / 2f;
             label.y = size.y / 2f;
@@ -418,8 +418,6 @@ namespace OptionalUI
             if (this.isRectangular) { return this.ScreenPos + this.size / 2f; }
             return this.ScreenPos + (this.rad / 2f * Vector2.one);
         }
-
-        protected internal bool showDesc;
 
         /// <summary>
         /// Actually deactivate/hide this UIelement.

@@ -73,7 +73,6 @@ namespace OptionalUI
                 return;
             }
             if (this.bumpBehav == null) { this.bumpBehav = new BumpBehaviour(this); }
-            this.bumpBehav.Update(timeStacker);
 
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
@@ -86,6 +85,7 @@ namespace OptionalUI
         {
             base.Update();
             this.rect.Update();
+            this.bumpBehav?.Update();
         }
 
         public override void OnChange()
@@ -93,24 +93,6 @@ namespace OptionalUI
             base.OnChange();
             this.rect.pos = this.pos;
             this.rect.size = this.size;
-        }
-
-        protected internal override void Unload()
-        {
-            base.Unload();
-            //this.subObjects.Remove(this.rect);
-        }
-
-        protected internal override void Deactivate()
-        {
-            base.Deactivate();
-            this.rect.Hide();
-        }
-
-        protected internal override void Reactivate()
-        {
-            base.Reactivate();
-            this.rect.Show();
         }
     }
 }

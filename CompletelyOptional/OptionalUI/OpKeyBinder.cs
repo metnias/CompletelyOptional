@@ -10,7 +10,7 @@ namespace OptionalUI
     /// <summary>
     /// Simple Key Binder
     /// </summary>
-    public class OpKeyBinder : UIconfig, ICanBeFocused
+    public class OpKeyBinder : UIconfig
     {
         /// <summary>
         /// Simple Key Binder. Value is the <see cref="KeyCode"/> in string form.
@@ -90,12 +90,6 @@ namespace OptionalUI
         /// Whether you will check the key is colliding with other KeyBinder or not
         /// </summary>
         protected bool collisionCheck;
-
-        bool ICanBeFocused.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
-
-        bool ICanBeFocused.CurrentlyFocusableMouse { get { return !this.disabled; } }
-
-        bool ICanBeFocused.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
 
         private static Dictionary<string, string> BoundKey
         {

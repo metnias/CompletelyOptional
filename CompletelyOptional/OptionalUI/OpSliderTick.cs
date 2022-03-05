@@ -1,4 +1,5 @@
-﻿using RWCustom;
+﻿using OptionalUI.ValueTypes;
+using RWCustom;
 using UnityEngine;
 
 namespace OptionalUI
@@ -67,7 +68,7 @@ namespace OptionalUI
             this.Circle.color = this.bumpBehav.GetColor(this.colorEdge);
         }
 
-        protected internal override void LineVisibility(Vector2 cutPos, Vector2 cutSize)
+        protected override void LineVisibility(Vector2 cutPos, Vector2 cutSize)
         {
             base.LineVisibility(cutPos, cutSize);
             this.lineSprites[0].isVisible = false;

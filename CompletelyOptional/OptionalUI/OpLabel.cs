@@ -120,14 +120,14 @@ namespace OptionalUI
 
         private LabelVAlignment _verticalAlignment;
 
-        protected internal bool IsLong => this is OpLabelLong;
+        protected bool IsLong => this is OpLabelLong;
 
         /// <summary>
         /// Access <see cref="FLabel"/>
         /// </summary>
         public FLabel label;
 
-        protected internal readonly bool _bigText;
+        protected readonly bool _bigText;
 
         /// <summary>
         /// (default : false) If this is true, OpLabel will automatically make text in MultiLine.
@@ -141,7 +141,7 @@ namespace OptionalUI
             set { if (_alignment != value) { _alignment = value; OnChange(); } }
         }
 
-        protected internal FLabelAlignment _alignment;
+        protected FLabelAlignment _alignment;
 
         /// <summary>
         /// Colour of the text. <see cref="Menu.Menu.MenuColors.MediumGrey"/> in default.
@@ -258,8 +258,8 @@ namespace OptionalUI
             set { if (_text != value) { _text = value; OnChange(); } }
         }
 
-        protected internal string _text;
-        protected internal string _displayText;
+        protected string _text;
+        protected string _displayText;
 
         public int GetLineCount() => _displayText.Split('\n').Length;
     }

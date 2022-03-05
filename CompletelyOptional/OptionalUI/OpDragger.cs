@@ -26,7 +26,7 @@ namespace OptionalUI
 
             this.rect = new DyeableRect(myContainer, this.pos, this.size, true);
             this.label = OpLabel.CreateFLabel(defaultInt.ToString());
-            PlaceLabelAtCenter(this.label, new Vector2(0f, 2f), new Vector2(24f, 20f));
+            LabelPlaceAtCenter(this.label, new Vector2(0f, 2f), new Vector2(24f, 20f));
 
             this.min = 0; this._min = 0; this.max = 99; this._max = 99;
             this.description = InternalTranslator.Translate("Hold your mouse button and Drag up/down to adjust value");
@@ -206,7 +206,7 @@ namespace OptionalUI
             else { this.label.text = value; }
 
             this.rect.pos = this.pos;
-            PlaceLabelAtCenter(this.label, new Vector2(0f, 2f), new Vector2(24f, 20f));
+            LabelPlaceAtCenter(this.label, new Vector2(0f, 2f), new Vector2(24f, 20f));
         }
     }
 }

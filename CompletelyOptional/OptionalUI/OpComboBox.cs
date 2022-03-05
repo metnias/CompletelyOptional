@@ -98,7 +98,7 @@ namespace OptionalUI
                 this.myContainer.AddChild(this.sprArrow);
                 this.sprArrow.SetPosition(this.size.x - 12f, this.size.y / 2f);
             }
-            this.lblList = new MenuLabel[0];
+            this.lblList = new FLabel[0];
             this.subObjects.Add(this.rect);
             this.subObjects.Add(this.lblText);
             this.searchCursor = new FCursor();
@@ -109,7 +109,7 @@ namespace OptionalUI
             this.bumpScroll = new BumpBehaviour(this) { held = false, MouseOver = false };
         }
 
-        protected internal ListItem[] itemList;
+        protected ListItem[] itemList;
         protected List<ListItem> searchList;
 
         /// <summary>
@@ -119,8 +119,8 @@ namespace OptionalUI
 
         private bool neverOpened;
         protected DyeableRect rect, rectList, rectScroll;
-        protected MenuLabel lblText;
-        protected MenuLabel[] lblList;
+        protected FLabel lblText;
+        protected FLabel[] lblList;
         private FSprite sprArrow;
 
         private bool IsResourceSelector => this is OpResourceSelector || this is OpResourceList;
@@ -264,9 +264,9 @@ namespace OptionalUI
             return -1;
         }
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            base.Update(dt);
+            base.Update();
 
             // this.searchMode = false; //temp
             if (dTimer > 0) { dTimer--; }
@@ -274,7 +274,7 @@ namespace OptionalUI
             this.bumpBehav.MouseOver = base.MouseOver && !this.MouseOverList();
             if (this.held)
             {
-                if (disabled) { goto close; }
+                if (greyedOut) { goto close; }
                 this.bumpList.MouseOver = this.MouseOverList();
                 this.bumpScroll.MouseOver = this.MousePos.x >= this.rectScroll.pos.x - this.pos.x && this.MousePos.x <= this.rectScroll.pos.x + this.rectScroll.size.x - this.pos.x;
                 this.bumpScroll.MouseOver = this.bumpScroll.MouseOver && this.MousePos.y >= this.rectScroll.pos.y - this.pos.y && this.MousePos.y <= this.rectScroll.pos.y + this.rectScroll.size.y - this.pos.y;
@@ -289,7 +289,7 @@ namespace OptionalUI
                             {
                                 this.searchQuery = (this.searchQuery.Substring(0, this.searchQuery.Length - 1));
                                 this.searchIdle = -1;
-                                if (!_soundFilled) { _soundFill += 12; menu.PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked); }
+                                PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
                             }
                             break;
                         }
@@ -300,7 +300,7 @@ namespace OptionalUI
                             this.bumpBehav.flash = 2.5f;
                             this.searchQuery += c;
                             this.searchIdle = -1;
-                            if (!_soundFilled) { _soundFill += 12; menu.PlaySound(SoundID.MENU_Checkbox_Uncheck); }
+                            PlaySound(SoundID.MENU_Checkbox_Uncheck);
                         }
                     }
                     if (this.searchIdle < this.searchDelay)
@@ -319,7 +319,7 @@ namespace OptionalUI
                         // Debug.Log($"{listTop} > {num}; {this.itemList.Length}, {this.lblList.Length}, {this.itemList.Length - this.lblList.Length}");
                         if (listTop != num)
                         {
-                            if (!_soundFilled) { _soundFill += 6; this.menu.PlaySound(SoundID.MENU_Scroll_Tick); }
+                            PlaySound(SoundID.MENU_Scroll_Tick);
                             this.listTop = num;
                             this.bumpScroll.flash = Mathf.Min(1f, this.bumpScroll.flash + 0.2f);
                             this.bumpScroll.sizeBump = Mathf.Min(2.5f, this.bumpScroll.sizeBump + 0.3f);
@@ -328,7 +328,7 @@ namespace OptionalUI
                     else
                     { // Release Scrollbar
                         this.bumpScroll.held = false; this.mouseDown = false;
-                        this.menu.PlaySound(SoundID.MENU_Scroll_Tick);
+                        PlaySound(SoundID.MENU_Scroll_Tick);
                     }
                 }
                 else if (this.MouseOver)
@@ -340,7 +340,7 @@ namespace OptionalUI
                             if (this.bumpScroll.MouseOver && listSize > this.lblList.Length)
                             {
                                 scrollHeldPos = this.MousePos.y - this.rectScroll.pos.y + this.pos.y;
-                                this.bumpScroll.held = true; this.menu.PlaySound(SoundID.MENU_First_Scroll_Tick);
+                                this.bumpScroll.held = true; PlaySound(SoundID.MENU_First_Scroll_Tick);
                             }
                             else { mouseDown = true; }
                         }
@@ -351,7 +351,7 @@ namespace OptionalUI
                         {
                             mouseDown = false;
                             if (dTimer > 0) { dTimer = 0; this.searchMode = true; EnterSearchMode(); return; }
-                            else { dTimer = FrameMultiply(15); if (allowEmpty) { this.value = ""; } this.menu.PlaySound(SoundID.MENU_Checkbox_Uncheck); goto close; }
+                            else { dTimer = FrameMultiply(15); if (allowEmpty) { this.value = ""; } PlaySound(SoundID.MENU_Checkbox_Uncheck); goto close; }
                         }
                     }
                     else // MouseOver List
@@ -372,7 +372,7 @@ namespace OptionalUI
                             // Debug.Log($"{listTop} > {num}; {this.itemList.Length}, {this.lblList.Length}, {this.itemList.Length - this.lblList.Length}");
                             if (listTop != num)
                             {
-                                if (!_soundFilled) { _soundFill += 6; this.menu.PlaySound(SoundID.MENU_Scroll_Tick); }
+                                PlaySound(SoundID.MENU_Scroll_Tick);
                                 this.listTop = num;
                                 this.bumpScroll.flash = Mathf.Min(1f, this.bumpScroll.flash + 0.2f);
                                 this.bumpScroll.sizeBump = Mathf.Min(2.5f, this.bumpScroll.sizeBump + 0.3f);
@@ -395,7 +395,7 @@ namespace OptionalUI
                                 { // Select one from here
                                     newVal = this.itemList[listTop + listHover].name;
                                 }
-                                if (newVal != this.value) { this.value = newVal; this.menu.PlaySound(SoundID.MENU_Checkbox_Check); goto close; }
+                                if (newVal != this.value) { this.value = newVal; PlaySound(SoundID.MENU_Checkbox_Check); goto close; }
                             }
                         }
                         if (listHover >= 0)
@@ -407,13 +407,13 @@ namespace OptionalUI
                                 { d = this.searchList[listTop + listHover].desc; }
                             }
                             else if (listTop + listHover < this.itemList.Length) { d = this.itemList[listTop + listHover].desc; }
-                            if (!string.IsNullOrEmpty(d)) { ConfigMenu.description = d; }
+                            if (!string.IsNullOrEmpty(d)) { ModConfigMenu.instance.ShowDescription(d); }
                         }
                     }
                 }
                 else
                 { // Mouse out
-                    if (Input.GetMouseButton(0) && !mouseDown || mouseDown && !Input.GetMouseButton(0)) { this.menu.PlaySound(SoundID.MENU_Checkbox_Uncheck); goto close; }
+                    if (Input.GetMouseButton(0) && !mouseDown || mouseDown && !Input.GetMouseButton(0)) { PlaySound(SoundID.MENU_Checkbox_Uncheck); goto close; }
                 }
                 this.bumpList.Update(dt);
                 this.bumpScroll.Update(dt);
@@ -438,7 +438,7 @@ namespace OptionalUI
                     this.held = true; this.fixedSize = this.size;
                     OpenList();
 
-                    this.menu.PlaySound(SoundID.MENU_Checkbox_Check);
+                    PlaySound(SoundID.MENU_Checkbox_Check);
                 }
                 else if (this.menu.mouseScrollWheelMovement != 0)
                 {
@@ -448,7 +448,7 @@ namespace OptionalUI
                     if (num != idx)
                     {
                         this.bumpBehav.flash = 1f;
-                        if (!_soundFilled) { _soundFill += 6; this.menu.PlaySound(SoundID.MENU_Scroll_Tick); }
+                        PlaySound(SoundID.MENU_Scroll_Tick);
                         this.bumpBehav.sizeBump = Mathf.Min(2.5f, this.bumpBehav.sizeBump + 1f);
                         this.value = this.itemList[num].name;
                     }
@@ -464,7 +464,7 @@ namespace OptionalUI
         {
             this._size = new Vector2(Mathf.Max(24f, size.x), 24f);
             base.OnChange();
-            if (!_init) { return; }
+
             this.rect.pos = this.pos;
             this.rect.size = this.size;
             this.lblText.pos = new Vector2(this.pos.x - this.size.x / 2f + 12f, this.pos.y);
@@ -478,25 +478,12 @@ namespace OptionalUI
             if (!IsListBox) { this.sprArrow.SetPosition(this.size.x - 12f, this.size.y / 2f); }
         }
 
-        public override void Show()
+        protected internal override void Deactivate()
         {
-            base.Show();
-            this.rect.Show();
-            this.lblText.label.isVisible = true;
-        }
-
-        public override void Hide()
-        {
-            base.Hide();
-            this.rect.Hide();
-            this.lblText.label.isVisible = false;
+            base.Deactivate();
             if (IsListBox)
             {
                 this.searchMode = false;
-                this.searchCursor.isVisible = false;
-                this.rectList.Hide(); this.rectScroll.Hide();
-                for (int i = 0; i < this.lblList.Length; i++)
-                { this.lblList[i].label.isVisible = false; }
                 this.bumpScroll.held = false;
             }
             else { this.CloseList(); }
@@ -587,7 +574,7 @@ namespace OptionalUI
             else { return this.MousePos.y >= this.size.y && this.MousePos.y <= this.size.y + this.rectList.size.y; }
         }
 
-        public override bool MouseOver => base.MouseOver || this.MouseOverList();
+        protected internal override bool MouseOver => base.MouseOver || this.MouseOverList();
 
         /// <summary>
         /// Add items to this <see cref="OpComboBox"/>
