@@ -7,7 +7,7 @@ namespace OptionalUI
     /// <summary>
     /// Simple CheckBox.
     /// </summary>
-    public class OpCheckBox : UIconfig, ICanBeFocused
+    public class OpCheckBox : UIconfig
     {
         /// <summary>
         /// Simple CheckBox which returns "true" of "false". The fixedSize is 24x24.

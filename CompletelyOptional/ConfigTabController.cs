@@ -15,12 +15,10 @@ namespace CompletelyOptional
         {
             this.menuTab = tab; this.menuTab.AddItems(this);
             tabButtons = new TabSelectButton[tabButtonLimit];
-            omit = omit < 0f ? LabelTest.GetWidth("...") : omit;
             topIndex = 0;
             scrollButtons = new TabScrollButton[2];
             scrollButtons[0] = new TabScrollButton(true, this);
             scrollButtons[1] = new TabScrollButton(false, this);
-            this.menuTab.AddItems(scrollButtons);
 
             rectCanvas = new DyeableRect(this.myContainer, new Vector2(543f, 105f) - UIelement._offset - this.pos, new Vector2(630f, 630f), true) { fillAlpha = 0.5f };
             // author version license: 908 30, 245 86
@@ -41,18 +39,13 @@ namespace CompletelyOptional
         internal TabScrollButton[] scrollButtons;
         internal const int tabButtonLimit = 10;
 
-        private static float omit = -1f;
+        public bool GreyedOut => false;
 
-        private bool _focused;
+        public bool CurrentlyFocusableMouse => ConfigContainer.activeInterface.Tabs.Length > 1;
 
-        bool ICanBeFocused.Focused { get => _focused; set => _focused = value; }
-        bool ICanBeFocused.GreyedOut => false;
+        public bool CurrentlyFocusableNonMouse => ConfigContainer.activeInterface.Tabs.Length > 1;
 
-        bool ICanBeFocused.CurrentlyFocusableMouse => ConfigContainer.activeInterface.Tabs.Length > 1;
-
-        bool ICanBeFocused.CurrentlyFocusableNonMouse => ConfigContainer.activeInterface.Tabs.Length > 1;
-
-        Rect ICanBeFocused.FocusRect =>
+        public Rect FocusRect =>
             new Rect(tabButtons[focusedIndex].pos.x, tabButtons[focusedIndex].pos.y,
                 tabButtons[focusedIndex].size.x, tabButtons[focusedIndex].size.y);
 
@@ -116,7 +109,7 @@ namespace CompletelyOptional
                 topIndex = focusedIndex - tabButtonLimit - 1;
             }
 
-            if (!MenuMouseMode && (this as ICanBeFocused).Focused)
+            if (!MenuMouseMode && this.Focused())
             {
                 if (!ConfigContainer.holdElement)
                 {
@@ -239,10 +232,7 @@ namespace CompletelyOptional
                 if (this.tabButtons[i] == null)
                 {
                     if (i < _tabCount)
-                    {
-                        this.tabButtons[i] = new TabSelectButton(i, this);
-                        menuTab.AddItems(this.tabButtons[i]);
-                    }
+                    { this.tabButtons[i] = new TabSelectButton(i, this); }
                 }
                 else
                 {
@@ -277,7 +267,6 @@ namespace CompletelyOptional
             {
                 this.buttonIndex = index;
                 this.ctrl = ctrler;
-                this.ctrl.menuTab.AddItems(this);
 
                 this.bumpBehav = new BumpBehaviour(this);
 
@@ -287,6 +276,8 @@ namespace CompletelyOptional
                 this.label = OpLabel.CreateFLabel(this.name);
                 this.label.alignment = FLabelAlignment.Left;
                 this.myContainer.AddChild(this.label);
+
+                this.ctrl.menuTab.AddItems(this);
             }
 
             internal bool mouseTop, click;
@@ -352,7 +343,7 @@ namespace CompletelyOptional
                 {
                     lastName = curName;
                     if (LabelTest.GetWidth(curName) > height) // Omit name too long
-                    { curName = LabelTest.TrimText(curName, height - ConfigTabController.omit) + "..."; }
+                    { curName = LabelTest.TrimText(curName, height, true); }
                     this.label.text = curName;
                 }
 
@@ -447,6 +438,7 @@ namespace CompletelyOptional
                 this.sprite = new FSprite("Big_Menu_Arrow")
                 { rotation = up ? 0f : 180f, scale = 0.5f, x = 15f, y = 10f };
                 this.myContainer.AddChild(this.sprite);
+                this.ctrl.menuTab.AddItems(this);
             }
 
             internal readonly FSprite sprite;

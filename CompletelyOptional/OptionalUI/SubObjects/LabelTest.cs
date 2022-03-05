@@ -58,6 +58,14 @@ namespace OptionalUI
         private const string _Vfont = "font", _VfontB = "DisplayFont";
 
         /// <summary>
+        /// Create <see cref="FLabel"/> with a font automatically selected, and centered.
+        /// </summary>
+        /// <param name="text">Initial text to be inserted</param>
+        /// <param name="bigText">Whether to use big font or not</param>
+        /// <returns></returns>
+        public static FLabel CreateFLabel(string text, bool bigText = false) => OpLabel.CreateFLabel(text, bigText);
+
+        /// <summary>
         /// LineHeight of current font
         /// </summary>
         /// <param name="bigText">Whether the font is big variant or not</param>
@@ -116,29 +124,35 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Trim Text to width
+        /// Trim Text to width. This won't trim if the text is shorter than wanted width.
         /// </summary>
-        /// <param name="text">Text you want to trim</param>
+        /// <param name="text">Singlelined text you want to trim</param>
         /// <param name="width">Wanted width</param>
+        /// <param name="addDots">Whether to add ... at the end of the text when trimmed</param>
         /// <param name="bigText">Whether the font is big variant or not</param>
         /// <returns></returns>
-        public static string TrimText(string text, float width, bool bigText = false)
+        public static string TrimText(string text, float width, bool addDots = false, bool bigText = false)
         {
+            if (addDots) { omit[bigText ? 1 : 0] = omit[bigText ? 1 : 0] < 0f ? GetWidth(omitDots, bigText) : omit[bigText ? 1 : 0]; }
             float curWidth = GetWidth(text, bigText);
             if (curWidth < width) { return text; }
-            bool forwards = curWidth > width * 2f;
+
+            if (addDots) { width -= omit[bigText ? 1 : 0]; }
             if (curWidth > width * 2f)
             {
                 for (int i = 0; i < text.Length; i++)
-                { if (GetWidth(text.Substring(0, i), bigText) < width) { return text.Substring(0, i); } }
+                { if (GetWidth(text.Substring(0, i), bigText) < width) { return text.Substring(0, i) + (addDots ? omitDots : ""); } }
             }
             else
             {
                 for (int i = text.Length - 1; i > 0; i--)
-                { if (GetWidth(text.Substring(0, i), bigText) < width) { return text.Substring(0, i); } }
+                { if (GetWidth(text.Substring(0, i), bigText) < width) { return text.Substring(0, i) + (addDots ? omitDots : ""); } }
             }
             return text.Substring(0, 1);
         }
+
+        private const string omitDots = "...";
+        private static float[] omit = new float[] { -1f, -1f };
 
         /// <summary>
         /// Text wrapper by <c>dual curly potato noodles</c>

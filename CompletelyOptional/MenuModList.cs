@@ -20,24 +20,20 @@ namespace CompletelyOptional
 
         private readonly DyeableRect rect;
 
-        private bool _focused = false;
+        public bool GreyedOut => false;
 
-        bool ICanBeFocused.Focused { get => _focused; set => _focused = value; }
+        public bool CurrentlyFocusableMouse => true;
 
-        bool ICanBeFocused.GreyedOut => false;
+        public bool CurrentlyFocusableNonMouse => true;
 
-        bool ICanBeFocused.CurrentlyFocusableMouse => true;
-
-        bool ICanBeFocused.CurrentlyFocusableNonMouse => true;
-
-        Rect ICanBeFocused.FocusRect => throw new System.NotImplementedException();
+        public Rect FocusRect => throw new System.NotImplementedException();
 
         #region ScrollBox
 
         private FTexture insideTexture;
         private RenderTexture _rt;
         private readonly Camera _cam;
-        private readonly Vector2 camPos;
+        internal readonly Vector2 camPos;
 
         private void UpdateCam()
         {
@@ -109,14 +105,24 @@ namespace CompletelyOptional
         /// <summary>
         /// Button for ModList
         /// </summary>
-        internal class ModButton : UIelement
+        internal class ModButton : OpSimpleButton
         {
-            public ModButton(int index) : base(Vector2.zero, Vector2.one)
+            public ModButton(MenuModList list, int index) : base(Vector2.zero, new Vector2(250f, 24f), "Mod List")
             {
+                this.list = list;
                 this.index = index;
+                this._pos = list.camPos;
+                this.labelVer = OpLabel.CreateFLabel("v1.0");
+                this.myContainer.AddChild(this.labelVer);
+
+                this.list.menuTab.AddItems(this);
+                OnChange();
             }
 
+            private readonly MenuModList list;
+
             public readonly int index;
+            private readonly FLabel labelVer;
 
             public enum State
             {
@@ -124,6 +130,31 @@ namespace CompletelyOptional
                 Idle,
                 Selected
             }
+
+            public override void OnChange()
+            {
+                base.OnChange();
+                this.label.alignment = FLabelAlignment.Left;
+            }
+
+            public override void GrafUpdate(float timeStacker)
+            {
+                base.GrafUpdate(timeStacker);
+            }
+
+            public override void Update()
+            {
+                base.Update();
+            }
+
+            public override void Signal()
+            {
+            }
+
+            public override bool CurrentlyFocusableMouse => false;
+            public override bool CurrentlyFocusableNonMouse => false; // ModList will take the Focus
+
+            protected internal override bool MouseOver => base.MouseOver;
         }
 
         internal class ListButton : UIelement

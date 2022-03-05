@@ -225,7 +225,7 @@ namespace OptionalUI
                 }
                 else
                 {
-                    if (this.focusedElement == null || !this.focusedElement.inScrollBox)
+                    if (focusedElement == null || !focusedElement.inScrollBox)
                     {// Candidates are items that aren't in scrollBox
                         foreach (UIelement item in list)
                         { if (!item.inScrollBox) { res.Add(item); } }
@@ -233,15 +233,15 @@ namespace OptionalUI
                     else
                     {
                         foreach (UIelement item in list)
-                        { if (item.inScrollBox && item.scrollBox == this.focusedElement.scrollBox) { res.Add(item); } }
+                        { if (item.inScrollBox && item.scrollBox == focusedElement.scrollBox) { res.Add(item); } }
                     }
                 }
                 return res;
             }
         }
 
-        public UIelement focusedElement { get; private set; }
-        private UIelement lastFocusedElement;
+        public static UIelement focusedElement { get; private set; }
+        private static UIelement lastFocusedElement;
 
         /// <summary>
         /// Change <see cref="focusedElement"/>
@@ -252,11 +252,11 @@ namespace OptionalUI
             if (element == null) { return; }
             if (!(element is ICanBeFocused))
             { ComOptPlugin.LogWarning($"{element.GetType()} is not ICanBeFocused. FocusNewElement ignored."); return; }
-            if (element != this.focusedElement)
+            if (element != focusedElement)
             {
-                this.lastFocusedElement = this.focusedElement;
-                this.focusedElement = element;
-                PlaySound((this.focusedElement as ICanBeFocused).GreyedOut
+                lastFocusedElement = focusedElement;
+                focusedElement = element;
+                PlaySound((focusedElement as ICanBeFocused).GreyedOut
                     ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                 // Always play Gamepad sound even in Mouse mode, as this is called by either Gamepad or Modder
             }
@@ -268,29 +268,26 @@ namespace OptionalUI
         /// <param name="direction">+x is Rightside, +y is Upside</param>
         internal void FocusNewElementInDirection(IntVector2 direction)
         {
-            UIelement element = this.FocusCandidate(direction);
-            this.FocusNewElement(element);
+            UIelement element = FocusCandidate(direction);
+            FocusNewElement(element);
         }
 
         private UIelement FocusCandidate(IntVector2 direction)
         {
-            if (this.focusedElement == null)
+            if (focusedElement == null)
             { // current mod button
                 return menuTab.modList;
             }
-            if (!(this.focusedElement is ICanBeFocused))
-            {
-                return this.lastFocusedElement;
-            }
-            UIelement result = this.lastFocusedElement;
-            Vector2 curCenter = this.focusedElement.CenterPos();
+            if (!(focusedElement is ICanBeFocused)) { return lastFocusedElement; }
+            UIelement result = lastFocusedElement;
+            Vector2 curCenter = focusedElement.CenterPos();
             List<UIelement> candidates = this.focusables;
             float likelihood = float.MaxValue;
             for (int i = 0; i < candidates.Count; i++)
             {
                 if (candidates[i] is ICanBeFocused
                     && (candidates[i] as ICanBeFocused).CurrentlyFocusableNonMouse
-                    && (candidates[i] as ICanBeFocused) != this.focusedElement)
+                    && (candidates[i] as ICanBeFocused) != focusedElement)
                 {
                     Vector2 cndCenter = candidates[i].CenterPos();
                     // if (direction.y == 0 || cndCenter.y < curCenter.y != direction.y < 0)
@@ -336,22 +333,22 @@ namespace OptionalUI
         {
             base.Update();
             _soundFill = _soundFill > 0 ? _soundFill - 1 : 0;
-            if (menu.ForceNoMouseMode) { this.focusedElement = null; return; } // == FreezeMenuFunctions
+            if (menu.ForceNoMouseMode) { focusedElement = null; return; } // == FreezeMenuFunctions
             if (menu.manager.menuesMouseMode)
             { // Mouse Mode
                 if (!holdElement)
                 {
-                    UIelement lastFocus = this.focusedElement;
-                    this.focusedElement = null;
+                    UIelement lastFocus = focusedElement;
+                    focusedElement = null;
                     List<UIelement> list = this.focusables;
                     for (int j = 0; j < list.Count; j++)
                     {
                         if ((list[j] as ICanBeFocused).CurrentlyFocusableMouse && list[j].MouseOver)
                         {
-                            this.focusedElement = list[j];
-                            if (this.focusedElement != lastFocus)
+                            focusedElement = list[j];
+                            if (focusedElement != lastFocus)
                             {
-                                PlaySound((this.focusedElement as ICanBeFocused).GreyedOut
+                                PlaySound((focusedElement as ICanBeFocused).GreyedOut
                                     ? SoundID.MENU_Greyed_Out_Button_Select_Mouse : SoundID.MENU_Button_Select_Mouse);
                             }
                             break;
@@ -428,7 +425,7 @@ namespace OptionalUI
             activeInterface.Update();
             if (holdElement)
             {
-                if (this.focusedElement != null && !(this.focusedElement as ICanBeFocused).GreyedOut) { this.focusedElement.Update(); }
+                if (focusedElement != null && !(focusedElement as ICanBeFocused).GreyedOut) { focusedElement.Update(); }
                 else { holdElement = false; }
             }
             if (!holdElement)

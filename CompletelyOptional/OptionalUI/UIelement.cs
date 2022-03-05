@@ -173,6 +173,23 @@ namespace OptionalUI
         /// </summary>
         public string description;
 
+        /// <summary>
+        /// Whether the element is Rectangular(true) or Circular(false)
+        /// </summary>
+        public readonly bool isRectangular;
+
+        /// <summary>
+        /// Whether the Modder has hide/inactivate this manually.
+        /// Use <see cref="Hide"/> and <see cref="Show"/> to manipulate this.
+        /// <para>To check whether this is actually inactive/invisible, use <see cref="isInactive"/></para>
+        /// </summary>
+        public bool hidden { get; private set; }
+
+        /// <summary>
+        /// Whether this is actually not Active/is hidden. See also <seealso cref="hidden"/>
+        /// </summary>
+        public bool isInactive => hidden || this.tab?.isInactive == true || this.scrollBox?.isInactive == true;
+
         #endregion Shallow
 
         // Codes for modders who makes custom UIelement
@@ -194,7 +211,7 @@ namespace OptionalUI
         {
             this.ScreenLastPos = ScreenPos;
             showDesc = !string.IsNullOrEmpty(this.description) && !isInactive
-                && (this.MouseOver || (this is ICanBeFocused && (this as ICanBeFocused).Focused));
+                && (this.MouseOver || (this is ICanBeFocused && (this as ICanBeFocused).Focused()));
             if (showDesc) { menu.ShowDescription(this.description); }
         }
 
@@ -283,9 +300,9 @@ namespace OptionalUI
         {
             get
             {
-                Vector2 p = new Vector2(this.menu.mousePosition.x - this.ScreenPos.x, this.menu.mousePosition.y - this.ScreenPos.y);
-                if (this.inScrollBox)
-                { p += this.scrollBox.camPos - (this.scrollBox.horizontal ? Vector2.right : Vector2.up) * this.scrollBox.scrollOffset - this.scrollBox.pos; }
+                Vector2 p = new Vector2(menu.mousePosition.x - ScreenPos.x, menu.mousePosition.y - ScreenPos.y);
+                if (inScrollBox)
+                { p += scrollBox.camPos - (scrollBox.horizontal ? Vector2.right : Vector2.up) * scrollBox.scrollOffset - scrollBox.pos; }
                 return p;
             }
         }
@@ -404,25 +421,6 @@ namespace OptionalUI
 
         protected internal bool showDesc;
 
-        #endregion Internal
-
-        /// <summary>
-        /// Whether the element is Rectangular(true) or Circular(false)
-        /// </summary>
-        public readonly bool isRectangular;
-
-        /// <summary>
-        /// Whether the Modder has hide/inactivate this manually.
-        /// Use <see cref="Hide"/> and <see cref="Show"/> to manipulate this.
-        /// <para>To check whether this is actually inactive/invisible, use <see cref="isInactive"/></para>
-        /// </summary>
-        public bool hidden { get; private set; }
-
-        /// <summary>
-        /// Whether this is actually not Active/is hidden. See also <seealso cref="hidden"/>
-        /// </summary>
-        public bool isInactive => hidden || this.tab?.isInactive == true || this.scrollBox?.isInactive == true;
-
         /// <summary>
         /// Actually deactivate/hide this UIelement.
         /// </summary>
@@ -438,5 +436,7 @@ namespace OptionalUI
         {
             if (!this.hidden) { this.myContainer.isVisible = true; }
         }
+
+        #endregion Internal
     }
 }

@@ -5,11 +5,6 @@ namespace OptionalUI
     public interface ICanBeFocused
     {
         /// <summary>
-        /// Whether this is focused
-        /// </summary>
-        bool Focused { get; set; }
-
-        /// <summary>
         /// Whether its change is prevented
         /// </summary>
         bool GreyedOut { get; }
@@ -29,5 +24,13 @@ namespace OptionalUI
         /// Whether this can be focused with Gamepad/Keyboard
         /// </summary>
         bool CurrentlyFocusableNonMouse { get; }
+    }
+
+    public static class ICanBeFocusedExtend
+    {
+        /// <summary>
+        /// Whether this element is focused or not.
+        /// </summary>
+        public static bool Focused(this ICanBeFocused focusable) => ConfigContainer.focusedElement == focusable;
     }
 }

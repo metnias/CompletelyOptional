@@ -15,7 +15,8 @@ namespace OptionalUI
         /// <param name="text">Initial text to be inserted</param>
         /// <param name="bigText">Whether to use big font or not</param>
         /// <returns></returns>
-        public static FLabel CreateFLabel(string text, bool bigText = false) => new FLabel(LabelTest.GetFont(bigText, !LabelTest.HasNonASCIIChars(text)), text) { alignment = FLabelAlignment.Center };
+        public static FLabel CreateFLabel(string text, bool bigText = false) =>
+            new FLabel(LabelTest.GetFont(bigText, !LabelTest.HasNonASCIIChars(text)), text) { alignment = FLabelAlignment.Center };
 
         /// <summary>
         /// Simple Label that displays text. See also <seealso cref="OpLabel(float, float, string, bool)"/> for lazier version.
@@ -163,7 +164,6 @@ namespace OptionalUI
         {
             base.GrafUpdate(timeStacker);
 
-            if (this.bumpBehav?.owner == this) { this.bumpBehav.Update(timeStacker); }
             if (this.IsLong) { return; }
             if (this.bumpBehav == null) { this.label.color = this.color; }
             else { this.label.color = this.bumpBehav.GetColor(this.color); }
@@ -173,6 +173,7 @@ namespace OptionalUI
         {
             this._size = new Vector2(Mathf.Max(this._size.x, 20f), Mathf.Max(this._size.y, 20f)); // Minimum size
             base.OnChange();
+            if (this.bumpBehav?.owner == this) { this.bumpBehav.Update(); }
 
             if (string.IsNullOrEmpty(this._text)) { this._displayText = ""; goto displaySkip; }
             if (!this.autoWrap)

@@ -2,7 +2,7 @@
 
 namespace OptionalUI
 {
-    public class OpSimpleButton : UItrigger, ICanBeFocused
+    public class OpSimpleButton : UItrigger
     {
         /// <summary>
         /// Simple Rectangular Botton
@@ -31,7 +31,17 @@ namespace OptionalUI
         /// Text inside the button
         /// </summary>
         public string text
-        { get { return this.label.text; } set { this.label.text = value; OnChange(); } }
+        {
+            get { return _text; }
+            set
+            {
+                if (_text == value || IsImageButton) { return; }
+                _text = value;
+                this.label.text = LabelTest.TrimText(_text, this.size.x, true); OnChange();
+            }
+        }
+
+        private string _text;
 
         /// <summary>
         /// The colour of Rectangle Edge and Text
@@ -93,7 +103,7 @@ namespace OptionalUI
         {
             base.Update();
             this.rect.Update(); this.rectH.Update();
-            if (disabled) { return; }
+            if (greyedOut) { return; }
 
             if (MenuMouseMode)
             {
@@ -118,7 +128,7 @@ namespace OptionalUI
             }
             else
             {
-                if ((this as ICanBeFocused).Focused)
+                if (this.Focused())
                 {
                     if (this.held)
                     {

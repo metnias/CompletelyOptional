@@ -97,7 +97,7 @@ namespace OptionalUI
         public OpTab[] Tabs;
 
         protected DirectoryInfo directory => new DirectoryInfo(string.Concat(
-                    OptionMod.directory.FullName,
+                    ComOptPlugin.directory.FullName,
                     rwMod.ModID,
                     Path.DirectorySeparatorChar
                     ));

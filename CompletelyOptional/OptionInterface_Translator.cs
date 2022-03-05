@@ -29,7 +29,7 @@ namespace OptionalUI
         /// <returns>Translated text (returns original if translation isn't found.)</returns>
         public string Translate(string orig)
         {
-            if (curLang != OptionScript.curLang || transConverter == null)
+            if (curLang != ModConfigMenu.curLang || transConverter == null)
             {
                 // curLang = OptionScript.curLang;
                 LoadTranslation();
@@ -52,11 +52,11 @@ namespace OptionalUI
         /// <seealso cref="GetCultureInfo"/>
         /// </summary>
         /// <returns></returns>
-        public static string GetLanguageID() => OptionScript.curLang;
+        public static string GetLanguageID() => ModConfigMenu.curLang;
 
         private void LoadTranslation()
         {
-            curLang = OptionScript.curLang;
+            curLang = ModConfigMenu.curLang;
             transConverter = new Dictionary<string, string>();
 
             if (transData == null) { if (!ReadTransTXT()) { return; }; }

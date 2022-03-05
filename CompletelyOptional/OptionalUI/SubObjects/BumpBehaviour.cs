@@ -73,12 +73,13 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// This will be called automatically with <see cref="UIconfig.Update()"/> or <see cref="UItrigger.Update()"/>
+        /// This will be called automatically with <see cref="UIconfig.Update"/> or <see cref="UItrigger.Update"/>.
+        /// <para>If you added this manually in your custom UIelement, add this in your <see cref="UIelement.Update"/></para>
         /// </summary>
         public void Update()
         {
             float dtMulti = 1f / UIelement.frameMulti;
-            this.flash = Custom.LerpAndTick(this.flash, 0f, 0.03f, 0.166666672f * dtMulti);
+            this.flash = Custom.LerpAndTick(this.flash, 0f, 0.03f, 0.16667f * dtMulti);
             if (MouseOver)
             {
                 this.sizeBump = Custom.LerpAndTick(this.sizeBump, 1f, 0.1f, 0.1f * dtMulti);
@@ -95,7 +96,7 @@ namespace OptionalUI
             {
                 this.flashBool = false;
                 this.sizeBump = Custom.LerpAndTick(this.sizeBump, 0f, 0.1f, 0.05f * dtMulti);
-                this.col = Mathf.Max(0f, this.col - 0.0333333351f * dtMulti);
+                this.col = Mathf.Max(0f, this.col - 0.03333f * dtMulti);
                 this.extraSizeBump = 0f;
             }
         }
@@ -103,7 +104,7 @@ namespace OptionalUI
         /// <summary>
         /// Multiplay this with <c>new Vector2(4f, 4f)</c> and apply to <see cref="DyeableRect"/>.addSize
         /// </summary>
-        public float AddSize => this.held || (this.owner.MouseOver && Input.GetMouseButton(0)) ? 0.5f * this.sizeBump : this.sizeBump + 0.5f * Mathf.Sin(this.extraSizeBump * 3.14159274f);
+        public float AddSize => this.held || (this.owner.MouseOver && Input.GetMouseButton(0)) ? 0.5f * this.sizeBump : this.sizeBump + 0.5f * Mathf.Sin(this.extraSizeBump * 3.1416f);
 
         /// <summary>
         /// Apply this to <see cref="DyeableRect"/>.fillAlpha
@@ -114,6 +115,6 @@ namespace OptionalUI
         /// Use this with <see cref="Color.Lerp(Color, Color, float)"/> to make colour blinking.
         /// </summary>
         /// <param name="period">Default is 30f. Recommend 10f for fast blinking.</param>
-        public float Sin(float period = 30f) => 0.5f - 0.5f * Mathf.Sin(this.sin / period * 3.14159274f);
+        public float Sin(float period = 30f) => 0.5f - 0.5f * Mathf.Sin(this.sin / period * 3.1416f);
     }
 }
