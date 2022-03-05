@@ -122,6 +122,12 @@ namespace CompletelyOptional
         /// </summary>
         internal ConfigContainer cfgContainer;
 
+        public override void GrafUpdate(float timeStacker)
+        {
+            base.GrafUpdate(timeStacker);
+            cfgContainer.GrafUpdate(timeStacker);
+        }
+
         public override void Update()
         {
             if (!string.IsNullOrEmpty(description) && string.IsNullOrEmpty(this.UpdateInfoText()))
@@ -148,6 +154,8 @@ namespace CompletelyOptional
             this.alertLabelSin += this.alertLabelFade; */
 
             base.Update(); //keep buttons to be sane
+
+            cfgContainer.Update();
 
             /*
             if (fadein && this.scene != null && (int)this.scene.sceneID < 12 && (int)this.scene.sceneID > 6)

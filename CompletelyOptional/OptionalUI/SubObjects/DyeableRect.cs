@@ -149,6 +149,7 @@ namespace OptionalUI
         /// </summary>
         public void Update()
         {
+            if (hidden) { return; }
             lastFillAlpha = fillAlpha;
             lastAddSize = addSize;
         }
@@ -177,6 +178,8 @@ namespace OptionalUI
         /// </summary>
         public void GrafUpdate(float timeStacker)
         {
+            if (hidden) { return; }
+
             #region RoundedRect
 
             pos -= Vector2.Lerp(this.lastAddSize, this.addSize, timeStacker) / 2f;
@@ -270,6 +273,8 @@ namespace OptionalUI
             #endregion Dye
         }
 
+        public bool hidden { get; private set; }
+
         /// <summary>
         /// Useful for hiding this alone. See also <seealso cref="Show()"/> for the counterpart.
         /// <para>If its <see cref="container"/> is <see cref="UIelement.myContainer"/>,
@@ -278,6 +283,7 @@ namespace OptionalUI
         public void Hide()
         {
             foreach (FSprite s in this.sprites) { s.isVisible = false; }
+            hidden = true;
         }
 
         /// <summary>
@@ -292,6 +298,7 @@ namespace OptionalUI
                 for (int i = 0; i < hide.Length; i++)
                 { this.sprites[hide[i]].isVisible = false; }
             }
+            hidden = false;
         }
     }
 }

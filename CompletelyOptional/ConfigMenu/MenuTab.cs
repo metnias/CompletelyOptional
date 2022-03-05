@@ -21,10 +21,10 @@ namespace CompletelyOptional
             this.AddItems(backButton, saveButton, resetButton);
         }
 
-        public new void Update()
+        /* internal new void Update()
         {
-            foreach (UIelement item in this.items) { item.Update(); }
-        }
+            foreach (UIelement item in this.items) { if (!item.isInactive) { item.Update(); } }
+        } */
 
         internal MenuModList modList;
 

@@ -1,5 +1,5 @@
 ﻿using BepInEx;
-using CompletelyOptional;
+using OptionalUI;
 using Menu;
 using RWCustom;
 using System;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace OptionalUI
+namespace CompletelyOptional
 {
     /// <summary>
     /// Contains all OptionInterfaces, and connects UIelements and Rain World Menu
@@ -98,7 +98,7 @@ namespace OptionalUI
                     if (method == null || method.GetParameters().Length > 0 || method.ContainsGenericParameters)
                     {
                         // Mod didn't attempt to interface with CompletelyOptional, don't bother logging it.
-                        oi = new InternalOI(plugin, InternalOI.Reason.NoInterface);
+                        oi = new InternalOI_Blank(plugin);
                     }
                     else if (method.Invoke(plugin, null) is OptionInterface itf)
                     {
@@ -108,13 +108,13 @@ namespace OptionalUI
                     }
                     else
                     {
-                        oi = new InternalOI(plugin, InternalOI.Reason.NoInterface);
+                        oi = new InternalOI_Blank(plugin);
                         ComOptPlugin.LogInfo($"{oi.rwMod.ModID} did not return an OptionInterface in LoadOI.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    oi = new InternalOI(plugin, InternalOI.Reason.NoInterface);
+                    oi = new InternalOI_Blank(plugin);
 
                     if (blackList.Contains(oi.rwMod.ModID) || oi.rwMod.ModID.Substring(0, 1) == "_")
                     { continue; }

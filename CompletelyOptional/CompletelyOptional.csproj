@@ -54,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="COExceptions.cs" />
-    <Compile Include="ConfigMenu\ComOptPlugin.cs" />
+    <Compile Include="ComOptPlugin.cs" />
     <None Include="Old_15\ConfigMenu.cs" />
     <Compile Include="ConfigMenu\ConfigTabController.cs" />
     <Compile Include="EnumExt_ComOpt.cs" />
@@ -90,7 +90,7 @@
     <Compile Include="OptionInterface\OptionInterface_DataAPI.cs" />
     <Compile Include="OptionInterface\OptionInterface_Translator.cs" />
     <Compile Include="UniClipboard.cs" />
-    <None Include="OptionalUI\OpColorPicker_bak.cs" />
+    <None Include="Old_15\OpColorPicker_bak.cs" />
     <Compile Include="OptionalUI\OpSimpleButton.cs" />
     <Compile Include="OptionalUI\OpSimpleImageButton.cs" />
     <Compile Include="OptionalUI\OpSpriteEditor.cs" />
@@ -133,7 +133,7 @@
     <None Include="Old_15\SoundTest\MaxGraphics.cs" />
     <None Include="Old_15\SoundTest\MaxOracle.cs" />
     <None Include="Old_15\SoundTest\MaxOracleBehavior.cs" />
-    <None Include="OptionalGameSession.cs" />
+    <None Include="Old_15\OptionalGameSession.cs" />
     <None Include="Old_15\OptionMod.cs" />
     <None Include="Old_15\OptionScript.cs" />
     <Compile Include="ConfigMenu\OptionsMenuPatch.cs" />

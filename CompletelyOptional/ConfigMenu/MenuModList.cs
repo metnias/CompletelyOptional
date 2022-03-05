@@ -7,7 +7,7 @@ namespace CompletelyOptional
     {
         public MenuModList(MenuTab tab) : base(new Vector2(208f, 40f) - UIelement._offset, new Vector2(250f, 684f))
         {
-            menuTab = tab; menuTab.AddItems(this);
+            tab.AddItems(this);
             rect = new DyeableRect(this.myContainer, new Vector2(-15f, -10f), new Vector2(280f, 705f));
 
             #region ScrollBox
@@ -29,7 +29,7 @@ namespace CompletelyOptional
             #endregion ScrollBox
         }
 
-        internal MenuTab menuTab;
+        internal MenuTab menuTab => this.tab as MenuTab;
         internal ConfigContainer cfgContainer => menu.cfgContainer;
 
         private readonly DyeableRect rect;
@@ -41,6 +41,10 @@ namespace CompletelyOptional
         public bool CurrentlyFocusableNonMouse => true;
 
         public Rect FocusRect => throw new System.NotImplementedException();
+
+        internal float buttonSlide = 40f, lastButtonSlide = 40f; // -60f (hidden) ~ 40f (slided out)
+
+        internal float GetMySlide(int index, float timeStacker) => Mathf.Clamp(Mathf.Lerp(lastButtonSlide, buttonSlide, timeStacker) + index * 2.0f, 0f, 40f);
 
         #region ScrollBox
 
@@ -174,16 +178,57 @@ namespace CompletelyOptional
 
         internal class StatButton : OpSimpleImageButton
         {
-            public StatButton(Vector2 pos, Vector2 size) : base(pos, size, "", "")
+            public StatButton(MenuModList list) : base(Vector2.zero, Vector2.one, "", "Menu_Symbol_Show_List")
             {
+                this.list = list;
+                this._size = new Vector2(20f, 20f);
+                this.rect.size = this.size; this.rectH.size = this.size;
+
+                this.list.menuTab.AddItems(this);
             }
 
-            // In Statistics mode, Add button for turn off custom music
+            public readonly MenuModList list;
+
+            public override void OnChange()
+            {
+                base.OnChange();
+                this._size = new Vector2(20f, 20f);
+                this.rect.size = this.size; this.rectH.size = this.size;
+            }
+
+            public override void Signal()
+            {
+            }
         }
 
         internal class AlphabetButton : OpSimpleButton
         {
-            public AlphabetButton(uint index) : base(Vector2.zero, new Vector2(24f, 24f), "", "")
+            public AlphabetButton(MenuModList list, uint index) : base(Vector2.zero, Vector2.one, "", "")
+            {
+                this.list = list;
+                this.index = index;
+
+                this._size = new Vector2(20f, 20f);
+                this.greyedOut = ConfigContainer.OptItfABC[index] < 0;
+
+                this.list.menuTab.AddItems(this);
+            }
+
+            public readonly uint index;
+
+            public readonly MenuModList list;
+
+            public override bool CurrentlyFocusableMouse => !greyedOut;
+
+            public override bool CurrentlyFocusableNonMouse => !greyedOut;
+
+            public override void GrafUpdate(float timeStacker)
+            {
+                base.GrafUpdate(timeStacker);
+                rect.Hide(); rectH.Hide();
+            }
+
+            public override void Signal()
             {
             }
         }

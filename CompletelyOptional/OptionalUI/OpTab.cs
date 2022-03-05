@@ -37,24 +37,9 @@ namespace OptionalUI
         public readonly string name;
 
         /// <summary>
-        /// Whether this tab is inactive or active
+        /// Whether this tab is inactive or active. Controlled by <see cref="CompletelyOptional.ConfigTabController"/>.
         /// </summary>
         public bool isInactive { get; internal set; }
-
-        internal void GrafUpdate(float timeStacker)
-        {
-            foreach (UIelement item in this.items)
-            { if (!item.isInactive) { item.GrafUpdate(timeStacker); } }
-        }
-
-        /// <summary>
-        /// Update for OpTab. Automatically called. Don't call this by yourself.
-        /// </summary>
-        internal void Update()
-        {
-            foreach (UIelement item in this.items)
-            { if (!item.isInactive) { item.Update(); } }
-        }
 
         #region ItemManager
 
@@ -150,6 +135,23 @@ namespace OptionalUI
         #endregion ItemManager
 
         #region Internal
+
+        /// <summary>
+        /// Graphical Update of OpTab called by <see cref="CompletelyOptional.ConfigContainer.GrafUpdate"/>. Calls <see cref="UIelement.GrafUpdate"/>.
+        /// </summary>
+        internal void GrafUpdate(float timeStacker)
+        {
+            foreach (UIelement item in this.items)
+            { if (!item.isInactive) { item.GrafUpdate(timeStacker); } }
+        }
+
+        /// <summary>
+        /// Update for OpTab called by <see cref="CompletelyOptional.ConfigContainer.Update"/>. Calls <see cref="UIelement.Update"/>.
+        /// </summary>
+        internal void Update()
+        {
+            foreach (UIelement item in this.items) { if (!item.isInactive) { item.Update(); } }
+        }
 
         internal void Deactivate()
         {

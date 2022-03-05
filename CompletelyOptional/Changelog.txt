@@ -10,7 +10,6 @@ o Clean up OptionInterface so only things the modders need are there
  o Removed usages of MenuObject in UIelements
   o This allows more controlled sorting
 o Added Undo function (framework)
-o A function that turns off CM music
 ###1.5.5#!#20220130#!#
 - Reworked OptionInterface's Data API (by Henpemaz)
  + This WILL BREAK backward compatibility with mods that use older progData

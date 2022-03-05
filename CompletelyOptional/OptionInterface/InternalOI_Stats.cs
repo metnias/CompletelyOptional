@@ -11,5 +11,8 @@ namespace CompletelyOptional
         public InternalOI_Stats() : base(null, Reason.Statistics)
         {
         }
+
+        // A function that turns off CM music
+        // Save starred mods and remember last chosen mod
     }
 }
