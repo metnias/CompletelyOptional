@@ -7,7 +7,7 @@ namespace OptionalUI
     /// <summary>
     /// Simple CheckBox.
     /// </summary>
-    public class OpCheckBox : UIconfig
+    public class OpCheckBox : UIconfig, IValueBool
     {
         /// <summary>
         /// Simple CheckBox which returns "true" of "false". The fixedSize is 24x24.
@@ -18,15 +18,12 @@ namespace OptionalUI
         public OpCheckBox(Vector2 pos, string key, bool defaultBool = false) : base(pos, new Vector2(24f, 24f), key, "false")
         {
             this.fixedSize = new Vector2(24f, 24f);
-            if (defaultBool) { this._value = "true"; }
-            else { this._value = "false"; }
+            this._value = defaultBool ? "true" : "false";
             this.defaultValue = this.value;
 
-            if (!_init) { return; }
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
-            this.rect = new DyeableRect(menu, owner, this.pos, this.size, true);
-            this.subObjects.Add(rect);
+            this.rect = new DyeableRect(myContainer, this.pos, this.size, true);
             this.symbolSprite = new FSprite("Menu_Symbol_CheckBox", true);
             this.myContainer.AddChild(this.symbolSprite);
             this.symbolSprite.SetAnchor(0f, 0f);
@@ -64,19 +61,15 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
-        bool ICanBeFocused.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
+        string IValueBool.valueString { get => this.value; set => this.value = value; }
 
-        bool ICanBeFocused.CurrentlyFocusableMouse { get { return !this.disabled; } }
-
-        bool ICanBeFocused.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
-
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
+            base.GrafUpdate(timeStacker);
 
             if (greyedOut)
             {
-                if (valueBool) { this.symbolSprite.alpha = 1f; }
+                if (this.GetValueBool()) { this.symbolSprite.alpha = 1f; }
                 else { this.symbolSprite.alpha = 0f; }
                 this.symbolSprite.color = this.bumpBehav.GetColor(this.colorEdge);
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
@@ -87,8 +80,8 @@ namespace OptionalUI
             Color ce = this.bumpBehav.GetColor(this.colorEdge);
             if (this.MouseOver)
             {
-                this.symbolHalfVisible = Custom.LerpAndTick(this.symbolHalfVisible, 1f, 0.07f, 0.0166666675f * DTMultiply(dt));
-                this.symbolSprite.color = Color.Lerp(DyeableRect.MidToDark(ce), ce, this.bumpBehav.Sin(10f));
+                this.symbolHalfVisible = Custom.LerpAndTick(this.symbolHalfVisible, 1f, 0.07f, 0.0166666675f / frameMulti);
+                this.symbolSprite.color = Color.Lerp(MenuColorEffect.MidToDark(ce), ce, this.bumpBehav.Sin(10f));
             }
             else
             {
@@ -98,7 +91,7 @@ namespace OptionalUI
 
             this.rect.colorEdge = ce;
 
-            if (this.valueBool) { this.symbolSprite.alpha = 1f - this.symbolHalfVisible * 0.2f; }
+            if (this.GetValueBool()) { this.symbolSprite.alpha = 1f - this.symbolHalfVisible * 0.2f; }
             else { this.symbolSprite.alpha = this.symbolHalfVisible * 0.2f; }
 
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
@@ -106,10 +99,10 @@ namespace OptionalUI
             this.rect.colorFill = this.colorFill;
         }
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            base.Update(dt);
-            if (this.disabled) { return; }
+            base.Update();
+            if (this.greyedOut) { return; }
 
             if (this.MouseOver)
             {
@@ -122,12 +115,8 @@ namespace OptionalUI
                     if (this.held)
                     {
                         this.held = false;
-                        this.valueBool = !this.valueBool;
-                        if (!OptionInterface.soundFilled)
-                        {
-                            OptionInterface.soundFill += 6;
-                            menu.PlaySound(!this.valueBool ? SoundID.MENU_Checkbox_Check : SoundID.MENU_Checkbox_Uncheck);
-                        }
+                        this.SetValueBool(!this.GetValueBool());
+                        PlaySound(!this.GetValueBool() ? SoundID.MENU_Checkbox_Check : SoundID.MENU_Checkbox_Uncheck);
                     }
                 }
             }
@@ -145,28 +134,8 @@ namespace OptionalUI
         public override void OnChange()
         {
             base.OnChange();
-            if (!_init) { return; }
+
             this.rect.pos = this.pos;
-        }
-
-        public override void Hide()
-        {
-            base.Hide();
-            this.rect.Hide();
-            this.symbolSprite.isVisible = false;
-        }
-
-        public override void Show()
-        {
-            base.Show();
-            this.rect.Show();
-            this.symbolSprite.isVisible = true;
-        }
-
-        public override void Unload()
-        {
-            base.Unload();
-            this.symbolSprite.RemoveFromContainer();
         }
     }
 }

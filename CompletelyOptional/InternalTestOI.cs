@@ -85,8 +85,8 @@ namespace CompletelyOptional
             sb.AddItems(cpk1, new OpLabel(new Vector2(300f, 2000f), new Vector2(100f, 20f), "Blue Colorpicker") { bumpBehav = cpk1.bumpBehav, color = Color.blue });
             sb.AddItems(new OpSlider(new Vector2(100f, 1800f), "", new IntVector2(0, 100), 300));
             sb.AddItems(new OpSlider(new Vector2(500f, 1700f), "", new IntVector2(0, 100), 300, true));
-            sb.AddItems(new OpSliderSubtle(new Vector2(100f, 1400f), "", new IntVector2(0, 20), 200));
-            sb.AddItems(new OpSliderSubtle(new Vector2(500f, 1300f), "", new IntVector2(0, 20), 200, true));
+            sb.AddItems(new OpSliderTick(new Vector2(100f, 1400f), "", new IntVector2(0, 20), 200));
+            sb.AddItems(new OpSliderTick(new Vector2(500f, 1300f), "", new IntVector2(0, 20), 200, true));
 
             /*
             sb.AddItems(new OpRect(new Vector2(25f, 1000f), new Vector2(150f, 150f)));

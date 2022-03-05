@@ -11,7 +11,7 @@ namespace OptionalUI
     /// Initialize this then <see cref="OpTab.AddItems(UIelement[])"/> to make it functional.
     /// Then Initialize <see cref="OpRadioButton"/> instances, then use <see cref="OpRadioButtonGroup.SetButtons(OpRadioButton[])"/> to bind them.
     /// </remarks>
-    public class OpRadioButtonGroup : UIconfig
+    public class OpRadioButtonGroup : UIconfig, IValueInt
     {
         /// <summary>
         /// Ties a number of <see cref="OpRadioButton"/> together, so only one of them can be activated.
@@ -22,10 +22,8 @@ namespace OptionalUI
         {
             this._value = defaultValue.ToString();
             this.defaultValue = this.value;
-            if (!_init) { return; }
-            this._greyedOut = false;
 
-            this.subObjects = new List<PositionedMenuObject>(0);
+            this._greyedOut = false;
         }
 
         /// <summary>
@@ -49,16 +47,16 @@ namespace OptionalUI
             {
                 this.buttons[i].group = this;
                 this.buttons[i].index = i;
-                if (i == base.valueInt) { this.buttons[i]._value = "true"; }
+                if (i == this.GetValueInt()) { this.buttons[i]._value = "true"; }
                 else { this.buttons[i]._value = "false"; }
                 this.buttons[i].OnChange();
             }
         }
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            base.Update(dt);
-            if (this.held) { foreach (OpRadioButton b in this.buttons) { b.Update(dt); } }
+            base.Update();
+            if (this.held) { foreach (OpRadioButton b in this.buttons) { b.Update(); } }
         }
 
         /// <summary>
@@ -100,35 +98,20 @@ namespace OptionalUI
 
         public OpRadioButton[] buttons;
 
-        public new int valueInt
-        {
-            get
-            {
-                return int.Parse(this.value);
-            }
-            set
-            {
-                if (base.value == value.ToString()) { return; }
-                if (value >= this.buttons.Length) { return; }
-                this._value = value.ToString();
-                if (_init) { Switch(value); }
-            }
-        }
-
         public override string value
         {
             get => base.value;
             set
             {
                 if (base.value == value) { return; }
-                if (int.TryParse(value, out int v))
-                {
-                    if (v >= this.buttons.Length) { return; }
-                    this._value = value;
-                    if (_init) { Switch(v); }
-                }
+                int vi = this.GetValueInt();
+                if (vi >= this.buttons.Length) { return; }
+                this._value = value;
+                Switch(vi);
             }
         }
+
+        string IValueFloat.valueString { get => this.value; set => this.value = value; }
 
         protected internal virtual void Switch(int index)
         {
@@ -143,30 +126,18 @@ namespace OptionalUI
             this.OnChange();
         }
 
-        public override void OnChange()
+        protected internal override void Deactivate()
         {
-            if (!_init) { return; }
-            base.OnChange();
+            base.Deactivate();
+            for (int i = 0; i < this.buttons.Length; i++)
+            { this.buttons[i].Deactivate(); }
         }
 
-        /// <summary>
-        /// Calls <see cref="OpRadioButton.Hide"/> for its children
-        /// </summary>
-        public override void Hide()
+        protected internal override void Reactivate()
         {
-            base.Hide();
+            base.Reactivate();
             for (int i = 0; i < this.buttons.Length; i++)
-            { this.buttons[i].Hide(); }
-        }
-
-        /// <summary>
-        /// Calls <see cref="OpRadioButton.Show"/> for its children
-        /// </summary>
-        public override void Show()
-        {
-            base.Show();
-            for (int i = 0; i < this.buttons.Length; i++)
-            { this.buttons[i].Show(); }
+            { this.buttons[i].Reactivate(); }
         }
     }
 }

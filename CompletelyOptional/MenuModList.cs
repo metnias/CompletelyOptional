@@ -157,18 +157,18 @@ namespace CompletelyOptional
             protected internal override bool MouseOver => base.MouseOver;
         }
 
-        internal class ListButton : UIelement
+        internal class ListButton : OpSimpleImageButton
         {
-            public ListButton(Vector2 pos, Vector2 size) : base(pos, size)
+            public ListButton(Vector2 pos, Vector2 size) : base(pos, size, "", "")
             {
             }
 
-            // In Mod list mode, Add button for turn off custom music, and Remove Focus marker animation
+            // In Mod list mode, Add button for turn off custom music
         }
 
-        internal class AlphabetButton : UIelement
+        internal class AlphabetButton : OpSimpleButton
         {
-            public AlphabetButton(Vector2 pos, Vector2 size, string text = "TEXT") : base(pos, size)
+            public AlphabetButton(Vector2 pos, Vector2 size) : base(pos, size, "", "")
             {
             }
         }

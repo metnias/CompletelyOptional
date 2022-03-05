@@ -10,7 +10,7 @@ namespace OptionalUI
     /// <summary>
     /// Slider that let you input integer more visually.
     /// </summary>
-    public class OpSlider : UIconfig, ICanBeFocused
+    public class OpSlider : UIconfig, IValueInt
     {
         /// <summary>
         /// Slider that let you input integer more visually.
@@ -33,7 +33,7 @@ namespace OptionalUI
             this._size = this.vertical ? new Vector2(30f, (r - 1) * this.mul) : new Vector2((r - 1) * this.mul, 30f);
             this.fixedSize = this._size;
             this._value = Custom.IntClamp(defaultValue, min, max).ToString();
-            if (!_init) { return; }
+
             Initialize();
         }
 
@@ -59,11 +59,11 @@ namespace OptionalUI
             this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
             this._value = Custom.IntClamp(defaultValue, min, max).ToString();
             this.defaultValue = this.value;
-            if (!_init) { return; }
+
             Initialize();
         }
 
-        private bool subtleSlider => this is OpSliderSubtle;
+        private bool tickSlider => this is OpSliderTick;
 
         /* private bool rangeSlider
         {
@@ -92,7 +92,7 @@ namespace OptionalUI
                 this.lineSprites[2].anchorY = 1f;
                 this.lineSprites[3].scaleY = 2f;
                 this.lineSprites[3].scaleX = 6f;
-                if (!subtleSlider) this.rect = new DyeableRect(menu, owner, this.pos + new Vector2(4f, -8f), new Vector2(24f, 16f), true);
+                if (!tickSlider) this.rect = new DyeableRect(myContainer, new Vector2(4f, -8f), new Vector2(24f, 16f), true);
                 //if (rangeSlider) { this.lineSprites[4].scaleX = 2f; this.lineSprites[4].anchorY = 1f; }
             }
             else
@@ -105,17 +105,14 @@ namespace OptionalUI
                 this.lineSprites[2].anchorX = 1f;
                 this.lineSprites[3].scaleX = 2f;
                 this.lineSprites[3].scaleY = 6f;
-                if (!subtleSlider) this.rect = new DyeableRect(menu, owner, this.pos + new Vector2(-8f, 4f), new Vector2(16f, 24f), true);
+                if (!tickSlider) this.rect = new DyeableRect(myContainer, new Vector2(-8f, 4f), new Vector2(16f, 24f), true);
                 //if (rangeSlider) { this.lineSprites[4].scaleY = 2f; this.lineSprites[4].anchorX = 1f; }
             }
-            if (!subtleSlider)
+            if (!tickSlider)
             {
-                this.subObjects.Add(this.rect);
-                this.label = new MenuLabel(menu, owner, this.value, this.rect.pos, new Vector2(40f, 20f), false);
-                this.label.label.alpha = 0f;
-                this.label.label.alignment = FLabelAlignment.Center;
-                this.subObjects.Add(this.label);
-                this.myContainer.sortZ = this.rect.sprites[0].sortZ + 1f;
+                this.label = OpLabel.CreateFLabel(this.value);
+                this.label.alpha = 0f;
+                PlaceLabelAtCenter(this.label, this.rect.pos, new Vector2(40f, 20f));
             }
         }
 
@@ -130,13 +127,9 @@ namespace OptionalUI
 
         internal FSprite[] lineSprites;
         internal DyeableRect rect;
-        internal MenuLabel label;
+        internal FLabel label;
 
-        bool ICanBeFocused.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
-
-        bool ICanBeFocused.CurrentlyFocusableMouse { get { return !this.disabled; } }
-
-        bool ICanBeFocused.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
+        string IValueFloat.valueString { get => this.value; set => this.value = value; }
 
         /// <summary>
         /// Text and Edge Colour of DyeableRect. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.
@@ -159,15 +152,17 @@ namespace OptionalUI
 
             float add = this.greyedOut ? 0f : this.bumpBehav.AddSize;
             Vector2 cutPos, cutSize;
+            int valueInt = this.GetValueInt();
             if (!vertical)
             {
-                if (!subtleSlider)
+                if (!tickSlider)
                 {
-                    float p = this.mul * (float)(this.valueInt - this.min);
-                    this.rect.pos.y = this.pos.y + 4f;
-                    this.rect.pos.x = this.pos.x + p - 8f;
+                    float p = this.mul * (float)(valueInt - this.min);
+                    this.rect.pos.y = 4f;
+                    this.rect.pos.x = p - 8f;
                     this.rect.addSize = new Vector2(4f, 4f) * add;
-                    this.label.pos = new Vector2(this.rect.pos.x - 14f, this.rect.pos.y + 25f);
+                    this.label.x = this.rect.pos.x - 14f;
+                    this.label.y = this.rect.pos.y + 25f;
                     cutPos = this.rect.pos - this.pos;
                     cutSize = this.rect.size;
                     cutPos -= this.rect.addSize / 2f;
@@ -175,7 +170,7 @@ namespace OptionalUI
                 }
                 else
                 {
-                    float t = (this.valueInt - this.min) * this.mul;
+                    float t = (valueInt - this.min) * this.mul;
                     float s = Mathf.Clamp(add, 0f, 1f);
                     s = 1.0f + s * 0.3f;
                     cutPos = new Vector2(t, 15f);
@@ -200,13 +195,14 @@ namespace OptionalUI
             }
             else
             {
-                if (!subtleSlider)
+                if (!tickSlider)
                 {
-                    float p = this.mul * (float)(this.valueInt - this.min);
-                    this.rect.pos.x = this.pos.x + 4f;
-                    this.rect.pos.y = this.pos.y + p - 8f;
+                    float p = this.mul * (float)(valueInt - this.min);
+                    this.rect.pos.x = 4f;
+                    this.rect.pos.y = p - 8f;
                     this.rect.addSize = new Vector2(4f, 4f) * add;
-                    this.label.pos = new Vector2(this.rect.pos.x - 10f, this.rect.pos.y + 18f);
+                    this.label.x = this.rect.pos.x - 10f;
+                    this.label.y = this.rect.pos.y + 18f;
                     cutPos = this.rect.pos - this.pos;
                     cutSize = this.rect.size;
                     cutPos -= this.rect.addSize / 2f;
@@ -214,7 +210,7 @@ namespace OptionalUI
                 }
                 else
                 {
-                    float t = (this.valueInt - this.min) * this.mul;
+                    float t = (valueInt - this.min) * this.mul;
                     float s = Mathf.Clamp(add, 0f, 1f);
                     s = 1.0f + s * 0.3f;
                     cutPos = new Vector2(15f, t);
@@ -241,20 +237,20 @@ namespace OptionalUI
             if (this.greyedOut)
             {
                 foreach (FSprite s in this.lineSprites) { s.color = this.bumpBehav.GetColor(this.colorLine); }
-                if (subtleSlider) return;
+                if (tickSlider) return;
                 this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
-                this.label.label.color = this.bumpBehav.GetColor(this.colorEdge);
-                if (this.MouseOver) { this.label.label.alpha = Mathf.Min(0.5f, this.label.label.alpha + 0.05f); }
-                else { this.label.label.alpha = Mathf.Max(0f, this.label.label.alpha - 0.1f); }
+                this.label.color = this.bumpBehav.GetColor(this.colorEdge);
+                if (this.MouseOver) { this.label.alpha = Mathf.Min(0.5f, this.label.alpha + 0.05f); }
+                else { this.label.alpha = Mathf.Max(0f, this.label.alpha - 0.1f); }
                 return;
             }
 
-            if (!subtleSlider)
+            if (!tickSlider)
             {
                 if (this.held || MouseOver)
-                { this.label.label.alpha = Mathf.Min(this.label.label.alpha + 0.1f, 1f); }
-                else { this.label.label.alpha = Mathf.Max(this.label.label.alpha - 0.15f, 0f); }
+                { this.label.alpha = Mathf.Min(this.label.alpha + 0.1f, 1f); }
+                else { this.label.alpha = Mathf.Max(this.label.alpha - 0.15f, 0f); }
 
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 if (this.held) { this.rect.colorFill = this.bumpBehav.GetColor(this.colorEdge); }
@@ -265,7 +261,7 @@ namespace OptionalUI
 
             Color color = this.bumpBehav.GetColor(this.colorLine);
             foreach (FSprite l in this.lineSprites) { l.color = color; }
-            if (!subtleSlider) { this.label.label.color = Color.Lerp(this.rect.colorEdge, Color.white, 0.5f); }
+            if (!tickSlider) { this.label.color = Color.Lerp(this.rect.colorEdge, Color.white, 0.5f); }
         }
 
         protected internal virtual void LineVisibility(Vector2 cutPos, Vector2 cutSize)
@@ -286,57 +282,56 @@ namespace OptionalUI
             }
         }
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            base.Update(dt);
-            if (disabled) { return; }
+            base.Update();
+            if (greyedOut) { return; }
 
-            if (this.held)
+            if (MenuMouseMode)
             {
-                if (Input.GetMouseButton(0))
+                if (this.held)
                 {
-                    float t = this.vertical ? this.MousePos.y : this.MousePos.x;
-                    this.valueInt = Mathf.Clamp(Mathf.RoundToInt(t / this.mul) + this.min, this.min, this.max);
-                }
-                else
-                {
-                    this.held = false;
-                }
-            }
-            else if (!this.held && this.menu.manager.menuesMouseMode && this.MouseOver)
-            {
-                if (Input.GetMouseButton(0))
-                {
-                    this.held = true;
-                    menu.PlaySound(SoundID.MENU_First_Scroll_Tick);
-                }
-                else if (this.menu.mouseScrollWheelMovement != 0)
-                {
-                    int num = valueInt - (int)Mathf.Sign(this.menu.mouseScrollWheelMovement) * this.wheelTick;
-                    num = Custom.IntClamp(num, this.min, this.max);
-                    if (num != valueInt)
+                    if (Input.GetMouseButton(0))
                     {
-                        this.valueInt = num;
+                        float t = this.vertical ? this.MousePos.y : this.MousePos.x;
+                        this.SetValueInt(Mathf.Clamp(Mathf.RoundToInt(t / this.mul) + this.min, this.min, this.max));
+                    }
+                    else
+                    {
+                        this.held = false;
                     }
                 }
+                else if (!this.held && this.MouseOver)
+                {
+                    if (Input.GetMouseButton(0))
+                    {
+                        this.held = true;
+                        PlaySound(SoundID.MENU_First_Scroll_Tick);
+                    }
+                    else if (this.menu.mouseScrollWheelMovement != 0)
+                    {
+                        int num = this.GetValueInt() - (int)Mathf.Sign(this.menu.mouseScrollWheelMovement) * this.wheelTick;
+                        num = Custom.IntClamp(num, this.min, this.max);
+                        if (num != this.GetValueInt()) { this.SetValueInt(num); }
+                    }
+                }
+            }
+            else
+            {
             }
         }
 
         public override void OnChange()
         {
             base.OnChange();
-            if (!_init) { return; }
+
             if (MouseOver || held)
             {
-                if (!_soundFilled)
-                {
-                    _soundFill += 5;
-                    menu.PlaySound(SoundID.MENU_Scroll_Tick);
-                }
+                PlaySound(SoundID.MENU_Scroll_Tick);
                 this.bumpBehav.flash = Mathf.Min(1f, this.bumpBehav.flash + 0.5f);
                 this.bumpBehav.sizeBump = Mathf.Min(2.5f, this.bumpBehav.sizeBump + 1f);
             }
-            if (!subtleSlider) this.label.label.text = this.value;
+            if (!tickSlider) this.label.text = this.value;
 
             /*
             int r = this.max - this.min + 1;
@@ -346,29 +341,25 @@ namespace OptionalUI
             */
         }
 
-        public override void Show()
+        protected internal override void Reactivate()
         {
-            base.Show();
-            for (int i = 0; i < lineSprites.Length; i++) { lineSprites[i].isVisible = true; }
-            if (!subtleSlider)
-            {
-                this.rect.Show();
-                this.label.label.isVisible = true;
-            }
+            base.Reactivate();
 
             #region visibility
 
             float add = this.greyedOut ? 0f : this.bumpBehav.AddSize;
             Vector2 cutPos, cutSize;
+            int valueInt = this.GetValueInt();
             if (!vertical)
             {
-                if (!subtleSlider)
+                if (!tickSlider)
                 {
-                    float p = this.mul * (float)(this.valueInt - this.min);
-                    this.rect.pos.y = this.pos.y + 4f;
-                    this.rect.pos.x = this.pos.x + p - 8f;
+                    float p = this.mul * (float)(valueInt - this.min);
+                    this.rect.pos.y = 4f;
+                    this.rect.pos.x = p - 8f;
                     this.rect.addSize = new Vector2(4f, 4f) * add;
-                    this.label.pos = new Vector2(this.rect.pos.x - 14f, this.rect.pos.y + 25f);
+                    this.label.x = this.rect.pos.x - 14f;
+                    this.label.y = this.rect.pos.y + 25f;
                     cutPos = this.rect.pos - this.pos;
                     cutSize = this.rect.size;
                     cutPos -= this.rect.addSize / 2f;
@@ -376,7 +367,7 @@ namespace OptionalUI
                 }
                 else
                 {
-                    float t = (this.valueInt - this.min) * this.mul;
+                    float t = (valueInt - this.min) * this.mul;
                     float s = Mathf.Clamp(add, 0f, 1f);
                     s = 1.0f + s * 0.3f;
                     cutPos = new Vector2(t, 15f);
@@ -386,13 +377,14 @@ namespace OptionalUI
             }
             else
             {
-                if (!subtleSlider)
+                if (!tickSlider)
                 {
-                    float p = this.mul * (float)(this.valueInt - this.min);
-                    this.rect.pos.x = this.pos.x + 4f;
-                    this.rect.pos.y = this.pos.y + p - 8f;
+                    float p = this.mul * (float)(valueInt - this.min);
+                    this.rect.pos.x = 4f;
+                    this.rect.pos.y = p - 8f;
                     this.rect.addSize = new Vector2(4f, 4f) * add;
-                    this.label.pos = new Vector2(this.rect.pos.x - 10f, this.rect.pos.y + 18f);
+                    this.label.x = this.rect.pos.x - 10f;
+                    this.label.y = this.rect.pos.y + 18f;
                     cutPos = this.rect.pos - this.pos;
                     cutSize = this.rect.size;
                     cutPos -= this.rect.addSize / 2f;
@@ -400,7 +392,7 @@ namespace OptionalUI
                 }
                 else
                 {
-                    float t = (this.valueInt - this.min) * this.mul;
+                    float t = (valueInt - this.min) * this.mul;
                     float s = Mathf.Clamp(add, 0f, 1f);
                     s = 1.0f + s * 0.3f;
                     cutPos = new Vector2(15f, t);
@@ -412,23 +404,6 @@ namespace OptionalUI
             this.LineVisibility(cutPos, cutSize);
 
             #endregion visibility
-        }
-
-        public override void Hide()
-        {
-            base.Hide();
-            for (int i = 0; i < lineSprites.Length; i++) { lineSprites[i].isVisible = false; }
-            if (!subtleSlider)
-            {
-                this.rect.Hide();
-                this.label.label.isVisible = false;
-            }
-        }
-
-        public override void Unload()
-        {
-            for (int i = 0; i < lineSprites.Length; i++) { lineSprites[i].RemoveFromContainer(); }
-            base.Unload();
         }
 
         protected internal override bool CopyFromClipboard(string value)

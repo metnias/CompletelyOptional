@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpUpdown : OpTextBox
+    public class OpUpdown : OpTextBox, IValueInt
     {
         /// <summary>
         /// Numeric Updown (Spinner)
@@ -16,7 +16,6 @@ namespace OptionalUI
         /// <param name="defaultInt">Default int value</param>
         public OpUpdown(Vector2 pos, float sizeX, string key, int defaultInt) : base(pos, sizeX, key, defaultInt.ToString(), Accept.Int)
         {
-            if (!_init) { return; }
             this.Initialize();
             // throw new NotImplementedException("OpUpdown might come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
         }
@@ -32,7 +31,7 @@ namespace OptionalUI
         public OpUpdown(Vector2 pos, float sizeX, string key, float defaultFloat, byte decimalNum = 1) : base(pos, sizeX, key, defaultFloat.ToString(), Accept.Float)
         {
             dNum = Math.Min(decimalNum, (byte)9);
-            if (!_init) { return; }
+
             this.Initialize();
             // throw new NotImplementedException("OpUpdown might come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
         }
@@ -74,16 +73,23 @@ namespace OptionalUI
             // rectDown.pos = this.pos + new Vector2(this.size.x - 20f, 3f);
         }
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
+            base.GrafUpdate(timeStacker);
             arrUp.color = bumpUp.GetColor(this.colorText);
             arrDown.color = bumpDown.GetColor(this.colorText);
         }
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            if (!this.disabled)
+            if (greyedOut)
+            {
+                mouseOverArrow = false;
+                bumpUp.held = false; bumpDown.held = false;
+                bumpUp.greyedOut = true; bumpDown.greyedOut = true;
+                bumpUp.MouseOver = false; bumpDown.MouseOver = false;
+            }
+            else
             {
                 mouseOverArrow = false;
                 bumpUp.greyedOut = this.greyedOut; bumpDown.greyedOut = this.greyedOut;
@@ -97,16 +103,9 @@ namespace OptionalUI
                     }
                 }
             }
-            else
-            {
-                mouseOverArrow = false;
-                bumpUp.held = false; bumpDown.held = false;
-                bumpUp.greyedOut = true; bumpDown.greyedOut = true;
-                bumpUp.MouseOver = false; bumpDown.MouseOver = false;
-            }
-            base.Update(dt);
-            bumpUp.Update(dt); bumpDown.Update(dt);
-            if (this.disabled) { return; }
+            base.Update();
+            bumpUp.Update(); bumpDown.Update();
+            if (this.greyedOut) { return; }
             byte bumpFlag = 200; // 200: no bump; 0: bump fail; 1: bump up; 2: bump down
             if (held && !KeyboardOn)
             {
@@ -227,7 +226,7 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Sets range for <see cref="UIconfig.valueInt"/>. Use for <see cref="int"/> version of <see cref="OpUpdown"/>
+        /// Sets range for <see cref="UIconfig.value"/>. Use for <see cref="int"/> version of <see cref="OpUpdown"/>
         /// </summary>
         /// <param name="intMin">Minimum value (default: <see cref="int.MinValue"/>)</param>
         /// <param name="intMax">Maximum value (default: <see cref="int.MaxValue"/>)</param>
@@ -239,7 +238,7 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Sets range for <see cref="UIconfig.valueFloat"/>. Use for <see cref="float"/> version of <see cref="OpUpdown"/>
+        /// Sets range for <see cref="UIconfig.value"/>. Use for <see cref="float"/> version of <see cref="OpUpdown"/>
         /// </summary>
         /// <param name="floatMin">Minimum value (default: -1,000,000)</param>
         /// <param name="floatMax">Maximum value (default: 1,000,000)</param>
@@ -255,17 +254,16 @@ namespace OptionalUI
         /// </summary>
         public bool IsInt => this.accept == Accept.Int;
 
-        public override void Show()
-        {
-            base.Show();
-            // rectUp.Show(); rectDown.Show();
-        }
+        string IValueFloat.valueString { get => this.value; set => this.value = value; }
 
-        public override void Hide()
-        {
-            base.Hide();
-            // rectUp.Hide(); rectDown.Hide();
-        }
+        // overrides
+        public void SetValueFloat(float value) => this.valueFloat = value;
+
+        public float GetValueFloat() => this.valueFloat;
+
+        public void SetValueInt(int value) => this.valueInt = value;
+
+        public int GetValueInt() => this.valueInt;
 
         private void ClampValue()
         {

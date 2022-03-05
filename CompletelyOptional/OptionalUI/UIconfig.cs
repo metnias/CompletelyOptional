@@ -111,37 +111,6 @@ namespace OptionalUI
             }
         }
 
-        /// <summary>
-        /// Value in <see cref="int"/> form
-        /// </summary>
-        public int valueInt
-        {
-            get { return int.TryParse(value, out int i) ? i : 0; }
-            set { this.value = value.ToString(); }
-        }
-
-        /// <summary>
-        /// Value in <see cref="float"/> form
-        /// </summary>
-        public float valueFloat
-        {
-            get { return float.TryParse(value, out float d) ? d : 0f; }
-            set { this.value = value.ToString(); }
-        }
-
-        /// <summary>
-        /// Value in <see cref="bool"/> form
-        /// </summary>
-        public bool valueBool
-        {
-            get
-            {
-                if (this.value == "true") { return true; }
-                else { return false; }
-            }
-            set { this.value = value ? "true" : "false"; }
-        }
-
         #endregion Shallow
 
         // Codes for modders who makes custom UIelement
@@ -167,7 +136,10 @@ namespace OptionalUI
             }
         }
 
-        private string _value;
+        /// <summary>
+        /// Access to <see cref="UIconfig.value"/> without calling <see cref="OnChange"/>
+        /// </summary>
+        protected internal string _value;
 
         #region ICanBeFocused
 

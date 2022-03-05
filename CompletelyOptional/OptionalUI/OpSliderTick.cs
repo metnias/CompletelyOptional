@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpSliderSubtle : OpSlider, ICanBeFocused
+    public class OpSliderTick : OpSlider
     {
         /// <summary>
         /// SubtleSlider that let you input integer in small range
@@ -15,7 +15,7 @@ namespace OptionalUI
         /// <param name="vertical">if true, the slider will go vertical and the length will be used as height</param>
         /// <param name="defaultValue">default integer value</param>
         /// <exception cref="ElementFormatException">Thrown when the range of this is less than 2 or more than 30</exception>
-        public OpSliderSubtle(Vector2 pos, string key, IntVector2 range, int length, bool vertical = false, int defaultValue = 0) : base(pos, key, range, length, vertical, defaultValue)
+        public OpSliderTick(Vector2 pos, string key, IntVector2 range, int length, bool vertical = false, int defaultValue = 0) : base(pos, key, range, length, vertical, defaultValue)
         {
             int r = range.y - range.x + 1;
             if (r > 31) { throw new ElementFormatException(this, "The range of OpSliderSubtle should be lower than 31! Use normal OpSlider instead.", key); }
@@ -29,8 +29,6 @@ namespace OptionalUI
             this.wheelTick = 1;
             this.defaultValue = this.value;
 
-            if (!_init) { return; }
-
             this.Nobs = new FSprite[r];
             for (int i = 0; i < this.Nobs.Length; i++)
             {
@@ -42,19 +40,13 @@ namespace OptionalUI
             this.myContainer.sortZ = this.Nobs[0].sortZ + 1f;
         }
 
-        protected internal override void Initialize()
-        {
-            base.Initialize();
-            if (!_init) { return; }
-        }
-
         private readonly FSprite[] Nobs;
         private readonly FSprite Circle;
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
-            float s = !disabled ? Mathf.Clamp(this.bumpBehav.AddSize, 0f, 1f) : 0f;
+            base.GrafUpdate(timeStacker);
+            float s = !greyedOut ? Mathf.Clamp(this.bumpBehav.AddSize, 0f, 1f) : 0f;
             for (int i = 0; i < this.Nobs.Length; i++)
             {
                 if (this.vertical)
@@ -69,8 +61,8 @@ namespace OptionalUI
                 }
                 this.Nobs[i].color = this.lineSprites[0].color;
             }
-            if (this.vertical) { this.Circle.x = 15.01f; this.Circle.y = this.mul * (this.valueInt - this.min) + 0.01f; }
-            else { this.Circle.y = 15.01f; this.Circle.x = this.mul * (this.valueInt - this.min) + 0.01f; }
+            if (this.vertical) { this.Circle.x = 15.01f; this.Circle.y = this.mul * (this.GetValueInt() - this.min) + 0.01f; }
+            else { this.Circle.y = 15.01f; this.Circle.x = this.mul * (this.GetValueInt() - this.min) + 0.01f; }
             this.Circle.scale = 1.0f + s * 0.3f;
             this.Circle.color = this.bumpBehav.GetColor(this.colorEdge);
         }
@@ -82,35 +74,9 @@ namespace OptionalUI
             this.lineSprites[3].isVisible = false;
             for (int i = 0; i < this.Nobs.Length; i++)
             {
-                if (this.valueInt - this.min == i) { this.Nobs[i].isVisible = false; }
+                if (this.GetValueInt() - this.min == i) { this.Nobs[i].isVisible = false; }
                 else { this.Nobs[i].isVisible = true; }
             }
-        }
-
-        public override void Update(float dt)
-        {
-            base.Update(dt);
-            // if (this.isHidden) { return; }
-        }
-
-        public override void OnChange()
-        {
-            base.OnChange();
-        }
-
-        public override void Show()
-        {
-            base.Show();
-        }
-
-        public override void Hide()
-        {
-            base.Hide();
-        }
-
-        public override void Unload()
-        {
-            base.Unload();
         }
     }
 }

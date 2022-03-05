@@ -294,7 +294,7 @@ namespace OptionalUI
         /// <summary>
         /// value in <see cref="int"/> form.
         /// </summary>
-        public new int valueInt
+        public int valueInt
         {
             get
             {
@@ -316,7 +316,7 @@ namespace OptionalUI
         /// <summary>
         /// value in <see cref="float"/> form.
         /// </summary>
-        public new float valueFloat
+        public float valueFloat
         {
             get
             {

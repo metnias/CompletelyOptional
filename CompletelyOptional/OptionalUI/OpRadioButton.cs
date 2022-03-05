@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpRadioButton : UIelement, ICanBeFocused
+    public class OpRadioButton : UIelement, ICanBeFocused, IValueBool
     {
         /// <summary>
         /// This returns value in "true" of "false", although this is NOT a <see cref="UIconfig"/> thus this value won't be saved.
@@ -15,11 +15,10 @@ namespace OptionalUI
         {
             this._value = "false";
             this.fixedSize = new Vector2(24f, 24f);
-            if (!_init) { return; }
+
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
-            this.rect = new DyeableRect(menu, owner, this.pos, this.size, true);
-            this.subObjects.Add(rect);
+            this.rect = new DyeableRect(myContainer, this.pos, this.size, true);
             this.symbolSprite = new FSprite("Menu_Symbol_Clear_All", true);
             this.myContainer.AddChild(this.symbolSprite);
             this.symbolSprite.SetAnchor(0f, 0f);
@@ -64,32 +63,42 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
-        bool ICanBeFocused.IsMouseOverMe { get { return this.MouseOver; } }
+        bool ICanBeFocused.GreyedOut => greyedOut;
 
         bool ICanBeFocused.CurrentlyFocusableMouse { get { return !this.greyedOut && !this.isInactive; } }
 
         bool ICanBeFocused.CurrentlyFocusableNonMouse { get { return !this.greyedOut && !this.isInactive; } }
+
+        Rect ICanBeFocused.FocusRect
+        {
+            get
+            {
+                Rect res = new Rect(this.pos.x, this.pos.y, this.size.x, this.size.y);
+                if (inScrollBox)
+                {
+                    Vector2 offset = scrollBox.camPos - (scrollBox.horizontal ? Vector2.right : Vector2.up) * scrollBox.scrollOffset - scrollBox.pos;
+                    res.x += offset.x; res.y += offset.y;
+                }
+                return res;
+            }
+        }
 
         /// <summary>
         /// Mimics <see cref="Menu.ButtonBehavior"/> of vanilla Rain World UIs
         /// </summary>
         public BumpBehaviour bumpBehav { get; private set; }
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
-            if (this.isInactive) { return; }
-
-            this.bumpBehav.greyedOut = this.greyedOut;
-            this.bumpBehav.Update(dt);
+            base.GrafUpdate(timeStacker);
 
             if (greyedOut)
             {
-                if (valueBool) { this.symbolSprite.alpha = 1f; }
+                if (this.GetValueBool()) { this.symbolSprite.alpha = 1f; }
                 else { this.symbolSprite.alpha = 0f; }
-                this.symbolSprite.color = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorEdge));
-                this.rect.colorEdge = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorEdge));
-                this.rect.colorFill = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorFill));
+                this.symbolSprite.color = MenuColorEffect.Greyscale(MenuColorEffect.MidToDark(this.colorEdge));
+                this.rect.colorEdge = MenuColorEffect.Greyscale(MenuColorEffect.MidToDark(this.colorEdge));
+                this.rect.colorFill = MenuColorEffect.Greyscale(MenuColorEffect.MidToDark(this.colorFill));
                 return;
             }
 
@@ -97,15 +106,15 @@ namespace OptionalUI
             this.symbolSprite.color = ce;
             if (this.MouseOver)
             {
-                this.symbolHalfVisible = Custom.LerpAndTick(this.symbolHalfVisible, 1f, 0.07f, 0.0166666675f * DTMultiply(dt));
-                if (!this.valueBool) { this.symbolSprite.color = Color.Lerp(DyeableRect.MidToDark(ce), ce, this.bumpBehav.Sin(10f)); }
+                this.symbolHalfVisible = Custom.LerpAndTick(this.symbolHalfVisible, 1f, 0.07f, 0.0166666675f / frameMulti);
+                if (!this.GetValueBool()) { this.symbolSprite.color = Color.Lerp(MenuColorEffect.MidToDark(ce), ce, this.bumpBehav.Sin(10f)); }
             }
             else
             { this.symbolHalfVisible = 0f; }
 
             this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
 
-            if (this.valueBool) { this.symbolSprite.alpha = 1f; }
+            if (this.GetValueBool()) { this.symbolSprite.alpha = 1f; }
             else { this.symbolSprite.alpha = this.symbolHalfVisible * 0.2f; }
 
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
@@ -117,11 +126,11 @@ namespace OptionalUI
         /// size: mouseOver : big / pressed/leave : smol
         /// symbolColor : mouseOver : flash(not selected: 0.5flash) / not: 1/0
         /// </summary>
-        /// <param name="dt">deltaTime</param>
-        public override void Update(float dt)
+        public override void Update()
         {
-            base.Update(dt);
-            this.bumpBehav.greyedOut = greyedOut;
+            base.Update();
+            this.bumpBehav.greyedOut = this.greyedOut;
+            this.bumpBehav.Update();
             if (greyedOut || isInactive) { return; }
 
             if (this.MouseOver)
@@ -139,7 +148,7 @@ namespace OptionalUI
                         this.group.held = false;
                         this.bumpBehav.held = false;
                         this.click = false;
-                        this.menu.PlaySound(!this.valueBool ? SoundID.MENU_MultipleChoice_Clicked : SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
+                        PlaySound(!this.GetValueBool() ? SoundID.MENU_MultipleChoice_Clicked : SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
                         this.value = "true";
                     }
                 }
@@ -155,7 +164,7 @@ namespace OptionalUI
         public override void OnChange()
         {
             base.OnChange();
-            if (!_init) { return; }
+
             this.rect.pos = this.pos;
         }
 
@@ -195,54 +204,6 @@ namespace OptionalUI
             }
         }
 
-        /// <summary>
-        /// Access value in bool form.
-        /// </summary>
-        public bool valueBool
-        {
-            set
-            {
-                if (value)
-                {
-                    this.value = "true";
-                }
-                else
-                {
-                    this.value = "false";
-                }
-            }
-            get
-            {
-                if (this._value == "true")
-                {
-                    return true;
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-
-        public override void Hide()
-        {
-            base.Hide();
-            this.rect.Hide();
-            this.symbolSprite.isVisible = false;
-        }
-
-        public override void Show()
-        {
-            base.Show();
-            this.rect.Show();
-            this.symbolSprite.isVisible = true;
-        }
-
-        public override void Unload()
-        {
-            base.Unload();
-            //this.subObjects.Remove(this.rect);
-            this.symbolSprite.RemoveFromContainer();
-        }
+        string IValueBool.valueString { get => this.value; set => this.value = value; }
     }
 }

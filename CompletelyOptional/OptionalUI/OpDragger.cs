@@ -8,7 +8,7 @@ namespace OptionalUI
     /// <summary>
     /// Dragger to adjust int value easily.
     /// </summary>
-    public class OpDragger : UIconfig, ICanBeFocused
+    public class OpDragger : UIconfig, IValueInt
     {
         /// <summary>
         /// Dragger to adjust int value in a cramped space. The fixedSize is 24x24.
@@ -19,15 +19,14 @@ namespace OptionalUI
         public OpDragger(Vector2 pos, string key, int defaultInt = 0) : base(pos, new Vector2(24f, 24f), key, defaultInt.ToString())
         {
             this.fixedSize = new Vector2(24f, 24f);
-            if (!_init) { return; }
+
             this.colorText = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
 
-            this.rect = new DyeableRect(menu, owner, this.pos, this.size, true);
-            this.subObjects.Add(this.rect);
-            this.label = new MenuLabel(menu, owner, defaultInt.ToString(), this.pos + new Vector2(0f, 2f), new Vector2(24f, 20f), false);
-            this.subObjects.Add(this.label);
+            this.rect = new DyeableRect(myContainer, this.pos, this.size, true);
+            this.label = OpLabel.CreateFLabel(defaultInt.ToString());
+            PlaceLabelAtCenter(this.label, new Vector2(0f, 2f), new Vector2(24f, 20f));
 
             this.min = 0; this._min = 0; this.max = 99; this._max = 99;
             this.description = InternalTranslator.Translate("Hold your mouse button and Drag up/down to adjust value");
@@ -82,9 +81,9 @@ namespace OptionalUI
         public DyeableRect rect;
 
         /// <summary>
-        /// MenuLabel
+        /// FLabel
         /// </summary>
-        public MenuLabel label;
+        public FLabel label;
 
         /// <summary>
         /// Text Colour. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.
@@ -101,24 +100,24 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
+            base.GrafUpdate(timeStacker);
             if (greyedOut)
             {
-                this.label.label.color = this.bumpBehav.GetColor(this.colorText);
+                this.label.color = this.bumpBehav.GetColor(this.colorText);
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
                 return;
             }
 
             this.rect.colorFill = this.colorFill;
-            this.greyFade = Custom.LerpAndTick(this.greyFade, (!CompletelyOptional.ConfigMenu.freezeMenu || this.held) ? 0f : 1f, 0.05f, 0.025f * DTMultiply(dt));
+            this.greyFade = Custom.LerpAndTick(this.greyFade, (!CompletelyOptional.ConfigMenu.freezeMenu || this.held) ? 0f : 1f, 0.05f, 0.025f / frameMulti);
 
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
 
-            this.label.label.color = this.bumpBehav.GetColor(this.colorText);
+            this.label.color = this.bumpBehav.GetColor(this.colorText);
             this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
         }
 
@@ -126,22 +125,18 @@ namespace OptionalUI
 
         private float savMouse; private int savValue;
 
-        bool ICanBeFocused.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
+        string IValueFloat.valueString { get => this.value; set => this.value = value; }
 
-        bool ICanBeFocused.CurrentlyFocusableMouse { get { return !this.disabled; } }
-
-        bool ICanBeFocused.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
-
-        public override void Update(float dt)
+        public override void Update()
         {
-            base.Update(dt);
-            if (disabled) { return; }
+            base.Update();
+            if (greyedOut) { return; }
             if (_min != min || _max != max) { OnChange(); }
 
             if (this.held)
             {
                 if (Input.GetMouseButton(0))
-                { this.valueInt = Custom.IntClamp(this.savValue + Mathf.FloorToInt((Input.mousePosition.y - this.savMouse) / 10f), this.min, this.max); }
+                { this.SetValueInt(Custom.IntClamp(this.savValue + Mathf.FloorToInt((Input.mousePosition.y - this.savMouse) / 10f), this.min, this.max)); }
                 else
                 { this.held = false; }
             }
@@ -151,23 +146,19 @@ namespace OptionalUI
                 {
                     this.held = true;
                     this.savMouse = Input.mousePosition.y;
-                    this.savValue = this.valueInt;
-                    menu.PlaySound(SoundID.MENU_First_Scroll_Tick);
+                    this.savValue = this.GetValueInt();
+                    PlaySound(SoundID.MENU_First_Scroll_Tick);
                 }
                 else if (this.menu.mouseScrollWheelMovement != 0)
                 {
-                    int num = valueInt - (int)Mathf.Sign(this.menu.mouseScrollWheelMovement);
+                    int num = this.GetValueInt() - (int)Mathf.Sign(this.menu.mouseScrollWheelMovement);
                     num = Custom.IntClamp(num, this.min, this.max);
-                    if (num != valueInt)
+                    if (num != this.GetValueInt())
                     {
                         this.bumpBehav.flash = 1f;
-                        if (!_soundFilled)
-                        {
-                            _soundFill += 4;
-                            this.menu.PlaySound(SoundID.MENU_Scroll_Tick);
-                        }
+                        PlaySound(SoundID.MENU_Scroll_Tick);
                         this.bumpBehav.sizeBump = Mathf.Min(2.5f, this.bumpBehav.sizeBump + 1f);
-                        this.valueInt = num;
+                        this.SetValueInt(num);
                     }
                 }
             }
@@ -179,11 +170,7 @@ namespace OptionalUI
             base.OnChange();
             if (MouseOver || held)
             {
-                if (!_soundFilled)
-                {
-                    _soundFill += 5;
-                    menu.PlaySound(SoundID.MENU_Scroll_Tick);
-                }
+                PlaySound(SoundID.MENU_Scroll_Tick);
                 this.bumpBehav.sizeBump = Mathf.Min(2.5f, this.bumpBehav.sizeBump + 1f);
                 this.bumpBehav.flash = Mathf.Min(1f, this.bumpBehav.flash + 0.5f);
             }
@@ -215,32 +202,11 @@ namespace OptionalUI
                 _max = max;
             }
 
-            if (useCT) { this.label.label.text = customText[this.valueInt - this.min]; }
-            else { this.label.label.text = value; }
+            if (useCT) { this.label.text = customText[this.GetValueInt() - this.min]; }
+            else { this.label.text = value; }
 
             this.rect.pos = this.pos;
-            this.label.pos = this.pos + new Vector2(0f, 2f);
-        }
-
-        public override void Hide()
-        {
-            base.Hide();
-            this.rect.Hide();
-            this.label.label.isVisible = false;
-        }
-
-        public override void Show()
-        {
-            base.Show();
-            this.rect.Show();
-            this.label.label.isVisible = true;
-        }
-
-        public override void Unload()
-        {
-            base.Unload();
-            //this.subObjects.Remove(this.rect);
-            //this.subObjects.Remove(this.label);
+            PlaceLabelAtCenter(this.label, new Vector2(0f, 2f), new Vector2(24f, 20f));
         }
     }
 }

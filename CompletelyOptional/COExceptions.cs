@@ -310,7 +310,7 @@ namespace OptionalUI
     }
 
     /// <summary>
-    /// <see cref="OptionInterface.mod"/> is null.
+    /// <see cref="OptionInterface.rwMod"/> is null.
     /// </summary>
     [Serializable]
     public class NullModException : NullReferenceException

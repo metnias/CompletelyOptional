@@ -107,7 +107,7 @@ namespace CompletelyOptional
                                 case "byte": //OpSliderSubtle
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<byte> eByte))
                                     {
-                                        elms.Add(new OpSliderSubtle(new Vector2(30f, 600f - h - 45f), GenerateKey(cds[e]), new IntVector2(0, 20), 240, false, Mathf.Clamp((byte)eByte.DefaultValue, 0, 20))
+                                        elms.Add(new OpSliderTick(new Vector2(30f, 600f - h - 45f), GenerateKey(cds[e]), new IntVector2(0, 20), 240, false, Mathf.Clamp((byte)eByte.DefaultValue, 0, 20))
                                         { description = GetFirstSentence(desc) });
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
                                         { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });

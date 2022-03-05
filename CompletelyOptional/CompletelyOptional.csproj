@@ -73,6 +73,7 @@
     <Compile Include="OptionalUI\OpListBox.cs" />
     <Compile Include="OptionalUI\OpResourceList.cs" />
     <Compile Include="OptionalUI\OpUpdown.cs" />
+    <Compile Include="OptionalUI\SubObjects\IValueType.cs" />
     <Compile Include="OptionalUI\SubObjects\LabelTest.cs" />
     <Compile Include="OptionalUI\SubObjects\ListItem.cs" />
     <Compile Include="OptionalUI\SubObjects\FCursor.cs" />
@@ -115,7 +116,7 @@
     <Compile Include="OptionalUI\OpRect.cs" />
     <Compile Include="OptionalUI\OpSlider.cs" />
     <Compile Include="OptionalUI\OpSliderRange.cs" />
-    <Compile Include="OptionalUI\OpSliderSubtle.cs" />
+    <Compile Include="OptionalUI\OpSliderTick.cs" />
     <None Include="OptionalUI\OpSlugcat.cs" />
     <Compile Include="OptionalUI\OpTab.cs" />
     <Compile Include="OptionalUI\OpTextBox.cs" />
