@@ -10,25 +10,25 @@ namespace CompletelyOptional
     /// Default OI that's called when your mod does not support CompletelyOptional.
     /// Also shows the error in your OI.
     /// </summary>
-    internal class UnconfiguableOI : OptionInterface
+    internal abstract class InternalOI : OptionInterface
     {
-        public UnconfiguableOI(BaseUnityPlugin plugin, Reason type) : base(plugin)
+        public InternalOI(BaseUnityPlugin plugin, Reason type) : base(plugin)
         { this.reason = type; }
 
-        public UnconfiguableOI(BaseUnityPlugin plugin, Exception exception) : base(plugin)
+        public InternalOI(BaseUnityPlugin plugin, Exception exception) : base(plugin)
         { CtorInitError(exception); }
 
-        public UnconfiguableOI(RainWorldMod rwMod, Reason type) : base(rwMod)
+        public InternalOI(RainWorldMod rwMod, Reason type) : base(rwMod)
         { this.reason = type; }
 
-        public UnconfiguableOI(RainWorldMod rwMod, Exception exception) : base(rwMod)
+        public InternalOI(RainWorldMod rwMod, Exception exception) : base(rwMod)
         { CtorInitError(exception); }
 
         private void CtorInitError(Exception exception)
         {
             if (this.rwMod.ModID != null)
             { Debug.LogError($"CompletelyOptional: {this.rwMod.ModID} had issue in OptionInterface:"); }
-            this.reason = Reason.InitError;
+            this.reason = Reason.Error;
             if (exception == null)
             { exception = new GeneralInitializeException("Unidentified Exception!"); }
             this.exception = exception.ToString();
@@ -72,10 +72,30 @@ namespace CompletelyOptional
 
         public enum Reason
         {
+            /// <summary>
+            /// The mod has no OI.
+            /// </summary>
             NoInterface,
-            InitError,
+
+            /// <summary>
+            /// Error has occured.
+            /// </summary>
+            Error,
+
+            /// <summary>
+            /// There is no mod installed.
+            /// </summary>
             NoMod,
-            TooManyMod
+
+            /// <summary>
+            /// Statistics screen
+            /// </summary>
+            Statistics,
+
+            /// <summary>
+            /// Internal Test OI for UIelement testing
+            /// </summary>
+            TestOI
         }
 
         public override bool Configuable()
@@ -96,14 +116,14 @@ namespace CompletelyOptional
 
         public override void Initialize()
         {
-            if (this.reason == Reason.TooManyMod)
+            if (this.reason == Reason.Statistics)
             {
                 ListMods();
                 return;
             }
 
             Tabs = new OpTab[1];
-            Tabs[0] = new OpTab();
+            Tabs[0] = new OpTab(this);
 
             if (this.reason == Reason.NoMod)
             {
@@ -120,26 +140,26 @@ namespace CompletelyOptional
                     {
                         Tabs[0].AddItems(new OpLabelLong(new Vector2(50f, 200f), new Vector2(500f, 250f), rwMod.description, alignment: FLabelAlignment.Center));
                         labelSluggo0 = new OpLabel(new Vector2(100f, 150f), new Vector2(400f, 20f),
-                            InternalTranslator.Translate(rwMod.type == RainWorldMod.Type.PartialityMod ? "This Partiality Mod has no Option Interface." : "This BepInEx Plugin has no Option Interface."));
+                            InternalTranslator.Translate("This BepInEx Plugin has no Option Interface."));
                     }
                     else
                     {
                         labelSluggo0 = new OpLabel(new Vector2(100f, 350f), new Vector2(400f, 20f),
-                            InternalTranslator.Translate(rwMod.type == RainWorldMod.Type.PartialityMod ? "This Partiality Mod has no Option Interface." : "This BepInEx Plugin has no Option Interface."));
+                            InternalTranslator.Translate("This BepInEx Plugin has no Option Interface."));
                     }
 
                     Tabs[0].AddItems(labelSluggo0);
 
                     break;
 
-                case Reason.InitError:
+                case Reason.Error:
                     blue = new OpRect(new Vector2(30f, 20f), new Vector2(540f, 420f)) { fillAlpha = 0.7f, colorFill = new Color(0.121568627f, 0.40392156862f, 0.69411764705f, 1f) };
 
                     Color white = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
                     oof = new OpLabel(new Vector2(100f, 380f), new Vector2(30f, 40f), ":(", FLabelAlignment.Left, true) { color = white };
                     labelSluggo0 = new OpLabel(new Vector2(150f, 390f), new Vector2(300f, 20f), InternalTranslator.Translate("There was an issue initializing OptionInterface.")) { color = white };
                     labelSluggo1 = new OpLabelLong(new Vector2(50f, 40f), new Vector2(500f, 320f), exception) { color = white, allowOverflow = false };
-                    labelVersion = new OpLabel(new Vector2(50f, 480f), new Vector2(100f, 20f), string.Concat(Environment.NewLine, "Config Machine ", MenuTab.GetCMVersion()), FLabelAlignment.Left);
+                    labelVersion = new OpLabel(new Vector2(50f, 480f), new Vector2(100f, 20f), string.Concat(Environment.NewLine, "Config Machine ", ComOptPlugin.ver), FLabelAlignment.Left);
 
                     Tabs[0].AddItems(blue, oof, labelSluggo0, labelSluggo1, labelVersion);
 
@@ -171,14 +191,14 @@ namespace CompletelyOptional
             {
                 string name = InternalTranslator.Translate("Mods") + " " + ((t * modInPage) + 1).ToString(modNumDecimal) + " ~ "
                     + (Math.Min((t + 1) * modInPage, configuableMods.Length)).ToString(modNumDecimal);
-                Tabs[t] = new OpTab(name);
+                Tabs[t] = new OpTab(this, name);
                 Tabs[t].AddItems(new OpLabel(new Vector2(100f, 500f), new Vector2(400f, 50f), InternalTranslator.Translate("Configurable Mod List"), FLabelAlignment.Center, true));
             }
             for (int t = cListNum; t < cListNum + iListNum; t++)
             {
                 string name = InternalTranslator.Translate("Mods") + " " + (1 + configuableMods.Length + ((t - cListNum) * modInPage)).ToString(modNumDecimal) + " ~ "
                     + (configuableMods.Length + Math.Min((t - cListNum + 1) * modInPage, ignoredMods.Length)).ToString(modNumDecimal);
-                Tabs[t] = new OpTab(name);
+                Tabs[t] = new OpTab(this, name);
                 Tabs[t].AddItems(new OpLabel(new Vector2(100f, 500f), new Vector2(400f, 50f), InternalTranslator.Translate("Other Mod List"), FLabelAlignment.Center, true));
             }
 
@@ -214,7 +234,7 @@ namespace CompletelyOptional
         public override void Signal(UItrigger trigger, string signal)
         {
             base.Signal(trigger, signal);
-            if (reason != Reason.TooManyMod) { return; }
+            if (reason != Reason.Statistics) { return; }
 
             foreach (KeyValuePair<int, string> mod in ConfigMenu.instance.modList)
             { if (mod.Value == signal) { ConfigMenu.selectedModIndex = mod.Key; break; } }
@@ -229,10 +249,5 @@ namespace CompletelyOptional
         public OpLabel labelSluggo0, labelSluggo1;
         public OpRect blue;
         public OpLabel oof;
-
-        public override void Update(float dt)
-        {
-            base.Update(dt);
-        }
     }
 }

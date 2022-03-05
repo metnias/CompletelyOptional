@@ -29,7 +29,6 @@ Save changed config of <ModID>|kor$<ModID> 모드의 바뀐 설정 저장|spa$Gu
 Save changed config of this mod|kor$이 모드의 바뀐 설정 저장|spa$Guardar configuración modificada de este Mod|fre$Enregistrer les changements pour ce mod|rus$Сохранить изменения конфигурации этого мода|chi$保存对于此模组的配置
 Configure Settings for Rain World Mods|kor$레인월드 모드의 설정 관리|spa$Configurar ajustes para Rain World Mods|fre$Configurer les options pour Mods Rain World|rus$Изменить настройки модов Rain World|chi$配置雨世界模组的设定
 // needs retranslation
-This Partiality Mod has no Option Interface.|kor$이 Partiality 모드는 설정 화면이 없습니다.|spa$Este Partiality Mod no se puede configurar|fre$Ce Mod Partiality ne peut pas être configuré.|rus$Этот мод Partiality не может быть настроен|chi$此Partiality模组没有任何选项界面。
 This BepInEx Plugin has no Option Interface.|kor$이 BepInEx 플러그인은 설정 화면이 없습니다.|spa$Este BepInEx Plugin no se puede configurar|fre$Ce Plugin BepInEx ne peut pas être configuré.|rus$Этот плагин BepInEx не может быть настроен|chi$此BeplnEx插件没有任何选项界面。
 There was an issue initializing OptionInterface.|kor$이 모드의 설정을 여는 중 문제가 발생했습니다.|spa$Hubo un problema al inicializar OptionInterface|fre$Une erreur est survenue pendant l'initialisation d'OptionInterface.|rus$При инициализации OptionInterface возникла ошибка|chi$初始化选项界面时出现问题。
 No Mod can be configured|kor$설정할 수 있는 모드 없음|spa$El Mod no se puede configurar|fre$Aucun Mod ne peut être configuré|rus$Ни один мод не может быть настроен|chi$没有模组可以配置

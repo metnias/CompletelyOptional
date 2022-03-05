@@ -11,7 +11,7 @@ namespace OptionalUI
     /// <summary>
     /// To Interact with Config Machine, check if your project has this class
     /// </summary>
-    public partial class OptionInterface
+    public abstract partial class OptionInterface
     {
         /// <summary>
         /// Custom OptionInterface for BepInEx Plugin.
@@ -49,16 +49,16 @@ namespace OptionalUI
         internal int GetPriority()
         {
             // if (OptionScript.blackList.Contains(rwMod.ModID)) { return -1; }
-            if (this is UnconfiguableOI uoi)
+            if (this is InternalOI uoi)
             {
-                if (uoi.reason == UnconfiguableOI.Reason.TooManyMod) { return (int)Priority.ModList; }
-                return uoi.reason != UnconfiguableOI.Reason.NoInterface ? (int)Priority.Error : (int)Priority.NoInterface;
+                if (uoi.reason == InternalOI.Reason.Statistics) { return (int)Priority.ModList; }
+                return uoi.reason != InternalOI.Reason.NoInterface ? (int)Priority.Error : (int)Priority.NoInterface;
             }
             else if (this is GeneratedOI goi)
             {
                 return goi.mode == GeneratedOI.GenMode.ModderCall ? (int)Priority.NoInterface : (int)Priority.Configuable;
             }
-            else if (this is InternalTestOI) { return (int)Priority.InternalTest; }
+            else if (this is InternalOI_Test) { return (int)Priority.InternalTest; }
             return this.Configuable() ? (int)Priority.Configuable : (int)Priority.Inconfiguable;
         }
 

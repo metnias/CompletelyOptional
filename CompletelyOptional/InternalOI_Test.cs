@@ -9,9 +9,9 @@ namespace CompletelyOptional
     /// <summary>
     /// Internal OI for testing new features of Config Machine
     /// </summary>
-    public class InternalTestOI : OptionInterface
+    internal class InternalOI_Test : InternalOI
     {
-        public InternalTestOI(BaseUnityPlugin plugin) : base(plugin)
+        public InternalOI_Test(RainWorldMod mod) : base(mod, Reason.TestOI)
         {
         }
 
@@ -140,11 +140,6 @@ namespace CompletelyOptional
             sb.AddItems(rs, new OpLabel(100f, 1130f, "Shaders") { bumpBehav = rs.bumpBehav });
             rs = new OpResourceSelector(new Vector2(100f, 1000f), new Vector2(200f, 30f), "", OpResourceSelector.SpecialEnum.Songs);
             sb.AddItems(rs, new OpLabel(100f, 1030f, "Songs") { bumpBehav = rs.bumpBehav });*/
-        }
-
-        public override void Update(float dt)
-        {
-            base.Update(dt);
         }
     }
 }

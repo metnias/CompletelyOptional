@@ -58,13 +58,17 @@
     <None Include="Old_15\ConfigMenu.cs" />
     <Compile Include="ConfigTabController.cs" />
     <Compile Include="EnumExt_ComOpt.cs" />
+    <Compile Include="InternalOI_Blank.cs" />
+    <Compile Include="InternalOI_Error.cs" />
+    <Compile Include="InternalOI_NoMod.cs" />
+    <Compile Include="InternalOI_Stats.cs" />
     <Compile Include="ListTab.cs" />
     <Compile Include="ConfigContainer.cs" />
     <Compile Include="MenuModList.cs" />
     <Compile Include="ModConfigMenu.cs" />
     <Compile Include="OptionalUI\SubObjects\EnumHelper.cs" />
     <Compile Include="GeneratedOI.cs" />
-    <Compile Include="InternalTestOI.cs" />
+    <Compile Include="InternalOI_Test.cs" />
     <Compile Include="InternalTranslator.cs" />
     <Compile Include="Crypto.cs" />
     <Compile Include="OptionalUI\OpContainer.cs" />
@@ -95,7 +99,7 @@
     <Compile Include="OptionalUI\UItrigger.cs" />
     <Compile Include="OptionInterface.cs" />
     <Compile Include="RainWorldMod.cs" />
-    <Compile Include="UnconfiguableOI.cs" />
+    <Compile Include="InternalOI.cs" />
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>

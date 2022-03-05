@@ -98,7 +98,7 @@ namespace OptionalUI
                     if (method == null || method.GetParameters().Length > 0 || method.ContainsGenericParameters)
                     {
                         // Mod didn't attempt to interface with CompletelyOptional, don't bother logging it.
-                        oi = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+                        oi = new InternalOI(plugin, InternalOI.Reason.NoInterface);
                     }
                     else if (method.Invoke(plugin, null) is OptionInterface itf)
                     {
@@ -108,13 +108,13 @@ namespace OptionalUI
                     }
                     else
                     {
-                        oi = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+                        oi = new InternalOI(plugin, InternalOI.Reason.NoInterface);
                         ComOptPlugin.LogInfo($"{oi.rwMod.ModID} did not return an OptionInterface in LoadOI.");
                     }
                 }
                 catch (Exception ex)
                 {
-                    oi = new UnconfiguableOI(plugin, UnconfiguableOI.Reason.NoInterface);
+                    oi = new InternalOI(plugin, InternalOI.Reason.NoInterface);
 
                     if (blackList.Contains(oi.rwMod.ModID) || oi.rwMod.ModID.Substring(0, 1) == "_")
                     { continue; }
@@ -122,7 +122,7 @@ namespace OptionalUI
                     ComOptPlugin.LogWarning($"{oi.rwMod.ModID} threw an exception in LoadOI: {ex.Message}");
                 }
 
-                if (oi is UnconfiguableOI && plugin.Config.Keys.Count > 0)
+                if (oi is InternalOI && plugin.Config.Keys.Count > 0)
                 {
                     // Use BepInEx Configuration
                     oi = new GeneratedOI(oi.rwMod, plugin.Config);

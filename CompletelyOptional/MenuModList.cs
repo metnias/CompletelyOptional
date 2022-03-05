@@ -18,6 +18,13 @@ namespace CompletelyOptional
             _cam = camObj.AddComponent<Camera>();
 
             camPos = new Vector2(-15000f, -10000f);
+            childOffset = camPos - new Vector2(Mathf.Round(_offset.x), Mathf.Round(_offset.y));
+
+            targetScrollOffset = -Mathf.Max(contentSize - size.y, 0f);
+            scrollOffset = targetScrollOffset;
+            UpdateCam();
+            OnChange();
+            this.GrafUpdate(0f);
 
             #endregion ScrollBox
         }
@@ -41,7 +48,9 @@ namespace CompletelyOptional
         private FTexture insideTexture;
         private RenderTexture _rt;
         private readonly Camera _cam;
-        internal readonly Vector2 camPos;
+        internal readonly Vector2 camPos, childOffset;
+        public float scrollOffset { get; private set; }
+        private float targetScrollOffset;
 
         private void UpdateCam()
         {
@@ -85,8 +94,6 @@ namespace CompletelyOptional
             _cam.gameObject.transform.position = new Vector3(Mathf.Round(v.x), Mathf.Round(v.y), Mathf.Round(v.z));
         }
 
-        public float scrollOffset { get; private set; }
-
         #endregion ScrollBox
 
         // ModList:
@@ -118,7 +125,7 @@ namespace CompletelyOptional
             public ModButton(MenuModList list, int index) : base(Vector2.zero, new Vector2(250f, 24f), "Mod List")
             {
                 this.list = list;
-                this.index = index;
+                this.index = index; // starts from 1; index 0 is for StatOI
                 this._pos = list.camPos;
                 this.labelVer = OpLabel.CreateFLabel("v1.0");
                 this.myContainer.AddChild(this.labelVer);
@@ -165,13 +172,13 @@ namespace CompletelyOptional
             protected internal override bool MouseOver => base.MouseOver;
         }
 
-        internal class ListButton : OpSimpleImageButton
+        internal class StatButton : OpSimpleImageButton
         {
-            public ListButton(Vector2 pos, Vector2 size) : base(pos, size, "", "")
+            public StatButton(Vector2 pos, Vector2 size) : base(pos, size, "", "")
             {
             }
 
-            // In Mod list mode, Add button for turn off custom music
+            // In Statistics mode, Add button for turn off custom music
         }
 
         internal class AlphabetButton : OpSimpleButton
