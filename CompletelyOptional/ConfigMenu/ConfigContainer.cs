@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using System.Globalization;
 
 namespace CompletelyOptional
 {
@@ -116,11 +117,12 @@ namespace CompletelyOptional
                 {
                     oi = new InternalOI_Blank(plugin);
 
-                    if (blackList.Contains(oi.rwMod.ModID) || oi.rwMod.ModID.Substring(0, 1) == "_")
+                    if (blackList.Contains(oi.rwMod.ModID) || !char.IsLetter(oi.rwMod.ModID[0]))
                     { continue; }
 
                     ComOptPlugin.LogWarning($"{oi.rwMod.ModID} threw an exception in LoadOI: {ex.Message}");
                 }
+                if (!char.IsLetter(oi.rwMod.ModID[0])) { continue; } // Ignore mods that start with non-alphabet
 
                 if (oi is InternalOI && plugin.Config.Keys.Count > 0)
                 {
@@ -141,8 +143,8 @@ namespace CompletelyOptional
             listItf.Sort(CompareOIModID);
             OptItfs = listItf.ToArray();
             OptItfID = new string[OptItfs.Length];
-            OptItfABC = new int[26];
-            uint a = 97; //a
+            OptItfABC = new int[26]; // ABC
+            uint a = 97; //a - 1
             for (int i = 0; i < OptItfs.Length; i++)
             {
                 // Save IDs
@@ -157,7 +159,7 @@ namespace CompletelyOptional
                 if (name[0] < (char)a) { continue; }
                 if (name[0] == (char)a) { OptItfABC[a - 97] = i; a++; continue; }
                 while (name[0] > (char)a && a < 123)
-                { OptItfABC[a - 97] = -1; a++; }
+                { OptItfABC[a - 97 + 1] = -1; a++; }
             }
 
             #endregion Sort
@@ -191,13 +193,17 @@ namespace CompletelyOptional
 
         internal static string GenerateID(RainWorldMod rwMod) => GenerateID(rwMod.ModID, rwMod.author);
 
+        private static CompareInfo comInfo = CultureInfo.InvariantCulture.CompareInfo;
+
         /// <summary>
         /// Comparator for Sorting OptionInterfaces by ModID
         /// </summary>
         private static int CompareOIModID(OptionInterface x, OptionInterface y)
         {
-            return ListItem.GetRealName(GenerateID(x.rwMod.ModID, x.rwMod.author))
-                  .CompareTo(ListItem.GetRealName(GenerateID(y.rwMod.ModID, y.rwMod.author)));
+            return
+                comInfo.Compare(ListItem.GetRealName(GenerateID(x.rwMod.ModID, x.rwMod.author)),
+                ListItem.GetRealName(GenerateID(y.rwMod.ModID, y.rwMod.author)),
+                CompareOptions.StringSort);
         }
 
         #endregion ItfHandler

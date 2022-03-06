@@ -138,6 +138,7 @@ namespace OptionalUI
             }
             set
             {
+                if (!isRectangular) { throw new InvalidActionException(this, "This Non-Rectangular item tried to set size which is Invalid!"); }
                 if (fixedSize != null)
                 {
                     _size = new Vector2(Mathf.Max(value.x, 0f), Mathf.Max(value.y, 0f));
@@ -165,6 +166,7 @@ namespace OptionalUI
             }
             set
             {
+                if (isRectangular) { throw new InvalidActionException(this, "This Rectangular item tried to set rad which is Invalid!"); }
                 if (fixedRad != null) { _rad = fixedRad.Value; OnChange(); }
                 else if (_rad != value)
                 {

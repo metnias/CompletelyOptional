@@ -222,7 +222,6 @@ namespace OptionalUI
             }
 
             this.ScrollToTop(true);
-            UpdateCam();
             OnChange();
             this.GrafUpdate(0f);
         }
@@ -482,9 +481,9 @@ namespace OptionalUI
             // Do scroll wheel scrolling
             if (!ScrollLocked)
             {
-                if (this.menu.mouseScrollWheelMovement != 0 && !IsThereMouseOver())
+                if (this.menu.mouseScrollWheelMovement != 0 && MouseOver)
                 {
-                    if (MouseOver && !_draggingSlider)
+                    if (!IsThereMouseOver() && !_draggingSlider)
                         targetScrollOffset -= (horizontal ? 40f : -40f) * Mathf.Sign(this.menu.mouseScrollWheelMovement);
                     if (targetScrollOffset != scrollOffset)
                     {
@@ -534,7 +533,6 @@ namespace OptionalUI
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);
-            rectBack?.GrafUpdate(timeStacker); rectSlidebar?.GrafUpdate(timeStacker);
 
             float sin = 1f;
             if (!this.hasScrolled && !this.ScrollLocked)
@@ -545,6 +543,7 @@ namespace OptionalUI
 
             if (rectBack != null)
             {
+                rectBack.GrafUpdate(timeStacker);
                 rectBack.colorFill = this.colorFill;
                 rectBack.colorEdge = doesBackBump ? this.bumpBehav.GetColor(this.colorEdge) : this.colorEdge;
                 rectBack.fillAlpha = fillAlpha;
@@ -555,6 +554,7 @@ namespace OptionalUI
             }
             if (rectSlidebar != null)
             {
+                rectSlidebar.GrafUpdate(timeStacker);
                 this.bumpScroll.MouseOver = this.scrollMouseOver;
                 this.bumpScroll.greyedOut = this.ScrollLocked;
                 this.bumpScroll.Update();

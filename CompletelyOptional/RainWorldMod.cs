@@ -12,24 +12,24 @@ namespace OptionalUI
             this.type = Type.BepInExPlugin;
             this.mod = plugin;
 
-            this.ModID = plugin.Info.Metadata.Name;
+            this.ModID = plugin.Info.Metadata.Name.Trim();
             this.author = authorNull;
             this.description = authorNull;
-            this.Version = plugin.Info.Metadata.Version.ToString();
+            this.Version = plugin.Info.Metadata.Version.ToString().Trim();
             try
             {
                 Assembly assm = Assembly.GetAssembly(plugin.GetType());
                 if (assm.GetCustomAttributes(typeof(AssemblyTrademarkAttribute), false).FirstOrDefault() is AssemblyTrademarkAttribute trademarkAttr && !string.IsNullOrEmpty(trademarkAttr.Trademark))
                 {
-                    author = trademarkAttr.Trademark;
+                    author = trademarkAttr.Trademark.Trim();
                 }
                 else if (assm.GetCustomAttributes(typeof(AssemblyCompanyAttribute), false).FirstOrDefault() is AssemblyCompanyAttribute companyAttr && !string.IsNullOrEmpty(companyAttr.Company))
                 {
-                    author = companyAttr.Company;
+                    author = companyAttr.Company.Trim();
                 }
                 if (assm.GetCustomAttributes(typeof(AssemblyDescriptionAttribute), false).FirstOrDefault() is AssemblyDescriptionAttribute descAttr && !string.IsNullOrEmpty(descAttr.Description))
                 {
-                    description = descAttr.Description;
+                    description = descAttr.Description.Trim();
                 }
             }
             catch (Exception) { }
