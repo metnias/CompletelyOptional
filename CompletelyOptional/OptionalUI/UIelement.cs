@@ -82,35 +82,9 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// For setting LeftBottom Position of this element from LeftBottom of <see cref="OpTab"/> or <see cref="OpScrollBox"/>.
-        /// <para>For grabbing position without offset, use <see cref="GetPos"/>.</para>
-        /// </summary>
-        public Vector2 pos
-        {
-            get
-            { return _pos; }
-            set
-            {
-                if (inScrollBox)
-                {
-                    if (_pos != value + scrollBox.childOffset + _offset)
-                    {
-                        _pos = value + scrollBox.childOffset + _offset;
-                        OnChange();
-                    }
-                }
-                else if (_pos != value + _offset)
-                {
-                    _pos = value + _offset;
-                    OnChange();
-                }
-            }
-        }
-
-        /// <summary>
         /// For grabbing LeftBottom Position of this element from LeftBottom of <see cref="OpTab"/> or <see cref="OpScrollBox"/>, without offset.
+        /// See also <seealso cref="x"/> and <seealso cref="y"/>.
         /// </summary>
-        /// <seealso cref="pos"/>
         public Vector2 GetPos()
         {
             if (inScrollBox)
@@ -118,6 +92,38 @@ namespace OptionalUI
             else
             { return _pos - _offset; }
         }
+
+        /// <summary>
+        /// For setting LeftBottom Position of this element from LeftBottom of <see cref="OpTab"/> or <see cref="OpScrollBox"/>, without offset.
+        /// See also <seealso cref="x"/> and <seealso cref="y"/>.
+        /// </summary>
+        /// <param name="value"></param>
+        public void SetPos(Vector2 value)
+        {
+            if (inScrollBox)
+            {
+                if (_pos != value + scrollBox.childOffset + _offset)
+                {
+                    _pos = value + scrollBox.childOffset + _offset;
+                    OnChange();
+                }
+            }
+            else if (_pos != value + _offset)
+            {
+                _pos = value + _offset;
+                OnChange();
+            }
+        }
+
+        /// <summary>
+        /// For getting and setting Left Position of this element from the Left of <see cref="OpTab"/> or <see cref="OpScrollBox"/>, without offset.
+        /// </summary>
+        public float x { get => GetPos().x; set => SetPos(new Vector2(value, GetPos().y)); }
+
+        /// <summary>
+        /// For getting and setting Bottom Position of this element from the Bottom of <see cref="OpTab"/> or <see cref="OpScrollBox"/>, without offset.
+        /// </summary>
+        public float y { get => GetPos().y; set => SetPos(new Vector2(GetPos().x, value)); }
 
         /// <summary>
         /// Size of this element. Changing this will call <see cref="OnChange"/> automatically.
@@ -239,6 +245,18 @@ namespace OptionalUI
         protected Vector2 _pos;
         protected Vector2 _size;
         protected float _rad;
+
+        /// <summary>
+        /// For setting LeftBottom Position of this element from LeftBottom of <see cref="OpTab"/> or <see cref="OpScrollBox"/>.
+        /// <para>For grabbing position without offset, use <see cref="GetPos"/>.</para>
+        /// </summary>
+        protected internal Vector2 pos
+        {
+            get
+            { return _pos; }
+            set
+            { if (_pos != value) { _pos = value; OnChange(); } }
+        }
 
         /// <summary>
         /// If this is set, this element cannot change its <see cref="size"/>.

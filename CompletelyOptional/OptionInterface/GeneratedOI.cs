@@ -254,7 +254,7 @@ namespace CompletelyOptional
                         OpScrollBox box = new OpScrollBox(Tabs[t], h);
                         if (t == 0) { AddBasicProfile(box, rwMod); hasFirstScroll = true; firstScroll = box; }
                         foreach (UIelement elm in elms)
-                        { elm.pos = new Vector2(elm.GetPos().x, elm.GetPos().y - 600f + h); }
+                        { elm.SetPos(new Vector2(elm.GetPos().x, elm.GetPos().y - 600f + h)); }
                         box.AddItems(elms.ToArray());
                     }
                 }
@@ -264,7 +264,7 @@ namespace CompletelyOptional
                         + InternalTranslator.Translate("Go to [BepInEx]-[config] folder and use Notepad to edit those settings.");
                     if (hasFirstScroll)
                     {
-                        firstScroll.AddItems(new OpLabel(new Vector2(50f, firstScroll.GetContentSize() - 600f + 525f), new Vector2(500f, 30f), warn));
+                        firstScroll.AddItems(new OpLabel(new Vector2(50f, firstScroll.contentSize - 600f + 525f), new Vector2(500f, 30f), warn));
                     }
                     else
                     {

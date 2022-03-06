@@ -79,6 +79,7 @@ namespace OptionalUI
 
         /// <summary>
         /// The height/width of the content inside this scrollbox.
+        /// To change this, use <see cref="SetContentSize"/>.
         /// </summary>
         public float contentSize { get; private set; }
 
@@ -96,7 +97,7 @@ namespace OptionalUI
             {
                 float ofs = ns - contentSize;
                 foreach (UIelement item in children) // Move all stuff
-                { item.pos = item.GetPos() + (horizontal ? new Vector2(ofs, 0f) : new Vector2(0f, ofs)); }
+                { item.SetPos(item.GetPos() + (horizontal ? new Vector2(ofs, 0f) : new Vector2(0f, ofs))); }
                 contentSize = ns;
                 targetScrollOffset += ofs;
                 scrollOffset = targetScrollOffset;
