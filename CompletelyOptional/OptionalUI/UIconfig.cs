@@ -82,7 +82,7 @@ namespace OptionalUI
         public bool greyedOut = false;
 
         /// <summary>
-        /// If you want to change <see cref="value"/> directly without running <see cref="OnChange"/>.
+        /// If you want to change <see cref="value"/> directly without running <see cref="OnChange"/> and added to undo History.
         /// This is not recommended unless you know what you are doing.
         /// </summary>
         public void ForceValue(string newValue)

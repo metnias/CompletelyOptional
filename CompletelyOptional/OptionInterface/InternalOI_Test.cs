@@ -15,7 +15,7 @@ namespace CompletelyOptional
         {
         }
 
-        public override bool Configuable()
+        public override bool Configurable()
         { return false; }
 
         public override void Initialize()

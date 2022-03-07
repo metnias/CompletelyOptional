@@ -7,7 +7,7 @@ using UnityEngine;
 namespace OptionalUI
 {
     /// <summary>
-    /// static class for getting useful value regarding <see cref="MenuLabel"/> and <see cref="FLabel"/>
+    /// static class for getting useful value regarding <see cref="FLabel"/>
     /// </summary>
     public static class LabelTest
     {

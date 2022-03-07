@@ -98,7 +98,7 @@ namespace CompletelyOptional
             TestOI
         }
 
-        public override bool Configuable()
+        public override bool Configurable()
         {
             return false;
         }

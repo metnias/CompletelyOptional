@@ -44,40 +44,11 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// The less the value is, the more likely to get ignored by ConfigMachine. The range is -1 ~ 2.
-        /// </summary>
-        internal int GetPriority()
-        {
-            // if (OptionScript.blackList.Contains(rwMod.ModID)) { return -1; }
-            if (this is InternalOI uoi)
-            {
-                if (uoi.reason == InternalOI.Reason.Statistics) { return (int)Priority.ModList; }
-                return uoi.reason != InternalOI.Reason.NoInterface ? (int)Priority.Error : (int)Priority.NoInterface;
-            }
-            else if (this is GeneratedOI goi)
-            {
-                return goi.mode == GeneratedOI.GenMode.ModderCall ? (int)Priority.NoInterface : (int)Priority.Configuable;
-            }
-            else if (this is InternalOI_Test) { return (int)Priority.InternalTest; }
-            return this.Configuable() ? (int)Priority.Configuable : (int)Priority.Inconfiguable;
-        }
-
-        internal enum Priority : int
-        {
-            ModList = 3,
-            InternalTest = 2,
-            Error = 2,
-            Configuable = 1,
-            Inconfiguable = 0,
-            NoInterface = -1
-        }
-
-        /// <summary>
         /// Whether the mod is configurable or not.
         /// You can just replace this to <c>return true;</c> or <c>false</c> to save computing time.
         /// </summary>
         /// <returns>Whether the mod is configurable or not</returns>
-        public virtual bool Configuable()
+        public virtual bool Configurable()
         {
             //if (!OptionScript.isOptionMenu) { return false; }
             Dictionary<string, string> temp = GrabConfig();
@@ -120,7 +91,7 @@ namespace OptionalUI
         {
             config = new Dictionary<string, string>();
             rawConfig = rawConfigDef;
-            if (!Configuable()) { return true; }
+            if (!Configurable()) { return true; }
             if (this is GeneratedOI && (this as GeneratedOI).mode == GeneratedOI.GenMode.BepInExConfig)
             { return (this as GeneratedOI).LoadBepConfig(); }
             if (!directory.Exists) { return false; } //directory.Create();
@@ -208,7 +179,7 @@ namespace OptionalUI
         /// </summary>
         internal bool SaveConfig(Dictionary<string, string> newConfig)
         {
-            if (!Configuable()) { return true; }
+            if (!Configurable()) { return true; }
             if (this is GeneratedOI && (this as GeneratedOI).mode == GeneratedOI.GenMode.BepInExConfig)
             { return (this as GeneratedOI).SaveBepConfig(newConfig); } // Saving config is handled by BepInEx
 

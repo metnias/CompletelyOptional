@@ -1,12 +1,9 @@
-﻿using BepInEx;
-using Menu;
+﻿using Menu;
 using Music;
 using OptionalUI;
 using RWCustom;
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using UnityEngine;
 
 namespace CompletelyOptional
@@ -84,6 +81,10 @@ namespace CompletelyOptional
             // UIContainer
             cfgContainer = new ConfigContainer(this, this.pages[0]);
             this.pages[0].subObjects.Add(cfgContainer);
+
+            // AlertLabel
+            alertLabel = new MenuLabel(this, this.pages[0], "", new Vector2(383f, 735f), new Vector2(600f, 30f), false);
+            this.pages[0].subObjects.Add(this.alertLabel);
         }
 
         private const int _DASinit = 20, _DASdelay = 6;
@@ -108,7 +109,20 @@ namespace CompletelyOptional
         /// <summary>
         /// Send Menu description text to display
         /// </summary>
-        public void ShowDescription(string description) => this.description = description;
+        public void ShowDescription(string text) => this.description = text;
+
+        #region Alert
+
+        /// <summary>
+        /// Send Menu alert text to display
+        /// </summary>
+        public void ShowAlert(string text) => this.alertText = text;
+
+        private MenuLabel alertLabel;
+        private string alertText = "";
+        private float alertLabelFade = 0f, lastAlertLabelFade = 0f, alertLabelSin = 0f;
+
+        #endregion Alert
 
         public static ModConfigMenu instance;
 
@@ -126,6 +140,13 @@ namespace CompletelyOptional
         {
             base.GrafUpdate(timeStacker);
             cfgContainer.GrafUpdate(timeStacker);
+
+            alertLabel.label.alpha = Custom.SCurve(Mathf.Clamp01(Mathf.Lerp(lastAlertLabelFade, alertLabelFade, timeStacker)), 0.3f);
+            if (lastAlertLabelFade > 0f)
+            {
+                alertLabel.label.color = Color.Lerp(MenuRGB(MenuColors.White), MenuRGB(MenuColors.MediumGrey),
+                        0.5f + 0.5f * Mathf.Sin((this.alertLabelSin + timeStacker) / 4f));
+            }
         }
 
         public override void Update()
@@ -141,17 +162,17 @@ namespace CompletelyOptional
                 }
             }
             lastDescription = description;
-            /* //SoonTM
-            if (!string.IsNullOrEmpty(alert))
+
+            if (!string.IsNullOrEmpty(alertText))
             {
                 this.alertLabelFade = 2f; this.lastAlertLabelFade = 2f;
                 this.alertLabelSin = 0f;
-                this.alertLabel.text = alert;
-                alert = null;
+                this.alertLabel.text = alertText;
+                alertText = null;
             }
             this.lastAlertLabelFade = this.alertLabelFade;
             this.alertLabelFade = Mathf.Max(0f, this.alertLabelFade - 1f / Mathf.Lerp(1f, 100f, Mathf.Clamp01(this.alertLabelFade)));
-            this.alertLabelSin += this.alertLabelFade; */
+            this.alertLabelSin += this.alertLabelFade;
 
             base.Update(); //keep buttons to be sane
 

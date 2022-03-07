@@ -34,6 +34,7 @@ namespace CompletelyOptional
             focusedElement = menuTab.backButton;
         }
 
+        private ModConfigMenu cfgMenu => this.menu as ModConfigMenu;
         internal static MenuTab menuTab;
         internal static OpTab activeTab;
 
@@ -48,8 +49,23 @@ namespace CompletelyOptional
 
         internal static void ChangeActiveTab(int newIndex)
         {
-            if (activeTab == null) { activeTab.Deactivate(); }
+            // Close
+            activeTab?.Deactivate();
+            // Open
             activeTabIndex = newIndex;
+            activeTab = activeInterface.Tabs[activeTabIndex];
+            activeTab.Activate();
+        }
+
+        internal static void ChangeActiveMod(int newIndex)
+        {
+            // Close
+            activeTab?.Deactivate();
+            savedActiveTabIndex[activeItfIndex] = activeTabIndex;
+
+            // Open
+            activeItfIndex = newIndex;
+            activeTabIndex = savedActiveTabIndex[activeItfIndex];
             activeTab = activeInterface.Tabs[activeTabIndex];
             activeTab.Activate();
         }
@@ -143,6 +159,8 @@ namespace CompletelyOptional
             listItf.Sort(CompareOIModID);
             OptItfs = listItf.ToArray();
             OptItfID = new string[OptItfs.Length];
+            savedActiveTabIndex = new int[OptItfs.Length];
+            OptItfChanged = new bool[OptItfs.Length];
             OptItfABC = new int[26]; // ABC
             uint a = 97; //a - 1
             for (int i = 0; i < OptItfs.Length; i++)
@@ -150,6 +168,7 @@ namespace CompletelyOptional
                 // Save IDs
                 OptItfID[i] = GenerateID(OptItfs[i].rwMod);
                 string name = ListItem.GetRealName(OptItfs[i].rwMod.ModID);
+                savedActiveTabIndex[i] = 0; OptItfChanged[i] = false;
 
                 // Deactivate Tabs
                 for (int t = 0; t < OptItfs[i].Tabs.Length; t++)
@@ -180,8 +199,20 @@ namespace CompletelyOptional
         /// </summary>
         internal static string[] OptItfID;
 
+        internal static int FindItfIndex(UIelement element) => FindItfIndex(element.tab.owner);
+
+        internal static int FindItfIndex(OptionInterface itf) => FindItfIndex(itf.rwMod);
+
+        internal static int FindItfIndex(RainWorldMod rwMod) => Array.IndexOf(OptItfID, GenerateID(rwMod));
+
+        /// <summary>
+        /// ABC index of ModIDs
+        /// </summary>
         internal static int[] OptItfABC;
-        internal static int activeItfIndex { get; private set; }
+
+        private static int activeItfIndex;
+        private static int[] savedActiveTabIndex;
+        internal static bool[] OptItfChanged { get; private set; }
 
         internal static string GenerateID(string ModID, string author)
         {
@@ -331,7 +362,11 @@ namespace CompletelyOptional
         {
             base.GrafUpdate(timeStacker);
             menuTab.GrafUpdate(timeStacker);
-            activeTab.GrafUpdate(timeStacker);
+            try
+            {
+                activeTab.GrafUpdate(timeStacker);
+            }
+            catch (Exception ex) { InterfaceUpdateError(true, ex); }
         }
 
         // Called by ModConfigMenu.Update
@@ -358,6 +393,40 @@ namespace CompletelyOptional
                                     ? SoundID.MENU_Greyed_Out_Button_Select_Mouse : SoundID.MENU_Button_Select_Mouse);
                             }
                             break;
+                        }
+                    }
+                    //Undo
+                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
+                    { if (Input.GetKeyDown(KeyCode.Z)) { UndoConfigChange(); } }
+                }
+                else // holdElement
+                {
+                    if (focusedElement is UIconfig && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
+                    { // Copy & Paste
+                        if (Input.GetKey(KeyCode.V) && !string.IsNullOrEmpty(UniClipboard.GetText()))
+                        {
+                            string grab = UniClipboard.GetText();
+                            if ((focusedElement as UIconfig).CopyFromClipboard(grab))
+                            {
+                                (focusedElement as UIconfig).bumpBehav.flash = 1f;
+                                if ((focusedElement as UIconfig).cosmetic)
+                                { cfgMenu.ShowAlert(InternalTranslator.Translate("Pasted <Text> from Clipboard").Replace("<Text>", grab)); }
+                                else
+                                { cfgMenu.ShowAlert(InternalTranslator.Translate("Pasted <Text> from Clipboard to <ObjectName>").Replace("<Text>", grab).Replace("<ObjectName>", (focusedElement as UIconfig).key)); }
+                            }
+                        }
+                        else if (Input.GetKey(KeyCode.C))
+                        {
+                            string grab = (focusedElement as UIconfig).CopyToClipboard();
+                            if (!string.IsNullOrEmpty(grab))
+                            {
+                                (focusedElement as UIconfig).bumpBehav.flash = 1f;
+                                UniClipboard.SetText(grab);
+                                if ((focusedElement as UIconfig).cosmetic)
+                                { cfgMenu.ShowAlert(InternalTranslator.Translate("Copied <Text> to Clipboard").Replace("<Text>", grab)); }
+                                else
+                                { cfgMenu.ShowAlert(InternalTranslator.Translate("Copied <Text> to Clipboard from <ObjectName>").Replace("<Text>", grab).Replace("<ObjectName>", (focusedElement as UIconfig).key)); }
+                            }
                         }
                     }
                 }
@@ -428,17 +497,35 @@ namespace CompletelyOptional
                     }
                 }
             }
-            activeInterface.Update();
+
+            #region UIelement.Update
+
+            try { activeInterface.Update(); }
+            catch (Exception ex) { InterfaceUpdateError(false, ex); }
             if (holdElement)
             {
-                if (focusedElement != null && !(focusedElement as ICanBeFocused).GreyedOut) { focusedElement.Update(); }
-                else { holdElement = false; }
+                try
+                {
+                    if (focusedElement != null && !(focusedElement as ICanBeFocused).GreyedOut) { focusedElement.Update(); }
+                    else { holdElement = false; }
+                }
+                catch (Exception ex) { InterfaceUpdateError(true, ex); }
             }
             if (!holdElement)
             {
                 menuTab.Update();
-                activeTab.Update();
+                try { activeTab.Update(); }
+                catch (Exception ex) { InterfaceUpdateError(true, ex); }
             }
+
+            #endregion UIelement.Update
+        }
+
+        internal void InterfaceUpdateError(bool tab, Exception ex)
+        {
+            // Fade out
+            // Change itf to Error version
+            // Recreate List's mod button to error version
         }
 
         /// <summary>
@@ -449,6 +536,7 @@ namespace CompletelyOptional
         /// <param name="value">New <see cref="UIconfig.value"/></param>
         internal void NotifyConfigChange(UIconfig config, string oldValue, string value)
         {
+            OptItfChanged[FindItfIndex(config)] = true;
             if (history.Count > 0)
             {
                 ConfigHistory last = history.Peek();
@@ -461,6 +549,18 @@ namespace CompletelyOptional
             history.Push(new ConfigHistory() { config = config, origValue = oldValue });
             // configChanged = true; == history.Count > 0
             // cfgContainer.menuTab.saveButton.text = InternalTranslator.Translate("APPLY");
+        }
+
+        internal void UndoConfigChange() // Ctrl + Z or Grab + Jump
+        {
+            if (history.Count > 0)
+            {
+                ConfigHistory last = history.Pop();
+                last.config.ForceValue(last.origValue);
+                last.config.OnChange();
+                OptItfChanged[FindItfIndex(last.config)] = true;
+                // Alert
+            }
         }
 
         /// <summary>

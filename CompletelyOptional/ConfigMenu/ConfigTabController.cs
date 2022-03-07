@@ -1,7 +1,5 @@
-using Menu;
 using OptionalUI;
 using RWCustom;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace CompletelyOptional
