@@ -5,23 +5,39 @@ namespace CompletelyOptional
 {
     internal class MenuModList : UIelement
     {
-        public MenuModList(MenuTab tab) : base(new Vector2(208f, 40f) - UIelement._offset, new Vector2(250f, 684f))
+        public MenuModList(MenuTab tab) : base(new Vector2(208f, 60f) - UIelement._offset, new Vector2(250f, 650f))
         {
+            // position of 26th button, size of mod list
+            // actual pos: 193 35; size: 280 700
             tab.AddItems(this);
 
             // abc buttons
             abcButtons = new AlphabetButton[26];
-            for (uint u = 0; u < abcButtons.Length; u++)
-            { abcButtons[u] = new AlphabetButton(this, u); }
+            for (int i = 0; i < abcButtons.Length; i++)
+            { abcButtons[i] = new AlphabetButton(this, i); }
 
             // backpanel & stat button
-            backSide = new FSprite("pixel") { anchorX = 0f, anchorY = 0f, scaleX = 250f, color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black) };
-            rightSides = new FSprite[2];
-            rightSides[0] = new FSprite("pixel") { anchorX = 0f, anchorY = 0f, scaleX = 2f };
-            rightSides[1] = new FSprite("pixel") { anchorX = 0f, anchorY = 0f, scaleX = 2f };
-            myContainer.AddChild(backSide); myContainer.AddChild(rightSides[0]); myContainer.AddChild(rightSides[1]);
+            backSide = new FSprite("pixel") { anchorX = 0f, anchorY = 0f, scaleX = 250f, color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black), alpha = 0.4f };
+            myContainer.AddChild(backSide);
+            bool scrollFit = ConfigContainer.OptItfs.Length - 1 < scrollVisible;
+            sideLines = new FSprite[scrollFit ? 3 : 2];
+            sideLines[0] = new FSprite("pixel") { anchorX = 0f, anchorY = 0f, scaleX = 2f }; // Right Btm
+            sideLines[1] = new FSprite("pixel") { anchorX = 0f, anchorY = 0f, scaleX = 2f }; // Right Top
+            if (scrollFit)
+            {
+                sideLines[2] = new FSprite("pixel") { anchorX = 0f, anchorY = 0f, scaleX = 2f }; // Leftside
+            }
+            else
+            { // Add subtle slider
+            }
 
-            statButton = new StatButton(this);
+            for (int i = 0; i < sideLines.Length; i++) { myContainer.AddChild(sideLines[i]); }
+
+            roleButtons = new ListButton[3];
+            roleButtons[0] = new ListButton(this, ListButton.Role.Stat);
+            roleButtons[1] = new ListButton(this, ListButton.Role.ScrollUp);
+            roleButtons[2] = new ListButton(this, ListButton.Role.ScrollDown);
+            if (scrollFit) { roleButtons[1].Hide(); roleButtons[2].Hide(); }
 
             // mod buttons
             modButtons = new ModButton[ConfigContainer.OptItfs.Length];
@@ -41,8 +57,9 @@ namespace CompletelyOptional
         private readonly ModButton[] modButtons;
         private readonly AlphabetButton[] abcButtons;
         private readonly FSprite backSide;
-        private readonly FSprite[] rightSides;
-        private readonly StatButton statButton;
+        private readonly FSprite[] sideLines;
+        private readonly ListButton[] roleButtons;
+        private int scrollPos; private const int scrollVisible = 26;
 
         // ModList:
         // ABC button, Mod button shows Name(Left) and Version(right)
@@ -61,6 +78,8 @@ namespace CompletelyOptional
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);
+            sideLines[0].x = 250f;
+            sideLines[0].y = 0f;
         }
 
         public override void Update()
@@ -78,8 +97,15 @@ namespace CompletelyOptional
             else if (element is AlphabetButton)
             { // Scroll to Alphabet
             }
-            else if (element is StatButton)
-            { // Switch Mod to InternalOI_Stats
+            else if (element is ListButton)
+            {
+                if (index == 0)
+                { // Switch Mod to InternalOI_Stats
+                    ConfigContainer.ChangeActiveMod(0);
+                }
+                else
+                { // Scroll Up(-1) or Down(+1)
+                }
             }
         }
 
@@ -88,7 +114,7 @@ namespace CompletelyOptional
         /// </summary>
         internal class ModButton : OpSimpleButton
         {
-            public ModButton(MenuModList list, int index) : base(Vector2.zero, new Vector2(250f, 24f), "Mod List")
+            public ModButton(MenuModList list, int index) : base(Vector2.zero, new Vector2(250f, 25f), "Mod List")
             {
                 this.list = list;
                 this.index = index + 1; // starts from 1; index 0 is for StatOI
@@ -160,49 +186,72 @@ namespace CompletelyOptional
             protected internal override bool MouseOver => base.MouseOver;
         }
 
-        internal class StatButton : OpSimpleImageButton
+        internal class ListButton : OpSimpleImageButton
         {
-            public StatButton(MenuModList list) : base(Vector2.zero, Vector2.one, "", "Menu_Symbol_Show_List")
+            public ListButton(MenuModList list, Role role) : base(Vector2.zero, new Vector2(24f, 24f), "", RoleSprite(role))
             {
+                this.role = role;
                 this.list = list;
                 this.list.menuTab.AddItems(this);
-                this._size = new Vector2(20f, 20f);
-                this.rect.size = this.size; this.rectH.size = this.size;
+                // 462 700, 321 720up/26down
+                this._pos = this.list.pos - new Vector2(250f, 600f);
+                OnChange();
             }
 
+            public enum Role : int
+            {
+                Stat = 0,
+                ScrollUp = -1,
+                ScrollDown = 1
+            }
+
+            public readonly Role role;
+
             public readonly MenuModList list;
+
+            private static string RoleSprite(Role role)
+            {
+                switch (role)
+                {
+                    case Role.Stat:
+                        return "Menu_Symbol_Show_List";
+
+                    case Role.ScrollUp:
+                    case Role.ScrollDown:
+                        return "Menu_Symbol_Arrow";
+                }
+                return "pixel";
+            }
 
             public override void OnChange()
             {
                 base.OnChange();
-                this._size = new Vector2(20f, 20f);
-                this.rect.size = this.size; this.rectH.size = this.size;
             }
 
             public override void Signal()
             {
-                list.Signal(this);
+                list.Signal(this, (int)role);
             }
         }
 
         internal class AlphabetButton : OpSimpleButton
         {
-            public AlphabetButton(MenuModList list, uint index) : base(Vector2.zero, Vector2.one, "", "")
+            public AlphabetButton(MenuModList list, int index) : base(Vector2.zero, new Vector2(24f, 24f), "", "")
             {
                 this.list = list;
                 this.index = index;
                 represent = (char)(index + 65); // upper A: 65
                 this.text = represent.ToString();
                 this.list.menuTab.AddItems(this);
+                //480 150 + 20i
 
-                this._size = new Vector2(20f, 20f);
                 this.greyedOut = ConfigContainer.OptItfABC[index] < 0;
                 OnChange();
             }
 
             public readonly MenuModList list;
 
-            public readonly uint index;
+            public readonly int index;
             public readonly char represent;
 
             public override bool CurrentlyFocusableMouse => !greyedOut;

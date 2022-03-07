@@ -156,8 +156,25 @@ namespace CompletelyOptional
             // Some code that about starred mods here so it would go first
             // Will think of how to save this list
 
-            listItf.Sort(CompareOIModID);
-            OptItfs = listItf.ToArray();
+            if (listItf.Count > 0)
+            {
+                listItf.Sort(CompareOIModID);
+                OptItfs = new OptionInterface[listItf.Count + 1];
+                OptItfs[0] = new InternalOI_Stats();
+                for (int k = 0; k < listItf.Count; k++)
+                { OptItfs[k + 1] = listItf[k]; }
+            }
+            else
+            { // No Mod
+                OptItfs = new OptionInterface[] { new InternalOI_NoMod() };
+                OptItfID = new string[] { "" };
+                savedActiveTabIndex = new int[] { 0 };
+                OptItfChanged = new bool[] { false };
+                OptItfABC = new int[26];
+                for (int j = 0; j < OptItfABC.Length; j++) { OptItfABC[j] = -1; }
+                goto sorted;
+            }
+
             OptItfID = new string[OptItfs.Length];
             savedActiveTabIndex = new int[OptItfs.Length];
             OptItfChanged = new bool[OptItfs.Length];
@@ -175,13 +192,16 @@ namespace CompletelyOptional
                 { OptItfs[i].Tabs[t].Deactivate(); }
 
                 // Save indexes of mods starting with ABC
+                if (i == 0) { continue; } //Ignore InternalOI_Stats
                 if (name[0] < (char)a) { continue; }
                 if (name[0] == (char)a) { OptItfABC[a - 97] = i; a++; continue; }
                 while (name[0] > (char)a && a < 123)
                 { OptItfABC[a - 97 + 1] = -1; a++; }
             }
 
-            #endregion Sort
+        #endregion Sort
+
+        sorted:
 
             ConfigContainer.mute = false;
             _loadedOIs = true;

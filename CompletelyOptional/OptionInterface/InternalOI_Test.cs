@@ -1,5 +1,4 @@
-﻿using BepInEx;
-using OptionalUI;
+﻿using OptionalUI;
 using RWCustom;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +10,12 @@ namespace CompletelyOptional
     /// </summary>
     internal class InternalOI_Test : InternalOI
     {
-        public InternalOI_Test(RainWorldMod mod) : base(mod, Reason.TestOI)
+        public InternalOI_Test() : base(new RainWorldMod("TestDummy")
+        {
+            author = "topicular",
+            description = "Internal OI for testing new features of Config Machine",
+            Version = ComOptPlugin.ver
+        }, Reason.TestOI)
         {
         }
 
@@ -24,14 +28,14 @@ namespace CompletelyOptional
 
             base.Initialize();
             this.Tabs = new OpTab[3];
-            this.Tabs[0] = new OpTab("TEST0");
-            this.Tabs[1] = new OpTab("TEST1");
-            this.Tabs[2] = new OpTab("TESTSCROLL");
+            this.Tabs[0] = new OpTab(this, "TEST0");
+            this.Tabs[1] = new OpTab(this, "TEST1");
+            this.Tabs[2] = new OpTab(this, "TESTSCROLL");
 
             Tabs[0].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
-                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), MenuTab.GetCMVersion(), FLabelAlignment.Right));
+                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.ver, FLabelAlignment.Right));
             Tabs[1].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
-                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), MenuTab.GetCMVersion(), FLabelAlignment.Right));
+                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.ver, FLabelAlignment.Right));
 
             #endregion init
 
@@ -75,7 +79,7 @@ namespace CompletelyOptional
             OpScrollBox sb = new OpScrollBox(Tabs[2], 2400f, false);
             // Use OpScrollBox.AddItems instead of OpTab.AddItems.
             sb.AddItems(new OpLabel(new Vector2(100f, 540f + 1800f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
-                    new OpLabel(new Vector2(420f, 510f + 1800f), new Vector2(100f, 20f), MenuTab.GetCMVersion(), FLabelAlignment.Right));
+                    new OpLabel(new Vector2(420f, 510f + 1800f), new Vector2(100f, 20f), ComOptPlugin.ver, FLabelAlignment.Right));
             sb.AddItems(new OpImage(new Vector2(420f, 50f), t));
             //sb.AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
             //Tabs[2].AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));

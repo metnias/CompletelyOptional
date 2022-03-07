@@ -7,6 +7,20 @@ namespace OptionalUI
 {
     public struct RainWorldMod
     {
+        /// <summary>
+        /// For making dummy RainWorldMod
+        /// </summary>
+        internal RainWorldMod(string id)
+        {
+            this.type = Type.Dummy;
+            this.mod = null;
+
+            this.ModID = id;
+            this.author = authorNull;
+            this.description = authorNull;
+            this.Version = authorNull;
+        }
+
         public RainWorldMod(BaseUnityPlugin plugin)
         {
             this.type = Type.BepInExPlugin;
@@ -40,10 +54,11 @@ namespace OptionalUI
         public readonly object mod;
 
         // public PartialityMod PartialityMod => mod as PartialityMod;
-        public const string authorNull = "NULL";
+        public const string authorNull = "_NULL_";
 
         public enum Type
         {
+            Dummy,
             BepInExPlugin
         }
     }
