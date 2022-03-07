@@ -242,7 +242,7 @@ namespace OptionalUI
         /// </summary>
         public static void PlaySound(SoundID soundID, float pan, float vol, float pitch) => ConfigContainer.PlaySound(soundID, pan, vol, pitch);
 
-        protected Vector2 DrawPos(float timeStacker) => Vector2.Lerp(this.lastScreenPos, this.ScreenPos, timeStacker);
+        protected Vector2 DrawPos(float timeStacker) => Vector2.Lerp(this.lastScreenPos, this.ScreenPos, timeStacker) + new Vector2(0.01f, 0.01f);
 
         protected Vector2 _pos;
         protected Vector2 _size;

@@ -1,4 +1,5 @@
 ﻿using OptionalUI;
+using RWCustom;
 using UnityEngine;
 
 namespace CompletelyOptional
@@ -59,7 +60,17 @@ namespace CompletelyOptional
         private readonly FSprite backSide;
         private readonly FSprite[] sideLines;
         private readonly ListButton[] roleButtons;
-        private int scrollPos; private const int scrollVisible = 26;
+        private int scrollPos = 0; private const int scrollVisible = 26;
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="targetIndex">targetIndex = itfIndex - 1</param>
+        internal void ScrollToShow(int targetIndex)
+        {
+            if (scrollPos > targetIndex) { scrollPos = targetIndex; }
+            else if (scrollPos + scrollVisible < targetIndex) { scrollPos = targetIndex - scrollVisible; }
+        }
 
         // ModList:
         // ABC button, Mod button shows Name(Left) and Version(right)
@@ -92,7 +103,7 @@ namespace CompletelyOptional
         {
             if (element is ModButton)
             { // Switch Mod
-                ConfigContainer.ChangeActiveMod(index);
+                cfgContainer.ChangeActiveMod(index);
             }
             else if (element is AlphabetButton)
             { // Scroll to Alphabet
@@ -101,10 +112,11 @@ namespace CompletelyOptional
             {
                 if (index == 0)
                 { // Switch Mod to InternalOI_Stats
-                    ConfigContainer.ChangeActiveMod(0);
+                    cfgContainer.ChangeActiveMod(0);
                 }
                 else
                 { // Scroll Up(-1) or Down(+1)
+                    scrollPos = Custom.IntClamp(scrollPos + index, 0, ConfigContainer.OptItfs.Length - scrollVisible);
                 }
             }
         }
@@ -195,6 +207,8 @@ namespace CompletelyOptional
                 this.list.menuTab.AddItems(this);
                 // 462 700, 321 720up/26down
                 this._pos = this.list.pos - new Vector2(250f, 600f);
+                if (this.role == Role.ScrollUp) { this.sprite.rotation = 0f; }
+                else if (this.role == Role.ScrollDown) { this.sprite.rotation = 180f; }
                 OnChange();
             }
 
@@ -226,6 +240,25 @@ namespace CompletelyOptional
             public override void OnChange()
             {
                 base.OnChange();
+            }
+
+            public override void Update()
+            {
+                base.Update();
+                switch (role)
+                {
+                    case Role.Stat:
+                        greyedOut = ConfigContainer.activeItfIndex == 0;
+                        break;
+
+                    case Role.ScrollUp:
+                        greyedOut = list.scrollPos == 0;
+                        break;
+
+                    case Role.ScrollDown:
+                        greyedOut = list.scrollPos > list.modButtons.Length - MenuModList.scrollVisible + 1;
+                        break;
+                }
             }
 
             public override void Signal()

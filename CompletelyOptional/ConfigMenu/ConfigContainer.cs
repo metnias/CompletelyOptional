@@ -57,7 +57,7 @@ namespace CompletelyOptional
             activeTab.Activate();
         }
 
-        internal static void ChangeActiveMod(int newIndex)
+        internal void ChangeActiveMod(int newIndex)
         {
             // Close
             activeTab?.Deactivate();
@@ -68,6 +68,8 @@ namespace CompletelyOptional
             activeTabIndex = savedActiveTabIndex[activeItfIndex];
             activeTab = activeInterface.Tabs[activeTabIndex];
             activeTab.Activate();
+
+            menuTab.modList.ScrollToShow(newIndex - 1);
         }
 
         internal static bool holdElement;
@@ -230,7 +232,7 @@ namespace CompletelyOptional
         /// </summary>
         internal static int[] OptItfABC;
 
-        private static int activeItfIndex;
+        internal static int activeItfIndex { get; private set; }
         private static int[] savedActiveTabIndex;
         internal static bool[] OptItfChanged { get; private set; }
 
