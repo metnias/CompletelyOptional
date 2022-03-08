@@ -26,12 +26,12 @@ namespace OptionalUI
         /// The real position of the box's contents relative to the tab, a considerable distance off-screen.
         /// <para>This value is added to each child's pos automatically when they are added in <see cref="AddItems(UIelement[])"/>.</para>
         /// </summary>
-        internal readonly Vector2 childOffset;
+        protected internal readonly Vector2 childOffset;
 
         /// <summary>
         /// A list of all items inside this scrollbox.
         /// </summary>
-        public List<UIelement> children = new List<UIelement>();
+        public List<UIelement> children { get; protected internal set; } = new List<UIelement>();
 
         /// <summary>
         /// Whether or not the scrollbox scrolls horizontally.
@@ -146,18 +146,18 @@ namespace OptionalUI
 
         private readonly Camera _cam;
         private readonly int _camIndex;
-        internal readonly Vector2 camPos;
-        public float scrollOffset { get; private set; }
+        protected internal readonly Vector2 camPos;
+        public float scrollOffset { get; protected set; }
         private float _scrollVel;
-        private FTexture insideTexture;
-        private RenderTexture _rt;
-        private readonly DyeableRect rectBack, rectSlidebar;
+        protected FTexture insideTexture;
+        protected RenderTexture _rt;
+        protected readonly DyeableRect rectBack, rectSlidebar;
 
         //private bool HasMouseFocus => ((_lockMouseFocus ?? MouseOver) && !_draggingSlider) && allowMouseOnContents;
         //private bool? _lockMouseFocus;
         private bool _draggingSlider = false;
 
-        private float ScrollSize => horizontal ? size.x : size.y;
+        protected float ScrollSize => horizontal ? size.x : size.y;
 
         /// <summary>
         /// Creates an empty scrollbox.
@@ -346,9 +346,16 @@ namespace OptionalUI
 
             foreach (UIelement item in items)
             {
-                if (item.AddToScrollBox(this)) { this.tab.AddItems(item); children.Add(item); }
+                if (item.AddToScrollBox(this))
+                {
+                    this.tab.AddItems(item);
+                    children.Add(item);
+                    if (lastFocusedElement == null && item is ICanBeFocused) { lastFocusedElement = item; }
+                }
             }
         }
+
+        protected internal UIelement lastFocusedElement = null;
 
         /// <summary>
         /// Remove UIelements from OpScrollbox they're in
@@ -409,6 +416,8 @@ namespace OptionalUI
 
         public override void Update()
         {
+            // Todo: scrollbox focus > uielement lastfocused
+
             rectBack?.Update(); rectSlidebar?.Update();
             this.bumpBehav.Update();
             // Check redraw conditions

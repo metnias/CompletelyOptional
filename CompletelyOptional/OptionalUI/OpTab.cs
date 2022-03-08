@@ -1,3 +1,4 @@
+using CompletelyOptional;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -81,6 +82,8 @@ namespace OptionalUI
             { this.items.Remove(item); }
             while (this.focusables.Contains(item)) { this.focusables.Remove(item); }
             item.SetTab(null);
+            if (ConfigContainer.focusedElement == item)
+            { ModConfigMenu.instance.cfgContainer.FocusNewElementInDirection(new RWCustom.IntVector2(-1, 0)); }
         }
 
         /// <summary>

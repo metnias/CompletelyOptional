@@ -1,7 +1,12 @@
-﻿using UnityEngine;
+﻿using CompletelyOptional;
+using UnityEngine;
 
 namespace OptionalUI
 {
+    /// <summary>
+    /// Add this to any <see cref="UIelement"/> that can be interacted with end-users.
+    /// <para><see cref="UIconfig"/> and <see cref="UItrigger"/> are <see cref="ICanBeFocused"/> by default, but you may override its properties in your custom UIelement.</para>
+    /// </summary>
     public interface ICanBeFocused
     {
         /// <summary>

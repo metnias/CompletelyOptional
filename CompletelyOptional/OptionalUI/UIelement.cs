@@ -405,7 +405,7 @@ namespace OptionalUI
         /// </summary>
         internal bool AddToScrollBox(OpScrollBox scrollBox)
         {
-            if (OpScrollBox.ChildBlacklist.Contains<Type>(this.GetType())) { Debug.LogError(this.GetType().Name + " instances may not be added to a scrollbox!"); return false; }
+            if (OpScrollBox.ChildBlacklist.Contains<Type>(this.GetType())) { ComOptPlugin.LogError(this.GetType().Name + " instances may not be added to a scrollbox!"); return false; }
             if (this.inScrollBox) { ComOptPlugin.LogError("This item is already in an OpScrollBox! The later call is ignored."); return false; }
             this.inScrollBox = true;
             this.scrollBox = scrollBox;
@@ -417,6 +417,12 @@ namespace OptionalUI
         internal void RemoveFromScrollBox()
         {
             if (!this.inScrollBox) { ComOptPlugin.LogError("This item is not in an OpScrollBox! This call will be ignored."); return; }
+            if (this.scrollBox.lastFocusedElement == this)
+            {
+                this.scrollBox.lastFocusedElement = null;
+                foreach (UIelement item in this.scrollBox.children)
+                { if (item != this && item is ICanBeFocused) { this.scrollBox.lastFocusedElement = item; break; } }
+            }
             this._pos -= this.scrollBox.childOffset;
             this.inScrollBox = false;
             this.scrollBox = null;

@@ -276,7 +276,7 @@ namespace OptionalUI
             #endregion Dye
         }
 
-        public bool hidden { get; private set; }
+        public bool hidden { get; private set; } = false;
 
         /// <summary>
         /// Useful for hiding this alone. See also <seealso cref="Show()"/> for the counterpart.
@@ -285,6 +285,7 @@ namespace OptionalUI
         /// </summary>
         public void Hide()
         {
+            if (hidden) { return; }
             foreach (FSprite s in this.sprites) { s.isVisible = false; }
             hidden = true;
         }
@@ -294,6 +295,7 @@ namespace OptionalUI
         /// </summary>
         public void Show()
         {
+            if (!hidden) { return; }
             foreach (FSprite s in this.sprites) { s.isVisible = true; }
             if (hiddenSide != HiddenSide.None)
             {

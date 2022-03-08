@@ -6,6 +6,7 @@ namespace CompletelyOptional
 {
     internal class MenuModList : UIelement
     {
+        // use Arena's LevelSelector way of doing
         public MenuModList(MenuTab tab) : base(new Vector2(208f, 60f) - UIelement._offset, new Vector2(250f, 650f))
         {
             // position of 26th button, size of mod list
@@ -46,8 +47,6 @@ namespace CompletelyOptional
             { modButtons[i] = new ModButton(this, i); }
         }
 
-        // Change of plan: use Arena's LevelSelector way of doing instead
-
         private MenuTab menuTab => this.tab as MenuTab;
         private ConfigContainer cfgContainer => menu.cfgContainer;
 
@@ -55,12 +54,15 @@ namespace CompletelyOptional
 
         private float GetMyAbcSlide(int index, float timeStacker) => Mathf.Clamp(Mathf.Lerp(lastAbcSlide, abcSlide, timeStacker) + index * 2.0f, 0f, 40f);
 
+        private float floatScrollPos = 0f, floatScrollVel = 0f;
+
         private readonly ModButton[] modButtons;
         private readonly AlphabetButton[] abcButtons;
         private readonly FSprite backSide;
         private readonly FSprite[] sideLines;
         private readonly ListButton[] roleButtons;
-        private int scrollPos = 0; private const int scrollVisible = 26;
+        private int scrollPos = 0;
+        private const int scrollVisible = 26;
 
         /// <summary>
         ///
@@ -70,14 +72,16 @@ namespace CompletelyOptional
         {
             if (scrollPos > targetIndex) { scrollPos = targetIndex; }
             else if (scrollPos + scrollVisible < targetIndex) { scrollPos = targetIndex - scrollVisible; }
+            ClampScrollPos();
         }
+
+        internal ModButton GetCurrentModButton() => modButtons[ConfigContainer.activeItfIndex - 1];
 
         // ModList:
         // ABC button, Mod button shows Name(Left) and Version(right)
         // Save first mod for each letter, and scroll to it
         // if name is too long, add ...
         // Tab: It will now have ^ and v instead of having 20 Limit
-        // Also can have a tab that doesn't have button
         // PickUp: Focus/Select, Throw: Unfocus/Leave, Select: Control View
         // Display Unsaved change in button colour
 
@@ -96,7 +100,17 @@ namespace CompletelyOptional
         public override void Update()
         {
             base.Update();
+            bool listFocused = ConfigContainer.focusedElement is IAmPartOfModList;
+            // abc buttons slide
             lastAbcSlide = abcSlide;
+            abcSlide += 4f / UIelement.frameMulti * (listFocused ? 1f : -1f);
+            abcSlide = Mathf.Clamp(abcSlide, -60f, 40f);
+            // scrollPos
+            floatScrollPos = Custom.LerpAndTick(this.floatScrollPos, scrollPos, 0.01f, 0.01f);
+            floatScrollVel *= Custom.LerpMap(System.Math.Abs(scrollPos - floatScrollPos), 0.25f, 1.5f, 0.45f, 0.99f);
+            floatScrollVel += Mathf.Clamp(scrollPos - floatScrollPos, -2.5f, 2.5f) / 2.5f * 0.15f;
+            floatScrollVel = Mathf.Clamp(floatScrollVel, -1.2f, 1.2f);
+            floatScrollPos += floatScrollVel;
         }
 
         private void Signal(UIelement element, int index = -1)
@@ -107,6 +121,9 @@ namespace CompletelyOptional
             }
             else if (element is AlphabetButton)
             { // Scroll to Alphabet
+                ScrollToShow(ConfigContainer.OptItfABC[index] - 1);
+                ClampScrollPos();
+                cfgContainer.FocusNewElement(modButtons[ConfigContainer.OptItfABC[index] - 1]);
             }
             else if (element is ListButton)
             {
@@ -116,22 +133,32 @@ namespace CompletelyOptional
                 }
                 else
                 { // Scroll Up(-1) or Down(+1)
-                    scrollPos = Custom.IntClamp(scrollPos + index, 0, ConfigContainer.OptItfs.Length - scrollVisible);
+                    scrollPos += index;
+                    ClampScrollPos();
                 }
             }
+        }
+
+        private void ClampScrollPos() =>
+            scrollPos = Custom.IntClamp(scrollPos, 0, System.Math.Max(0, ConfigContainer.OptItfs.Length - scrollVisible + 1));
+
+        private void Star(int index)
+        {
+            // Add/Remove ID to/from star list
+            // ConfigContainer.OptItfID[index];
         }
 
         /// <summary>
         /// Button for ModList
         /// </summary>
-        internal class ModButton : OpSimpleButton
+        internal class ModButton : OpSimpleButton, IAmPartOfModList
         {
-            public ModButton(MenuModList list, int index) : base(Vector2.zero, new Vector2(250f, 25f), "Mod List")
+            public ModButton(MenuModList list, int index) : base(Vector2.zero, new Vector2(250f, height), "Mod List")
             {
                 this.list = list;
                 this.index = index + 1; // starts from 1; index 0 is for StatOI
                 this.list.menuTab.AddItems(this);
-                //this._pos = list.camPos;
+                this._pos = MyPos;
 
                 // Get Type
                 if (itf is InternalOI)
@@ -140,6 +167,7 @@ namespace CompletelyOptional
                     else { type = ItfType.Blank; }
                 }
                 else { type = itf.Configurable() ? ItfType.Configurable : ItfType.Inconfigurable; }
+                greyedOut = type == ItfType.Blank;
 
                 this.text = itf.rwMod.ModID;
                 this.labelVer = OpLabel.CreateFLabel(itf.rwMod.Version);
@@ -149,12 +177,16 @@ namespace CompletelyOptional
                 OnChange();
             }
 
+            private Vector2 MyPos => list.pos + new Vector2(0f, 650f - (index - list.floatScrollPos) * height);
+
+            public const float height = 25f;
+
             private readonly MenuModList list;
 
             public readonly int index;
             private OptionInterface itf => ConfigContainer.OptItfs[index];
             private readonly FLabel labelVer;
-            private float fade, lastFade;
+            private float fade, lastFade; // 0f : visible, 1f: invisible
 
             public readonly ItfType type;
 
@@ -168,47 +200,89 @@ namespace CompletelyOptional
 
             public override void OnChange()
             {
+                UpdateColor();
                 base.OnChange();
                 this.label.alignment = FLabelAlignment.Left;
                 this.labelVer.alignment = FLabelAlignment.Right;
+                this.rect.Hide();
             }
 
             public override void GrafUpdate(float timeStacker)
             {
+                if (lastFade >= 1f) { return; }
                 base.GrafUpdate(timeStacker);
-                Mathf.Lerp(lastFade, fade, timeStacker);
-                list.GetMyAbcSlide(index, timeStacker);
-                //ConfigContainer.OptItfChanged[index];
+                this.label.alpha = Mathf.Pow(1f - Mathf.Lerp(lastFade, fade, timeStacker), 2f);
             }
 
             public override void Update()
             {
                 this.lastFade = this.fade;
+                this.fade = Mathf.Clamp01(Mathf.Max(index - list.floatScrollPos, list.floatScrollPos - index - MenuModList.scrollVisible));
+                if (fade >= 1f) { return; }
+
                 base.Update();
+                this._pos = MyPos;
+
+                if (this.Focused())
+                {
+                    if (MenuMouseMode)
+                    {
+                        if (Input.GetMouseButtonDown(1)) // Starred
+                        { list.Star(index); }
+                    }
+                    else
+                    {
+                        if (menu.input.mp && !menu.lastInput.mp) // Starred
+                        { list.Star(index); }
+                    }
+                }
             }
+
+            private Color? setColor;
+
+            public void SetColor(Color? color)
+            { setColor = color; UpdateColor(); }
+
+            public void UpdateColor()
+            {
+                if (setColor.HasValue) { colorEdge = setColor.Value; return; }
+                if (greyedOut) { return; }
+                if (type == ItfType.Error) { colorEdge = cError; return; }
+                if (ConfigContainer.OptItfChanged[index + 1]) { colorEdge = cChange; return; }
+                colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
+            }
+
+            private static Color cError = new Color(0.8f, 0.1f, 0.2f);
+            private static Color cChange = new Color(0.8f, 0.8f, 0.2f);
 
             public override void Signal()
             {
                 list.Signal(this, index);
             }
 
-            public override bool CurrentlyFocusableMouse => this.fade > 0.5f;
-            public override bool CurrentlyFocusableNonMouse => this.fade > 0.5f;
+            public override bool CurrentlyFocusableMouse => this.fade < 0.5f;
+            public override bool CurrentlyFocusableNonMouse => this.fade < 0.5f;
 
             protected internal override bool MouseOver => base.MouseOver;
         }
 
-        internal class ListButton : OpSimpleImageButton
+        internal class ListButton : OpSimpleImageButton, IAmPartOfModList
         {
             public ListButton(MenuModList list, Role role) : base(Vector2.zero, new Vector2(24f, 24f), "", RoleSprite(role))
             {
                 this.role = role;
                 this.list = list;
                 this.list.menuTab.AddItems(this);
-                // 462 700, 321 720up/26down
-                this._pos = this.list.pos - new Vector2(250f, 600f);
-                if (this.role == Role.ScrollUp) { this.sprite.rotation = 0f; }
-                else if (this.role == Role.ScrollDown) { this.sprite.rotation = 180f; }
+
+                switch (this.role)
+                {
+                    case Role.Stat:
+                        this._pos = new Vector2(462f, 700f); break;
+                    case Role.ScrollUp:
+                        this._pos = new Vector2(321f, 720f); break;
+                    case Role.ScrollDown:
+                        this._pos = new Vector2(321f, 26f); this.sprite.rotation = 180f; break;
+                }
                 OnChange();
             }
 
@@ -267,7 +341,7 @@ namespace CompletelyOptional
             }
         }
 
-        internal class AlphabetButton : OpSimpleButton
+        internal class AlphabetButton : OpSimpleButton, IAmPartOfModList
         {
             public AlphabetButton(MenuModList list, int index) : base(Vector2.zero, new Vector2(24f, 24f), "", "")
             {
@@ -276,9 +350,9 @@ namespace CompletelyOptional
                 represent = (char)(index + 65); // upper A: 65
                 this.text = represent.ToString();
                 this.list.menuTab.AddItems(this);
-                //480 150 + 20i
+                this._pos = new Vector2(440f, 150f + (25 - index) * 20f); // x: 480f
 
-                this.greyedOut = ConfigContainer.OptItfABC[index] < 0;
+                this.unused = ConfigContainer.OptItfABC[index] < 0;
                 OnChange();
             }
 
@@ -287,9 +361,12 @@ namespace CompletelyOptional
             public readonly int index;
             public readonly char represent;
 
-            public override bool CurrentlyFocusableMouse => !greyedOut;
+            public override bool CurrentlyFocusableMouse => !greyedOut && slideOut;
 
-            public override bool CurrentlyFocusableNonMouse => !greyedOut;
+            public override bool CurrentlyFocusableNonMouse => !greyedOut && slideOut;
+
+            private bool slideOut => list.GetMyAbcSlide(index, 0f) >= 40f;
+            private readonly bool unused;
 
             public override void OnChange()
             {
@@ -299,7 +376,20 @@ namespace CompletelyOptional
 
             public override void GrafUpdate(float timeStacker)
             {
+                float mySlide = list.GetMyAbcSlide(index, timeStacker);
+                this._pos.x = 440f + mySlide;
+                if (slideOut) { this.rectH.Show(); }
+                else { this.rectH.Hide(); }
                 base.GrafUpdate(timeStacker);
+                mySlide = Mathf.Clamp01(mySlide / 40f);
+                this.label.alpha = Mathf.Pow(mySlide, 2f);
+            }
+
+            public override void Update()
+            {
+                greyedOut = unused || !slideOut;
+                this.bumpBehav.greyedOut = unused;
+                base.Update();
             }
 
             public override void Signal()
@@ -307,5 +397,8 @@ namespace CompletelyOptional
                 list.Signal(this, (int)index);
             }
         }
+
+        private interface IAmPartOfModList
+        { }
     }
 }

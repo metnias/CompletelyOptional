@@ -490,32 +490,33 @@ namespace CompletelyOptional
                 {
                     if (menu.input.thrw && !menu.lastInput.thrw && focusedElement != null) // Move Upward
                     {
-                        bool moved = false;
+                        UIelement curFocusedElement = focusedElement;
                         if (focusedElement.inScrollBox) // Move to ScrollBox
                         {
+                            focusedElement.scrollBox.lastFocusedElement = focusedElement;
                             focusedElement = focusedElement.scrollBox;
                         }
                         else if (!(focusedElement.tab is MenuTab)) // Move to TabController
                         {
                             if (activeInterface.Tabs.Length > 1) { focusedElement = menuTab.tabCtrler; }
-                            else { focusedElement = menuTab.modList; }
+                            else { focusedElement = menuTab.modList.GetCurrentModButton(); }
                         }
                         else if (focusedElement is ConfigTabController) // Move to Mod List
                         {
-                            focusedElement = menuTab.modList;
+                            focusedElement = menuTab.modList.GetCurrentModButton();
                         }
-                        else // Move to Save button
+                        else // Move to Save/Back button
                         {
-                            focusedElement = menuTab.saveButton;
+                            focusedElement = OptItfChanged[activeItfIndex] ? menuTab.saveButton : menuTab.backButton;
                         }
+                        bool moved;
+                        if (curFocusedElement != focusedElement) { lastFocusedElement = curFocusedElement; moved = true; }
+                        else { moved = false; }
                         if (moved)
                         {
                             PlaySound((focusedElement as ICanBeFocused).GreyedOut
                                 ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                         }
-                    }
-                    if (menu.input.mp && !menu.lastInput.mp && focusedElement is MenuModList) // Starred
-                    {
                     }
                 }
             }
