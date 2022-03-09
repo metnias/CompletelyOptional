@@ -108,8 +108,8 @@ namespace OptionalUI
             { ConfigOnChange(); }
             catch (Exception e)
             {
-                Debug.Log("CompletelyOptional) Lost backward compatibility in Config! Reset Config.");
-                Debug.Log(new LoadDataException(e.ToString()));
+                ComOptPlugin.LogWarning("Lost backward compatibility in Config! Reset Config.");
+                ComOptPlugin.LogWarning(new LoadDataException(e.ToString()).ToString());
                 File.Delete(path);
                 config = new Dictionary<string, string>();
                 rawConfig = rawConfigDef;
@@ -135,7 +135,7 @@ namespace OptionalUI
                 }
                 else
                 {
-                    Debug.Log($"{rwMod.ModID} setting has been removed. (key: {setting.Key} / value: {setting.Value})");
+                    ComOptPlugin.LogMessage($"{rwMod.ModID} setting has been removed. (key: {setting.Key} / value: {setting.Value})");
                 }
             }
         }
@@ -208,7 +208,7 @@ namespace OptionalUI
 
                 return true;
             }
-            catch (Exception ex) { Debug.LogException(new SaveDataException(ex.ToString())); }
+            catch (Exception ex) { ComOptPlugin.LogError(new SaveDataException(ex.ToString()).ToString()); }
 
             return false;
         }

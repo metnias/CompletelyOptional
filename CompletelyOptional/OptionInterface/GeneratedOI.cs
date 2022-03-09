@@ -66,7 +66,7 @@ namespace CompletelyOptional
                 List<string> sections = new List<string>();
                 foreach (ConfigDefinition k in keys)
                 {
-                    // Debug.Log($"{rwMod.ModID}) {k.Section}: {k.Key}");
+                    // ComOptPlugin.LogInfo($"{rwMod.ModID}) {k.Section}: {k.Key}");
                     if (!sections.Contains(k.Section)) { sections.Add(k.Section); }
                 }
                 sections.Sort();
@@ -238,7 +238,7 @@ namespace CompletelyOptional
                                         break;
                                     }
 
-                                    Debug.Log($"{rwMod.ModID} has unsupported ConfigEntry: {cds[e].Key}({entryBase.SettingType.Name})");
+                                    ComOptPlugin.LogWarning($"{rwMod.ModID} has unsupported ConfigEntry: {cds[e].Key}({entryBase.SettingType.Name})");
                                     hasUnsupported = true; continue; // Not supported
                             }
                             h += 20f; // between gap

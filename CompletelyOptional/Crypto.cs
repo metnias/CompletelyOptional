@@ -14,10 +14,10 @@ namespace CompletelyOptional
         /*
         public static void DumpString(string value)
         {
-            Debug.Log(value);
+            ComOptPlugin.LogInfo(value);
             foreach (char c in value)
             {
-                Debug.Log(string.Concat( "{0:x4} ", (int)c ));
+                ComOptPlugin.LogInfo(string.Concat( "{0:x4} ", (int)c ));
             }
         }*/
 

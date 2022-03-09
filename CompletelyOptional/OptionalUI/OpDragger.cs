@@ -179,12 +179,12 @@ namespace OptionalUI
                 if (min > _max)
                 {
                     min = _min;
-                    Debug.LogError(string.Concat("You set new minimum of OpDragger(key: ", this.key, ") larger than its maximum! (", min.ToString(), ">", _max.ToString(), ") Disregarding new change."));
+                    ComOptPlugin.LogError(string.Concat("You set new minimum of OpDragger(key: ", this.key, ") larger than its maximum! (", min.ToString(), ">", _max.ToString(), ") Disregarding new change."));
                 }
                 else if (max < _min)
                 {
                     max = _max;
-                    Debug.LogError(string.Concat("You set new maximum of OpDragger(key: ", this.key, ") larger than its minimum! (", min.ToString(), ">", _max.ToString(), ") Disregarding new change."));
+                    ComOptPlugin.LogError(string.Concat("You set new maximum of OpDragger(key: ", this.key, ") larger than its minimum! (", min.ToString(), ">", _max.ToString(), ") Disregarding new change."));
                 }
                 if (useCT)
                 {

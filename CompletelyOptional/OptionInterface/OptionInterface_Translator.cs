@@ -71,18 +71,18 @@ namespace OptionalUI
                     string[] piece = langs[j].Split('$'); //Regex.Split(langs[j], @"$");
                     if (piece.Length < 2)
                     {
-                        Debug.LogError($"CompletelyOptional: Specify Language for your translation in this format: \'lang$translation\'\n Allowed Language Codes are: {InternalTranslator.allowedCodes}"); continue;
+                        ComOptPlugin.LogError($"Specify Language for your translation in this format: \'lang$translation\'\n Allowed Language Codes are: {InternalTranslator.allowedCodes}"); continue;
                     }
                     if (curLang == InternalTranslator.LangToCode(piece[0]))
                     {
                         //string cvt = Regex.Replace(piece[1], "/\\en/i", Environment.NewLine);
                         if (transConverter.ContainsKey(langs[0]))
                         {
-                            if (!hasDefault) { Debug.LogError($"Conflicting Key found: \'{langs[0]}\'"); }
+                            if (!hasDefault) { ComOptPlugin.LogError($"Conflicting Key found: \'{langs[0]}\'"); }
                             transConverter.Remove(langs[0]);
                         }
                         transConverter.Add(langs[0], piece[1]);
-                        //Debug.Log($"{transConverter.Count}: {langs[0]}|{piece[1]}");
+                        //ComOptPlugin.LogInfo($"{transConverter.Count}: {langs[0]}|{piece[1]}");
                     }
                     else if (InternalTranslator.LangToCode(piece[0]) == "eng")
                     {
@@ -102,7 +102,7 @@ namespace OptionalUI
 
             if (File.Exists(test))
             {
-                Debug.Log($"{rwMod.ModID} reloaded external translation: {test}");
+                ComOptPlugin.LogMessage($"{rwMod.ModID} reloaded external translation: {test}");
                 string d = File.ReadAllText(test);
                 if (d.Contains(Environment.NewLine)) { transData = Regex.Split(d, Environment.NewLine); }
                 else { transData = Regex.Split(d, "\n"); }
@@ -127,12 +127,12 @@ namespace OptionalUI
             }
             catch (Exception e)
             {
-                Debug.LogError($"CompletelyOptional: Unable to find the translation txt named {transFile}");
-                Debug.LogException(e);
-                Debug.LogError("This is the list of resources in your mod's assembly. Pick one and set \'transFile\' in ctor!");
+                ComOptPlugin.LogError($"Unable to find the translation txt named {transFile}");
+                ComOptPlugin.LogError(e.ToString());
+                ComOptPlugin.LogError("This is the list of resources in your mod's assembly. Pick one and set \'transFile\' in ctor!");
 
                 string[] names = assembly.GetManifestResourceNames();
-                foreach (string name in names) { Debug.LogError(name); }
+                foreach (string name in names) { ComOptPlugin.LogError(name); }
                 return false;
             }
 

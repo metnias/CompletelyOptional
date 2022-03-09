@@ -54,7 +54,7 @@ namespace OptionalUI
 
                         if (modID != anotherMod)
                         {
-                            Debug.LogError(string.Concat("More than two mods are using same defaultKey!", Environment.NewLine,
+                            ComOptPlugin.LogError(string.Concat("More than two mods are using same defaultKey!", Environment.NewLine,
                             "Conflicting Control: ", item.Key, " & ", controlKey, " (duplicate defalutKey: ", item.Value, ")"
                             ));
 

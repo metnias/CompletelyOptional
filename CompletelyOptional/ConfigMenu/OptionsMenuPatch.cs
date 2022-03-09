@@ -73,7 +73,7 @@ namespace CompletelyOptional
                 string songid = menu.manager.musicPlayer.song?.name.Substring(0, 5).ToUpper();
                 if (songid != "RW_8 " && songid != "TITLE")
                 {
-                    Debug.Log($"Shutdown ModConfig Music :{menu.manager.musicPlayer.song?.name}");
+                    ComOptPlugin.LogMessage($"Shutdown ModConfig Music :{menu.manager.musicPlayer.song?.name}");
                     menu.manager.musicPlayer.nextSong = new MenuOrSlideShowSong(menu.manager.musicPlayer, "RW_8 - Sundown", 0.8f, 2f)
                     { playWhenReady = false };
                 }

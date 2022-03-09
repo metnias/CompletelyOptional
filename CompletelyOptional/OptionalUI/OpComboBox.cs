@@ -316,7 +316,7 @@ namespace OptionalUI
                     { // Hold Scroll and update listtop
                         int num = Mathf.RoundToInt((this.MousePos.y - this.rectList.pos.y + this.pos.y - 10f - scrollHeldPos) * (listSize - this.lblList.Length) / (this.rectList.size.y - 20f - this.rectScroll.size.y));
                         num = Custom.IntClamp(listSize - this.lblList.Length - num, 0, listSize - this.lblList.Length);
-                        // Debug.Log($"{listTop} > {num}; {this.itemList.Length}, {this.lblList.Length}, {this.itemList.Length - this.lblList.Length}");
+                        // ComOptPlugin.LogInfo($"{listTop} > {num}; {this.itemList.Length}, {this.lblList.Length}, {this.itemList.Length - this.lblList.Length}");
                         if (listTop != num)
                         {
                             PlaySound(SoundID.MENU_Scroll_Tick);
@@ -369,7 +369,7 @@ namespace OptionalUI
                         {
                             int num = listTop + (int)Mathf.Sign(this.menu.mouseScrollWheelMovement) * Mathf.CeilToInt(this.lblList.Length / 2f);
                             num = Custom.IntClamp(num, 0, listSize - this.lblList.Length);
-                            // Debug.Log($"{listTop} > {num}; {this.itemList.Length}, {this.lblList.Length}, {this.itemList.Length - this.lblList.Length}");
+                            // ComOptPlugin.LogInfo($"{listTop} > {num}; {this.itemList.Length}, {this.lblList.Length}, {this.itemList.Length - this.lblList.Length}");
                             if (listTop != num)
                             {
                                 PlaySound(SoundID.MENU_Scroll_Tick);

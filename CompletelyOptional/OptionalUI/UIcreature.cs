@@ -83,7 +83,7 @@ namespace OptionalUI
                 graphic.DrawSprites(null, null, dt, new Vector2(0f, 0f));
                 graphic.Update();
             }
-            catch (Exception ex) { Debug.LogError(ex); }
+            catch (Exception ex) { ComOptPlugin.LogError(ex.ToString()); }
         }
 
         public override void OnChange()

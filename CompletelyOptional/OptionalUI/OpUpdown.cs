@@ -134,7 +134,7 @@ namespace OptionalUI
                             {
                                 int old = valueInt;
                                 valueInt += (int)Mathf.Pow(10, deci) * (up ? 1 : -1);
-                                // Debug.Log($"deci[{deci}]: {old} > {valueInt} ({(int)Mathf.Pow(10, deci) })");
+                                // ComOptPlugin.LogInfo($"deci[{deci}]: {old} > {valueInt} ({(int)Mathf.Pow(10, deci) })");
                                 if (old != valueInt) { bumpFlag = (byte)(up ? 1 : 2); }
                                 else { bumpFlag = 0; }
                             }
@@ -142,7 +142,7 @@ namespace OptionalUI
                             {
                                 float old = valueFloat;
                                 valueFloat += Mathf.Pow(10, deci - dNum) * (up ? 1 : -1);
-                                // Debug.Log($"deci[{deci - dNum}]: {old} > {valueFloat} ({Mathf.Pow(10, deci - dNum) })");
+                                // ComOptPlugin.LogInfo($"deci[{deci - dNum}]: {old} > {valueFloat} ({Mathf.Pow(10, deci - dNum) })");
                                 if (old != valueFloat) { bumpFlag = (byte)(up ? 1 : 2); }
                                 else { bumpFlag = 0; }
                             }

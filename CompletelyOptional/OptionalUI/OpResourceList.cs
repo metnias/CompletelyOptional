@@ -108,8 +108,8 @@ namespace OptionalUI
             list.Sort(ListItem.Comparer);
             this.itemList = list.ToArray();
             this.ResetIndex();
-            //Debug.Log(listType);
-            //for (int i = 0; i < itemList.Length; i++) { Debug.Log(string.Concat(i, ": ", itemList[i].name)); }
+            //ComOptPlugin.LogInfo(listType);
+            //for (int i = 0; i < itemList.Length; i++) { ComOptPlugin.LogInfo(string.Concat(i, ": ", itemList[i].name)); }
             this.Initialize(defaultName);
             if (_init) { this.OpenList(); }
         }

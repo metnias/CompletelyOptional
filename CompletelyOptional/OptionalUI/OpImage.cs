@@ -1,3 +1,4 @@
+using CompletelyOptional;
 using UnityEngine;
 
 namespace OptionalUI
@@ -56,7 +57,7 @@ namespace OptionalUI
         public void ChangeImage(Texture2D newImage)
         {
             if (!isTexture) { throw new InvalidActionException(this, "You must construct this with Texture2D to use this function"); }
-            if (newImage == null) { Debug.LogError("CompletelyOptional: newImage is null in OpImage.ChangeImage!"); return; }
+            if (newImage == null) { ComOptPlugin.LogError("newImage is null in OpImage.ChangeImage!"); return; }
 
             this._color = Color.white;
             this._size = new Vector2(newImage.width * _scale.x, newImage.height * _scale.y);
@@ -75,11 +76,11 @@ namespace OptionalUI
         public void ChangeElement(string newElement)
         {
             if (isTexture) { throw new InvalidActionException(this, "You must construct this with a name of FAtlasElement to use this function"); }
-            if (newElement == null) { Debug.LogError("CompletelyOptional: newElement is null in OpImage.ChangeElement!"); return; }
+            if (newElement == null) { ComOptPlugin.LogError("newElement is null in OpImage.ChangeElement!"); return; }
             myContainer.RemoveAllChildren();
 
             if (!Futile.atlasManager.DoesContainElementWithName(newElement))
-            { Debug.LogError($"CompletelyOptional: There is no such FAtlasElement called [{newElement}]"); return; }
+            { ComOptPlugin.LogError($"There is no such FAtlasElement called [{newElement}]"); return; }
             this.sprite = new FSprite(newElement, true)
             {
                 color = this._color,

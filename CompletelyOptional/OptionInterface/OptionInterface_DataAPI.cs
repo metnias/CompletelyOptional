@@ -111,7 +111,7 @@ namespace OptionalUI
                     data = data.Substring(32, data.Length - 32);
                     if (Custom.Md5Sum(data) != key)
                     {
-                        Debug.Log($"CompletelyOptional) {rwMod.ModID} data file has been tinkered!");
+                        ComOptPlugin.LogWarning($"CompletelyOptional) {rwMod.ModID} data file has been tinkered!");
                         dataTinkered = true;
                     }
                     else { dataTinkered = false; }
@@ -120,7 +120,7 @@ namespace OptionalUI
                     return;
                 }
             }
-            catch (Exception ex) { Debug.LogException(new LoadDataException(ex.ToString())); }
+            catch (Exception ex) { ComOptPlugin.LogError(new LoadDataException(ex.ToString()).ToString()); }
             DataOnChange();
         }
 
@@ -153,7 +153,7 @@ namespace OptionalUI
 
                 return true;
             }
-            catch (Exception ex) { Debug.LogException(new SaveDataException(ex.ToString())); }
+            catch (Exception ex) { ComOptPlugin.LogError(new SaveDataException(ex.ToString()).ToString()); }
 
             return false;
         }
@@ -375,7 +375,7 @@ namespace OptionalUI
             data = data.Substring(32, data.Length - 32);
             if (Custom.Md5Sum(data) != key)
             {
-                Debug.Log($"{rwMod.ModID} progData file has been tinkered!");
+                ComOptPlugin.LogWarning($"{rwMod.ModID} progData file has been tinkered!");
                 progDataTinkered = true;
             }
             else

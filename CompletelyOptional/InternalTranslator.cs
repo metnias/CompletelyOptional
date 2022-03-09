@@ -47,7 +47,7 @@ namespace CompletelyOptional
         {
             if (lang.Length < 3)
             {
-                Debug.LogError($"CompletelyOptional: Your Language Code({lang}) is wrong! Use one of these: {allowedCodes}");
+                ComOptPlugin.LogError($"CompletelyOptional: Your Language Code({lang}) is wrong! Use one of these: {allowedCodes}");
                 return "xxx";
             }
             return lang.Substring(0, 3).ToLower();
@@ -55,13 +55,13 @@ namespace CompletelyOptional
 
         internal static void LoadTranslation()
         {
-            Debug.Log($"CompletelyOptional Loading Translation for {curLang}");
+            ComOptPlugin.LogInfo($"CompletelyOptional Loading Translation for {curLang}");
             if (data == null) { ReadTXT(); }
             converter = new Dictionary<string, string>();
             for (int i = 0; i < data.Length; i++)
             {
                 if (data[i].StartsWith("//") || data[i].Length < 5) { continue; }
-                //Debug.Log(data[i]);
+                //ComOptPlugin.LogInfo(data[i]);
                 string[] langs = data[i].Split('|'); //Regex.Split(data[i], "/\|/");
                 //if (langs.Length < 2) { continue; }
                 for (int j = 1; j < langs.Length; j++)
@@ -69,12 +69,12 @@ namespace CompletelyOptional
                     string[] piece = langs[j].Split('$'); //Regex.Split(langs[j], @"$");
                     if (piece.Length < 2)
                     {
-                        Debug.LogError(string.Concat("CompletelyOptional: Specify Language for your translation in this format: \'lang$translation\'",
+                        ComOptPlugin.LogError(string.Concat("CompletelyOptional: Specify Language for your translation in this format: \'lang$translation\'",
                             Environment.NewLine, "Allowed Language Codes are: ", allowedCodes)); continue;
                     }
                     if (curLang == LangToCode(piece[0]))
                     {
-                        //Debug.Log(string.Concat(langs[0], "|", piece[1]));
+                        //ComOptPlugin.LogInfo(string.Concat(langs[0], "|", piece[1]));
                         if (converter.ContainsKey(langs[0])) { converter.Remove(langs[0]); }
                         converter.Add(langs[0], piece[1]);
                     }

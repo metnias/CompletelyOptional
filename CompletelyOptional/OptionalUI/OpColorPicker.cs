@@ -32,12 +32,12 @@ namespace OptionalUI
                 { this.value = defaultHex; }
                 catch
                 {
-                    Debug.LogError(string.Concat("DefaultHex is in incorrect format! key: ", key, " defaultHex: ", defaultHex));
+                    ComOptPlugin.LogError(string.Concat("DefaultHex is in incorrect format! key: ", key, " defaultHex: ", defaultHex));
                     this.value = "FF00FF";
                 }
                 this.defaultValue = this.value;
 
-                //Debug.Log(string.Concat(key, ") dH: ", defaultHex, " v: ", this.value, " /rgb: ", r, ",", g, ",", b));
+                //ComOptPlugin.LogInfo(string.Concat(key, ") dH: ", defaultHex, " v: ", this.value, " /rgb: ", r, ",", g, ",", b));
                 return;
             }
 
@@ -144,7 +144,7 @@ namespace OptionalUI
                 //Throw Error Screen.
                 throw new ElementFormatException(this, "OpColorPicker Error: DefaultHex is not a proper value.\nMust be in form of \'FFFFFF\'.", key);
             }
-            //Debug.Log(string.Concat(key, ") dH: ", defaultHex, "/ v: ", this.value, "/ rgb: ", r, ",", g, ",", b));
+            //ComOptPlugin.LogInfo(string.Concat(key, ") dH: ", defaultHex, "/ v: ", this.value, "/ rgb: ", r, ",", g, ",", b));
         }
 
         /// <summary>
@@ -278,7 +278,6 @@ namespace OptionalUI
                     this.rect1.SetTexture(ttre1);
                     this.rect1.SetPosition(new Vector2(75f, 80f));
                 }
-                //Debug.Log(this.rect1.element.name);
             }
             else
             { //Revert
@@ -480,7 +479,7 @@ namespace OptionalUI
                             pi = k;
                         }
                     }
-                    //Debug.Log(string.Concat("value " + _value + "swapped to " + PaletteHex[pi] + " (pi: " + pi.ToString() + "/ min: " + min.ToString() + ")"));
+                    //ComOptPlugin.LogInfo(string.Concat("value " + _value + "swapped to " + PaletteHex[pi] + " (pi: " + pi.ToString() + "/ min: " + min.ToString() + ")"));
                     value = this.PaletteHex[pi];
                     mod = 2;
 
@@ -623,7 +622,7 @@ namespace OptionalUI
                             }
                             cdis1.color = new Color(dr / 100f, dg / 100f, db / 100f);
 
-                            //Debug.Log(dr.ToString() + " " + dg.ToString() + " " + db.ToString() + " ");
+                            //ComOptPlugin.LogInfo(dr.ToString() + " " + dg.ToString() + " " + db.ToString() + " ");
                             if (Input.GetMouseButton(0))
                             {
                                 if (!mouseDown)
@@ -880,7 +879,7 @@ namespace OptionalUI
             set
             {
                 if (base.value == value) { return; }
-                try { MenuColorEffect.HexToColor(value); } catch (Exception e) { Debug.LogError(e); return; }
+                try { MenuColorEffect.HexToColor(value); } catch (Exception e) { ComOptPlugin.LogError(e); return; }
                 this._value = value;
 
                 r = Mathf.RoundToInt(Convert.ToInt32(value.Substring(0, 2), 16) / 255f * 100f);
@@ -890,7 +889,7 @@ namespace OptionalUI
                 //Vector3 _hsl = FromRGB(r / 100f, g / 100f, b / 100f);
                 RXColorHSL _hsl = RXColor.HSLFromColor(new Color(r / 100f, g / 100f, b / 100f));
 
-                //Debug.Log(_value + " / " + _hsl.x.ToString()+ "/" + _hsl.y.ToString()+ "/" + _hsl.z.ToString());
+                //ComOptPlugin.LogInfo(_value + " / " + _hsl.x.ToString()+ "/" + _hsl.y.ToString()+ "/" + _hsl.z.ToString());
 
                 h = Mathf.FloorToInt(_hsl.h * 100f);
                 s = Mathf.FloorToInt(_hsl.s * 100f);

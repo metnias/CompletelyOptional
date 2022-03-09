@@ -46,8 +46,8 @@ namespace OptionalUI
                     result.Append(".");
                 }
             }
-            //Debug.Log($"minSen: {minSentences}, maxSen: {maxSentences}, numPar: {numParagraphs}");
-            //Debug.Log(result.ToString());
+            //ComOptPlugin.LogInfo($"minSen: {minSentences}, maxSen: {maxSentences}, numPar: {numParagraphs}");
+            //ComOptPlugin.LogInfo(result.ToString());
 
             return result.ToString();
         }

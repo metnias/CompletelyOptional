@@ -36,8 +36,6 @@ namespace OptionalUI
             bodymode = OptionalSlugcat.BodyModeIndex.Default;
             animode = OptionalSlugcat.AnimationIndex.StandUp;
 
-            //Debug.Log("Here Comes the Slugo!");
-
             doWiggle = false;
 
             this.description = "It is hungry, find food";
@@ -269,8 +267,6 @@ namespace OptionalUI
 
                 //SlugcatStats.Name name = this.slugcatStats.name;
 
-                //Debug.Log(string.Concat(this.bodyMode.ToString(), " ", this.animation.ToString()));
-
                 if (this.poleSkipPenalty > 0)
                 {
                     this.poleSkipPenalty--;
@@ -305,7 +301,7 @@ namespace OptionalUI
                 /*
                 if (base.bodyChunks[0].ContactPoint.y != 0 && base.bodyChunks[0].ContactPoint.y == -base.bodyChunks[1].ContactPoint.y)
                 {
-                    Debug.Log("WALLSTUCK");
+                    ComOptPlugin.LogInfo("WALLSTUCK");
                     base.bodyChunks[1].HardSetPosition(base.bodyChunks[0].pos + Custom.DirVec(base.bodyChunks[0].pos, base.bodyChunks[1].pos) * 2f);
                 }*/
                 if (this.dontGrabStuff > 0)
@@ -349,7 +345,7 @@ namespace OptionalUI
                 {
                     //this.bodyChunks[i].Update();
                     /*
-                    Debug.Log(string.Concat(
+                    ComOptPlugin.LogInfo(string.Concat(
                         "index ", i.ToString(), " pos: ",
                         this.bodyChunks[i].pos.x.ToString("N2"), ", ",
                         this.bodyChunks[i].pos.y.ToString("N2"), " / vel: ",
@@ -446,12 +442,12 @@ namespace OptionalUI
             {
                 if (float.IsNaN(bodyChunk.vel.y))
                 {
-                    Debug.Log("VELY IS NAN");
+                    ComOptPlugin.LogMessage("VELY IS NAN");
                     bodyChunk.vel.y = 0f;
                 }
                 if (float.IsNaN(bodyChunk.vel.x))
                 {
-                    Debug.Log("VELX IS NAN");
+                    ComOptPlugin.LogMessage("VELX IS NAN");
                     bodyChunk.vel.x = 0f;
                 }
                 bodyChunk.vel.y = bodyChunk.vel.y - 1f;
@@ -1349,7 +1345,7 @@ namespace OptionalUI
                     vector2 = pos;
                     pos = this.tail[k].pos;
 
-                    //Debug.Log(string.Concat("Tail ", k," pos: ", this.tail[k].pos.ToString("N2"), " / vel: ", this.tail[k].vel.ToString("N2")));
+                    //ComOptPlugin.LogInfo(string.Concat("Tail ", k," pos: ", this.tail[k].pos.ToString("N2"), " / vel: ", this.tail[k].vel.ToString("N2")));
                 }
 
                 this.blink--;

@@ -133,7 +133,7 @@ namespace OptionalUI
                 //input spotted! ->cursorAlpha = 2.5f;
                 foreach (char c in Input.inputString)
                 {
-                    //Debug.Log(string.Concat("input: ", c));
+                    //ComOptPlugin.LogInfo(string.Concat("input: ", c));
                     if (c == '\b')
                     {
                         cursorAlpha = 2.5f; this.bumpBehav.flash = 2.5f;

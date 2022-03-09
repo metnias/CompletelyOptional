@@ -122,7 +122,7 @@ namespace CompletelyOptional
 
         private static void LogMethodName([System.Runtime.CompilerServices.CallerMemberName] string memberName = "")
         {
-            if (doLog) UnityEngine.Debug.Log(memberName);
+            if (doLog) ComOptPlugin.LogInfo(memberName);
         }
 
         internal static void RunPreSave()
@@ -223,7 +223,7 @@ namespace CompletelyOptional
             // the process goes from game -> dream -> sleepscreen
             // processmanager calls Revert when going into dream, sleepscreen tries to call SaveDeathPersistentProgression
             // to save passage progression shown, but there's nothing in rw.progression.currentSaveState
-            if (ComOptPlugin.rw.progression.currentSaveState == null) { UnityEngine.Debug.Log("CompletelyOptional: No progression to save"); return; }
+            if (ComOptPlugin.rw.progression.currentSaveState == null) { ComOptPlugin.LogMessage("No progression to save"); return; }
 
             if (!(saveAsIfPlayerDied || saveAsIfPlayerQuit))
             {

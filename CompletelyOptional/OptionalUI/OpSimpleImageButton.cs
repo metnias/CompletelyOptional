@@ -78,7 +78,7 @@ namespace OptionalUI
         public void ChangeImage(Texture2D newImage)
         {
             if (!isTexture) { throw new InvalidActionException(this, "You must construct this with Texture2D to use this function", signal); }
-            if (newImage == null) { Debug.LogError("CompletelyOptional: newImage is null in OpSimpleImageButton.ChangeImage!"); return; }
+            if (newImage == null) { ComOptPlugin.LogError("CompletelyOptional: newImage is null in OpSimpleImageButton.ChangeImage!"); return; }
 
             this._size = new Vector2(newImage.width, newImage.height);
             (this.sprite as FTexture).SetTexture(newImage);
