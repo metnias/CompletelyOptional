@@ -8,7 +8,7 @@ namespace CompletelyOptional
     internal class MenuModList : UIelement
     {
         // use Arena's LevelSelector way of doing
-        public MenuModList(MenuTab tab) : base(new Vector2(208f, 60f) - UIelement._offset, new Vector2(250f, 650f))
+        public MenuModList(MenuTab tab) : base(new Vector2(208f, 60f), new Vector2(250f, 650f))
         {
             // position of 26th button, size of mod list
             // actual pos: 193 35; size: 280 700
@@ -30,6 +30,7 @@ namespace CompletelyOptional
             { sideLines[2] = new FSprite("pixel") { anchorX = 0f, anchorY = 0f, scaleX = 2f }; } // Leftside
             else
             { slider = new ListSlider(this); }
+            foreach (FSprite line in sideLines) { line.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey); }
 
             for (int i = 0; i < sideLines.Length; i++) { myContainer.AddChild(sideLines[i]); }
 
@@ -58,7 +59,7 @@ namespace CompletelyOptional
 
         private float abcSlide = 40f, lastAbcSlide = 40f; // -60f (hidden) ~ 40f (slided out)
 
-        private float GetMyAbcSlide(int index, float timeStacker) => Mathf.Clamp(Mathf.Lerp(lastAbcSlide, abcSlide, timeStacker) + index * 2.0f, 0f, 40f);
+        private float GetMyAbcSlide(int index, float timeStacker) => Mathf.Clamp(Mathf.Lerp(lastAbcSlide, abcSlide, timeStacker) + (abcButtons.Length - index) * 2.0f, 0f, 40f);
 
         private float floatScrollPos = 0f, floatScrollVel = 0f;
 
@@ -103,8 +104,8 @@ namespace CompletelyOptional
             float listBtnAddSize = roleButtons[0].bumpBehav.AddSize;
             sideLines[0].x = 265f; sideLines[0].y = -25f;
             sideLines[1].x = 265f; sideLines[1].y = 663.5f + listBtnAddSize;
-            sideLines[0].scaleY = 689.5f - listBtnAddSize;
-            sideLines[1].scaleY = 36.5f - listBtnAddSize;
+            sideLines[0].scaleY = 665.5f - listBtnAddSize;
+            sideLines[1].scaleY = 12.5f - listBtnAddSize;
             if (slider == null)
             {
                 sideLines[2].x = -15f; sideLines[2].y = -25f;
@@ -112,10 +113,13 @@ namespace CompletelyOptional
             }
         }
 
+        protected internal override bool MouseOver => base.MouseOver
+            || (this.MousePos.x < 480f && this.MousePos.y > 140f && this.MousePos.y < 700f);
+
         public override void Update()
         {
             base.Update();
-            bool listFocused = ConfigContainer.focusedElement is IAmPartOfModList;
+            bool listFocused = ConfigContainer.focusedElement is IAmPartOfModList || (MenuMouseMode && MouseOver);
             // abc buttons slide
             lastAbcSlide = abcSlide;
             abcSlide += 4f / UIelement.frameMulti * (listFocused ? 1f : -1f);
@@ -190,13 +194,15 @@ namespace CompletelyOptional
                 {
                     this.labelVer = OpLabel.CreateFLabel(itf.rwMod.Version);
                     this.myContainer.AddChild(this.labelVer);
+                    this.labelVer.y = this.label.y;
+                    this.labelVer.alignment = FLabelAlignment.Right;
                 }
 
                 this.list.menuTab.AddItems(this);
                 OnChange();
             }
 
-            private Vector2 MyPos => list.pos + new Vector2(0f, 650f - (index - list.floatScrollPos) * height);
+            private Vector2 MyPos => list.GetPos() + new Vector2(0f, 650f - (index - list.floatScrollPos) * height);
 
             public const float height = 25f;
 
@@ -222,7 +228,8 @@ namespace CompletelyOptional
                 UpdateColor();
                 base.OnChange();
                 this.label.alignment = FLabelAlignment.Left;
-                if (this.labelVer != null) { this.labelVer.alignment = FLabelAlignment.Right; }
+                this.label.x = 10f;
+                if (this.labelVer != null) { this.labelVer.x = this.size.x; }
 
                 this.rect.Hide();
             }
@@ -231,15 +238,20 @@ namespace CompletelyOptional
             {
                 if (lastFade >= 1f) { return; }
                 base.GrafUpdate(timeStacker);
+                if (greyedOut) { this.label.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.DarkGrey); }
                 this.label.alpha = Mathf.Pow(1f - Mathf.Lerp(lastFade, fade, timeStacker), 2f);
-                if (this.labelVer != null) { this.labelVer.alpha = this.label.alpha; }
+                if (this.labelVer != null)
+                {
+                    this.labelVer.alpha = this.label.alpha;
+                    this.labelVer.color = this.label.color;
+                }
             }
 
             public override void Update()
             {
                 this.lastFade = this.fade;
                 this.fade = Mathf.Clamp01(Mathf.Max(index - list.floatScrollPos, list.floatScrollPos - index - MenuModList.scrollVisible));
-                if (fade >= 1f) { return; }
+                // if (fade >= 1f) { return; }
 
                 base.Update();
                 this._pos = MyPos;
@@ -450,7 +462,7 @@ namespace CompletelyOptional
         internal class ListSlider : OpSlider, IAmPartOfModList
         {
             public ListSlider(MenuModList list)
-                : base(new Vector2(458f, 60f) - UIelement._offset, "_ModList_",
+                : base(new Vector2(458f, 60f), "_ModList_",
                       new IntVector2(0, System.Math.Max(0, ConfigContainer.OptItfs.Length - scrollVisible + 1)),
                       650, true, 0)
             {

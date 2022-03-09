@@ -17,11 +17,12 @@ namespace OptionalUI
 
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
-            this.rect = new DyeableRect(this.myContainer, this.pos, this.size, true);
-            this.rectH = new DyeableRect(this.myContainer, this.pos, this.size, false);
+            this.rect = new DyeableRect(this.myContainer, Vector2.zero, this.size, true);
+            this.rectH = new DyeableRect(this.myContainer, Vector2.zero, this.size, false);
             if (!IsImageButton)
             {
                 this.label = OpLabel.CreateFLabel(text);
+                this.label.alignment = FLabelAlignment.Center;
                 this.myContainer.AddChild(this.label);
                 LabelPlaceAtCenter(this.label, Vector2.zero, this.size);
             }
@@ -68,9 +69,7 @@ namespace OptionalUI
             this._size = new Vector2(Mathf.Max(24f, this.size.x), Mathf.Max(24f, this.size.y)); // Min Size
             base.OnChange();
             if (!IsImageButton) { LabelPlaceAtCenter(this.label, Vector2.zero, this.size); }
-            this.rect.pos = this.pos;
             this.rect.size = this.size;
-            this.rectH.pos = this.pos;
             this.rectH.size = this.size;
         }
 
@@ -83,16 +82,15 @@ namespace OptionalUI
             if (!IsImageButton)
             {
                 this.label.color = this.bumpBehav.GetColor(this.colorEdge);
-                LabelPlaceAtCenter(this.label, Vector2.zero, this.size);
             }
             if (greyedOut)
             {
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
-                this.rectH.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
+                this.rectH.Hide();
                 return;
             }
-
+            this.rectH.Show();
             this.rectH.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
             this.rectH.addSize = new Vector2(-2f, -2f) * this.bumpBehav.AddSize;
             float highlight = this.MouseOver && !this.held ? (0.5f + 0.5f * this.bumpBehav.Sin(10f)) * this.bumpBehav.AddSize : 0f;

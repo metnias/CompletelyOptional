@@ -20,7 +20,7 @@ namespace OptionalUI
             colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
-            this.rect = new DyeableRect(this.myContainer, this.pos, size, true)
+            this.rect = new DyeableRect(this.myContainer, Vector2.zero, size, true)
             {
                 colorEdge = this.colorEdge,
                 colorFill = this.colorFill,
@@ -91,7 +91,6 @@ namespace OptionalUI
         public override void OnChange()
         {
             base.OnChange();
-            this.rect.pos = this.pos;
             this.rect.size = this.size;
         }
     }

@@ -11,6 +11,8 @@ namespace CompletelyOptional
         internal MenuTab() : base(null, "")
         {
             // 171 offset from left
+            this.container.x = 0f; this.container.y = 0f;
+            this.container.MoveToBack();
             isInactive = false;
             modList = new MenuModList(this);
             tabCtrler = new ConfigTabController(this);

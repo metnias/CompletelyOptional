@@ -13,6 +13,7 @@ namespace OptionalUI
         {
             this.container = new FContainer();
             ConfigContainer.instance.Container.AddChild(this.container);
+            this.container.x = _offset.x; this.container.y = _offset.y;
             this.container.isVisible = false;
             this.isInactive = true;
             this.owner = owner;
@@ -22,6 +23,11 @@ namespace OptionalUI
             this.colorButton = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorCanvas = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
         }
+
+        /// <summary>
+        /// Offset from BottomLeft of the screen.
+        /// </summary>
+        public static readonly Vector2 _offset = new Vector2(558.00f, 120.01f);
 
         public readonly OptionInterface owner;
 

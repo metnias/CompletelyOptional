@@ -203,7 +203,7 @@ namespace OptionalUI
             // 300 pixels are added as a safety, in case some elements are slightly off screen
             camPos = horizontal ? new Vector2(10000f, -10000f - 10300f * _camIndex) : new Vector2(10000f + 10300f * _camIndex, 10000f);
 
-            childOffset = camPos - new Vector2(Mathf.Round(_offset.x), Mathf.Round(_offset.y));
+            childOffset = camPos; // - new Vector2(Mathf.Round(_offset.x), Mathf.Round(_offset.y));
 
             colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             colorFill = Color.black;

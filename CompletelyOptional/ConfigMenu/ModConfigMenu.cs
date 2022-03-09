@@ -232,6 +232,19 @@ namespace CompletelyOptional
         public override void Singal(MenuObject sender, string message)
         {
             base.Singal(sender, message);
+            switch (message)
+            {
+                case MenuTab.backSignal:
+                    PlaySound(SoundID.MENU_Switch_Page_Out);
+                    this.manager.RequestMainProcessSwitch(ProcessManager.ProcessID.OptionsMenu);
+                    break;
+
+                case MenuTab.saveSignal:
+                    break;
+
+                case MenuTab.resetSignal:
+                    break;
+            }
         }
 
         #region Aesthetics

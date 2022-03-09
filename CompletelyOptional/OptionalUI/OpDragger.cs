@@ -24,7 +24,7 @@ namespace OptionalUI
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
 
-            this.rect = new DyeableRect(myContainer, this.pos, this.size, true);
+            this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true);
             this.label = OpLabel.CreateFLabel(defaultInt.ToString());
             LabelPlaceAtCenter(this.label, new Vector2(0f, 2f), new Vector2(24f, 20f));
 
@@ -205,7 +205,6 @@ namespace OptionalUI
             if (useCT) { this.label.text = customText[this.GetValueInt() - this.min]; }
             else { this.label.text = value; }
 
-            this.rect.pos = this.pos;
             LabelPlaceAtCenter(this.label, new Vector2(0f, 2f), new Vector2(24f, 20f));
         }
     }

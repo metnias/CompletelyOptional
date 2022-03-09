@@ -37,7 +37,7 @@ namespace OptionalUI
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorText = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
-            this.rect = new DyeableRect(myContainer, this.pos, this.size, true) { fillAlpha = 0.5f };
+            this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true) { fillAlpha = 0.5f };
 
             this.label = OpLabel.CreateFLabel(defaultValue);
             this.label.x = 5f - this._size.x * 0.5f; this.label.y = 10f + (IsUpdown ? 13f : 10f);
@@ -400,7 +400,6 @@ namespace OptionalUI
                 { this.label.text += "#"; }
             }
 
-            this.rect.pos = this.pos;
             this.rect.size = this.size;
             this.label.x = 5f - this._size.x * 0.5f; this.label.y = 10f + (IsUpdown ? 13f : 10f);
             this.cursor.SetPosition(LabelTest.GetWidth(this.label.text) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);

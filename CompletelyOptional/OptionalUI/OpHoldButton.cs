@@ -51,8 +51,8 @@ namespace OptionalUI
             _text = displayText;
             this.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
-            this.rect = new DyeableRect(this.myContainer, this.pos, this.size, true);
-            this.rectH = new DyeableRect(this.myContainer, this.pos, this.size, false);
+            this.rect = new DyeableRect(this.myContainer, Vector2.zero, this.size, true);
+            this.rectH = new DyeableRect(this.myContainer, Vector2.zero, this.size, false);
             this.rectF = new FSprite("pixel", true)
             {
                 anchorX = 0f,
@@ -61,12 +61,13 @@ namespace OptionalUI
                 y = rect.sprites[DyeableRect.MainFillSprite].y,
                 scaleX = 9f,
                 scaleY = rect.sprites[DyeableRect.MainFillSprite].scaleY,
-                color = this.color
+                color = this.color,
+                alpha = 1f
             };
             label = OpLabel.CreateFLabel(text);
             LabelPlaceAtCenter(label, Vector2.zero, this.size);
-            this.myContainer.AddChild(this.label);
             this.myContainer.AddChild(this.rectF);
+            this.myContainer.AddChild(this.label);
         }
 
         private readonly FLabel label;
@@ -103,9 +104,7 @@ namespace OptionalUI
             {
                 this._size = new Vector2(Mathf.Max(24f, this.size.x), Mathf.Max(24f, this.size.y)); // Min Size
                 LabelPlaceAtCenter(label, Vector2.zero, this.size);
-                this.rect.pos = this.pos;
                 this.rect.size = this.size;
-                this.rectH.pos = this.pos;
                 this.rectH.size = this.size;
             }
             if (!isProgress) { label.text = text; }
@@ -170,9 +169,16 @@ namespace OptionalUI
                         this.rect.sprites[this.rect.FillCornerSprite(i)].alpha = 1f;
                         this.rect.sprites[this.rect.FillCornerSprite(i)].color = this.rect.colorEdge;
                     }
-                    this.rectF.x = pos.x + 7f;
-                    this.rectF.y = pos.y;
-                    this.rectF.scaleX = (size.x - 14f) * fill;
+                    this.rect.sprites[this.rect.FillSideSprite(0)].alpha = 1f;
+                    this.rect.sprites[this.rect.FillSideSprite(0)].color = this.rect.colorEdge;
+                    if (fill == 1f)
+                    {
+                        this.rect.sprites[this.rect.FillSideSprite(2)].alpha = 1f;
+                        this.rect.sprites[this.rect.FillSideSprite(2)].color = this.rect.colorEdge;
+                    }
+
+                    this.rectF.x = 7f - this.rect.addSize.x / 2f;
+                    this.rectF.scaleX = (size.x - 14f + this.rect.addSize.x) * fill;
                     this.rectF.scaleY = size.y;
                     this.rectF.color = this.rect.colorEdge;
                     this.rect.sprites[DyeableRect.MainFillSprite].x = (size.x - 14f) * fill + 7f;

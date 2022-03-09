@@ -9,7 +9,7 @@ namespace CompletelyOptional
     /// </summary>
     internal class ConfigTabController : UIelement, ICanBeFocused
     {
-        public ConfigTabController(MenuTab tab) : base(new Vector2(520f, 120f) - UIelement._offset, new Vector2(40f, 600f))
+        public ConfigTabController(MenuTab tab) : base(new Vector2(520f, 120f), new Vector2(40f, 600f))
         {
             tab.AddItems(this);
             tabButtons = new TabSelectButton[tabButtonLimit];
@@ -18,9 +18,9 @@ namespace CompletelyOptional
             scrollButtons[0] = new TabScrollButton(true, this);
             scrollButtons[1] = new TabScrollButton(false, this);
 
-            rectCanvas = new DyeableRect(this.myContainer, new Vector2(543f, 105f) - UIelement._offset - this.pos, new Vector2(630f, 630f), true) { fillAlpha = 0.5f };
+            rectCanvas = new DyeableRect(this.myContainer, new Vector2(543f, 105f) - this._pos, new Vector2(630f, 630f), true) { fillAlpha = 0.5f };
             // author version license: 908 30, 245 86
-            rectPpty = new DyeableRect(this.myContainer, new Vector2(908f, 30f) - UIelement._offset - this.pos, new Vector2(245f, 86f), true) { hiddenSide = DyeableRect.HiddenSide.Top };
+            rectPpty = new DyeableRect(this.myContainer, new Vector2(908f, 30f) - this._pos, new Vector2(245f, 86f), true) { hiddenSide = DyeableRect.HiddenSide.Top };
 
             OnChange();
         }

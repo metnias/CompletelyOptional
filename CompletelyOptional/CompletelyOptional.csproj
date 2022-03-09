@@ -93,7 +93,7 @@
     <None Include="Old_15\OpColorPicker_bak.cs" />
     <Compile Include="OptionalUI\OpSimpleButton.cs" />
     <Compile Include="OptionalUI\OpSimpleImageButton.cs" />
-    <Compile Include="OptionalUI\OpSpriteEditor.cs" />
+    <None Include="OptionalUI\OpSpriteEditor.cs" />
     <Compile Include="OptionalUI\SubObjects\LoremIpsum.cs" />
     <Compile Include="OptionalUI\UItrigger.cs" />
     <Compile Include="OptionInterface\OptionInterface.cs" />

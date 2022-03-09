@@ -24,7 +24,7 @@ namespace OptionalUI
         public UIelement(Vector2 pos, Vector2 size)
         {
             this.isRectangular = true;
-            this._pos = pos + _offset;
+            this._pos = pos;
             this._size = size;
             this.menu = ModConfigMenu.instance;
             this.myContainer = new FContainer();
@@ -44,7 +44,7 @@ namespace OptionalUI
         public UIelement(Vector2 pos, float rad)
         {
             this.isRectangular = false;
-            this._pos = pos + _offset;
+            this._pos = pos;
             this._rad = rad;
             this.menu = ModConfigMenu.instance;
             this.myContainer = new FContainer();
@@ -88,9 +88,9 @@ namespace OptionalUI
         public Vector2 GetPos()
         {
             if (inScrollBox)
-            { return _pos - scrollBox.childOffset - _offset; }
+            { return _pos - scrollBox.childOffset; }
             else
-            { return _pos - _offset; }
+            { return _pos; }
         }
 
         /// <summary>
@@ -102,15 +102,15 @@ namespace OptionalUI
         {
             if (inScrollBox)
             {
-                if (_pos != value + scrollBox.childOffset + _offset)
+                if (_pos != value + scrollBox.childOffset)
                 {
-                    _pos = value + scrollBox.childOffset + _offset;
+                    _pos = value + scrollBox.childOffset + OpTab._offset;
                     OnChange();
                 }
             }
-            else if (_pos != value + _offset)
+            else if (_pos != value)
             {
-                _pos = value + _offset;
+                _pos = value;
                 OnChange();
             }
         }
@@ -198,6 +198,28 @@ namespace OptionalUI
         /// </summary>
         public bool isInactive => hidden || this.tab?.isInactive == true || this.scrollBox?.isInactive == true;
 
+        /// <summary>
+        /// Moves this UIelement to the backmost visually.
+        /// </summary>
+        public void MoveToBack() => this.myContainer.MoveToBack();
+
+        /// <summary>
+        /// Moves this UIelement to the frontmost visually.
+        /// </summary>
+        public void MoveToFront() => this.myContainer.MoveToFront();
+
+        /// <summary>
+        /// Moves this UIelement in front of referenced <see cref="UIelement"/> visually.
+        /// </summary>
+        /// <param name="reference">Target</param>
+        public void MoveInFrontOfElement(UIelement reference) => this.myContainer.MoveInFrontOfOtherNode(reference.myContainer);
+
+        /// <summary>
+        /// Moves this UIelement behind referenced <see cref="UIelement"/> visually.
+        /// </summary>
+        /// <param name="reference">Target</param>
+        public void MoveBehindElement(UIelement reference) => this.myContainer.MoveBehindOtherNode(reference.myContainer);
+
         #endregion Shallow
 
         // Codes for modders who makes custom UIelement
@@ -217,7 +239,6 @@ namespace OptionalUI
         /// </summary>
         public virtual void Update()
         {
-            this.lastScreenPos = ScreenPos;
             bool showDesc = !string.IsNullOrEmpty(this.description) && !isInactive
                  && (this.MouseOver || (this is ICanBeFocused && (this as ICanBeFocused).Focused()));
             if (showDesc) { menu.ShowDescription(this.description); }
@@ -242,7 +263,7 @@ namespace OptionalUI
         /// </summary>
         public static void PlaySound(SoundID soundID, float pan, float vol, float pitch) => ConfigContainer.PlaySound(soundID, pan, vol, pitch);
 
-        protected Vector2 DrawPos(float timeStacker) => Vector2.Lerp(this.lastScreenPos, this.ScreenPos, timeStacker) + new Vector2(0.01f, 0.01f);
+        protected Vector2 DrawPos(float timeStacker) => this.ScreenPos + new Vector2(0.01f, 0.01f);
 
         protected Vector2 _pos;
         protected Vector2 _size;
@@ -269,11 +290,6 @@ namespace OptionalUI
         /// If this is set, this element cannot change its <see cref="rad"/>.
         /// </summary>
         protected float? fixedRad;
-
-        /// <summary>
-        /// Offset from BottomLeft of the screen.
-        /// </summary>
-        public static readonly Vector2 _offset = new Vector2(558.00f, 120.01f);
 
         /// <summary>
         /// OpTab this element is belong to.
@@ -354,8 +370,6 @@ namespace OptionalUI
                 return owner.ScreenPos + this._pos;
             }
         }
-
-        private Vector2 lastScreenPos;
 
         /// <summary>
         /// Set <see cref="FLabel"/>'s pos in the Center of the size

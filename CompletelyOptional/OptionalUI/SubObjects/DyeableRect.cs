@@ -17,8 +17,11 @@ namespace OptionalUI
         /// </code></remarks>
         public DyeableRect(FContainer container, Vector2 pos, Vector2 size, bool filled = true)
         {
-            this.container = container;
+            this.container = new FContainer();
+            container.AddChild(this.container);
             this.pos = pos;
+            this.size = size;
+            this.container.x = this.pos.x; this.container.y = this.pos.y;
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
             this.filled = filled;
@@ -80,22 +83,20 @@ namespace OptionalUI
 
         protected readonly FContainer container;
 
-        /// <summary>
-        ///
-        /// </summary>
         /// <param name="side">Left, Top, Right, Bottom</param>
         /// <returns></returns>
         protected int SideSprite(int side) => ((!this.filled) ? 0 : 9) + side;
 
-        /// <summary>
-        ///
-        /// </summary>
         /// <param name="corner">BottomLeft, TopLeft, TopRight, BottomRight</param>
         /// <returns></returns>
         protected int CornerSprite(int corner) => ((!this.filled) ? 0 : 9) + 4 + corner;
 
+        /// <param name="side">Left, Top, Right, Bottom</param>
+        /// <returns></returns>
         protected internal int FillSideSprite(int side) => side;
 
+        /// <param name="corner">BottomLeft, TopLeft, TopRight, BottomRight</param>
+        /// <returns></returns>
         protected internal int FillCornerSprite(int corner) => 4 + corner;
 
         protected internal const int MainFillSprite = 8;
@@ -143,6 +144,9 @@ namespace OptionalUI
             Bottom
         }
 
+        /// <summary>
+        /// Alpha of backdrop fill
+        /// </summary>
         public float fillAlpha;
 
         private float lastFillAlpha;
@@ -155,6 +159,7 @@ namespace OptionalUI
             if (hidden) { return; }
             lastFillAlpha = fillAlpha;
             lastAddSize = addSize;
+            this.container.x = this.pos.x; this.container.y = this.pos.y;
         }
 
         private int[] sideSprites()
@@ -182,33 +187,34 @@ namespace OptionalUI
         public void GrafUpdate(float timeStacker)
         {
             if (hidden) { return; }
+            this.container.x = this.pos.x; this.container.y = this.pos.y;
 
             #region RoundedRect
 
-            pos -= Vector2.Lerp(this.lastAddSize, this.addSize, timeStacker) / 2f;
-            size += Vector2.Lerp(this.lastAddSize, this.addSize, timeStacker);
-            pos.x = Mathf.Floor(pos.x) + 0.41f;
-            pos.y = Mathf.Floor(pos.y) + 0.41f;
-            this.sprites[this.SideSprite(0)].x = pos.x + 1f; // Left
-            this.sprites[this.SideSprite(0)].y = pos.y + 7f;
-            this.sprites[this.SideSprite(0)].scaleY = size.y - 14f;
-            this.sprites[this.SideSprite(1)].x = pos.x + 7f; // Top
-            this.sprites[this.SideSprite(1)].y = pos.y + size.y - 1f;
-            this.sprites[this.SideSprite(1)].scaleX = size.x - 14f;
-            this.sprites[this.SideSprite(2)].x = pos.x + size.x - 1f; // Right
-            this.sprites[this.SideSprite(2)].y = pos.y + 7f;
-            this.sprites[this.SideSprite(2)].scaleY = size.y - 14f;
-            this.sprites[this.SideSprite(3)].x = pos.x + 7f; // Bottom
-            this.sprites[this.SideSprite(3)].y = pos.y + 1f;
-            this.sprites[this.SideSprite(3)].scaleX = size.x - 14f;
-            this.sprites[this.CornerSprite(0)].x = pos.x + 3.5f; // BottomLeft
-            this.sprites[this.CornerSprite(0)].y = pos.y + 3.5f;
-            this.sprites[this.CornerSprite(1)].x = pos.x + 3.5f; // TopLeft
-            this.sprites[this.CornerSprite(1)].y = pos.y + size.y - 3.5f;
-            this.sprites[this.CornerSprite(2)].x = pos.x + size.x - 3.5f; // TopRight
-            this.sprites[this.CornerSprite(2)].y = pos.y + size.y - 3.5f;
-            this.sprites[this.CornerSprite(3)].x = pos.x + size.x - 3.5f; // BottomRight
-            this.sprites[this.CornerSprite(3)].y = pos.y + 3.5f;
+            Vector2 drawPos = -Vector2.Lerp(this.lastAddSize, this.addSize, timeStacker) / 2f;
+            Vector2 drawSize = size + Vector2.Lerp(this.lastAddSize, this.addSize, timeStacker);
+            drawPos.x = Mathf.Floor(drawPos.x) + 0.41f;
+            drawPos.y = Mathf.Floor(drawPos.y) + 0.41f;
+            this.sprites[this.SideSprite(0)].x = drawPos.x + 1f; // Left
+            this.sprites[this.SideSprite(0)].y = drawPos.y + 7f;
+            this.sprites[this.SideSprite(0)].scaleY = drawSize.y - 14f;
+            this.sprites[this.SideSprite(1)].x = drawPos.x + 7f; // Top
+            this.sprites[this.SideSprite(1)].y = drawPos.y + drawSize.y - 1f;
+            this.sprites[this.SideSprite(1)].scaleX = drawSize.x - 14f;
+            this.sprites[this.SideSprite(2)].x = drawPos.x + drawSize.x - 1f; // Right
+            this.sprites[this.SideSprite(2)].y = drawPos.y + 7f;
+            this.sprites[this.SideSprite(2)].scaleY = drawSize.y - 14f;
+            this.sprites[this.SideSprite(3)].x = drawPos.x + 7f; // Bottom
+            this.sprites[this.SideSprite(3)].y = drawPos.y + 1f;
+            this.sprites[this.SideSprite(3)].scaleX = drawSize.x - 14f;
+            this.sprites[this.CornerSprite(0)].x = drawPos.x + 3.5f; // BottomLeft
+            this.sprites[this.CornerSprite(0)].y = drawPos.y + 3.5f;
+            this.sprites[this.CornerSprite(1)].x = drawPos.x + 3.5f; // TopLeft
+            this.sprites[this.CornerSprite(1)].y = drawPos.y + drawSize.y - 3.5f;
+            this.sprites[this.CornerSprite(2)].x = drawPos.x + drawSize.x - 3.5f; // TopRight
+            this.sprites[this.CornerSprite(2)].y = drawPos.y + drawSize.y - 3.5f;
+            this.sprites[this.CornerSprite(3)].x = drawPos.x + drawSize.x - 3.5f; // BottomRight
+            this.sprites[this.CornerSprite(3)].y = drawPos.y + 3.5f;
             Color color = new Color(1f, 1f, 1f);
             for (int i = 0; i < 4; i++)
             {
@@ -217,30 +223,30 @@ namespace OptionalUI
             }
             if (this.filled)
             {
-                this.sprites[this.FillSideSprite(0)].x = pos.x + 4f;
-                this.sprites[this.FillSideSprite(0)].y = pos.y + 7f;
-                this.sprites[this.FillSideSprite(0)].scaleY = size.y - 14f;
-                this.sprites[this.FillSideSprite(1)].x = pos.x + 7f;
-                this.sprites[this.FillSideSprite(1)].y = pos.y + size.y - 4f;
-                this.sprites[this.FillSideSprite(1)].scaleX = size.x - 14f;
-                this.sprites[this.FillSideSprite(2)].x = pos.x + size.x - 4f;
-                this.sprites[this.FillSideSprite(2)].y = pos.y + 7f;
-                this.sprites[this.FillSideSprite(2)].scaleY = size.y - 14f;
-                this.sprites[this.FillSideSprite(3)].x = pos.x + 7f;
-                this.sprites[this.FillSideSprite(3)].y = pos.y + 4f;
-                this.sprites[this.FillSideSprite(3)].scaleX = size.x - 14f;
-                this.sprites[this.FillCornerSprite(0)].x = pos.x + 3.5f;
-                this.sprites[this.FillCornerSprite(0)].y = pos.y + 3.5f;
-                this.sprites[this.FillCornerSprite(1)].x = pos.x + 3.5f;
-                this.sprites[this.FillCornerSprite(1)].y = pos.y + size.y - 3.5f;
-                this.sprites[this.FillCornerSprite(2)].x = pos.x + size.x - 3.5f;
-                this.sprites[this.FillCornerSprite(2)].y = pos.y + size.y - 3.5f;
-                this.sprites[this.FillCornerSprite(3)].x = pos.x + size.x - 3.5f;
-                this.sprites[this.FillCornerSprite(3)].y = pos.y + 3.5f;
-                this.sprites[MainFillSprite].x = pos.x + 7f;
-                this.sprites[MainFillSprite].y = pos.y + 7f;
-                this.sprites[MainFillSprite].scaleX = size.x - 14f;
-                this.sprites[MainFillSprite].scaleY = size.y - 14f;
+                this.sprites[this.FillSideSprite(0)].x = drawPos.x + 4f;
+                this.sprites[this.FillSideSprite(0)].y = drawPos.y + 7f;
+                this.sprites[this.FillSideSprite(0)].scaleY = drawSize.y - 14f;
+                this.sprites[this.FillSideSprite(1)].x = drawPos.x + 7f;
+                this.sprites[this.FillSideSprite(1)].y = drawPos.y + drawSize.y - 4f;
+                this.sprites[this.FillSideSprite(1)].scaleX = drawSize.x - 14f;
+                this.sprites[this.FillSideSprite(2)].x = drawPos.x + drawSize.x - 4f;
+                this.sprites[this.FillSideSprite(2)].y = drawPos.y + 7f;
+                this.sprites[this.FillSideSprite(2)].scaleY = drawSize.y - 14f;
+                this.sprites[this.FillSideSprite(3)].x = drawPos.x + 7f;
+                this.sprites[this.FillSideSprite(3)].y = drawPos.y + 4f;
+                this.sprites[this.FillSideSprite(3)].scaleX = drawSize.x - 14f;
+                this.sprites[this.FillCornerSprite(0)].x = drawPos.x + 3.5f;
+                this.sprites[this.FillCornerSprite(0)].y = drawPos.y + 3.5f;
+                this.sprites[this.FillCornerSprite(1)].x = drawPos.x + 3.5f;
+                this.sprites[this.FillCornerSprite(1)].y = drawPos.y + drawSize.y - 3.5f;
+                this.sprites[this.FillCornerSprite(2)].x = drawPos.x + drawSize.x - 3.5f;
+                this.sprites[this.FillCornerSprite(2)].y = drawPos.y + drawSize.y - 3.5f;
+                this.sprites[this.FillCornerSprite(3)].x = drawPos.x + drawSize.x - 3.5f;
+                this.sprites[this.FillCornerSprite(3)].y = drawPos.y + 3.5f;
+                this.sprites[MainFillSprite].x = drawPos.x + 7f;
+                this.sprites[MainFillSprite].y = drawPos.y + 7f;
+                this.sprites[MainFillSprite].scaleX = drawSize.x - 14f;
+                this.sprites[MainFillSprite].scaleY = drawSize.y - 14f;
                 for (int j = 0; j < 9; j++)
                 {
                     this.sprites[j].alpha = Mathf.Lerp(this.lastFillAlpha, this.fillAlpha, timeStacker);
@@ -286,7 +292,7 @@ namespace OptionalUI
         public void Hide()
         {
             if (hidden) { return; }
-            foreach (FSprite s in this.sprites) { s.isVisible = false; }
+            this.container.isVisible = false;
             hidden = true;
         }
 
@@ -296,13 +302,7 @@ namespace OptionalUI
         public void Show()
         {
             if (!hidden) { return; }
-            foreach (FSprite s in this.sprites) { s.isVisible = true; }
-            if (hiddenSide != HiddenSide.None)
-            {
-                int[] hide = sideSprites();
-                for (int i = 0; i < hide.Length; i++)
-                { this.sprites[hide[i]].isVisible = false; }
-            }
+            this.container.isVisible = true;
             hidden = false;
         }
     }

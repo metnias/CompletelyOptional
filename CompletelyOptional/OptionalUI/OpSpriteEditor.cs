@@ -133,7 +133,7 @@ namespace OptionalUI
             this.held = true;
             this._descContext = "";
 
-            this.rect.pos = _offset + editorOffset;
+            this.rect.pos = editorOffset;
             this.rect.size = editorSize;
             foreach (FSprite spr in this.rect.sprites) { spr.MoveToFront(); }
             this.myContainer.MoveToFront();

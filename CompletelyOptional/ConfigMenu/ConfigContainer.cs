@@ -218,11 +218,12 @@ namespace CompletelyOptional
 
                 // Save indexes of mods starting with ABC
                 if (i == 0) { continue; } //Ignore InternalOI_Stats
-                if (name[0] < (char)a) { continue; }
-                if (name[0] == (char)a) { OptItfABC[a - 97] = i; a++; continue; }
-                while (name[0] > (char)a && a < 123)
-                { OptItfABC[a - 97 + 1] = -1; a++; }
+                if (name[0] < a) { continue; }
+                while (name[0] > a && a < 123)
+                { OptItfABC[a - 97] = -1; a++; }
+                if (name[0] == a) { OptItfABC[a - 97] = i; a++; continue; }
             }
+            while (a < 123) { OptItfABC[a - 97] = -1; a++; }
 
         #endregion Regist
 
