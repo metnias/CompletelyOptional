@@ -1,4 +1,5 @@
 ﻿using OptionalUI;
+using OptionalUI.ValueTypes;
 using RWCustom;
 using UnityEngine;
 
@@ -26,12 +27,9 @@ namespace CompletelyOptional
             sideLines[0] = new FSprite("pixel") { anchorX = 0f, anchorY = 0f, scaleX = 2f }; // Right Btm
             sideLines[1] = new FSprite("pixel") { anchorX = 0f, anchorY = 0f, scaleX = 2f }; // Right Top
             if (scrollFit)
-            {
-                sideLines[2] = new FSprite("pixel") { anchorX = 0f, anchorY = 0f, scaleX = 2f }; // Leftside
-            }
+            { sideLines[2] = new FSprite("pixel") { anchorX = 0f, anchorY = 0f, scaleX = 2f }; } // Leftside
             else
-            { // Add subtle slider
-            }
+            { slider = new ListSlider(this); }
 
             for (int i = 0; i < sideLines.Length; i++) { myContainer.AddChild(sideLines[i]); }
 
@@ -61,6 +59,7 @@ namespace CompletelyOptional
         private readonly FSprite backSide;
         private readonly FSprite[] sideLines;
         private readonly ListButton[] roleButtons;
+        private readonly ListSlider slider;
         private int scrollPos = 0;
         private const int scrollVisible = 26;
 
@@ -93,8 +92,16 @@ namespace CompletelyOptional
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);
-            sideLines[0].x = 250f;
-            sideLines[0].y = 0f;
+            float listBtnAddSize = roleButtons[0].bumpBehav.AddSize;
+            sideLines[0].x = 265f; sideLines[0].y = -25f;
+            sideLines[1].x = 265f; sideLines[1].y = 663.5f + listBtnAddSize;
+            sideLines[0].scaleY = 689.5f - listBtnAddSize;
+            sideLines[1].scaleY = 36.5f - listBtnAddSize;
+            if (slider == null)
+            {
+                sideLines[2].x = -15f; sideLines[2].y = -25f;
+                sideLines[2].scaleY = 700f;
+            }
         }
 
         public override void Update()
@@ -159,6 +166,7 @@ namespace CompletelyOptional
                 this.index = index + 1; // starts from 1; index 0 is for StatOI
                 this.list.menuTab.AddItems(this);
                 this._pos = MyPos;
+                this.clickSound = SoundID.MENU_Player_Join_Game;
 
                 // Get Type
                 if (itf is InternalOI)
@@ -277,11 +285,14 @@ namespace CompletelyOptional
                 switch (this.role)
                 {
                     case Role.Stat:
-                        this._pos = new Vector2(462f, 700f); break;
+                        this._pos = new Vector2(462f, 700f);
+                        this.clickSound = SoundID.MENU_Switch_Arena_Gametype; break;
                     case Role.ScrollUp:
-                        this._pos = new Vector2(321f, 720f); break;
+                        this._pos = new Vector2(321f, 720f);
+                        this.clickSound = SoundID.MENU_First_Scroll_Tick; break;
                     case Role.ScrollDown:
-                        this._pos = new Vector2(321f, 26f); this.sprite.rotation = 180f; break;
+                        this._pos = new Vector2(321f, 26f); this.sprite.rotation = 180f;
+                        this.clickSound = SoundID.MENU_First_Scroll_Tick; break;
                 }
                 OnChange();
             }
@@ -295,7 +306,7 @@ namespace CompletelyOptional
 
             public readonly Role role;
 
-            public readonly MenuModList list;
+            private readonly MenuModList list;
 
             private static string RoleSprite(Role role)
             {
@@ -333,7 +344,31 @@ namespace CompletelyOptional
                         greyedOut = list.scrollPos > list.modButtons.Length - MenuModList.scrollVisible + 1;
                         break;
                 }
+                if (role != Role.Stat)
+                {
+                    if (MenuMouseMode)
+                    {
+                        if (this.MouseOver && Input.GetMouseButton(0)) { goto held; }
+                    }
+                    else
+                    {
+                        if (this.Focused() && CtlrInput.jmp) { goto held; }
+                    }
+                    heldCounter = 0;
+                    return;
+
+                held:
+                    heldCounter++;
+                    if (this.heldCounter > 20 && this.heldCounter % 4 == 0)
+                    {
+                        PlaySound(SoundID.MENU_Scroll_Tick);
+                        this.Signal();
+                        this.bumpBehav.sin = 0.5f;
+                    }
+                }
             }
+
+            private int heldCounter;
 
             public override void Signal()
             {
@@ -351,12 +386,13 @@ namespace CompletelyOptional
                 this.text = represent.ToString();
                 this.list.menuTab.AddItems(this);
                 this._pos = new Vector2(440f, 150f + (25 - index) * 20f); // x: 480f
+                this.clickSound = SoundID.MENU_First_Scroll_Tick;
 
                 this.unused = ConfigContainer.OptItfABC[index] < 0;
                 OnChange();
             }
 
-            public readonly MenuModList list;
+            private readonly MenuModList list;
 
             public readonly int index;
             public readonly char represent;
@@ -395,6 +431,64 @@ namespace CompletelyOptional
             public override void Signal()
             {
                 list.Signal(this, (int)index);
+            }
+        }
+
+        internal class ListSlider : OpSlider, IAmPartOfModList
+        {
+            public ListSlider(MenuModList list)
+                : base(new Vector2(458f, 60f) - UIelement._offset, "_ModList_",
+                      new IntVector2(0, System.Math.Max(0, ConfigContainer.OptItfs.Length - scrollVisible + 1)),
+                      650, true, 0)
+            {
+                this.list = list;
+                this.subtleCircle = new FSprite("Menu_Subtle_Slider_Nob")
+                { anchorX = 0.5f, anchorY = 0.5f };
+                this.myContainer.AddChild(this.subtleCircle);
+            }
+
+            private const float subSize = 10f;
+
+            private readonly MenuModList list;
+            private readonly FSprite subtleCircle;
+
+            public override bool CurrentlyFocusableMouse => base.CurrentlyFocusableMouse;
+            public override bool CurrentlyFocusableNonMouse => false;
+
+            protected internal override bool MouseOver => Custom.DistLess(new Vector2(0f, this.subtleCircle.y), this.MousePos, subSize / 2f);
+
+            public override void GrafUpdate(float dt)
+            {
+                base.GrafUpdate(dt);
+                this.rect.Hide();
+                this.lineSprites[0].isVisible = false; this.lineSprites[3].isVisible = false;
+                this.subtleCircle.x = 0f; this.subtleCircle.y = this.mul * (float)(list.floatScrollPos - this.min);
+                this.subtleCircle.scale = 10f / subSize;
+                this.subtleCircle.color = this.rect.colorEdge;
+
+                this.lineSprites[1].isVisible = true; this.lineSprites[1].y = -25f;
+                this.lineSprites[2].isVisible = true;
+                float cutPos = this.subtleCircle.y - subSize / 2f;
+                this.lineSprites[1].scaleY = 25f + cutPos;
+                this.lineSprites[2].y = cutPos + subSize;
+                this.lineSprites[2].scaleY = 700f - (cutPos + subSize);
+            }
+
+            public override void Update()
+            {
+                base.Update();
+
+                if (!this.held) { this.SetValueInt(list.scrollPos); }
+            }
+
+            public override void OnChange()
+            {
+                base.OnChange();
+                if (this.held)
+                {
+                    list.scrollPos = this.GetValueInt();
+                    list.ClampScrollPos();
+                }
             }
         }
 

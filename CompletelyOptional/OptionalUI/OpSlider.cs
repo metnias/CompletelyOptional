@@ -121,13 +121,13 @@ namespace OptionalUI
         /// </summary>
         public int wheelTick;
 
-        internal readonly int min, max;
-        internal readonly bool vertical;
-        internal float mul;
+        protected readonly int min, max;
+        public readonly bool vertical;
+        protected float mul;
 
-        internal FSprite[] lineSprites;
-        internal DyeableRect rect;
-        internal FLabel label;
+        protected FSprite[] lineSprites;
+        public DyeableRect rect { get; protected set; }
+        public FLabel label { get; protected set; }
 
         string IValueType.valueString { get => this.value; set => this.value = value; }
 
@@ -158,6 +158,7 @@ namespace OptionalUI
                 if (!tickSlider)
                 {
                     float p = this.mul * (float)(valueInt - this.min);
+                    if (MenuMouseMode && this.held) { p = MousePos.x; }
                     this.rect.pos.y = 4f;
                     this.rect.pos.x = p - 8f;
                     this.rect.addSize = new Vector2(4f, 4f) * add;
@@ -198,6 +199,7 @@ namespace OptionalUI
                 if (!tickSlider)
                 {
                     float p = this.mul * (float)(valueInt - this.min);
+                    if (MenuMouseMode && this.held) { p = MousePos.y; }
                     this.rect.pos.x = 4f;
                     this.rect.pos.y = p - 8f;
                     this.rect.addSize = new Vector2(4f, 4f) * add;
@@ -318,8 +320,61 @@ namespace OptionalUI
             }
             else
             {
+                if (this.Focused())
+                {
+                    if (vertical)
+                    {
+                        if (menu.input.y != 0 && menu.lastInput.y != menu.input.y)
+                        {
+                            int newVal = Custom.IntClamp(this.GetValueInt() + menu.input.y, min, max);
+                            if (newVal != this.GetValueInt()) { PlaySound(SoundID.MENU_First_Scroll_Tick); this.SetValueInt(newVal); }
+                            else { PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard); }
+                        }
+                        if (menu.input.y != 0 && menu.lastInput.y == menu.input.y && menu.input.x == 0)
+                        { this.scrollInitDelay++; }
+                        else if (menu.input.x != 0 && menu.lastInput.x == menu.input.y && menu.input.y == 0)
+                        { this.scrollInitDelay++; }
+                        else
+                        { this.scrollInitDelay = 0; }
+                        if (this.scrollInitDelay > ModConfigMenu.DASinit)
+                        {
+                            this.scrollDelay++;
+                            if (this.scrollDelay > ModConfigMenu.DASdelay)
+                            {
+                                this.scrollDelay = 0;
+                                if (menu.input.y != 0 && menu.lastInput.y == menu.input.y)
+                                { this.SetValueInt(this.GetValueInt() + menu.input.y); }
+                            }
+                        }
+                        else { this.scrollDelay = 0; }
+                    }
+                    else
+                    {
+                        if (menu.input.x != 0 && menu.lastInput.x != menu.input.x)
+                        { this.SetValueInt(this.GetValueInt() + menu.input.x); }
+                        if (menu.input.y != 0 && menu.lastInput.y == menu.input.y && menu.input.x == 0)
+                        { this.scrollInitDelay++; }
+                        else if (menu.input.x != 0 && menu.lastInput.x == menu.input.y && menu.input.y == 0)
+                        { this.scrollInitDelay++; }
+                        else
+                        { this.scrollInitDelay = 0; }
+                        if (this.scrollInitDelay > ModConfigMenu.DASinit)
+                        {
+                            this.scrollDelay++;
+                            if (this.scrollDelay > ModConfigMenu.DASdelay)
+                            {
+                                this.scrollDelay = 0;
+                                if (menu.input.x != 0 && menu.lastInput.x == menu.input.x)
+                                { this.SetValueInt(this.GetValueInt() + menu.input.x); }
+                            }
+                        }
+                        else { this.scrollDelay = 0; }
+                    }
+                }
             }
         }
+
+        private float scrollInitDelay, scrollDelay;
 
         public override void OnChange()
         {

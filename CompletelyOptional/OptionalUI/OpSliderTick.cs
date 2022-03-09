@@ -36,13 +36,13 @@ namespace OptionalUI
                 this.Nobs[i] = new FSprite("pixel", true) { anchorX = 0.5f, anchorY = 0.5f };
                 this.myContainer.AddChild(this.Nobs[i]);
             }
-            this.Circle = new FSprite("buttonCircleB", true) { anchorX = 0.5f, anchorY = 0.5f }; //"buttonCircleB"
-            this.myContainer.AddChild(this.Circle);
+            this.circle = new FSprite("buttonCircleB", true) { anchorX = 0.5f, anchorY = 0.5f }; //"buttonCircleB"
+            this.myContainer.AddChild(this.circle);
             this.myContainer.sortZ = this.Nobs[0].sortZ + 1f;
         }
 
-        private readonly FSprite[] Nobs;
-        private readonly FSprite Circle;
+        protected readonly FSprite[] Nobs;
+        protected readonly FSprite circle;
 
         public override void GrafUpdate(float timeStacker)
         {
@@ -62,10 +62,10 @@ namespace OptionalUI
                 }
                 this.Nobs[i].color = this.lineSprites[0].color;
             }
-            if (this.vertical) { this.Circle.x = 15.01f; this.Circle.y = this.mul * (this.GetValueInt() - this.min) + 0.01f; }
-            else { this.Circle.y = 15.01f; this.Circle.x = this.mul * (this.GetValueInt() - this.min) + 0.01f; }
-            this.Circle.scale = 1.0f + s * 0.3f;
-            this.Circle.color = this.bumpBehav.GetColor(this.colorEdge);
+            if (this.vertical) { this.circle.x = 15.01f; this.circle.y = this.mul * (this.GetValueInt() - this.min) + 0.01f; }
+            else { this.circle.y = 15.01f; this.circle.x = this.mul * (this.GetValueInt() - this.min) + 0.01f; }
+            this.circle.scale = 1.0f + s * 0.3f;
+            this.circle.color = this.bumpBehav.GetColor(this.colorEdge);
         }
 
         protected override void LineVisibility(Vector2 cutPos, Vector2 cutSize)

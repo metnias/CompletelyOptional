@@ -28,6 +28,11 @@ namespace OptionalUI
         }
 
         /// <summary>
+        /// Click sound to play. In default this is <see cref="SoundID.MENU_Button_Standard_Button_Pressed"/>.
+        /// </summary>
+        public SoundID clickSound = SoundID.MENU_Button_Standard_Button_Pressed;
+
+        /// <summary>
         /// Text inside the button
         /// </summary>
         public string text
@@ -116,7 +121,7 @@ namespace OptionalUI
                         if (this.held)
                         {
                             this.held = false;
-                            PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);
+                            PlaySound(clickSound);
                             this.Signal();
                         }
                     }
@@ -135,7 +140,7 @@ namespace OptionalUI
                         if (!CtlrInput.jmp)
                         {
                             this.held = false;
-                            PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);
+                            PlaySound(clickSound);
                             this.Signal();
                         }
                     }
