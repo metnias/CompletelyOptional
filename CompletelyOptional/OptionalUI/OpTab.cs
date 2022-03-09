@@ -11,10 +11,13 @@ namespace OptionalUI
         /// </summary>
         public OpTab(OptionInterface owner, string name = "")
         {
+            this.container = new FContainer();
+            ConfigContainer.instance.Container.AddChild(this.container);
+            this.container.isVisible = false;
+            this.isInactive = true;
             this.owner = owner;
             this.items = new List<UIelement>();
             this.focusables = new List<UIelement>();
-            this.isInactive = true;
             this.name = name;
             this.colorButton = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorCanvas = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
@@ -52,6 +55,7 @@ namespace OptionalUI
             if (this.items.Contains(element)) { return; }
             if (element.tab != null && element.tab != this) { RemoveItemsFromTab(element); }
             this.items.Add(element);
+            this.container.AddChild(element.myContainer);
             if (element is ICanBeFocused) { this.focusables.Add(element); }
             element.SetTab(this);
         }
@@ -80,10 +84,11 @@ namespace OptionalUI
             if (item.inScrollBox) { item.RemoveFromScrollBox(); }
             while (this.items.Contains(item))
             { this.items.Remove(item); }
+            this.container.RemoveChild(item.myContainer);
             while (this.focusables.Contains(item)) { this.focusables.Remove(item); }
             item.SetTab(null);
             if (ConfigContainer.focusedElement == item)
-            { ModConfigMenu.instance.cfgContainer.FocusNewElementInDirection(new RWCustom.IntVector2(-1, 0)); }
+            { ConfigContainer.instance.FocusNewElementInDirection(new RWCustom.IntVector2(-1, 0)); }
         }
 
         /// <summary>
@@ -139,6 +144,8 @@ namespace OptionalUI
 
         #region Internal
 
+        internal readonly FContainer container;
+
         /// <summary>
         /// Graphical Update of OpTab called by <see cref="CompletelyOptional.ConfigContainer.GrafUpdate"/>. Calls <see cref="UIelement.GrafUpdate"/>.
         /// </summary>
@@ -159,6 +166,7 @@ namespace OptionalUI
         internal void Deactivate()
         {
             this.isInactive = true;
+            this.container.isVisible = false;
             foreach (UIelement element in this.items)
             { element.Deactivate(); }
         }
@@ -166,6 +174,7 @@ namespace OptionalUI
         internal void Activate()
         {
             this.isInactive = false;
+            this.container.isVisible = true;
             foreach (UIelement element in this.items)
             { element.Reactivate(); }
         }
@@ -217,6 +226,8 @@ namespace OptionalUI
         {
             foreach (UIelement item in this.items)
             { item.Unload(); }
+            this.container.RemoveAllChildren();
+            this.container.RemoveFromContainer();
         }
 
         #endregion Internal

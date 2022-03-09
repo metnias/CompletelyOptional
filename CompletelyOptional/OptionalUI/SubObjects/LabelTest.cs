@@ -39,7 +39,7 @@ namespace OptionalUI
                 _charLimB = Mathf.FloorToInt(60000f / (_lineHeightB * _charMeanB));
                 _font = (string)typeof(FLabel).GetField("_fontName", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(tester.label);
                 _fontB = (string)typeof(FLabel).GetField("_fontName", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance).GetValue(testerB.label);
-                CompletelyOptional.ComOptPlugin.LogInfo($"Label th: {_textHeight:0.0} thB: {_textHeightB:0.00} / lh: {_lineHeight:0.0} lhB: {_lineHeightB:0.0} / cm: {_charMean:0.0} cmB: {_charMeanB:0.0} / cl: {_charLim} clB: {_charLimB}");
+                CompletelyOptional.ComOptPlugin.LogInfo($"LabelTest Initialized) th: {_textHeight:0.0} thB: {_textHeightB:0.00} / lh: {_lineHeight:0.0} lhB: {_lineHeightB:0.0} / cm: {_charMean:0.0} cmB: {_charMeanB:0.0} / cl: {_charLim} clB: {_charLimB}");
             }
         }
 
@@ -133,11 +133,20 @@ namespace OptionalUI
         /// <returns></returns>
         public static string TrimText(string text, float width, bool addDots = false, bool bigText = false)
         {
-            if (addDots) { omit[bigText ? 1 : 0] = omit[bigText ? 1 : 0] < 0f ? GetWidth(omitDots, bigText) : omit[bigText ? 1 : 0]; }
+            float o = 0f;
+            if (addDots)
+            {
+                o = omit[(bigText ? 1 : 0) + (HasNonASCIIChars(text) ? 2 : 0)];
+                if (o < 0f)
+                {
+                    o = !HasNonASCIIChars(text) ? GetWidth(omitDots, bigText) : (GetWidth("à" + omitDots, bigText) - GetWidth("à", bigText));
+                    omit[(bigText ? 1 : 0) + (HasNonASCIIChars(text) ? 2 : 0)] = o;
+                }
+            }
             float curWidth = GetWidth(text, bigText);
             if (curWidth < width) { return text; }
 
-            if (addDots) { width -= omit[bigText ? 1 : 0]; }
+            if (addDots) { width -= o; }
             if (curWidth > width * 2f)
             {
                 for (int i = 0; i < text.Length; i++)
@@ -152,7 +161,7 @@ namespace OptionalUI
         }
 
         private const string omitDots = "...";
-        private static float[] omit = new float[] { -1f, -1f };
+        private static readonly float[] omit = new float[] { -1f, -1f, -1f, -1f };
 
         /// <summary>
         /// Text wrapper by <c>dual curly potato noodles</c>

@@ -5,14 +5,18 @@ using System.IO;
 using System.Reflection;
 using UnityEngine;
 
-[assembly: AssemblyVersion(CompletelyOptional.ComOptPlugin.ver)]
-[assembly: AssemblyFileVersion(CompletelyOptional.ComOptPlugin.ver)]
+[assembly: AssemblyVersion(CompletelyOptional.ComOptPlugin.PLUGIN_VERSION)]
+[assembly: AssemblyFileVersion(CompletelyOptional.ComOptPlugin.PLUGIN_VERSION)]
 
 namespace CompletelyOptional
 {
+    [BepInPlugin(PLUGIN_ID, PLUGIN_NAME, PLUGIN_VERSION)]
+    [BepInProcess("RainWorld.exe")]
     public class ComOptPlugin : BaseUnityPlugin
     {
-        public const string ver = "2.0.0.0";
+        public const string PLUGIN_ID = "com.rainworldgame.completelyoptional.plugin";
+        public const string PLUGIN_NAME = "CompletelyOptional";
+        public const string PLUGIN_VERSION = "2.0.0.0";
 
         public static bool testing = false; //= true;
 
@@ -67,12 +71,12 @@ namespace CompletelyOptional
         /// <summary>
         /// <see cref="RainWorld"/> instance
         /// </summary>
-        public static RainWorld rw { get; private set; }
+        public static RainWorld rw { get; internal set; }
 
         /// <summary>
         /// <see cref="ProcessManager"/> instance
         /// </summary>
-        public static ProcessManager pm { get; private set; }
+        public static ProcessManager pm { get; internal set; }
 
         /// <summary>
         /// Catch <see cref="RainWorld"/> instance
@@ -112,13 +116,13 @@ namespace CompletelyOptional
 
         private static ManualLogSource logSource;
 
-        internal static void LogMessage(string msg) => logSource.LogMessage($"ComOpt) {msg}");
+        internal static void LogMessage(object msg) => logSource.LogMessage(msg);
 
-        internal static void LogInfo(string msg) => logSource.LogInfo($"ComOpt) {msg}");
+        internal static void LogInfo(object msg) => logSource.LogInfo(msg);
 
-        internal static void LogWarning(string msg) => logSource.LogWarning($"ComOpt) {msg}");
+        internal static void LogWarning(object msg) => logSource.LogWarning(msg);
 
-        internal static void LogError(string msg) => logSource.LogError($"ComOpt) {msg}");
+        internal static void LogError(object msg) => logSource.LogError(msg);
 
         #endregion Logger
     }

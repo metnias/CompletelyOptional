@@ -14,30 +14,20 @@ namespace CompletelyOptional
         {
             ComOptPlugin.LogInfo("ModConfigMenu ctor called");
 
+            // Update rw pm
+            ComOptPlugin.pm = this.manager;
+            ComOptPlugin.rw = this.manager.rainWorld;
+
             // Initialize
             instance = this;
             description = ""; lastDescription = "";
-            Dictionary<int, string> ID2Code = new Dictionary<int, string>()
-            {
-                { 0 , "eng" },
-                { 1 , "fre" },
-                { 2 , "ita" },
-                { 3 , "ger" },
-                { 4 , "spa" },
-                { 5 , "por" },
-                { 6 , "jap" },
-                { 7 , "kor" }
-            };
-            if (ID2Code.TryGetValue(this.manager.rainWorld.options.language, out string code)) { curLang = code; }
-            else { curLang = "eng"; }
-            InternalTranslator.LoadTranslation();
-            LabelTest.Initialize(this);
             redUnlocked = (this.manager.rainWorld.progression.miscProgressionData.redUnlocked ||
                 File.Exists(string.Concat(Custom.RootFolderDirectory(), "unlockred.txt")) ||
                 this.manager.rainWorld.progression.miscProgressionData.redMeatEatTutorial > 2
                 );
 
             this.pages.Add(new Page(this, null, "hub", 0));
+            LabelTest.Initialize(this);
 
             // Play song
             if (this.manager.musicPlayer == null && this.manager.rainWorld.options.musicVolume > 0f)
@@ -78,13 +68,13 @@ namespace CompletelyOptional
             };
             this.pages[0].Container.AddChild(this.darkSprite);
 
-            // UIContainer
-            cfgContainer = new ConfigContainer(this, this.pages[0]);
-            this.pages[0].subObjects.Add(cfgContainer);
-
             // AlertLabel
             alertLabel = new MenuLabel(this, this.pages[0], "", new Vector2(383f, 735f), new Vector2(600f, 30f), false);
             this.pages[0].subObjects.Add(this.alertLabel);
+
+            // UIContainer
+            cfgContainer = new ConfigContainer(this, this.pages[0]);
+            this.pages[0].subObjects.Add(cfgContainer);
         }
 
         private const int _DASinit = 20, _DASdelay = 6;
@@ -118,7 +108,7 @@ namespace CompletelyOptional
         /// </summary>
         public void ShowAlert(string text) => this.alertText = text;
 
-        private MenuLabel alertLabel;
+        private readonly MenuLabel alertLabel;
         private string alertText = "";
         private float alertLabelFade = 0f, lastAlertLabelFade = 0f, alertLabelSin = 0f;
 
@@ -129,7 +119,7 @@ namespace CompletelyOptional
         /// <summary>
         /// Screensized Dark Screen for fading
         /// </summary>
-        private FSprite darkSprite;
+        private readonly FSprite darkSprite;
 
         /// <summary>
         /// Container that connects and stores UIelements for Mod Configs

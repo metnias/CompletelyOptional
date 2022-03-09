@@ -40,9 +40,17 @@ namespace CompletelyOptional
             if (scrollFit) { roleButtons[1].Hide(); roleButtons[2].Hide(); }
 
             // mod buttons
-            modButtons = new ModButton[ConfigContainer.OptItfs.Length];
+            modButtons = new ModButton[ConfigContainer.OptItfs.Length - 1];
             for (int i = 0; i < modButtons.Length; i++)
             { modButtons[i] = new ModButton(this, i); }
+
+            // modless
+            if (modButtons.Length < 1)
+            {
+                roleButtons[0].Hide();
+                for (int i = 0; i < abcButtons.Length; i++)
+                { abcButtons[i].Hide(); }
+            }
         }
 
         private MenuTab menuTab => this.tab as MenuTab;
@@ -178,8 +186,11 @@ namespace CompletelyOptional
                 greyedOut = type == ItfType.Blank;
 
                 this.text = itf.rwMod.ModID;
-                this.labelVer = OpLabel.CreateFLabel(itf.rwMod.Version);
-                this.myContainer.AddChild(this.labelVer);
+                if (itf.rwMod.Version != RainWorldMod.authorNull)
+                {
+                    this.labelVer = OpLabel.CreateFLabel(itf.rwMod.Version);
+                    this.myContainer.AddChild(this.labelVer);
+                }
 
                 this.list.menuTab.AddItems(this);
                 OnChange();
@@ -211,7 +222,8 @@ namespace CompletelyOptional
                 UpdateColor();
                 base.OnChange();
                 this.label.alignment = FLabelAlignment.Left;
-                this.labelVer.alignment = FLabelAlignment.Right;
+                if (this.labelVer != null) { this.labelVer.alignment = FLabelAlignment.Right; }
+
                 this.rect.Hide();
             }
 
@@ -220,6 +232,7 @@ namespace CompletelyOptional
                 if (lastFade >= 1f) { return; }
                 base.GrafUpdate(timeStacker);
                 this.label.alpha = Mathf.Pow(1f - Mathf.Lerp(lastFade, fade, timeStacker), 2f);
+                if (this.labelVer != null) { this.labelVer.alpha = this.label.alpha; }
             }
 
             public override void Update()

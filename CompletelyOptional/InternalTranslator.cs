@@ -53,8 +53,26 @@ namespace CompletelyOptional
             return lang.Substring(0, 3).ToLower();
         }
 
+        internal static void GetCurrentLanguage()
+        {
+            Dictionary<int, string> ID2Code = new Dictionary<int, string>()
+                    {
+                        { 0 , "eng" },
+                        { 1 , "fre" },
+                        { 2 , "ita" },
+                        { 3 , "ger" },
+                        { 4 , "spa" },
+                        { 5 , "por" },
+                        { 6 , "jap" },
+                        { 7 , "kor" }
+                    };
+            if (ID2Code.TryGetValue(ComOptPlugin.rw.options.language, out string code)) { ModConfigMenu.curLang = code; }
+            else { ModConfigMenu.curLang = "eng"; }
+        }
+
         internal static void LoadTranslation()
         {
+            if (string.IsNullOrEmpty(curLang)) { GetCurrentLanguage(); }
             ComOptPlugin.LogInfo($"CompletelyOptional Loading Translation for {curLang}");
             if (data == null) { ReadTXT(); }
             converter = new Dictionary<string, string>();
@@ -89,6 +107,7 @@ namespace CompletelyOptional
 
         internal static string Translate(string orig)
         {
+            if (converter == null) { LoadTranslation(); }
             if (converter.TryGetValue(orig, out string res))
             { return res.Replace("\\n", Environment.NewLine); }
             else { return orig.Replace("\\n", Environment.NewLine); }

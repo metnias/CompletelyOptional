@@ -1,5 +1,6 @@
 using Menu;
 using Music;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CompletelyOptional
@@ -25,6 +26,7 @@ namespace CompletelyOptional
         {
             orig(menu, manager);
 
+            InternalTranslator.GetCurrentLanguage();
             string t = InternalTranslator.Translate("MOD CONFIG");
             enterConfig = new SimpleButton(menu, menu.pages[0], t, "MOD CONFIG", new Vector2(340f, 50f), new Vector2(Mathf.Max(110f, t.Length * 9f + 15f), 30f));
             menu.pages[0].subObjects.Add(enterConfig);
@@ -93,7 +95,9 @@ namespace CompletelyOptional
             if (ID == EnumExt_ComOpt.ModConfigMenu) // Switch to ModConfigMenu
             {
                 MainLoopProcess oldMenu = pm.currentMainLoop;
-                orig(pm, ID);
+                orig(pm, ProcessManager.ProcessID.InputSelect);
+                // lightweight dummy that has same blackFadeTime & blackDelay with OptionsMenu
+                pm.currentMainLoop.ShutDownProcess(); // kill dummy
                 pm.currentMainLoop = new ModConfigMenu(pm);
                 oldMenu.CommunicateWithUpcomingProcess(pm.currentMainLoop);
                 return;

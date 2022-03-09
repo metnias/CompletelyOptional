@@ -14,7 +14,7 @@ namespace CompletelyOptional
         {
             author = "topicular",
             description = "Internal OI for testing new features of Config Machine",
-            Version = ComOptPlugin.ver
+            Version = ComOptPlugin.PLUGIN_VERSION
         }, Reason.TestOI)
         {
         }
@@ -33,9 +33,9 @@ namespace CompletelyOptional
             this.Tabs[2] = new OpTab(this, "TESTSCROLL");
 
             Tabs[0].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
-                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.ver, FLabelAlignment.Right));
+                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
             Tabs[1].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
-                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.ver, FLabelAlignment.Right));
+                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
 
             #endregion init
 
@@ -79,7 +79,7 @@ namespace CompletelyOptional
             OpScrollBox sb = new OpScrollBox(Tabs[2], 2400f, false);
             // Use OpScrollBox.AddItems instead of OpTab.AddItems.
             sb.AddItems(new OpLabel(new Vector2(100f, 540f + 1800f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
-                    new OpLabel(new Vector2(420f, 510f + 1800f), new Vector2(100f, 20f), ComOptPlugin.ver, FLabelAlignment.Right));
+                    new OpLabel(new Vector2(420f, 510f + 1800f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
             sb.AddItems(new OpImage(new Vector2(420f, 50f), t));
             //sb.AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
             //Tabs[2].AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));

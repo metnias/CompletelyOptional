@@ -18,6 +18,9 @@ namespace CompletelyOptional
         public ConfigContainer(Menu.Menu menu, MenuObject owner) : base(menu, owner)
         {
             // Initialize
+            instance = this;
+            myContainer = new FContainer();
+            owner.Container.AddChild(myContainer);
             _soundFill = 0;
             holdElement = false;
             history = new Stack<ConfigHistory>();
@@ -26,13 +29,18 @@ namespace CompletelyOptional
             if (!_loadedOIs) { LoadItfs(); }
 
             menuTab = new MenuTab();
+            lastFocusedElement = menuTab.backButton;
+            focusedElement = menuTab.backButton;
+
             activeItfIndex = 0;
             activeTabIndex = 0;
             activeTab = activeInterface.Tabs[activeTabIndex];
 
-            lastFocusedElement = menuTab.backButton;
-            focusedElement = menuTab.backButton;
+            menuTab.Activate();
+            activeTab.Activate();
         }
+
+        public static ConfigContainer instance;
 
         private ModConfigMenu cfgMenu => this.menu as ModConfigMenu;
         internal static MenuTab menuTab;
@@ -72,8 +80,6 @@ namespace CompletelyOptional
             menuTab.modList.ScrollToShow(newIndex - 1);
         }
 
-        internal static bool holdElement;
-
         #region ItfHandler
 
         /// <summary>
@@ -83,6 +89,7 @@ namespace CompletelyOptional
         {
             "CompletelyOptional",
             "ConfigMachine",
+            "ComOptPlugin",
             //"RustyMachine",
             "PolishedMachine",
             //"Enum Extender",
@@ -99,7 +106,7 @@ namespace CompletelyOptional
         private void LoadItfs()
         {
             List<OptionInterface> listItf = new List<OptionInterface>();
-            ConfigContainer.mute = true;
+            mute = true;
 
             // Load Plugins
 
@@ -134,19 +141,29 @@ namespace CompletelyOptional
                 catch (Exception ex)
                 {
                     oi = new InternalOI_Blank(plugin);
-
                     if (blackList.Contains(oi.rwMod.ModID) || !char.IsLetter(oi.rwMod.ModID[0]))
                     { continue; }
 
                     ComOptPlugin.LogWarning($"{oi.rwMod.ModID} threw an exception in LoadOI: {ex.Message}");
                 }
-                if (!char.IsLetter(oi.rwMod.ModID[0])) { continue; } // Ignore mods that start with non-alphabet
+                if (blackList.Contains(oi.rwMod.ModID) || !char.IsLetter(oi.rwMod.ModID[0])) { continue; }
                 if (oi.rwMod.ModID == "SlugBase") { OptionInterface.SlugBaseExists = true; }
 
                 if (oi is InternalOI && plugin.Config.Keys.Count > 0)
                 {
                     // Use BepInEx Configuration
                     oi = new GeneratedOI(oi.rwMod, plugin.Config); // temp disable
+                }
+
+                // Initialize
+                try
+                {
+                    oi.Initialize();
+                }
+                catch (Exception ex)
+                {
+                    oi = new InternalOI_Error(plugin, ex);
+                    oi.Initialize();
                 }
 
                 listItf.Add(oi);
@@ -164,19 +181,24 @@ namespace CompletelyOptional
                 listItf.Sort(CompareOIModID);
                 OptItfs = new OptionInterface[listItf.Count + 1];
                 OptItfs[0] = new InternalOI_Stats();
+                OptItfs[0].Initialize();
                 for (int k = 0; k < listItf.Count; k++)
                 { OptItfs[k + 1] = listItf[k]; }
             }
             else
             { // No Mod
                 OptItfs = new OptionInterface[] { new InternalOI_NoMod() };
-                OptItfID = new string[] { "" };
+                OptItfID = new string[] { OptItfs[0].rwMod.ModID };
                 savedActiveTabIndex = new int[] { 0 };
                 OptItfChanged = new bool[] { false };
                 OptItfABC = new int[26];
                 for (int j = 0; j < OptItfABC.Length; j++) { OptItfABC[j] = -1; }
                 goto sorted;
             }
+
+            #endregion Sort
+
+            #region Regist
 
             OptItfID = new string[OptItfs.Length];
             savedActiveTabIndex = new int[OptItfs.Length];
@@ -202,7 +224,7 @@ namespace CompletelyOptional
                 { OptItfABC[a - 97 + 1] = -1; a++; }
             }
 
-        #endregion Sort
+        #endregion Regist
 
         sorted:
 
@@ -234,7 +256,7 @@ namespace CompletelyOptional
         internal static int[] OptItfABC;
 
         internal static int activeItfIndex { get; private set; }
-        private static int[] savedActiveTabIndex;
+        internal static int[] savedActiveTabIndex;
         internal static bool[] OptItfChanged { get; private set; }
 
         internal static string GenerateID(string ModID, string author)
@@ -247,7 +269,7 @@ namespace CompletelyOptional
 
         internal static string GenerateID(RainWorldMod rwMod) => GenerateID(rwMod.ModID, rwMod.author);
 
-        private static CompareInfo comInfo = CultureInfo.InvariantCulture.CompareInfo;
+        private static readonly CompareInfo comInfo = CultureInfo.InvariantCulture.CompareInfo;
 
         /// <summary>
         /// Comparator for Sorting OptionInterfaces by ModID
@@ -302,6 +324,7 @@ namespace CompletelyOptional
 
         public static UIelement focusedElement { get; private set; }
         private static UIelement lastFocusedElement;
+        internal static bool holdElement;
 
         /// <summary>
         /// Change <see cref="focusedElement"/>
@@ -336,7 +359,7 @@ namespace CompletelyOptional
         {
             if (focusedElement == null)
             { // current mod button
-                return menuTab.modList;
+                return menuTab.modList.GetCurrentModButton();
             }
             if (!(focusedElement is ICanBeFocused)) { return lastFocusedElement; }
             UIelement result = lastFocusedElement;
@@ -385,10 +408,7 @@ namespace CompletelyOptional
         {
             base.GrafUpdate(timeStacker);
             menuTab.GrafUpdate(timeStacker);
-            try
-            {
-                activeTab.GrafUpdate(timeStacker);
-            }
+            try { activeTab.GrafUpdate(timeStacker); }
             catch (Exception ex) { InterfaceUpdateError(true, ex); }
         }
 
@@ -590,7 +610,7 @@ namespace CompletelyOptional
         /// <summary>
         /// History for undo
         /// </summary>
-        private Stack<ConfigHistory> history;
+        private readonly Stack<ConfigHistory> history;
 
         private struct ConfigHistory
         {

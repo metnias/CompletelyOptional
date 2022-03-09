@@ -293,7 +293,7 @@ namespace OptionalUI
         /// <summary>
         /// <see cref="FContainer"/> to add <see cref="FSprite"/>.
         /// </summary>
-        protected FContainer myContainer;
+        protected internal FContainer myContainer;
 
         /// <summary>
         /// Whether mousecursor is over this element or not.

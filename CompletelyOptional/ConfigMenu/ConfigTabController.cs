@@ -71,6 +71,9 @@ namespace CompletelyOptional
             GrafUpdate(0f);
         }
 
+        /// <summary>
+        /// Current activeInterface's <see cref="OpTab"/> count
+        /// </summary>
         public static int TabCount => ConfigContainer.activeInterface.Tabs.Length;
 
         private int _tabCount = -1;
@@ -207,21 +210,22 @@ namespace CompletelyOptional
             {
                 _tabCount = TabCount;
                 topIndex = 0;
-                focusedIndex = 0; // change this to saved index
-                if (_tabCount > 0)
+                focusedIndex = ConfigContainer.savedActiveTabIndex[ConfigContainer.activeItfIndex];
+                if (_tabCount > tabButtonLimit)
                 { scrollButtons[0].Show(); scrollButtons[1].Show(); }
                 else
                 { scrollButtons[0].Hide(); scrollButtons[1].Hide(); }
-                Initialize();
+                Refresh();
             }
         }
 
-        private void Initialize()
+        private void Refresh()
         {
             scrollBump = 0f; lastScrollBump = 0f;
             if (_tabCount < 2)
             { // No tab button
-                foreach (TabSelectButton btn in tabButtons) { btn.Hide(); }
+                foreach (TabSelectButton btn in tabButtons)
+                { if (btn != null) { btn.Hide(); } }
                 return;
             }
 
@@ -239,24 +243,6 @@ namespace CompletelyOptional
                     { this.tabButtons[i].Reset(); this.tabButtons[i].Show(); }
                 }
             }
-        }
-
-        protected internal override void Deactivate()
-        {
-            base.Deactivate();
-            foreach (UIelement element in this.tabButtons)
-            { element.Deactivate(); }
-            foreach (UIelement element in this.scrollButtons)
-            { element.Deactivate(); }
-        }
-
-        protected internal override void Reactivate()
-        {
-            base.Reactivate();
-            foreach (UIelement element in this.tabButtons)
-            { element.Reactivate(); }
-            foreach (UIelement element in this.scrollButtons)
-            { element.Reactivate(); }
         }
 
         internal class TabSelectButton : UIelement

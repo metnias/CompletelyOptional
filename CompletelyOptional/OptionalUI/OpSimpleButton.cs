@@ -67,7 +67,7 @@ namespace OptionalUI
         {
             this._size = new Vector2(Mathf.Max(24f, this.size.x), Mathf.Max(24f, this.size.y)); // Min Size
             base.OnChange();
-            LabelPlaceAtCenter(this.label, Vector2.zero, this.size);
+            if (!IsImageButton) { LabelPlaceAtCenter(this.label, Vector2.zero, this.size); }
             this.rect.pos = this.pos;
             this.rect.size = this.size;
             this.rectH.pos = this.pos;
