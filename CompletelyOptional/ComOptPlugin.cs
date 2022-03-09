@@ -14,7 +14,7 @@ namespace CompletelyOptional
     {
         public const string ver = "2.0.0.0";
 
-        public static bool testing = true;
+        public static bool testing = false; //= true;
 
         #region AutoUpdate
 
@@ -60,7 +60,34 @@ namespace CompletelyOptional
             if (!directory.Exists) { directory.Create(); directory.Refresh(); }
 
             OptionsMenuPatch.SubPatch();
+            On.ProcessManager.ctor += ProcessManagerCtor;
             // ProgressData.SubPatch(); moved to post-initialization of OIs, makes no sense to hook before the OIs are even instantiated.
+        }
+
+        /// <summary>
+        /// <see cref="RainWorld"/> instance
+        /// </summary>
+        public static RainWorld rw { get; private set; }
+
+        /// <summary>
+        /// <see cref="ProcessManager"/> instance
+        /// </summary>
+        public static ProcessManager pm { get; private set; }
+
+        /// <summary>
+        /// Catch <see cref="RainWorld"/> instance
+        /// </summary>
+        private static void ProcessManagerCtor(On.ProcessManager.orig_ctor orig, ProcessManager self, RainWorld rainWorld)
+        {
+            try
+            {
+                pm = self;
+                rw = rainWorld;
+            }
+            finally
+            {
+                orig(self, rainWorld);
+            }
         }
 
         #region curFramerate

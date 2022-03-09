@@ -19,7 +19,6 @@ namespace CompletelyOptional
         { this.reason = type; }
 
         public Reason reason;
-        public string exception;
 
         public enum Reason
         {
@@ -66,7 +65,5 @@ namespace CompletelyOptional
 
         protected OpLabel labelID, labelVersion, labelAuthor; //labelCoauthor labelDesc;
         protected OpLabel labelSluggo0, labelSluggo1;
-        protected OpRect blue;
-        protected OpLabel oof;
     }
 }

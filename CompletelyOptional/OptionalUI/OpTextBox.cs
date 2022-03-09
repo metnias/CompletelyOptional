@@ -8,7 +8,7 @@ namespace OptionalUI
     /// <summary>
     /// Simple TextBox for general purpose.
     /// </summary>
-    public class OpTextBox : UIconfig, ICanBeFocused
+    public class OpTextBox : UIconfig
     {
         /// <summary>
         /// Simple TextBox.
@@ -37,15 +37,15 @@ namespace OptionalUI
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorText = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
-            this.rect = new DyeableRect(menu, owner, this.pos, this.size, true) { fillAlpha = 0.5f };
-            this.subObjects.Add(this.rect);
+            this.rect = new DyeableRect(myContainer, this.pos, this.size, true) { fillAlpha = 0.5f };
 
-            this.label = new MenuLabel(menu, owner, defaultValue, this.pos + new Vector2(5f - this._size.x * 0.5f, IsUpdown ? 13f : 10f), new Vector2(this._size.x, 20f), false);
-            this.label.label.alignment = FLabelAlignment.Left;
-            this.label.label.SetAnchor(0f, 1f);
-            this.label.label.color = this.colorText;
+            this.label = OpLabel.CreateFLabel(defaultValue);
+            this.label.x = 5f - this._size.x * 0.5f; this.label.y = 10f + (IsUpdown ? 13f : 10f);
+            this.label.alignment = FLabelAlignment.Left;
+            this.label.anchorX = 0f; this.label.anchorY = 1f;
+            this.label.color = this.colorText;
+
             //this.label.label.SetPosition(new Vector2(5f, 3f) - (this._size * 0.5f));
-            this.subObjects.Add(this.label);
 
             this.cursor = new FCursor();
             cursor.SetPosition(LabelTest.GetWidth(value) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
@@ -58,18 +58,18 @@ namespace OptionalUI
         public bool IsUpdown => this is OpUpdown;
 
         /// <summary>
-        /// MenuLabel of TextBox.
+        /// FLabel of TextBox.
         /// </summary>
-        public MenuLabel label;
+        public readonly FLabel label;
 
         /// <summary>
         /// Boundary DyeableRect.
         /// </summary>
-        public DyeableRect rect;
+        public readonly DyeableRect rect;
 
         protected string _lastValue;
-        private readonly FCursor cursor;
-        private float cursorAlpha;
+        protected readonly FCursor cursor;
+        protected float cursorAlpha;
 
         /// <summary>
         /// Edge Colour of DyeableRect. Default is MediumGrey.
@@ -86,22 +86,16 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
-        bool ICanBeFocused.IsMouseOverMe { get { return !this.held && this.MouseOver; } }
-
-        bool ICanBeFocused.CurrentlyFocusableMouse { get { return !this.disabled; } }
-
-        bool ICanBeFocused.CurrentlyFocusableNonMouse { get { return !this.disabled; } }
-
         public override void GrafUpdate(float dt)
         {
             base.GrafUpdate(dt);
             if (greyedOut)
             {
                 KeyboardOn = false;
-                this.label.label.color = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorText));
+                this.label.color = MenuColorEffect.Greyscale(MenuColorEffect.MidToDark(this.colorText));
                 this.cursor.alpha = 0f;
-                this.rect.colorEdge = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorEdge));
-                this.rect.colorFill = DyeableRect.Grayscale(DyeableRect.MidToDark(this.colorFill));
+                this.rect.colorEdge = MenuColorEffect.Greyscale(MenuColorEffect.MidToDark(this.colorEdge));
+                this.rect.colorFill = MenuColorEffect.Greyscale(MenuColorEffect.MidToDark(this.colorFill));
                 return;
             }
             Color white = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
@@ -118,17 +112,17 @@ namespace OptionalUI
             this.rect.fillAlpha = Mathf.Lerp(0.5f, 0.8f, this.bumpBehav.col);
             this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
             this.rect.colorFill = this.colorFill;
-            this.label.label.color = Color.Lerp(this.colorText, white, Mathf.Clamp(this.bumpBehav.flash, 0f, 1f));
+            this.label.color = Color.Lerp(this.colorText, white, Mathf.Clamp(this.bumpBehav.flash, 0f, 1f));
         }
 
         private float col;
 
-        public override void Update(float dt)
+        public override void Update()
         {
             this.col = this.bumpBehav.col;
-            base.Update(dt);
+            base.Update();
             this.bumpBehav.col = this.col;
-            if (disabled) { return; }
+            if (greyedOut) { return; }
 
             if (KeyboardOn)
             {
@@ -408,8 +402,7 @@ namespace OptionalUI
 
             this.rect.pos = this.pos;
             this.rect.size = this.size;
-            this.label.pos = this.pos + new Vector2(5f - this.size.x * 0.5f, IsUpdown ? 13f : 10f);
-            this.label.size = new Vector2(this._size.x, 20f);
+            this.label.x = 5f - this._size.x * 0.5f; this.label.y = 10f + (IsUpdown ? 13f : 10f);
             this.cursor.SetPosition(LabelTest.GetWidth(this.label.text) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
         }
 

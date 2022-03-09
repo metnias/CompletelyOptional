@@ -28,8 +28,6 @@ namespace OptionalUI
 
             fixedRad = 30f;
 
-            if (_init) { return; }
-
             color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             circles = new FSprite[5];
             circles[0] = new FSprite("Futile_White")
@@ -77,7 +75,7 @@ namespace OptionalUI
             circles[2].scale = (r + 10f) / 8f;
             circles[2].alpha = 0f; // Mathf.Clamp01(!isProgress ? filled : progress / 100f);
             circles[2].color = Color.Lerp(Color.white, color, 0.7f);
-            circles[3].color = Color.Lerp(c, DyeableRect.MidToDark(c), 0.5f);
+            circles[3].color = Color.Lerp(c, MenuColorEffect.MidToDark(c), 0.5f);
             circles[3].scale = (r + 15f) / 8f;
             circles[3].alpha = 2f / (r + 15f);
             float dim = 0.5f + 0.5f * Mathf.Sin(bumpBehav.sin / 30f * Mathf.PI * 2f);
@@ -88,9 +86,9 @@ namespace OptionalUI
             circles[4].color = new Color(0f, 0f, dim);
         }
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            base.Update(dt);
+            base.Update();
             if (MouseOver && Input.GetMouseButtonDown(0))
             {
             }

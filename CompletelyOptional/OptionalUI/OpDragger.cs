@@ -112,7 +112,7 @@ namespace OptionalUI
             }
 
             this.rect.colorFill = this.colorFill;
-            this.greyFade = Custom.LerpAndTick(this.greyFade, (!CompletelyOptional.ConfigMenu.freezeMenu || this.held) ? 0f : 1f, 0.05f, 0.025f / frameMulti);
+            this.greyFade = Custom.LerpAndTick(this.greyFade, (!ConfigContainer.holdElement || this.held) ? 0f : 1f, 0.05f, 0.025f / frameMulti);
 
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;

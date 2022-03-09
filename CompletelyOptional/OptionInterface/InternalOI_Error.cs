@@ -9,25 +9,36 @@ namespace CompletelyOptional
     {
         public InternalOI_Error(BaseUnityPlugin plugin, Exception exception) : base(plugin, Reason.Error)
         {
-            CtorInitError(exception);
-        }
-
-        public InternalOI_Error(RainWorldMod rwMod, Exception exception) : base(rwMod, Reason.Error)
-        {
-            CtorInitError(exception);
-        }
-
-        private void CtorInitError(Exception exception)
-        {
             if (this.rwMod.ModID != null)
-            { Debug.LogError($"CompletelyOptional: {this.rwMod.ModID} had issue in OptionInterface:"); }
+            {
+                string msg = $"CompletelyOptional: {this.rwMod.ModID} had issue in OptionInterface:";
+                Debug.LogError(msg); ComOptPlugin.LogError(msg);
+            }
             this.reason = Reason.Error;
             if (exception == null)
             { exception = new GeneralInitializeException("Unidentified Exception!"); }
             this.exception = exception.ToString();
-            Debug.LogError(this.exception);
-            //Debug.LogException(exception);
+            Debug.LogException(exception); ComOptPlugin.LogError(this.exception);
         }
+
+        public InternalOI_Error(RainWorldMod rwMod, Exception exception) : base(rwMod, Reason.Error)
+        {
+            if (this.rwMod.ModID != null)
+            {
+                string msg = $"CompletelyOptional: {this.rwMod.ModID} had issue in OptionInterface:";
+                Debug.LogError(msg); ComOptPlugin.LogError(msg);
+            }
+            this.reason = Reason.Error;
+            if (exception == null)
+            { exception = new GeneralInitializeException("Unidentified Exception!"); }
+            this.exception = exception.ToString();
+            Debug.LogException(exception); ComOptPlugin.LogError(this.exception);
+        }
+
+        /// <summary>
+        /// <see cref="Exception"/> that caused this screen.
+        /// </summary>
+        public readonly string exception;
 
         public override void Initialize()
         {
@@ -44,5 +55,8 @@ namespace CompletelyOptional
 
             Tabs[0].AddItems(blue, oof, labelSluggo0, labelSluggo1, labelVersion);
         }
+
+        protected OpRect blue;
+        protected OpLabel oof;
     }
 }

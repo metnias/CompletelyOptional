@@ -488,21 +488,23 @@ namespace OptionalUI
             LoadPers(slugcat);
         }
 
+        internal static bool SlugBaseExists = false;
+
         /// <summary>
         /// Currently selected saveslot
         /// </summary>
-        public int slot => OptionScript.Slot;
+        public static int slot => ComOptPlugin.rw.options.saveSlot;
 
         /// <summary>
         /// Currently selected slugcat
         /// </summary>
-        public int slugcat => OptionScript.Slugcat;
+        public static int slugcat => ComOptPlugin.rw.progression.PlayingAsSlugcat;
 
         /// <summary>
         /// Seed of currently loaded savestate
         /// Used for validating loaded progression
         /// </summary>
-        public int seed => ComOptPlugin.rw.progression.currentSaveState != null ? OptionScript.rw.progression.currentSaveState.seed : -1;
+        public static int seed => ComOptPlugin.rw.progression.currentSaveState != null ? ComOptPlugin.rw.progression.currentSaveState.seed : -1;
 
         /// <summary>
         /// Reads the death-persistent data of the specified slugcat directly from its file, without replacing <see cref="persData"/>
@@ -525,7 +527,7 @@ namespace OptionalUI
         {
             if (slugcat < 0) return null;
             if (slugcat < 3) { return ((SlugcatStats.Name)slugcat).ToString(); }
-            if (OptionScript.SlugBaseExists && IsSlugBaseSlugcat(slugcat)) { return GetSlugBaseSlugcatName(slugcat); }
+            if (SlugBaseExists && IsSlugBaseSlugcat(slugcat)) { return GetSlugBaseSlugcatName(slugcat); }
             else { return ((SlugcatStats.Name)slugcat).ToString(); }
         }
 
@@ -542,7 +544,7 @@ namespace OptionalUI
                 case "yellow": return 1;
                 case "red": return 2;
                 default:
-                    if (OptionScript.SlugBaseExists && IsSlugBaseName(name)) { return GetSlugBaseSlugcatOfName(name); }
+                    if (SlugBaseExists && IsSlugBaseName(name)) { return GetSlugBaseSlugcatOfName(name); }
                     break;
             }
             return (int)Enum.Parse(typeof(SlugcatStats.Name), name, true);
@@ -551,20 +553,20 @@ namespace OptionalUI
         internal static int GetSlugcatSeed(int slugcat, int slot)
         {
             // Load from currently loaded save if available and valid
-            SaveState save = OptionScript.rw?.progression?.currentSaveState;
+            SaveState save = ComOptPlugin.rw?.progression?.currentSaveState;
             if (save != null && save.saveStateNumber == slugcat)
             {
                 return save.seed;
             }
             // Load from slugbase custom save file
-            if (OptionScript.SlugBaseExists && IsSlugBaseSlugcat(slugcat))
+            if (SlugBaseExists && IsSlugBaseSlugcat(slugcat))
             {
                 return GetSlugBaseSeed(slugcat, slot);
             }
             // Load from vanilla save file
-            if (OptionScript.rw.progression.IsThereASavedGame(slugcat))
+            if (ComOptPlugin.rw.progression.IsThereASavedGame(slugcat))
             {
-                string[] progLines = OptionScript.rw.progression.GetProgLines();
+                string[] progLines = ComOptPlugin.rw.progression.GetProgLines();
                 if (progLines.Length != 0)
                 {
                     for (int i = 0; i < progLines.Length; i++)
@@ -576,7 +578,7 @@ namespace OptionalUI
                         {
                             new SaveStateMiner.Target(">SEED", "<svB>", "<svA>", 20)
                         };
-                            List<SaveStateMiner.Result> result = SaveStateMiner.Mine(OptionScript.rw, data[1], query);
+                            List<SaveStateMiner.Result> result = SaveStateMiner.Mine(ComOptPlugin.rw, data[1], query);
                             if (result.Count == 0) break;
                             try
                             {
@@ -612,7 +614,7 @@ namespace OptionalUI
                 {
                     new SaveStateMiner.Target(">SEED", "<svB>", "<svA>", 20)
                 };
-            List<SaveStateMiner.Result> result = SaveStateMiner.Mine(OptionScript.rw, saveData, query);
+            List<SaveStateMiner.Result> result = SaveStateMiner.Mine(ComOptPlugin.rw, saveData, query);
             if (result.Count != 0)
             {
                 try

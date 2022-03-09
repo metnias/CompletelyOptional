@@ -141,11 +141,12 @@ namespace CompletelyOptional
                     ComOptPlugin.LogWarning($"{oi.rwMod.ModID} threw an exception in LoadOI: {ex.Message}");
                 }
                 if (!char.IsLetter(oi.rwMod.ModID[0])) { continue; } // Ignore mods that start with non-alphabet
+                if (oi.rwMod.ModID == "SlugBase") { OptionInterface.SlugBaseExists = true; }
 
                 if (oi is InternalOI && plugin.Config.Keys.Count > 0)
                 {
                     // Use BepInEx Configuration
-                    oi = new GeneratedOI(oi.rwMod, plugin.Config);
+                    oi = new GeneratedOI(oi.rwMod, plugin.Config); // temp disable
                 }
 
                 listItf.Add(oi);

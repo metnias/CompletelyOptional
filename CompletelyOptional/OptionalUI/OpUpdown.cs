@@ -60,9 +60,9 @@ namespace OptionalUI
 
         private int iMin = int.MinValue, iMax = int.MaxValue;
         private float fMin = -1000000, fMax = 1000000;
-        protected readonly byte dNum;
+        protected internal readonly byte dNum;
         private BumpBehaviour bumpUp, bumpDown;
-        protected bool mouseOverArrow;
+        protected internal bool mouseOverArrow;
         private int arrowCounter = 0, bumpCount, bumpDeci;
         private Vector2 scrollHeldPos; private float scrollHeldTickPos;
 

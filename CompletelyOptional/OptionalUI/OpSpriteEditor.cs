@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CompletelyOptional;
+using System;
 using UnityEngine;
 
 namespace OptionalUI
@@ -20,13 +21,11 @@ namespace OptionalUI
         /// <param name="defaultTexture"></param>
         public OpSpriteEditor(Vector2 pos, Vector2 size, string key, Texture2D defaultTexture) : base(pos, size, key, Texture2DToString(defaultTexture))
         {
-            if (!_init) { return; }
             this._size = new Vector2(Mathf.Max(size.x, defaultTexture.width + 10f), Mathf.Max(size.y, defaultTexture.height + 10f));
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this._descCustom = "";
 
-            this.rect = new DyeableRect(menu, owner, this.pos, this.size, true);
-            this.subObjects.Add(rect);
+            this.rect = new DyeableRect(myContainer, this.pos, this.size, true);
 
             this.preview = new FTexture(defaultTexture, "edtp" + key);
             this.myContainer.AddChild(this.preview);
@@ -68,15 +67,15 @@ namespace OptionalUI
             if (!this.held)
             {
                 if (this.MouseOver && !this.greyedOut)
-                { ConfigMenu.description = this.description; }
+                { ModConfigMenu.instance.ShowDescription(this.description); }
 
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
-                this.rect.colorFill = DyeableRect.MidToVeryDark(this.colorEdge);
+                this.rect.colorFill = MenuColorEffect.MidToVeryDark(this.colorEdge);
                 this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
                 this.rect.fillAlpha = this.bumpBehav.FillAlpha;
                 return;
             }
-            ConfigMenu.description = this.description;
+            ModConfigMenu.instance.ShowDescription(this.description);
 
             this.rect.colorEdge = this.colorEdge;
             this.rect.colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
@@ -86,9 +85,9 @@ namespace OptionalUI
 
         private int clickDelay; private bool clicked;
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            base.Update(dt);
+            base.Update();
             if (this.greyedOut)
             { if (this.held) { this.SwitchToPreview(); } return; }
             clickDelay = clickDelay > 0 ? clickDelay - 1 : 0;
@@ -154,7 +153,6 @@ namespace OptionalUI
         public override void OnChange()
         {
             base.OnChange();
-            if (!_init) { return; }
 
             Texture2D curTexture = this.valueTexture;
 
@@ -174,21 +172,7 @@ namespace OptionalUI
             this.SwitchToPreview();
         }
 
-        public override void Show()
-        {
-            base.Show();
-            this.rect.Show();
-            this.preview.isVisible = true;
-        }
-
-        public override void Hide()
-        {
-            base.Hide();
-            this.rect.Hide();
-            this.preview.isVisible = false;
-        }
-
-        public override void Unload()
+        protected internal override void Unload()
         {
             base.Unload();
             this.preview.Destroy();

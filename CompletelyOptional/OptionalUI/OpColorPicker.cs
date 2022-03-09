@@ -14,12 +14,12 @@ namespace OptionalUI
     {
         /// <summary>
         /// ColorPicker for Option Config.
-        /// The fixedSize is 150x150, and output is in form of Hex. (See also <seealso cref="HexToColor(string)"/>)
+        /// The fixedSize is 150x150, and output is in form of Hex. (See also <seealso cref="MenuColorEffect.HexToColor"/>)
         /// </summary>
         /// <exception cref="ElementFormatException">Thrown when defaultHex is not a proper Hex code</exception>
         /// <param name="pos">BottomLeft Position</param>
         /// <param name="key">Unique <see cref="UIconfig.key"/></param>
-        /// <param name="defaultHex">default Hex. (See also <seealso cref="ColorToHex(Color)"/>)</param>
+        /// <param name="defaultHex">default Hex. (See also <seealso cref="MenuColorEffect.ColorToHex"/>)</param>
         public OpColorPicker(Vector2 pos, string key, string defaultHex = "FFFFFF") : base(pos, new Vector2(150f, 150f), key, defaultHex)
         {
             ctor = false; //to prevent OnChange from running before ready
@@ -45,9 +45,8 @@ namespace OptionalUI
             this.PaletteName = OpColorPicker.PaletteNameDefault;
             this.clickDelay = 0;
 
-            this.rect = new DyeableRect(menu, owner, this.pos, this.fixedSize.Value, true) { fillAlpha = 0.8f }; //Boundary Rectangle
+            this.rect = new DyeableRect(myContainer, this.pos, this.fixedSize.Value, true) { fillAlpha = 0.8f }; //Boundary Rectangle
             this._size = this.fixedSize.Value;
-            this.subObjects.Add(rect);
 
             r = 0; g = 0; b = 0;
             h = 0; s = 0; l = 0;
@@ -197,7 +196,7 @@ namespace OptionalUI
         private int clickDelay;
 
 #pragma warning disable IDE0044
-        private MenuLabel lblHex, lblRGB, lblHSL, lblPLT;
+        private FLabel lblHex, lblRGB, lblHSL, lblPLT;
         private FTexture rect1, rect2, rect3;
         private Texture2D ttre1, ttre2, ttre3;
         private FSprite cdis0, cdis1;
@@ -212,7 +211,7 @@ namespace OptionalUI
             set { this.value = MenuColorEffect.ColorToHex(value); }
         }
 
-        private MenuLabel lblR, lblG, lblB, lblP;
+        private FLabel lblR, lblG, lblB, lblP;
         protected bool ctor = false;
 
         private bool greyTrigger = false;
@@ -433,11 +432,7 @@ namespace OptionalUI
             mod = newmod;
             value = temp;
             mod = newmod;
-            if (OptionInterface.soundFilled)
-            {
-                OptionInterface.soundFill += 6;
-                menu.PlaySound(SoundID.MENU_MultipleChoice_Clicked);
-            }
+            PlaySound(SoundID.MENU_MultipleChoice_Clicked);
 
             RecalculateTexture();
             //load new mod
@@ -554,11 +549,7 @@ namespace OptionalUI
                             inputHex += acceptKeys[n].Substring(0, 1).ToUpper();
                             lblHex.text = "#" + inputHex;
                             this.cursor.SetPosition(80f + LabelTest.GetWidth(inputHex), 5f);
-                            if (!_soundFilled && inputHex.Length < 6)
-                            {
-                                _soundFill += 12;
-                                menu.PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
-                            }
+                            PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
                             break;
                         }
                     }
@@ -573,7 +564,7 @@ namespace OptionalUI
                     this.held = false;
                     this.myContainer.RemoveChild(this.cursor);
                     this.cursor = null;
-                    menu.PlaySound(SoundID.MENU_Player_Unjoin_Game);
+                    PlaySound(SoundID.MENU_Player_Unjoin_Game);
                 }
                 else if (Input.GetMouseButton(0) && !this.MouseOverHex())
                 {
@@ -583,14 +574,14 @@ namespace OptionalUI
                     this.held = false;
                     this.myContainer.RemoveChild(this.cursor);
                     this.cursor = null;
-                    menu.PlaySound(SoundID.MENU_Player_Unjoin_Game);
+                    PlaySound(SoundID.MENU_Player_Unjoin_Game);
                 }
                 return;
             }
 
             if (this.MouseOver)
             {
-                if (!isDirty) { menu.PlaySound(SoundID.MENU_Button_Select_Mouse); isDirty = true; }
+                if (!isDirty) { PlaySound(SoundID.MENU_Button_Select_Mouse); isDirty = true; }
                 if (this.MousePos.y > 135f)
                 { //mod settings
                     if (Input.GetMouseButtonDown(0))
@@ -606,7 +597,7 @@ namespace OptionalUI
                         }
                         else
                         { //Clicked already chosen mod
-                            menu.PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
+                            PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
                         }
                     }
                     return;
@@ -639,7 +630,7 @@ namespace OptionalUI
                                 {
                                     this.held = true;
                                     mouseDown = true;
-                                    menu.PlaySound(SoundID.MENU_First_Scroll_Tick);
+                                    PlaySound(SoundID.MENU_First_Scroll_Tick);
                                 }
                                 else
                                 {
@@ -648,11 +639,7 @@ namespace OptionalUI
                                         r = dr;
                                         g = dg;
                                         b = db;
-                                        if (!_soundFilled)
-                                        {
-                                            menu.PlaySound(SoundID.MENU_Scroll_Tick);
-                                            _soundFill += 4;
-                                        }
+                                        PlaySound(SoundID.MENU_Scroll_Tick);
                                         this._value = string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
                                             Mathf.RoundToInt(g * 255f / 100f).ToString("X2"),
                                             Mathf.RoundToInt(b * 255f / 100f).ToString("X2"));
@@ -679,17 +666,13 @@ namespace OptionalUI
                                     {
                                         this.held = true;
                                         mouseDown = true;
-                                        menu.PlaySound(SoundID.MENU_First_Scroll_Tick);
+                                        PlaySound(SoundID.MENU_First_Scroll_Tick);
                                     }
                                     else
                                     {
                                         if (l != lastL)
                                         {
-                                            if (!_soundFilled)
-                                            {
-                                                menu.PlaySound(SoundID.MENU_Scroll_Tick);
-                                                _soundFill += 4;
-                                            }
+                                            PlaySound(SoundID.MENU_Scroll_Tick);
                                         }
                                     }
                                     OnChange();
@@ -711,17 +694,13 @@ namespace OptionalUI
                                     {
                                         this.held = true;
                                         mouseDown = true;
-                                        menu.PlaySound(SoundID.MENU_First_Scroll_Tick);
+                                        PlaySound(SoundID.MENU_First_Scroll_Tick);
                                     }
                                     else
                                     {
                                         if (lastH != h || lastS != s)
                                         {
-                                            if (!_soundFilled)
-                                            {
-                                                menu.PlaySound(SoundID.MENU_Scroll_Tick);
-                                                _soundFill += 4;
-                                            }
+                                            PlaySound(SoundID.MENU_Scroll_Tick);
                                         }
                                     }
                                     OnChange();
@@ -750,11 +729,7 @@ namespace OptionalUI
                                         if (pi != _i)
                                         {
                                             pi = _i;
-                                            if (!_soundFilled)
-                                            {
-                                                menu.PlaySound(SoundID.Mouse_Scurry);
-                                                _soundFill += 8;
-                                            }
+                                            PlaySound(SoundID.Mouse_Scurry);
                                         }
                                         this._value = this.PaletteHex[_i];
                                         mod = 2;
@@ -800,7 +775,7 @@ namespace OptionalUI
                         this.input = false;
                         this.inputHex = "";
                         this.lblHex.text = "#";
-                        menu.PlaySound(SoundID.MENU_Player_Join_Game);
+                        PlaySound(SoundID.MENU_Player_Join_Game);
                         this.cursor = new FCursor();
                         this.myContainer.AddChild(this.cursor);
                         this.cursor.SetPosition(80f, 5f);
@@ -1452,7 +1427,7 @@ namespace OptionalUI
         protected internal override bool CopyFromClipboard(string value)
         {
             value = value.Trim().TrimStart('#');
-            if (IsStringHexColor(value))
+            if (MenuColorEffect.IsStringHexColor(value))
             { this.inputHex = value.Substring(0, 6).ToUpper(); this.lblHex.text = "#" + this.inputHex; return true; }
             return false;
         }

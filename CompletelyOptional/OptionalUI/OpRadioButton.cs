@@ -205,6 +205,6 @@ namespace OptionalUI
             }
         }
 
-        string IValueBool.valueString { get => this.value; set => this.value = value; }
+        string IValueType.valueString { get => this.value; set => this.value = value; }
     }
 }

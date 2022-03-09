@@ -24,7 +24,7 @@ namespace OptionalUI
             this.description = InternalTranslator.Translate("Scroll the list, Double Click to search");
             this.listHeight = lineCount;
             this.downward = downward;
-            if (_init && !(this is OpResourceList)) { this.OpenList(); }
+            if (!(this is OpResourceList)) { this.OpenList(); }
         }
 
         /// <summary>
@@ -43,7 +43,7 @@ namespace OptionalUI
             this.description = InternalTranslator.Translate("Scroll the list, Double Click to search");
             this.listHeight = lineCount;
             this.downward = downward;
-            if (_init && !(this is OpResourceList)) { this.OpenList(); }
+            if (!(this is OpResourceList)) { this.OpenList(); }
         }
 
         public override void GrafUpdate(float dt)
@@ -51,11 +51,11 @@ namespace OptionalUI
             base.GrafUpdate(dt);
         }
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            base.Update(dt);
+            base.Update();
 
-            if (disabled) { return; }
+            if (greyedOut) { return; }
 
             this.bumpList.MouseOver = this.MouseOverList();
             bool xOver = this.MousePos.x >= this.rectScroll.pos.x - this.pos.x && this.MousePos.x <= this.rectScroll.pos.x + this.rectScroll.size.x - this.pos.x;
@@ -74,7 +74,7 @@ namespace OptionalUI
                         {
                             this.searchQuery = (this.searchQuery.Substring(0, this.searchQuery.Length - 1));
                             this.searchIdle = -1;
-                            if (!_soundFilled) { _soundFill += 12; menu.PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked); }
+                            PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
                         }
                         break;
                     }
@@ -85,7 +85,7 @@ namespace OptionalUI
                         this.bumpBehav.flash = 2.5f;
                         this.searchQuery += c;
                         this.searchIdle = -1;
-                        if (!_soundFilled) { _soundFill += 12; menu.PlaySound(SoundID.MENU_Checkbox_Uncheck); }
+                        PlaySound(SoundID.MENU_Checkbox_Uncheck);
                     }
                 }
                 if (this.searchIdle < this.searchDelay)
@@ -104,7 +104,7 @@ namespace OptionalUI
                     // Debug.Log($"{listTop} > {num}; {this.itemList.Length}, {this.lblList.Length}, {this.itemList.Length - this.lblList.Length}");
                     if (listTop != num)
                     {
-                        if (!_soundFilled) { _soundFill += 6; this.menu.PlaySound(SoundID.MENU_Scroll_Tick); }
+                        PlaySound(SoundID.MENU_Scroll_Tick);
                         this.listTop = num;
                         this.bumpScroll.flash = Mathf.Min(1f, this.bumpScroll.flash + 0.2f);
                         this.bumpScroll.sizeBump = Mathf.Min(2.5f, this.bumpScroll.sizeBump + 0.3f);
@@ -113,7 +113,7 @@ namespace OptionalUI
                 else
                 { // Release Scrollbar
                     this.bumpScroll.held = false; this.mouseDown = false;
-                    this.menu.PlaySound(SoundID.MENU_Scroll_Tick);
+                    PlaySound(SoundID.MENU_Scroll_Tick);
                 }
             }
             else if ((!downward && this.MouseOver) ||
@@ -126,7 +126,7 @@ namespace OptionalUI
                         if (this.bumpScroll.MouseOver && listSize > this.lblList.Length)
                         {
                             scrollHeldPos = this.MousePos.y - this.rectScroll.pos.y + this.pos.y;
-                            this.bumpScroll.held = true; this.menu.PlaySound(SoundID.MENU_First_Scroll_Tick);
+                            this.bumpScroll.held = true; PlaySound(SoundID.MENU_First_Scroll_Tick);
                         }
                         else { mouseDown = true; }
                     }
@@ -137,7 +137,7 @@ namespace OptionalUI
                     {
                         mouseDown = false;
                         if (dTimer > 0) { dTimer = 0; this.searchMode = true; EnterSearchMode(); return; }
-                        else { dTimer = FrameMultiply(15); if (allowEmpty) { this.value = ""; } this.menu.PlaySound(SoundID.MENU_Checkbox_Uncheck); }
+                        else { dTimer = FrameMultiply(15); if (allowEmpty) { this.value = ""; } PlaySound(SoundID.MENU_Checkbox_Uncheck); }
                     }
                 }
                 else // MouseOver List
@@ -158,7 +158,7 @@ namespace OptionalUI
                         // Debug.Log($"{listTop} > {num}; {this.itemList.Length}, {this.lblList.Length}, {this.itemList.Length - this.lblList.Length}");
                         if (listTop != num)
                         {
-                            if (!_soundFilled) { _soundFill += 6; this.menu.PlaySound(SoundID.MENU_Scroll_Tick); }
+                            PlaySound(SoundID.MENU_Scroll_Tick);
                             this.listTop = num;
                             this.bumpScroll.flash = Mathf.Min(1f, this.bumpScroll.flash + 0.2f);
                             this.bumpScroll.sizeBump = Mathf.Min(2.5f, this.bumpScroll.sizeBump + 0.3f);
@@ -181,7 +181,7 @@ namespace OptionalUI
                             { // Select one from here
                                 newVal = this.itemList[listTop + listHover].name;
                             }
-                            if (newVal != this.value) { this.value = newVal; this.menu.PlaySound(SoundID.MENU_Checkbox_Check); goto exit; }
+                            if (newVal != this.value) { this.value = newVal; PlaySound(SoundID.MENU_Checkbox_Check); goto exit; }
                         }
                     }
                     if (listHover >= 0)
@@ -193,7 +193,7 @@ namespace OptionalUI
                             { d = this.searchList[listTop + listHover].desc; }
                         }
                         else if (listTop + listHover < this.itemList.Length) { d = this.itemList[listTop + listHover].desc; }
-                        if (!string.IsNullOrEmpty(d)) { ConfigMenu.description = d; }
+                        if (!string.IsNullOrEmpty(d)) { ModConfigMenu.instance.ShowDescription(d); }
                     }
                 }
             }
@@ -202,8 +202,8 @@ namespace OptionalUI
                 if (Input.GetMouseButton(0) && !mouseDown || mouseDown && !Input.GetMouseButton(0)) { goto exit; }
             }
             this.held = this.bumpScroll.held || this.searchMode;
-            this.bumpList.Update(dt);
-            this.bumpScroll.Update(dt);
+            this.bumpList.Update();
+            this.bumpScroll.Update();
             return;
         exit:
             this.held = false;
@@ -217,14 +217,5 @@ namespace OptionalUI
         /// </summary>
         /// <param name="height">pixel height, which is usually <see cref="UIelement.size"/>.y</param>
         public static int GetLineCountFromHeight(float height) => Math.Max(1, Mathf.FloorToInt((height - 34f) / 20f));
-
-        public override void Show()
-        {
-            base.Show();
-
-            this.rectList.Show(); this.rectScroll.Show();
-            for (int i = 0; i < this.lblList.Length; i++)
-            { this.lblList[i].label.isVisible = true; }
-        }
     }
 }

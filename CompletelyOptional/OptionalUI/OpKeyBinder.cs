@@ -34,7 +34,6 @@ namespace OptionalUI
             this.bind = ctrlerNo;
             this.defaultValue = this.value;
 
-            if (!_init) { return; }
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
             this.Initalize(defaultKey);
@@ -73,12 +72,11 @@ namespace OptionalUI
             }
             this._description = "";
 
-            this.rect = new DyeableRect(menu, owner, this.pos, this.size, true);
-            this.subObjects.Add(this.rect);
+            this.rect = new DyeableRect(myContainer, this.pos, this.size, true);
             this.rect.fillAlpha = 0.3f;
 
-            this.label = new MenuLabel(menu, owner, defaultKey, this.pos, this.size, true);
-            this.subObjects.Add(this.label);
+            this.label = OpLabel.CreateFLabel(defaultKey, true);
+            LabelPlaceAtCenter(this.label, this.pos, this.size);
 
             this.sprite = new FSprite("GamepadIcon", true) { anchorX = 0f, anchorY = 0.5f, scale = 0.333f };
             this.myContainer.AddChild(sprite);
@@ -146,9 +144,9 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// This displays Key
+        /// FLabel that displays <see cref="value"/>(Key)
         /// </summary>
-        public MenuLabel label;
+        public FLabel label { get; private set; }
 
         private FSprite sprite;
 
@@ -205,9 +203,9 @@ namespace OptionalUI
             {
                 this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
                 if (string.IsNullOrEmpty(this._desError))
-                { this.label.label.color = this.bumpBehav.GetColor(this.colorEdge); }
+                { this.label.color = this.bumpBehav.GetColor(this.colorEdge); }
                 else
-                { this.label.label.color = new Color(0.5f, 0f, 0f); }
+                { this.label.color = new Color(0.5f, 0f, 0f); }
                 return;
             }
 
@@ -218,11 +216,11 @@ namespace OptionalUI
             Color myColor = this.bumpBehav.GetColor(string.IsNullOrEmpty(this._desError) ? this.colorEdge : Color.red);
             if (this.MouseOver)
             {
-                ConfigMenu.description = this.GetDescription();
+                ModConfigMenu.instance.ShowDescription(this.GetDescription());
                 myColor = Color.Lerp(myColor, Color.white, this.bumpBehav.Sin());
             }
 
-            this.label.label.color = myColor;
+            this.label.color = myColor;
         }
 
         private bool anyKeyDown; private bool lastAnyKeyDown;
@@ -310,10 +308,10 @@ namespace OptionalUI
             return "Joystick" + (newBind != BindController.AnyController ? b.ToString() : "") + btn;
         }
 
-        public override void Update(float dt)
+        public override void Update()
         {
-            base.Update(dt);
-            if (disabled) { return; }
+            base.Update();
+            if (greyedOut) { return; }
 
             if (this.MouseOver && Input.GetMouseButton(0))
             {
@@ -384,7 +382,7 @@ namespace OptionalUI
             {
                 this.held = true;
                 menu.PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);
-                this.label.label.text = "?";
+                this.label.text = "?";
             }
         }
 
@@ -392,42 +390,24 @@ namespace OptionalUI
         {
             this._size = new Vector2(Mathf.Max(30f, this.size.x), Mathf.Max(30f, this.size.y));
             base.OnChange();
-            if (!_init) { return; }
+
             this.sprite.isVisible = IsJoystick(this.value);
             if (IsJoystick(this.value))
             {
                 this.sprite.SetPosition(5f, this.size.y / 2f);
                 this.label.text = this.value.Replace("Joystick", "");
-                this.label.pos = new Vector2(this.pos.x + 20f, this.pos.y);
-                this.label.size = new Vector2(this.size.x - 20f, this.size.y);
+                LabelPlaceAtCenter(this.label, this.pos + new Vector2(20f, 0), this.size - new Vector2(20f, 0));
             }
             else
             {
                 this.label.text = this.value;
-                this.label.pos = this.pos;
-                this.label.size = this.size;
+                LabelPlaceAtCenter(this.label, this.pos, this.size);
             }
             this.rect.pos = this.pos;
             this.rect.size = this.size;
         }
 
-        public override void Hide()
-        {
-            base.Hide();
-            this.rect.Hide();
-            this.label.label.isVisible = false;
-            this.sprite.isVisible = false;
-        }
-
-        public override void Show()
-        {
-            base.Show();
-            this.rect.Show();
-            this.label.label.isVisible = true;
-            this.sprite.isVisible = IsJoystick(this.value);
-        }
-
-        public override void Unload()
+        protected internal override void Unload()
         {
             base.Unload();
             BoundKey.Remove(this.controlKey);

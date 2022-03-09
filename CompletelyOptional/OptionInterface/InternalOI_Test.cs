@@ -83,10 +83,10 @@ namespace CompletelyOptional
             sb.AddItems(new OpImage(new Vector2(420f, 50f), t));
             //sb.AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
             //Tabs[2].AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
-            OpColorPicker cpk0 = new OpColorPicker(new Vector2(100f, 100f), "_TEST", "CCCCCC") { colorEdge = Color.red };
-            sb.AddItems(cpk0, new OpLabel(new Vector2(300f, 100f), new Vector2(100f, 20f), "Red Colorpicker") { bumpBehav = cpk0.bumpBehav, color = Color.red });
-            OpColorPicker cpk1 = new OpColorPicker(new Vector2(100f, 2000f), "_TEST", "AAAAAA") { colorEdge = Color.blue };
-            sb.AddItems(cpk1, new OpLabel(new Vector2(300f, 2000f), new Vector2(100f, 20f), "Blue Colorpicker") { bumpBehav = cpk1.bumpBehav, color = Color.blue });
+            //OpColorPicker cpk0 = new OpColorPicker(new Vector2(100f, 100f), "_TEST", "CCCCCC") { colorEdge = Color.red };
+            //sb.AddItems(cpk0, new OpLabel(new Vector2(300f, 100f), new Vector2(100f, 20f), "Red Colorpicker") { bumpBehav = cpk0.bumpBehav, color = Color.red });
+            //OpColorPicker cpk1 = new OpColorPicker(new Vector2(100f, 2000f), "_TEST", "AAAAAA") { colorEdge = Color.blue };
+            //sb.AddItems(cpk1, new OpLabel(new Vector2(300f, 2000f), new Vector2(100f, 20f), "Blue Colorpicker") { bumpBehav = cpk1.bumpBehav, color = Color.blue });
             sb.AddItems(new OpSlider(new Vector2(100f, 1800f), "", new IntVector2(0, 100), 300));
             sb.AddItems(new OpSlider(new Vector2(500f, 1700f), "", new IntVector2(0, 100), 300, true));
             sb.AddItems(new OpSliderTick(new Vector2(100f, 1400f), "", new IntVector2(0, 20), 200));
@@ -113,6 +113,7 @@ namespace CompletelyOptional
             sb.AddItems(new OpLabelLong(new Vector2(425f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
             */
 
+            /*
             OpComboBox cb = new OpComboBox(new Vector2(100f, 1000f), 150f, "", new List<ListItem>() {
                 new ListItem("Slugcat"), new ListItem("Is"), new ListItem("HalfSlug"),
                 new ListItem("And"), new ListItem("HalfBunny"), new ListItem("Creature") }, "Slugcat");
@@ -128,6 +129,7 @@ namespace CompletelyOptional
                 new ListItem("The Survivor", 0), new ListItem("The Monk", 1), new ListItem("The Hunter", 2),
                 new ListItem("The Sporecat", 3), new ListItem("The Electric Cat", 4), new ListItem("The Programmer Cat", 5)}, OpListBox.GetLineCountFromHeight(200f)));
             sb.AddItems(new OpLabel(330f, 780f, "Player 2 plays as", true));
+            */
             // Use OpScrollBox.AddItems instead of OpTab.AddItems.
             /*
             OpResourceSelector rs = new OpResourceSelector(new Vector2(100f, 1600f), new Vector2(200f, 30f), "", typeof(CreatureTemplate.Type));

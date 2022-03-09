@@ -76,7 +76,7 @@ namespace CompletelyOptional
                 Tabs = new OpTab[Mathf.Min(20, sections.Count)];
                 for (int t = 0; t < Tabs.Length; t++)
                 {
-                    Tabs[t] = new OpTab(sections[t]);
+                    Tabs[t] = new OpTab(this, sections[t]);
                     float h = t != 0 ? 50f : 150f;
                     List<ConfigDefinition> cds = new List<ConfigDefinition>();
                     foreach (ConfigDefinition k in keys) { if (k.Section == sections[t]) { cds.Add(k); } }
@@ -167,9 +167,9 @@ namespace CompletelyOptional
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<string> eString))
                                     {
                                         string defaultString = (string)eString.DefaultValue;
-                                        if (OpColorPicker.IsStringHexColor(defaultString))
+                                        if (MenuColorEffect.IsStringHexColor(defaultString))
                                         { //OpColorPicker
-                                            elms.Add(new OpColorPicker(new Vector2(30f, 600f - h - 170f), GenerateKey(cds[e]), defaultString));
+                                            // elms.Add(new OpColorPicker(new Vector2(30f, 600f - h - 170f), GenerateKey(cds[e]), defaultString));
                                             elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
                                             { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                             if (!string.IsNullOrEmpty(desc))
@@ -193,7 +193,7 @@ namespace CompletelyOptional
                                 case "keycode": //OpKeyBinder
                                     if (bepConfig.TryGetEntry(cds[e], out ConfigEntry<KeyCode> eKeyCode))
                                     {
-                                        elms.Add(new OpKeyBinder(new Vector2(30f, 600f - h - 50f), new Vector2(150f, 30f), rwMod.ModID, GenerateKey(cds[e]), ((KeyCode)eKeyCode.DefaultValue).ToString(), false));
+                                        // elms.Add(new OpKeyBinder(new Vector2(30f, 600f - h - 50f), new Vector2(150f, 30f), rwMod.ModID, GenerateKey(cds[e]), ((KeyCode)eKeyCode.DefaultValue).ToString(), false));
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
                                         { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
@@ -207,7 +207,7 @@ namespace CompletelyOptional
                                     // if type is enum => OpComboBox
                                     if (entryBase.SettingType.IsEnum)
                                     {
-                                        elms.Add(new OpResourceSelector(new Vector2(30f, 600f - h - 45f), 120f, GenerateKey(cds[e]), entryBase.SettingType, entryBase.DefaultValue.ToString()));
+                                        // elms.Add(new OpResourceSelector(new Vector2(30f, 600f - h - 45f), 120f, GenerateKey(cds[e]), entryBase.SettingType, entryBase.DefaultValue.ToString()));
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
                                         { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
@@ -229,7 +229,7 @@ namespace CompletelyOptional
                                             items.Add(item);
                                         }
 
-                                        elms.Add(new OpComboBox(new Vector2(30f, 600f - h - 45f), 120f, GenerateKey(cds[e]), items, TomlTypeConverter.ConvertToString(entryBase.DefaultValue, valueType)));
+                                        // elms.Add(new OpComboBox(new Vector2(30f, 600f - h - 45f), 120f, GenerateKey(cds[e]), items, TomlTypeConverter.ConvertToString(entryBase.DefaultValue, valueType)));
                                         elms.Add(new OpLabel(new Vector2(20f, 600f - h - 15f), new Vector2(120f, 15f), cds[e].Key)
                                         { alignment = FLabelAlignment.Left, description = GetFirstSentence(desc), bumpBehav = (elms[elms.Count - 1] as UIconfig).bumpBehav });
                                         if (!string.IsNullOrEmpty(desc))
@@ -275,7 +275,7 @@ namespace CompletelyOptional
             else
             {
                 Tabs = new OpTab[1];
-                Tabs[0] = new OpTab();
+                Tabs[0] = new OpTab(this);
                 AddBasicProfile(Tabs[0], rwMod);
                 if (!string.IsNullOrEmpty(modDescription))
                 { Tabs[0].AddItems(new OpLabelLong(new Vector2(50f, 200f), new Vector2(500f, 250f), modDescription, alignment: FLabelAlignment.Center)); }
@@ -303,7 +303,7 @@ namespace CompletelyOptional
         /// <summary>
         /// Saves Config to BepInEx's cfg format. One of the bridges between Config Machine and BepInEx.Config.
         /// </summary>
-        public bool SaveBepConfig(Dictionary<string, string> newConfig)
+        internal bool SaveBepConfig(Dictionary<string, string> newConfig)
         {
             foreach (ConfigDefinition def in bepConfig.Keys)
             {
@@ -366,7 +366,7 @@ namespace CompletelyOptional
         /// <summary>
         /// Reloads Config from BepInEx's cfg format. One of the bridges between Config Machine and BepInEx.Config
         /// </summary>
-        public bool LoadBepConfig()
+        internal bool LoadBepConfig()
         {
             bepConfig.Reload();
             return true;
@@ -375,10 +375,10 @@ namespace CompletelyOptional
         /// <summary>
         /// Displays Config from BepInEx to UIconfigs. One of the bridges between Config Machine and BepInEx.Config
         /// </summary>
-        public void ShowBepConfig()
+        internal void ShowBepConfig()
         {
-            bool m = ConfigMenu.mute;
-            ConfigMenu.mute = true;
+            bool m = ConfigContainer.mute;
+            ConfigContainer.mute = true;
             foreach (ConfigDefinition def in bepConfig.Keys)
             {
                 if (objectDictionary.TryGetValue(GenerateKey(def), out UIconfig obj))
@@ -433,7 +433,7 @@ namespace CompletelyOptional
                     }
                 }
             }
-            ConfigMenu.mute = m;
+            ConfigContainer.mute = m;
         }
 
         /// <summary>
@@ -473,12 +473,12 @@ namespace CompletelyOptional
         /// <param name="mod"><see cref="RainWorldMod"/> that has basic information of the mod</param>
         public static void AddBasicProfile(OpScrollBox box, RainWorldMod mod)
         {
-            box.AddItems(new OpLabel(new Vector2(100f, box.GetContentSize() - 600f + 550f), new Vector2(400f, 50f), mod.ModID, FLabelAlignment.Center, true));
-            box.AddItems(new OpLabel(new Vector2(50f, box.GetContentSize() - 600f + 500f), new Vector2(100f, 20f), InternalTranslator.Translate("Version: <ModVersion>").Replace("<ModVersion>", mod.Version), FLabelAlignment.Left));
+            box.AddItems(new OpLabel(new Vector2(100f, box.contentSize - 600f + 550f), new Vector2(400f, 50f), mod.ModID, FLabelAlignment.Center, true));
+            box.AddItems(new OpLabel(new Vector2(50f, box.contentSize - 600f + 500f), new Vector2(100f, 20f), InternalTranslator.Translate("Version: <ModVersion>").Replace("<ModVersion>", mod.Version), FLabelAlignment.Left));
 
             if (mod.author != RainWorldMod.authorNull)
             {
-                box.AddItems(new OpLabel(new Vector2(350f, box.GetContentSize() - 600f + 500f), new Vector2(200f, 20f), InternalTranslator.Translate("Author: <ModAuthor>").Replace("<ModAuthor>", mod.author), FLabelAlignment.Right) { autoWrap = true });
+                box.AddItems(new OpLabel(new Vector2(350f, box.contentSize - 600f + 500f), new Vector2(200f, 20f), InternalTranslator.Translate("Author: <ModAuthor>").Replace("<ModAuthor>", mod.author), FLabelAlignment.Right) { autoWrap = true });
             }
         }
 
