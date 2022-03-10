@@ -209,13 +209,13 @@ namespace OptionalUI
             colorFill = Color.black;
             if (hasBack)
             {
-                rectBack = new DyeableRect(this.myContainer, pos, size);
+                rectBack = new DyeableRect(this.myContainer, Vector2.zero, size);
                 rectBack.colorEdge = colorEdge;
             }
             if (hasSlideBar)
             {
                 bumpScroll = new BumpBehaviour(this);
-                rectSlidebar = new DyeableRect(this.myContainer, pos, SliderSize);
+                rectSlidebar = new DyeableRect(this.myContainer, Vector2.zero, SliderSize);
                 rectSlidebar.colorEdge = colorEdge;
                 rectSlidebar.colorFill = Color.Lerp(colorEdge, colorFill, 0.5f);
                 rectSlidebar.fillAlpha = 0.5f;
@@ -558,12 +558,10 @@ namespace OptionalUI
                 rectBack.fillAlpha = fillAlpha;
                 rectBack.addSize = doesBackBump ? new Vector2(4f, 4f) * this.bumpBehav.AddSize : Vector2.zero;
                 rectBack.addSize += new Vector2(2f, 2f);
-                rectBack.pos = pos;
                 rectBack.size = size;
             }
             if (rectSlidebar != null)
             {
-                rectSlidebar.GrafUpdate(timeStacker);
                 this.bumpScroll.MouseOver = this.scrollMouseOver;
                 this.bumpScroll.greyedOut = this.ScrollLocked;
                 this.bumpScroll.Update();
@@ -585,7 +583,8 @@ namespace OptionalUI
                 rectSlidebar.colorEdge = this.bumpScroll.GetColor(this.colorEdge);
                 rectSlidebar.size = SliderSize;
                 rectSlidebar.addSize = new Vector2(2f, 2f) * this.bumpScroll.AddSize;
-                rectSlidebar.pos = pos + SliderPos;
+                rectSlidebar.pos = SliderPos;
+                rectSlidebar.GrafUpdate(timeStacker);
             }
             if (this._labelNotify != null)
             {

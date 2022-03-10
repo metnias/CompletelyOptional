@@ -10,7 +10,7 @@ APPLY|kor$적용|spa$APLICAR|fre$APPLIQUER|rus$ПРИМЕНИТЬ|chi$应用
 SAVE ALL|kor$모두 적용|spa$GUARDAR TODO|fre$ENREGISTRER TOUT|rus$СОХРАНИТЬ ВСЕ|chi$保存所有
 BACK|kor$뒤로|spa$VOLVER|fre$RETOUR|rus$НАЗАД|chi$返回
 CANCEL|kor$취소|spa$CANCELAR|fre$ANNULER|rus$ОТМЕНА|chi$取消
-RESET CONFIG|kor$설정 초기화|spa$RESTABLECER|fre$REINITIALISER|rus$СБРОСИТЬ\nНАСТРОЙКИ|chi$重置配置
+RESET CONFIG|kor$설정 초기화|spa$RESTABLECER|fre$REINITIALISER|rus$СБРОСИТЬ НАСТРОЙКИ|chi$重置配置
 Version: <ModVersion>|kor$버전: <ModVersion>|spa$Versión: <ModVersion>|fre$Version : <ModVersion>|rus$Версия: <ModVersion>|chi$版本：<ModVersion>
 Author: <ModAuthor>|kor$제작자: <ModAuthor>|spa$Autor: <ModAuthor>|fre$Auteur : <ModAuthor>|rus$Автор: <ModAuthor>|chi$作者：<ModAuthor>
 Configure <ModID> by <ModAuthor>|kor$<ModID> by <ModAuthor> 설정|spa$Configurar <ModID> por <ModAuthor>|fre$Configurer <ModID> par <ModAuthor>|rus$Настроить <ModID> от <ModAuthor>|chi$配置由<ModAuthor>制作的<ModID>

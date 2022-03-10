@@ -114,7 +114,7 @@ namespace CompletelyOptional
         }
 
         protected internal override bool MouseOver => base.MouseOver
-            || (this.MousePos.x < 480f && this.MousePos.y > 140f && this.MousePos.y < 700f);
+            || (this.MousePos.x < 260f && this.MousePos.y > 140f && this.MousePos.y < 700f);
 
         public override void Update()
         {
@@ -204,7 +204,7 @@ namespace CompletelyOptional
                 OnChange();
             }
 
-            private Vector2 MyPos => list.GetPos() + new Vector2(0f, 650f - (index - list.floatScrollPos) * height);
+            private Vector2 MyPos => list.pos + new Vector2(0f, 650f - (index - list.floatScrollPos) * height);
 
             public const float height = 25f;
 

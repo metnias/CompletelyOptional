@@ -339,6 +339,7 @@ namespace OptionalUI
                 Vector2 p = new Vector2(menu.mousePosition.x - ScreenPos.x, menu.mousePosition.y - ScreenPos.y);
                 if (inScrollBox)
                 { p += scrollBox.camPos - (scrollBox.horizontal ? Vector2.right : Vector2.up) * scrollBox.scrollOffset - scrollBox.pos; }
+                else if (tab != null) { p -= new Vector2(tab.container.x, tab.container.y); }
                 return p;
             }
         }
@@ -380,7 +381,7 @@ namespace OptionalUI
         protected static void LabelPlaceAtCenter(FLabel label, Vector2 pos, Vector2 size)
         {
             label.x = pos.x + size.x / 2f;
-            label.y = size.y / 2f;
+            label.y = pos.y + size.y / 2f;
         }
 
         /// <summary>

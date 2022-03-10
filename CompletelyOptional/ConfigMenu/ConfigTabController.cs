@@ -255,10 +255,11 @@ namespace CompletelyOptional
                 this.bumpBehav = new BumpBehaviour(this);
 
                 this.Reset(); // repos & resize
-                this.rect = new DyeableRect(myContainer, this.pos, this.size, true) { hiddenSide = DyeableRect.HiddenSide.Right };
-                this.rectH = new DyeableRect(myContainer, this.pos, this.size, false) { hiddenSide = DyeableRect.HiddenSide.Right };
+                this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true) { hiddenSide = DyeableRect.HiddenSide.Right };
+                this.rectH = new DyeableRect(myContainer, Vector2.zero, this.size, false) { hiddenSide = DyeableRect.HiddenSide.Right };
                 this.label = OpLabel.CreateFLabel(this.name);
                 this.label.alignment = FLabelAlignment.Left;
+                this.label.rotation = -90f;
                 this.myContainer.AddChild(this.label);
 
                 this.ctrl.menuTab.AddItems(this);
@@ -321,7 +322,6 @@ namespace CompletelyOptional
                 if (!this.active && !this.MouseOver) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f); }
                 else { this.darken = Mathf.Min(1f, this.darken + 0.1f); }
 
-                this.label.rotation = -90f;
                 string curName = string.IsNullOrEmpty(this.name) ? tabIndex.ToString() : this.name;
                 if (lastName != curName)
                 {
@@ -341,12 +341,12 @@ namespace CompletelyOptional
                 this.rect.fillAlpha = this.bumpBehav.FillAlpha;
                 float addSize = this.active ? 1f : this.bumpBehav.AddSize;
                 this.rect.addSize = new Vector2(8f, 4f) * addSize;
-                this.rect.pos = this.pos + new Vector2(-this.rect.addSize.x * 0.5f, Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker));
+                this.rect.pos = new Vector2(-this.rect.addSize.x * 0.5f, Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker));
                 this.label.x = -addSize * 4f;
 
                 this.rectH.colorEdge = color;
                 this.rectH.addSize = new Vector2(4f, -4f) * addSize;
-                this.rectH.pos = this.pos + new Vector2(-this.rectH.addSize.x * 0.5f, Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker));
+                this.rectH.pos = new Vector2(-this.rectH.addSize.x * 0.5f, Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker));
                 float highlight = this.MouseOver ? (0.5f + 0.5f * this.bumpBehav.Sin(10f)) * addSize : 0f;
                 for (int j = 0; j < 8; j++) { this.rectH.sprites[j].alpha = active ? 1f : highlight; }
             }
