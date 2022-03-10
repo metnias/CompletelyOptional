@@ -18,7 +18,7 @@ namespace CompletelyOptional
         public const string PLUGIN_NAME = "CompletelyOptional";
         public const string PLUGIN_VERSION = "2.0.0.0";
 
-        public static bool testing = false; //= true;
+        public static readonly bool testing = true;
 
         #region AutoUpdate
 

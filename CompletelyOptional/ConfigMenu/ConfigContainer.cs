@@ -169,6 +169,14 @@ namespace CompletelyOptional
                 listItf.Add(oi);
             }
 
+            if (ComOptPlugin.testing)
+            {
+                OptionInterface t = new InternalOI_Test();
+                try { t.Initialize(); }
+                catch (Exception e) { t = new InternalOI_Error(t.rwMod, e); t.Initialize(); }
+                listItf.Add(t);
+            }
+
             #endregion Load
 
             #region Sort
@@ -218,7 +226,7 @@ namespace CompletelyOptional
 
                 // Save indexes of mods starting with ABC
                 if (i == 0) { continue; } //Ignore InternalOI_Stats
-                if (name[0] < a) { continue; }
+                if (name[0] < a || !char.IsLetter(name[0])) { continue; }
                 while (name[0] > a && a < 123)
                 { OptItfABC[a - 97] = -1; a++; }
                 if (name[0] == a) { OptItfABC[a - 97] = i; a++; continue; }
@@ -646,7 +654,7 @@ namespace CompletelyOptional
             SoundLoader.SoundData soundData = ModConfigMenu.instance.manager.menuMic.GetSoundData(soundID, -1);
             AudioClip clip = ModConfigMenu.instance.manager.menuMic.soundLoader.GetAudioClip(soundData.audioClip);
             if (clip == null) { return 0; }
-            return Mathf.CeilToInt(clip.length * 60.0f) + 1;
+            return Mathf.CeilToInt(Mathf.Sqrt(clip.length * 60.0f)) + 1;
         }
 
         /// <summary>
@@ -657,7 +665,7 @@ namespace CompletelyOptional
         /// <summary>
         /// Whether the sound engine is full or not. See also <seealso cref="_soundFill"/>
         /// </summary>
-        private static bool _soundFilled => _soundFill > UIelement.FrameMultiply(80) || mute;
+        private static bool _soundFilled => _soundFill > UIelement.FrameMultiply(300) || mute;
 
         /// <summary>
         /// Whether to play sound or not

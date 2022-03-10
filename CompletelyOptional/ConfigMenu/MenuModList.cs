@@ -136,7 +136,8 @@ namespace CompletelyOptional
         {
             if (element is ModButton)
             { // Switch Mod
-                cfgContainer.ChangeActiveMod(index);
+                if (index != ConfigContainer.activeItfIndex)
+                { cfgContainer.ChangeActiveMod(index); }
             }
             else if (element is AlphabetButton)
             { // Scroll to Alphabet
@@ -184,6 +185,7 @@ namespace CompletelyOptional
                 if (itf is InternalOI)
                 {
                     if ((itf as InternalOI).reason == InternalOI.Reason.Error) { type = ItfType.Error; }
+                    else if ((itf as InternalOI).reason == InternalOI.Reason.TestOI) { type = ItfType.Inconfigurable; }
                     else { type = ItfType.Blank; }
                 }
                 else { type = itf.Configurable() ? ItfType.Configurable : ItfType.Inconfigurable; }

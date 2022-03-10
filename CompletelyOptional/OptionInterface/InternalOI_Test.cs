@@ -10,7 +10,7 @@ namespace CompletelyOptional
     /// </summary>
     internal class InternalOI_Test : InternalOI
     {
-        public InternalOI_Test() : base(new RainWorldMod("TestDummy")
+        public InternalOI_Test() : base(new RainWorldMod("_TestDummy_")
         {
             author = "topicular",
             description = "Internal OI for testing new features of Config Machine",
@@ -60,10 +60,12 @@ namespace CompletelyOptional
             t.SetPixels(n); t.Apply();
 
             //Tabs[0].AddItems(new OpSpriteEditor(new Vector2(300f, 100f), new Vector2(100f, 100f), "_TEST", t));
-            OpScrollBox scb = new OpScrollBox(new Vector2(100f, 100f), new Vector2(240f, 150f), 400f);
+            OpScrollBox scb = new OpScrollBox(new Vector2(50f, 100f), new Vector2(240f, 150f), 400f);
             Tabs[0].AddItems(scb);
             scb.AddItems(new OpLabelLong(new Vector2(20f, 20f), new Vector2(120f, 200f)),
                 new OpSlider(new Vector2(160f, 30f), "_", new IntVector2(-20, 20), length: 180, true, 10));
+            hold = new OpHoldButton(new Vector2(440f, 200f), new Vector2(120f, 24f), "_", "Hold");
+            Tabs[0].AddItems(hold);
 
             OpCheckBox chk = new OpCheckBox(new Vector2(100f, 420f), "_", true);
             Tabs[1].AddItems(chk, new OpLabel(new Vector2(100f, 470f), new Vector2(50f, 15f), "CheckBox") { bumpBehav = chk.bumpBehav });
@@ -146,6 +148,17 @@ namespace CompletelyOptional
             sb.AddItems(rs, new OpLabel(100f, 1130f, "Shaders") { bumpBehav = rs.bumpBehav });
             rs = new OpResourceSelector(new Vector2(100f, 1000f), new Vector2(200f, 30f), "", OpResourceSelector.SpecialEnum.Songs);
             sb.AddItems(rs, new OpLabel(100f, 1030f, "Songs") { bumpBehav = rs.bumpBehav });*/
+        }
+
+        private OpHoldButton hold;
+        private float perc = 0f;
+
+        public override void Update()
+        {
+            base.Update();
+            if (Random.value < 0.3f) { perc += Mathf.Pow(Random.value, 2f); }
+            if (perc > 100f) { perc = Random.value > 0.1f ? 100f : 0f; }
+            hold.SetProgress(perc);
         }
     }
 }

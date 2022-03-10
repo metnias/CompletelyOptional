@@ -611,12 +611,9 @@ namespace OptionalUI
 
         protected internal override void Deactivate()
         {
-            base.Hide();
+            base.Deactivate();
             foreach (UIelement child in children) { child.Deactivate(); }
             _cam.gameObject.SetActive(false);
-            if (rectBack != null) { this.rectBack.Hide(); }
-            if (rectSlidebar != null) { this.rectSlidebar.Hide(); }
-            if (_labelNotify != null) { this._labelNotify.isVisible = false; }
         }
 
         protected internal override void Reactivate()
@@ -624,9 +621,6 @@ namespace OptionalUI
             base.Reactivate();
             foreach (UIelement child in children) { child.Reactivate(); }
             _cam.gameObject.SetActive(true);
-            if (rectBack != null) { this.rectBack.Show(); }
-            if (rectSlidebar != null) { this.rectSlidebar.Show(); }
-            if (_labelNotify != null) { this._labelNotify.isVisible = true; }
         }
 
         protected internal override void Unload()

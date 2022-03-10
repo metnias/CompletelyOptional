@@ -6,7 +6,8 @@ namespace OptionalUI
     public class OpHoldButton : UItrigger, ICanBeFocused
     {
         /// <summary>
-        /// Circular Hold Button which can also be used as ProgressButton
+        /// Circular Hold Button which can also be used as ProgressButton.
+        /// <para><see cref="UIelement.fixedRad"/> is 55f (110f in diameter)</para>
         /// </summary>
         /// <param name="pos">BottomLeft <see cref="UIelement.pos"/>; <see cref="UIelement.fixedRad"/> is 55f (110f in diameter)</param>
         /// <param name="signal"><see cref="UItrigger.signal"/></param>
@@ -53,7 +54,7 @@ namespace OptionalUI
 
             this.rect = new DyeableRect(this.myContainer, Vector2.zero, this.size, true);
             this.rectH = new DyeableRect(this.myContainer, Vector2.zero, this.size, false);
-            this.rectF = new FSprite("pixel", true)
+            this.fillSprite = new FSprite("pixel", true)
             {
                 anchorX = 0f,
                 anchorY = 0f,
@@ -66,7 +67,7 @@ namespace OptionalUI
             };
             label = OpLabel.CreateFLabel(text);
             LabelPlaceAtCenter(label, Vector2.zero, this.size);
-            this.myContainer.AddChild(this.rectF);
+            this.myContainer.AddChild(this.fillSprite);
             this.myContainer.AddChild(this.label);
         }
 
@@ -81,7 +82,7 @@ namespace OptionalUI
         private int releaseCounter;
         private readonly FSprite[] circles;
         private readonly DyeableRect rect, rectH;
-        private readonly FSprite rectF;
+        private readonly FSprite fillSprite;
 
         /// <summary>
         /// Text to be displayed
@@ -177,19 +178,20 @@ namespace OptionalUI
                         this.rect.sprites[this.rect.FillSideSprite(2)].color = this.rect.colorEdge;
                     }
 
-                    this.rectF.x = 7f - this.rect.addSize.x / 2f;
-                    this.rectF.scaleX = (size.x - 14f + this.rect.addSize.x) * fill;
-                    this.rectF.scaleY = size.y;
-                    this.rectF.color = this.rect.colorEdge;
+                    this.fillSprite.x = 7f - this.rect.addSize.x / 2f;
+                    this.fillSprite.y = 0f - this.rect.addSize.y / 2f;
+                    this.fillSprite.scaleX = (size.x - 14f + this.rect.addSize.x) * fill;
+                    this.fillSprite.scaleY = size.y + this.rect.addSize.y;
+                    this.fillSprite.color = this.rect.colorEdge;
                     this.rect.sprites[DyeableRect.MainFillSprite].x = (size.x - 14f) * fill + 7f;
                     this.rect.sprites[DyeableRect.MainFillSprite].scaleX = (size.x - 14f) * (1f - fill);
                     this.rect.sprites[this.rect.FillSideSprite(1)].x = (size.x - 14f) * fill + 7f;
                     this.rect.sprites[this.rect.FillSideSprite(1)].scaleX = (size.x - 14f) * (1f - fill);
                     this.rect.sprites[this.rect.FillSideSprite(3)].x = (size.x - 14f) * fill + 7f;
                     this.rect.sprites[this.rect.FillSideSprite(3)].scaleX = (size.x - 14f) * (1f - fill);
-                    label.color = Color.Lerp(c, MenuColorEffect.MidToVeryDark(c), fill);
+                    label.color = Color.Lerp(c, MenuColorEffect.MidToVeryDark(c), Custom.SCurve(fill, 0.6f));
                 }
-                else { this.rectF.scaleX = 0f; }
+                else { this.fillSprite.scaleX = 0f; }
             }
         }
 

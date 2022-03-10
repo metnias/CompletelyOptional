@@ -20,7 +20,7 @@ namespace CompletelyOptional
 
             rectCanvas = new DyeableRect(this.myContainer, new Vector2(543f, 105f) - this._pos, new Vector2(630f, 630f), true) { fillAlpha = 0.5f };
             // author version license: 908 30, 245 86
-            rectPpty = new DyeableRect(this.myContainer, new Vector2(908f, 30f) - this._pos, new Vector2(245f, 86f), true) { hiddenSide = DyeableRect.HiddenSide.Top };
+            rectPpty = new DyeableRect(this.myContainer, new Vector2(908f, 30f) - this._pos, new Vector2(245f, 83f), true) { hiddenSide = DyeableRect.HiddenSide.Top };
 
             OnChange();
         }
