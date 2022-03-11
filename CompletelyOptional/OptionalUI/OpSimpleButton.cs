@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using CompletelyOptional;
+using UnityEngine;
 
 namespace OptionalUI
 {
@@ -28,9 +29,24 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Click sound to play. In default this is <see cref="SoundID.MENU_Button_Standard_Button_Pressed"/>.
+        /// Whether this triggers <see cref="UItrigger.Signal"/> when it's kept pressed or not. See also <seealso cref="soundHold"/>.
         /// </summary>
-        public SoundID clickSound = SoundID.MENU_Button_Standard_Button_Pressed;
+        public bool canHold;
+
+        /// <summary>
+        /// How long this is held.
+        /// </summary>
+        protected int heldCounter = 0;
+
+        /// <summary>
+        /// A sound to play when this is held and released (<see cref="canHold"/> is false), or pressed initially (<see cref="canHold"/> is true). In default this is <see cref="SoundID.MENU_Button_Standard_Button_Pressed"/>.
+        /// </summary>
+        public SoundID soundClick = SoundID.MENU_Button_Standard_Button_Pressed;
+
+        /// <summary>
+        /// A sound to play when this is held for long to trigger <see cref="UItrigger.Signal"/>. See also <seealso cref="canHold"/>, <seealso cref="soundClick"/>.
+        /// </summary>
+        public SoundID soundHold = SoundID.MENU_Scroll_Tick;
 
         /// <summary>
         /// Text inside the button
@@ -112,37 +128,67 @@ namespace OptionalUI
                 if (this.MouseOver)
                 {
                     if (Input.GetMouseButton(0))
-                    { this.held = true; }
+                    {
+                        if (!this.held && canHold)
+                        {
+                            PlaySound(soundClick);
+                            this.Signal();
+                        }
+                        this.held = true; heldCounter++;
+                    }
                     else
                     {
                         if (this.held)
                         {
                             this.held = false;
-                            PlaySound(clickSound);
-                            this.Signal();
+                            if (!canHold)
+                            {
+                                PlaySound(soundClick);
+                                this.Signal();
+                            }
+                            heldCounter = 0;
                         }
                     }
                 }
                 else if (!Input.GetMouseButton(0))
                 {
                     this.held = false;
+                    heldCounter = 0;
                 }
             }
             else
             {
                 if (this.Focused())
                 {
-                    if (this.held)
+                    if (CtlrInput.jmp)
                     {
-                        if (!CtlrInput.jmp)
+                        this.held = true; heldCounter++;
+                        if (canHold && !LastCtlrInput.jmp)
                         {
-                            this.held = false;
-                            PlaySound(clickSound);
+                            PlaySound(soundClick);
                             this.Signal();
                         }
                     }
-                    if (CtlrInput.jmp && !LastCtlrInput.jmp) { this.held = true; }
+                    else
+                    {
+                        if (this.held)
+                        {
+                            this.held = false;
+                            if (!canHold)
+                            {
+                                PlaySound(soundClick);
+                                this.Signal();
+                            }
+                            heldCounter = 0;
+                        }
+                    }
                 }
+            }
+            if (canHold && heldCounter > ModConfigMenu.DASinit && heldCounter % ModConfigMenu.DASdelay == 1)
+            {
+                PlaySound(soundHold);
+                this.Signal();
+                this.bumpBehav.sin = 0.5f;
             }
         }
     }

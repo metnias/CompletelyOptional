@@ -7,7 +7,7 @@ namespace CompletelyOptional
     /// <summary>
     /// Special UI used internally in CM for switching tabs
     /// </summary>
-    internal class ConfigTabController : UIelement, ICanBeFocused
+    internal class ConfigTabController : UIelement
     {
         public ConfigTabController(MenuTab tab) : base(new Vector2(520f, 120f), new Vector2(40f, 600f))
         {
@@ -36,16 +36,6 @@ namespace CompletelyOptional
         internal TabSelectButton[] tabButtons;
         internal TabScrollButton[] scrollButtons;
         internal const int tabButtonLimit = 8;
-
-        public bool GreyedOut => false;
-
-        public bool CurrentlyFocusableMouse => ConfigContainer.activeInterface.Tabs.Length > 1;
-
-        public bool CurrentlyFocusableNonMouse => ConfigContainer.activeInterface.Tabs.Length > 1;
-
-        public Rect FocusRect =>
-            new Rect(tabButtons[focusedIndex].pos.x, tabButtons[focusedIndex].pos.y,
-                tabButtons[focusedIndex].size.x, tabButtons[focusedIndex].size.y);
 
         internal int index
         {
@@ -78,6 +68,8 @@ namespace CompletelyOptional
 
         private int _tabCount = -1;
 
+        internal TabSelectButton GetCurrentTabButton() => tabButtons[ConfigContainer.activeTabIndex - topIndex];
+
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);
@@ -97,8 +89,10 @@ namespace CompletelyOptional
 
             lastScrollBump = scrollBump;
             scrollBump = Custom.LerpAndTick(scrollBump, 0f, 0.1f, 0.1f / frameMulti);
+        }
 
-            // Scroll to Focus
+        internal void ScrollToFocus(int focusedIndex)
+        {
             if (focusedIndex < topIndex)
             {
                 scrollBump = Mathf.Max(scrollBump - 2.5f * (topIndex - focusedIndex), -12f);
@@ -109,86 +103,6 @@ namespace CompletelyOptional
                 scrollBump = Mathf.Min(scrollBump + 2.5f * (topIndex - focusedIndex), 12f);
                 topIndex = focusedIndex - tabButtonLimit - 1;
             }
-
-            if (!MenuMouseMode && this.Focused())
-            {
-                if (!ConfigContainer.holdElement)
-                {
-                    // If this gets focus
-                    // becomes hold automatically
-                    ConfigContainer.holdElement = true;
-                    focusedIndex = ConfigContainer.activeTabIndex;
-                }
-                else if (!CtlrInput.jmp)
-                {
-                    // X direction
-                    if (CtlrInput.x != 0 && LastCtlrInput.x == 0)
-                    {
-                        ConfigContainer.holdElement = false;
-                        menu.cfgContainer.FocusNewElementInDirection(new IntVector2(CtlrInput.x, 0));
-                        return;
-                    }
-                    // Y direction
-                    if (menu.input.y != 0 && menu.lastInput.y != menu.input.y)
-                    { focusedIndex += System.Math.Sign(menu.input.y); }
-                    if (menu.input.y != 0 && menu.lastInput.y == menu.input.y && menu.input.x == 0)
-                    { this.scrollInitDelay++; }
-                    else
-                    { this.scrollInitDelay = 0; }
-                    if (this.scrollInitDelay > ModConfigMenu.DASinit)
-                    {
-                        this.scrollDelay++;
-                        if (this.scrollDelay > ModConfigMenu.DASdelay)
-                        {
-                            this.scrollDelay = 0;
-                            if (menu.input.y != 0 && menu.lastInput.y == menu.input.y)
-                            { focusedIndex += System.Math.Sign(menu.input.y); }
-                        }
-                    }
-                    else { this.scrollDelay = 0; }
-
-                    if (focusedIndex < 0)
-                    {
-                        focusedIndex = 0;
-                        if (topIndex > 0)
-                        { // Scroll Up
-                            topIndex--;
-                            PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
-                            scrollBump = Mathf.Max(scrollBump - 4f, -8f);
-                        }
-                        else
-                        { // No more scroll
-                            PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard);
-                            scrollBump = Mathf.Max(scrollBump - 2f, -8f);
-                        }
-                    }
-                    else if (focusedIndex > _tabCount)
-                    { // Escape
-                        ConfigContainer.holdElement = false;
-                        menu.cfgContainer.FocusNewElementInDirection(new IntVector2(0, menu.input.y));
-                        return;
-                    }
-                    else if (focusedIndex > tabButtonLimit)
-                    {
-                        if (topIndex < _tabCount - tabButtonLimit)
-                        { // Scroll Down
-                            topIndex++;
-                            PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
-                            scrollBump = Mathf.Min(scrollBump + 4f, 8f);
-                        }
-                        else
-                        { // Escape to Save Button
-                            ConfigContainer.holdElement = false;
-                            menu.cfgContainer.FocusNewElement(menuTab.saveButton);
-                            return;
-                        }
-                    }
-                    else
-                    { // Switch to next button
-                        PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
-                    }
-                }
-            }
         }
 
         /// <summary>
@@ -196,12 +110,7 @@ namespace CompletelyOptional
         /// </summary>
         internal float scrollBump, lastScrollBump;
 
-        /// <summary>
-        /// Required for DAS
-        /// </summary>
-        private int scrollDelay, scrollInitDelay;
-
-        internal int topIndex, focusedIndex;
+        internal int topIndex;
 
         public override void OnChange()
         { //Selected Tab/Tab number has changed
@@ -210,18 +119,19 @@ namespace CompletelyOptional
             {
                 _tabCount = TabCount;
                 topIndex = 0;
-                focusedIndex = ConfigContainer.savedActiveTabIndex[ConfigContainer.activeItfIndex];
+                scrollBump = 0f; lastScrollBump = 0f;
+
                 if (_tabCount > tabButtonLimit)
                 { scrollButtons[0].Show(); scrollButtons[1].Show(); }
                 else
                 { scrollButtons[0].Hide(); scrollButtons[1].Hide(); }
+                ScrollToFocus(ConfigContainer.activeTabIndex);
                 Refresh();
             }
         }
 
         private void Refresh()
         {
-            scrollBump = 0f; lastScrollBump = 0f;
             if (_tabCount < 2)
             { // No tab button
                 foreach (TabSelectButton btn in tabButtons)
@@ -239,8 +149,8 @@ namespace CompletelyOptional
                 else
                 {
                     if (i >= _tabCount) { this.tabButtons[i].Hide(); }
-                    else if (this.tabButtons[i].isInactive)
-                    { this.tabButtons[i].Reset(); this.tabButtons[i].Show(); }
+                    else if (this.tabButtons[i].isInactive) { this.tabButtons[i].Show(); }
+                    if (!this.tabButtons[i].isInactive) { this.tabButtons[i].Reset(); }
                 }
             }
         }
@@ -249,6 +159,8 @@ namespace CompletelyOptional
         {
             if (trigger is TabSelectButton)
             {
+                if (index == ConfigContainer.activeTabIndex) { PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked); return; }
+                PlaySound(SoundID.MENU_MultipleChoice_Clicked);
                 ConfigContainer.ChangeActiveTab(index); return;
             }
             if (trigger is TabScrollButton)
@@ -257,9 +169,9 @@ namespace CompletelyOptional
                 {
                     if (topIndex > 0)
                     { // Scroll Up
-                        topIndex--;
+                        topIndex--; Refresh();
                         PlaySound(index < -1 ? SoundID.MENU_Scroll_Tick : SoundID.MENU_First_Scroll_Tick);
-                        scrollBump = Mathf.Max(scrollBump - 6f, -12f);
+                        scrollBump = Mathf.Max(scrollBump - (index < -1 ? 4f : 6f), -12f);
                     }
                     else
                     { // No more scroll
@@ -271,9 +183,9 @@ namespace CompletelyOptional
                 {
                     if (topIndex < _tabCount - tabButtonLimit)
                     { // Scroll Down
-                        topIndex++;
-                        PlaySound(index > 1 ? SoundID.MENU_Scroll_Tick : SoundID.MENU_First_Scroll_Tick);
-                        scrollBump = Mathf.Min(scrollBump + 6f, 12f);
+                        topIndex++; Refresh();
+                        PlaySound(index < -1 ? SoundID.MENU_Scroll_Tick : SoundID.MENU_First_Scroll_Tick);
+                        scrollBump = Mathf.Min(scrollBump + (index > 1 ? 4f : 6f), 12f);
                     }
                     else
                     { // No more scroll
@@ -297,6 +209,7 @@ namespace CompletelyOptional
                 this.rectH.hiddenSide = DyeableRect.HiddenSide.Right;
                 this.label.alignment = FLabelAlignment.Left;
                 this.label.rotation = -90f;
+                this.mute = true;
                 this.myContainer.AddChild(this.label);
 
                 this.ctrl.menuTab.AddItems(this);
@@ -321,6 +234,9 @@ namespace CompletelyOptional
             public Color colorButton => representingTab.colorButton;
             public Color colorCanvas => representingTab.colorCanvas;
 
+            private bool isTop => this.buttonIndex == 0;
+            private bool isBottom => this.buttonIndex == ConfigTabController.tabButtonLimit - 1;
+
             public override void Reset()
             {
                 base.Reset();
@@ -331,7 +247,7 @@ namespace CompletelyOptional
                 { this.description = InternalTranslator.Translate("Switch to Tab <TabName>").Replace("<TabName>", this.name); }
 
                 height = Mathf.Min(120f, 600f / Custom.IntClamp(ctrl._tabCount, 1, tabButtonLimit));
-                this._pos = ctrl.pos + new Vector2(0f, height * (-tabIndex - 1) + 603f);
+                this._pos = ctrl.pos + new Vector2(0f, height * (-buttonIndex - 1) + 603f);
                 this._size = new Vector2(30f, height - 6f);
 
                 string curName = string.IsNullOrEmpty(this.name) ? tabIndex.ToString() : this.name;
@@ -374,10 +290,29 @@ namespace CompletelyOptional
 
                 if (!this.active && !this.MouseOver) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f / frameMulti); }
                 else { this.darken = Mathf.Min(1f, this.darken + 0.1f / frameMulti); }
+
+                if (!MenuMouseMode && this.Focused())
+                {
+                    if (this.isTop && this.CtlrInput.y < 0)
+                    {
+                        if (this.CtlrInput.y != this.LastCtlrInput.y)
+                        { ctrl.Signal(ctrl.scrollButtons[0], -1); }
+                        else if (ConfigContainer.instance.scrollDelay >= ModConfigMenu.DASdelay)
+                        { ctrl.Signal(ctrl.scrollButtons[0], -2); }
+                    }
+                    if (this.isBottom && this.CtlrInput.y > 0)
+                    {
+                        if (this.CtlrInput.y != this.LastCtlrInput.y)
+                        { ctrl.Signal(ctrl.scrollButtons[0], 1); }
+                        else if (ConfigContainer.instance.scrollDelay >= ModConfigMenu.DASdelay)
+                        { ctrl.Signal(ctrl.scrollButtons[0], 2); }
+                    }
+                }
             }
 
             public override void Signal()
             {
+                ConfigContainer.instance.allowFocusMove = false;
                 ctrl.Signal(this, this.tabIndex);
             }
         }
@@ -389,13 +324,14 @@ namespace CompletelyOptional
                 this._size = new Vector2(30f, 20f);
                 this.up = up;
                 this.ctrl = ctrl;
-                if (up) { this._pos = ctrl.pos + new Vector2(0f, 605f); }
-                else { this._pos = ctrl.pos + new Vector2(0f, -25f); }
+                if (up) { this._pos = ctrl.pos + new Vector2(0f, 600f); }
+                else { this._pos = ctrl.pos + new Vector2(0f, -20f); }
 
                 this.sprite.rotation = up ? 0f : 180f;
                 this.sprite.scale = 0.5f;
                 this.sprite.x = 15f;
-                this.clickSound = SoundID.MENU_First_Scroll_Tick;
+                this.mute = true;
+                this.canHold = true;
                 this.rect.Hide(); this.rectH.Hide();
                 this.ctrl.menuTab.AddItems(this);
             }
@@ -423,25 +359,14 @@ namespace CompletelyOptional
 
             public override void Update()
             {
-                this.greyedOut = up ? ctrl.topIndex == 0 : ctrl.topIndex > ctrl._tabCount - ConfigTabController.tabButtonLimit + 1;
+                this.greyedOut = up ? ctrl.topIndex == 0 : ctrl.topIndex >= ctrl._tabCount - ConfigTabController.tabButtonLimit;
                 base.Update();
-                if (MenuMouseMode)
-                {
-                    if (MouseOver)
-                    {
-                    }
-                    else
-                    {
-                    }
-                }
-                else
-                {
-                }
             }
 
             public override void Signal()
             {
-                ctrl.Signal(this, up ? -1 : 1);
+                ConfigContainer.instance.allowFocusMove = false;
+                ctrl.Signal(this, (up ? -1 : 1) * (heldCounter > ModConfigMenu.DASinit ? 2 : 1));
             }
         }
     }

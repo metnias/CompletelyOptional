@@ -63,6 +63,11 @@ namespace OptionalUI
         }
 
         /// <summary>
+        /// Prevents this <see cref="UIelement"/>'s <see cref="PlaySound(SoundID)"/> working.
+        /// </summary>
+        public bool mute = false;
+
+        /// <summary>
         /// Resets <see cref="UIelement"/>.
         /// </summary>
         public virtual void Reset()
@@ -263,12 +268,14 @@ namespace OptionalUI
         /// <summary>
         /// Restricted <see cref="Menu.Menu.PlaySound(SoundID)"/> to prevent sound glitch
         /// </summary>
-        public static void PlaySound(SoundID soundID) => ConfigContainer.PlaySound(soundID);
+        public void PlaySound(SoundID soundID)
+        { if (!mute) { ConfigContainer.PlaySound(soundID); } }
 
         /// <summary>
         /// Restricted <see cref="Menu.Menu.PlaySound(SoundID, float, float, float)"/> to prevent sound glitch
         /// </summary>
-        public static void PlaySound(SoundID soundID, float pan, float vol, float pitch) => ConfigContainer.PlaySound(soundID, pan, vol, pitch);
+        public void PlaySound(SoundID soundID, float pan, float vol, float pitch)
+        { if (!mute) { ConfigContainer.PlaySound(soundID, pan, vol, pitch); } }
 
         protected Vector2 _pos;
         protected Vector2 _size;

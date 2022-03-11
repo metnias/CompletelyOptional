@@ -13,7 +13,7 @@ namespace CompletelyOptional
     /// <summary>
     /// Contains all OptionInterfaces, and connects UIelements and Rain World Menu
     /// </summary>
-    public class ConfigContainer : Menu.MenuObject
+    public class ConfigContainer : MenuObject
     {
         public ConfigContainer(Menu.Menu menu, MenuObject owner) : base(menu, owner)
         {
@@ -26,7 +26,7 @@ namespace CompletelyOptional
             history = new Stack<ConfigHistory>();
 
             // Load OptionInterfaces
-            if (!_loadedOIs) { LoadItfs(); }
+            LoadItfs();
 
             menuTab = new MenuTab();
             lastFocusedElement = menuTab.backButton;
@@ -38,6 +38,10 @@ namespace CompletelyOptional
 
             menuTab.Activate();
             activeTab.Activate();
+
+            // Update Once
+            GrafUpdate(0f);
+            Update();
         }
 
         public static ConfigContainer instance;
@@ -52,8 +56,8 @@ namespace CompletelyOptional
         public static int activeTabIndex { get; private set; }
 
         internal static OptionInterface activeInterface => OptItfs[activeItfIndex];
-        private int scrollInitDelay;
-        private int scrollDelay;
+        internal int scrollInitDelay { get; private set; }
+        internal int scrollDelay { get; private set; }
 
         internal static void ChangeActiveTab(int newIndex)
         {
@@ -238,10 +242,7 @@ namespace CompletelyOptional
         sorted:
 
             ConfigContainer.mute = false;
-            _loadedOIs = true;
         }
-
-        private static bool _loadedOIs = false;
 
         /// <summary>
         /// Array of OptionInterface Instances
@@ -421,12 +422,44 @@ namespace CompletelyOptional
             catch (Exception ex) { InterfaceUpdateError(true, ex); }
         }
 
+        internal bool allowFocusMove;
+
         // Called by ModConfigMenu.Update
         public override void Update()
         {
             base.Update();
             _soundFill = _soundFill > 0 ? _soundFill - 1 : 0;
             if (menu.ForceNoMouseMode) { focusedElement = null; return; } // == FreezeMenuFunctions
+
+            UIelement focusedElementBeforeUpdate = focusedElement;
+            allowFocusMove = true;
+
+            #region UIelement.Update
+
+            try { activeInterface.Update(); }
+            catch (Exception ex) { InterfaceUpdateError(false, ex); }
+            if (holdElement)
+            {
+                try
+                {
+                    if (focusedElement != null && !(focusedElement as ICanBeFocused).GreyedOut) { focusedElement.Update(); }
+                    else { holdElement = false; }
+                }
+                catch (Exception ex) { InterfaceUpdateError(true, ex); }
+            }
+            if (!holdElement)
+            {
+                menuTab.Update();
+                try { activeTab.Update(); }
+                catch (Exception ex) { InterfaceUpdateError(true, ex); }
+            }
+
+            #endregion UIelement.Update
+
+            #region FocusManage
+
+            allowFocusMove = allowFocusMove && focusedElementBeforeUpdate == focusedElement;
+
             if (menu.manager.menuesMouseMode)
             { // Mouse Mode
                 if (!holdElement)
@@ -485,7 +518,8 @@ namespace CompletelyOptional
             }
             else
             { // Controller/Keyboard Mode
-                if (!holdElement)
+                if (!allowFocusMove) { this.scrollDelay = 0; } // Focus changed by OI.Update
+                else if (!holdElement)
                 {
                     if (menu.input.jmp && !menu.lastInput.jmp) // Hold Element
                     { holdElement = true; }
@@ -528,10 +562,10 @@ namespace CompletelyOptional
                         }
                         else if (!(focusedElement.tab is MenuTab)) // Move to TabController
                         {
-                            if (activeInterface.Tabs.Length > 1) { focusedElement = menuTab.tabCtrler; }
+                            if (activeInterface.Tabs.Length > 1) { focusedElement = menuTab.tabCtrler.GetCurrentTabButton(); }
                             else { focusedElement = menuTab.modList.GetCurrentModButton(); }
                         }
-                        else if (focusedElement is ConfigTabController) // Move to Mod List
+                        else if (focusedElement is ConfigTabController.TabSelectButton) // Move to Mod List
                         {
                             focusedElement = menuTab.modList.GetCurrentModButton();
                         }
@@ -551,27 +585,7 @@ namespace CompletelyOptional
                 }
             }
 
-            #region UIelement.Update
-
-            try { activeInterface.Update(); }
-            catch (Exception ex) { InterfaceUpdateError(false, ex); }
-            if (holdElement)
-            {
-                try
-                {
-                    if (focusedElement != null && !(focusedElement as ICanBeFocused).GreyedOut) { focusedElement.Update(); }
-                    else { holdElement = false; }
-                }
-                catch (Exception ex) { InterfaceUpdateError(true, ex); }
-            }
-            if (!holdElement)
-            {
-                menuTab.Update();
-                try { activeTab.Update(); }
-                catch (Exception ex) { InterfaceUpdateError(true, ex); }
-            }
-
-            #endregion UIelement.Update
+            #endregion FocusManage
         }
 
         internal void InterfaceUpdateError(bool tab, Exception ex)

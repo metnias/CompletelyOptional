@@ -99,6 +99,7 @@ namespace OptionalUI
         /// </summary>
         public virtual void Signal()
         {
+            ConfigContainer.instance.allowFocusMove = false;
             this.tab.owner.Signal(this, this.signal);
         }
 

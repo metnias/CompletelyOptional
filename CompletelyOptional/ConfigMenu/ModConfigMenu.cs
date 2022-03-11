@@ -75,21 +75,17 @@ namespace CompletelyOptional
             // UIContainer
             cfgContainer = new ConfigContainer(this, this.pages[0]);
             this.pages[0].subObjects.Add(cfgContainer);
-
-            // Update Once
-            cfgContainer.GrafUpdate(0f);
-            cfgContainer.Update();
         }
 
         private const int _DASinit = 20, _DASdelay = 6;
 
         /// <summary>
-        /// Delayed Auto Shift initial delay frame
+        /// Delayed Auto Shift initial delay frame (20)
         /// </summary>
         public static int DASinit => UIelement.FrameMultiply(_DASinit);
 
         /// <summary>
-        /// Delayed Auto Shift delay frame after initial one
+        /// Delayed Auto Shift delay frame after initial one (6)
         /// </summary>
         public static int DASdelay => UIelement.FrameMultiply(_DASdelay);
 

@@ -137,7 +137,8 @@ namespace CompletelyOptional
             if (element is ModButton)
             { // Switch Mod
                 if (index != ConfigContainer.activeItfIndex)
-                { cfgContainer.ChangeActiveMod(index); }
+                { PlaySound(SoundID.MENU_MultipleChoice_Clicked); cfgContainer.ChangeActiveMod(index); }
+                else { PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked); }
             }
             else if (element is AlphabetButton)
             { // Scroll to Alphabet
@@ -179,7 +180,7 @@ namespace CompletelyOptional
                 this.index = index + 1; // starts from 1; index 0 is for StatOI
                 this.list.menuTab.AddItems(this);
                 this._pos = MyPos;
-                this.clickSound = SoundID.MENU_Player_Join_Game;
+                this.mute = true;
 
                 // Get Type
                 if (itf is InternalOI)
@@ -313,13 +314,13 @@ namespace CompletelyOptional
                 {
                     case Role.Stat:
                         this._pos = new Vector2(462f, 700f);
-                        this.clickSound = SoundID.MENU_Switch_Arena_Gametype; break;
+                        this.soundClick = SoundID.MENU_Switch_Arena_Gametype; break;
                     case Role.ScrollUp:
                         this._pos = new Vector2(321f, 720f);
-                        this.clickSound = SoundID.MENU_First_Scroll_Tick; break;
+                        this.soundClick = SoundID.MENU_First_Scroll_Tick; this.canHold = true; break;
                     case Role.ScrollDown:
                         this._pos = new Vector2(321f, 26f); this.sprite.rotation = 180f;
-                        this.clickSound = SoundID.MENU_First_Scroll_Tick; break;
+                        this.soundClick = SoundID.MENU_First_Scroll_Tick; this.canHold = true; break;
                 }
                 OnChange();
             }
@@ -371,34 +372,11 @@ namespace CompletelyOptional
                         greyedOut = list.scrollPos > list.modButtons.Length - MenuModList.scrollVisible + 1;
                         break;
                 }
-                if (role != Role.Stat)
-                {
-                    if (MenuMouseMode)
-                    {
-                        if (this.MouseOver && Input.GetMouseButton(0)) { goto held; }
-                    }
-                    else
-                    {
-                        if (this.Focused() && CtlrInput.jmp) { goto held; }
-                    }
-                    heldCounter = 0;
-                    return;
-
-                held:
-                    heldCounter++;
-                    if (this.heldCounter > 20 && this.heldCounter % 4 == 0)
-                    {
-                        PlaySound(SoundID.MENU_Scroll_Tick);
-                        this.Signal();
-                        this.bumpBehav.sin = 0.5f;
-                    }
-                }
             }
-
-            private int heldCounter;
 
             public override void Signal()
             {
+                ConfigContainer.instance.allowFocusMove = false;
                 list.Signal(this, (int)role);
             }
         }
@@ -413,7 +391,7 @@ namespace CompletelyOptional
                 this.text = represent.ToString();
                 this.list.menuTab.AddItems(this);
                 this._pos = new Vector2(450f, 150f + (25 - index) * 20f); // x: 480f
-                this.clickSound = SoundID.MENU_First_Scroll_Tick;
+                this.soundClick = SoundID.MENU_First_Scroll_Tick;
 
                 this.unused = ConfigContainer.OptItfABC[index] < 0;
                 OnChange();
@@ -460,6 +438,7 @@ namespace CompletelyOptional
 
             public override void Signal()
             {
+                ConfigContainer.instance.allowFocusMove = false;
                 list.Signal(this, (int)index);
             }
         }
