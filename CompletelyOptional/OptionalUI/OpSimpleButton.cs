@@ -22,7 +22,6 @@ namespace OptionalUI
             if (!IsImageButton)
             {
                 this.label = OpLabel.CreateFLabel(text);
-                this.label.alignment = FLabelAlignment.Center;
                 this.myContainer.AddChild(this.label);
                 LabelPlaceAtCenter(this.label, Vector2.zero, this.size);
             }

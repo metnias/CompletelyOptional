@@ -57,9 +57,9 @@ namespace CompletelyOptional
         private MenuTab menuTab => this.tab as MenuTab;
         private ConfigContainer cfgContainer => menu.cfgContainer;
 
-        private float abcSlide = 40f, lastAbcSlide = 40f; // -60f (hidden) ~ 40f (slided out)
+        private float abcSlide = -60f, lastAbcSlide = -60f; // -60f (hidden) ~ 40f (slided out)
 
-        private float GetMyAbcSlide(int index, float timeStacker) => Mathf.Clamp(Mathf.Lerp(lastAbcSlide, abcSlide, timeStacker) + (abcButtons.Length - index) * 2.0f, 0f, 40f);
+        private float GetMyAbcSlide(int index, float timeStacker) => Mathf.Clamp(Mathf.Lerp(lastAbcSlide, abcSlide, timeStacker) + (abcButtons.Length - index) * 2.0f, 0f, 30f);
 
         private float floatScrollPos = 0f, floatScrollVel = 0f;
 
@@ -114,7 +114,7 @@ namespace CompletelyOptional
         }
 
         protected internal override bool MouseOver => base.MouseOver
-            || (this.MousePos.x < 260f && this.MousePos.y > 140f && this.MousePos.y < 700f);
+            || (this.MousePos.x > -15f && this.MousePos.x < 295f && this.MousePos.y > 140f && this.MousePos.y < 700f);
 
         public override void Update()
         {
@@ -412,7 +412,7 @@ namespace CompletelyOptional
                 represent = (char)(index + 65); // upper A: 65
                 this.text = represent.ToString();
                 this.list.menuTab.AddItems(this);
-                this._pos = new Vector2(440f, 150f + (25 - index) * 20f); // x: 480f
+                this._pos = new Vector2(450f, 150f + (25 - index) * 20f); // x: 480f
                 this.clickSound = SoundID.MENU_First_Scroll_Tick;
 
                 this.unused = ConfigContainer.OptItfABC[index] < 0;
@@ -428,23 +428,26 @@ namespace CompletelyOptional
 
             public override bool CurrentlyFocusableNonMouse => !greyedOut && slideOut;
 
-            private bool slideOut => list.GetMyAbcSlide(index, 0f) >= 40f;
+            private bool slideOut => list.GetMyAbcSlide(index, 0f) >= 30f;
             private readonly bool unused;
 
             public override void OnChange()
             {
                 base.OnChange();
+                this._size = new Vector2(18f, 18f);
+                this.rectH.pos = new Vector2(-3f, -3f);
+                LabelPlaceAtCenter(this.label, new Vector2(-3f, -3f), new Vector2(24f, 24f));
                 rect.Hide();
             }
 
             public override void GrafUpdate(float timeStacker)
             {
                 float mySlide = list.GetMyAbcSlide(index, timeStacker);
-                this._pos.x = 440f + mySlide;
+                this._pos.x = 450f + mySlide;
                 if (slideOut) { this.rectH.Show(); }
                 else { this.rectH.Hide(); }
                 base.GrafUpdate(timeStacker);
-                mySlide = Mathf.Clamp01(mySlide / 40f);
+                mySlide = Mathf.Clamp01(mySlide / 30f);
                 this.label.alpha = Mathf.Pow(mySlide, 2f);
             }
 

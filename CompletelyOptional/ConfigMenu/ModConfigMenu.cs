@@ -75,6 +75,10 @@ namespace CompletelyOptional
             // UIContainer
             cfgContainer = new ConfigContainer(this, this.pages[0]);
             this.pages[0].subObjects.Add(cfgContainer);
+
+            // Update Once
+            cfgContainer.GrafUpdate(0f);
+            cfgContainer.Update();
         }
 
         private const int _DASinit = 20, _DASdelay = 6;

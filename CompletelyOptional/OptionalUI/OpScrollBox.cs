@@ -414,6 +414,15 @@ namespace OptionalUI
             UpdateCam();
         }
 
+        protected internal override bool MouseOver
+        {
+            get
+            {
+                if (!isTab) { return base.MouseOver; }
+                return this.MousePos.x > -30f && this.MousePos.x < 630f && this.MousePos.y > -30f && this.MousePos.y < 630f;
+            }
+        }
+
         public override void Update()
         {
             // Todo: scrollbox focus > uielement lastfocused
@@ -457,7 +466,7 @@ namespace OptionalUI
                     if (!Input.GetMouseButton(0)) { _draggingSlider = false; }
                 }
             }
-            else if ((rectSlidebar != null) && !ScrollLocked && (MouseOver || isTab))
+            else if ((rectSlidebar != null) && !ScrollLocked && MouseOver)
             {
                 if (horizontal)
                 {
@@ -497,7 +506,7 @@ namespace OptionalUI
                     if (targetScrollOffset != scrollOffset)
                     {
                         hasMoved = true; this.hasScrolled = true;
-                        ConfigContainer.PlaySound(SoundID.MENU_Scroll_Tick);
+                        PlaySound(SoundID.MENU_Scroll_Tick);
                         if (this.bumpScroll != null)
                         {
                             this.bumpScroll.flash = Mathf.Min(1f, this.bumpScroll.flash + 0.2f);

@@ -27,10 +27,13 @@ namespace OptionalUI
             this._pos = pos;
             this._size = size;
             this.menu = ModConfigMenu.instance;
-            this.myContainer = new FContainer();
-            this.myContainer.SetPosition(this.ScreenPos);
-            this.myContainer.scaleX = 1f;
-            this.myContainer.scaleY = 1f;
+            this.myContainer = new FContainer
+            {
+                x = this.ScreenPos.x + 0.01f,
+                y = this.ScreenPos.y + 0.01f,
+                scaleX = 1f,
+                scaleY = 1f
+            };
             this.inScrollBox = false;
             this.description = "";
             this.hidden = false;
@@ -47,10 +50,13 @@ namespace OptionalUI
             this._pos = pos;
             this._rad = rad;
             this.menu = ModConfigMenu.instance;
-            this.myContainer = new FContainer();
-            this.myContainer.SetPosition(this.ScreenPos);
-            this.myContainer.scaleX = 1f;
-            this.myContainer.scaleY = 1f;
+            this.myContainer = new FContainer()
+            {
+                x = this.ScreenPos.x + 0.01f,
+                y = this.ScreenPos.y + 0.01f,
+                scaleX = 1f,
+                scaleY = 1f
+            };
             this.inScrollBox = false;
             this.description = "";
             this.hidden = false;
@@ -250,7 +256,8 @@ namespace OptionalUI
         /// <param name="timeStacker">timeStacker</param>
         public virtual void GrafUpdate(float timeStacker)
         {
-            this.myContainer.SetPosition(DrawPos(timeStacker));
+            this.myContainer.x = ScreenPos.x + 0.01f;
+            this.myContainer.y = ScreenPos.y + 0.01f;
         }
 
         /// <summary>
@@ -262,8 +269,6 @@ namespace OptionalUI
         /// Restricted <see cref="Menu.Menu.PlaySound(SoundID, float, float, float)"/> to prevent sound glitch
         /// </summary>
         public static void PlaySound(SoundID soundID, float pan, float vol, float pitch) => ConfigContainer.PlaySound(soundID, pan, vol, pitch);
-
-        protected Vector2 DrawPos(float timeStacker) => this.ScreenPos + new Vector2(0.01f, 0.01f);
 
         protected Vector2 _pos;
         protected Vector2 _size;

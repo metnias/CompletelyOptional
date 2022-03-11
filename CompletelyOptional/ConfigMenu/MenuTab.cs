@@ -52,31 +52,8 @@ namespace CompletelyOptional
 
         internal class MenuButton : OpSimpleButton
         {
-            public MenuButton(Vector2 pos, Vector2 size, string signal, string id, string ver = "") : base(pos, size, signal, id)
+            public MenuButton(Vector2 pos, Vector2 size, string signal, string text) : base(pos, size, signal, text)
             {
-                this.ver = ver;
-                labelVer = new FLabel(LabelTest.GetFont(false, false), ver);
-                this.myContainer.AddChild(labelVer);
-                SetLabelsPos();
-            }
-
-            private void SetLabelsPos()
-            {
-                this.label.alignment = FLabelAlignment.Left;
-                this.label.x = 9f; this.label.y = this.size.y / 2f;
-                this.labelVer.alignment = FLabelAlignment.Right;
-                this.labelVer.x = this.size.x - 9f; this.labelVer.y = this.size.y / 2f;
-            }
-
-            private readonly FLabel labelVer;
-            internal string ver;
-
-            public override void OnChange()
-            {
-                base.OnChange();
-                label.text = this.text;
-                labelVer.text = this.ver;
-                SetLabelsPos();
             }
 
             public override void Signal()
