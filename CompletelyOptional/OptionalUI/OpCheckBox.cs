@@ -24,11 +24,10 @@ namespace OptionalUI
 
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
-            this.rect = new DyeableRect(myContainer, this.pos, this.size, true);
-            this.symbolSprite = new FSprite("Menu_Symbol_CheckBox", true);
+            this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true);
+            this.symbolSprite = new FSprite("Menu_Symbol_CheckBox", true)
+            { anchorX = 0.5f, anchorY = 0.5f, x = 12f, y = 12f };
             this.myContainer.AddChild(this.symbolSprite);
-            this.symbolSprite.SetAnchor(0f, 0f);
-            this.symbolSprite.SetPosition(2f, 2f);
             this.description = InternalTranslator.Translate("Click to Check/Uncheck");
         }
 
@@ -70,11 +69,15 @@ namespace OptionalUI
 
             if (greyedOut)
             {
-                if (this.GetValueBool()) { this.symbolSprite.alpha = 1f; }
+                if (this.GetValueBool())
+                {
+                    this.symbolSprite.alpha = 1f;
+                    this.symbolSprite.color = this.bumpBehav.GetColor(this.colorEdge);
+                }
                 else { this.symbolSprite.alpha = 0f; }
-                this.symbolSprite.color = this.bumpBehav.GetColor(this.colorEdge);
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
+                this.rect.GrafUpdate(timeStacker);
                 return;
             }
 
@@ -98,45 +101,48 @@ namespace OptionalUI
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
             this.rect.colorFill = this.colorFill;
+            this.rect.GrafUpdate(timeStacker);
         }
 
         public override void Update()
         {
             base.Update();
             if (this.greyedOut) { return; }
+            this.rect.Update();
 
-            if (this.MouseOver)
+            if (MenuMouseMode)
             {
-                if (Input.GetMouseButton(0))
+                if (this.MouseOver)
                 {
-                    this.held = true;
-                }
-                else
-                {
-                    if (this.held)
+                    if (Input.GetMouseButton(0))
+                    { this.held = true; }
+                    else
                     {
-                        this.held = false;
-                        this.SetValueBool(!this.GetValueBool());
-                        PlaySound(!this.GetValueBool() ? SoundID.MENU_Checkbox_Check : SoundID.MENU_Checkbox_Uncheck);
+                        if (this.held)
+                        {
+                            this.held = false;
+                            this.SetValueBool(!this.GetValueBool());
+                            PlaySound(!this.GetValueBool() ? SoundID.MENU_Checkbox_Check : SoundID.MENU_Checkbox_Uncheck);
+                        }
                     }
                 }
+                else if (this.held)
+                {
+                    if (!Input.GetMouseButton(0))
+                    { this.held = false; }
+                }
             }
-            else if (this.held)
+            else
             {
-                if (!Input.GetMouseButton(0))
+                if (this.Focused() && this.held)
                 {
                     this.held = false;
+                    this.SetValueBool(!this.GetValueBool());
+                    PlaySound(!this.GetValueBool() ? SoundID.MENU_Checkbox_Check : SoundID.MENU_Checkbox_Uncheck);
                 }
             }
         }
 
         private float symbolHalfVisible;
-
-        public override void OnChange()
-        {
-            base.OnChange();
-
-            this.rect.pos = this.pos;
-        }
     }
 }

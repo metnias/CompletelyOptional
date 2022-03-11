@@ -108,6 +108,7 @@ namespace OptionalUI
                 this.label.color = this.bumpBehav.GetColor(this.colorText);
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
+                this.rect.GrafUpdate(timeStacker);
                 return;
             }
 
@@ -119,6 +120,7 @@ namespace OptionalUI
 
             this.label.color = this.bumpBehav.GetColor(this.colorText);
             this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
+            this.rect.GrafUpdate(timeStacker);
         }
 
         private float greyFade;
@@ -131,6 +133,7 @@ namespace OptionalUI
         {
             base.Update();
             if (greyedOut) { return; }
+            this.rect.Update();
             if (_min != min || _max != max) { OnChange(); }
 
             if (this.held)

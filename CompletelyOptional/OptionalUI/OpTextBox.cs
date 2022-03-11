@@ -40,16 +40,17 @@ namespace OptionalUI
             this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true) { fillAlpha = 0.5f };
 
             this.label = OpLabel.CreateFLabel(defaultValue);
-            this.label.x = 5f - this._size.x * 0.5f; this.label.y = 10f + (IsUpdown ? 13f : 10f);
-            this.label.alignment = FLabelAlignment.Left;
             this.label.anchorX = 0f; this.label.anchorY = 1f;
             this.label.color = this.colorText;
+            this.myContainer.AddChild(this.label);
 
             //this.label.label.SetPosition(new Vector2(5f, 3f) - (this._size * 0.5f));
 
             this.cursor = new FCursor();
             cursor.SetPosition(LabelTest.GetWidth(value) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
             this.myContainer.AddChild(this.cursor);
+
+            OnChange();
         }
 
         /// <summary>
@@ -69,7 +70,7 @@ namespace OptionalUI
 
         protected string _lastValue;
         protected readonly FCursor cursor;
-        protected float cursorAlpha;
+        protected float cursorAlpha = 0f, lastCursorAlpha;
 
         /// <summary>
         /// Edge Colour of DyeableRect. Default is MediumGrey.
@@ -86,9 +87,9 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill;
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
+            base.GrafUpdate(timeStacker);
             if (greyedOut)
             {
                 KeyboardOn = false;
@@ -96,6 +97,7 @@ namespace OptionalUI
                 this.cursor.alpha = 0f;
                 this.rect.colorEdge = MenuColorEffect.Greyscale(MenuColorEffect.MidToDark(this.colorEdge));
                 this.rect.colorFill = MenuColorEffect.Greyscale(MenuColorEffect.MidToDark(this.colorFill));
+                this.rect.GrafUpdate(timeStacker);
                 return;
             }
             Color white = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
@@ -107,11 +109,16 @@ namespace OptionalUI
             else { this.col = Mathf.Max(0f, this.bumpBehav.col - 0.0333333351f); }
 
             this.cursor.color = Color.Lerp(Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White), this.colorText, this.bumpBehav.Sin());
+            this.cursor.alpha = Mathf.Clamp01(Mathf.Lerp(lastCursorAlpha, cursorAlpha, timeStacker));
+            this.cursor.x = IsUpdown ? this.size.x - (LabelTest.GetWidth(this.label.text) + LabelTest.CharMean(false) + 35f)
+                : 10f + LabelTest.GetWidth(this.label.text) + LabelTest.CharMean(false);
+            this.cursor.y = this.size.y * 0.5f - 7f;
 
             this.bumpBehav.col = this.col;
             this.rect.fillAlpha = Mathf.Lerp(0.5f, 0.8f, this.bumpBehav.col);
             this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
             this.rect.colorFill = this.colorFill;
+            this.rect.GrafUpdate(timeStacker);
             this.label.color = Color.Lerp(this.colorText, white, Mathf.Clamp(this.bumpBehav.flash, 0f, 1f));
         }
 
@@ -119,14 +126,15 @@ namespace OptionalUI
 
         public override void Update()
         {
+            this.rect.Update();
             this.col = this.bumpBehav.col;
             base.Update();
             this.bumpBehav.col = this.col;
             if (greyedOut) { return; }
+            lastCursorAlpha = cursorAlpha;
 
             if (KeyboardOn)
             {
-                cursor.alpha = Mathf.Clamp(cursorAlpha, 0f, 1f);
                 cursorAlpha -= 0.05f;
                 if (cursorAlpha < -0.5f) { cursorAlpha = 2f; }
 
@@ -386,10 +394,10 @@ namespace OptionalUI
 
             if (!this.password)
             {
-                if (this is OpUpdown ud && !KeyboardOn)
+                if (IsUpdown && !KeyboardOn)
                 {
-                    if (ud.IsInt) { this.label.text = valueInt.ToString("N0"); }
-                    else { this.label.text = valueFloat.ToString("N" + ud.dNum); }
+                    if ((this as OpUpdown).IsInt) { this.label.text = valueInt.ToString("N0"); }
+                    else { this.label.text = valueFloat.ToString("N" + (this as OpUpdown).dNum); }
                 }
                 else { this.label.text = this.value; }
             }
@@ -401,8 +409,15 @@ namespace OptionalUI
             }
 
             this.rect.size = this.size;
-            this.label.x = 5f - this._size.x * 0.5f; this.label.y = 10f + (IsUpdown ? 13f : 10f);
-            this.cursor.SetPosition(LabelTest.GetWidth(this.label.text) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
+            if (IsUpdown)
+            {
+                this.label.alignment = FLabelAlignment.Right;
+                this.label.x = this.size.x - 30f; this.label.y = 23f;
+            }
+            else
+            {
+                this.label.x = 5f; this.label.y = 20f;
+            }
         }
 
         protected internal override void Deactivate()

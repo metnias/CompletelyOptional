@@ -19,7 +19,7 @@ namespace OptionalUI
 
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
-            this.rect = new DyeableRect(myContainer, this.pos, this.size, true);
+            this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true);
             this.symbolSprite = new FSprite("Menu_Symbol_Clear_All", true);
             this.myContainer.AddChild(this.symbolSprite);
             this.symbolSprite.SetAnchor(0f, 0f);
@@ -100,6 +100,7 @@ namespace OptionalUI
                 this.symbolSprite.color = MenuColorEffect.Greyscale(MenuColorEffect.MidToDark(this.colorEdge));
                 this.rect.colorEdge = MenuColorEffect.Greyscale(MenuColorEffect.MidToDark(this.colorEdge));
                 this.rect.colorFill = MenuColorEffect.Greyscale(MenuColorEffect.MidToDark(this.colorFill));
+                this.rect.GrafUpdate(timeStacker);
                 return;
             }
 
@@ -121,6 +122,7 @@ namespace OptionalUI
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
             this.rect.colorFill = this.colorFill;
+            this.rect.GrafUpdate(timeStacker);
         }
 
         /// <summary>
@@ -133,6 +135,7 @@ namespace OptionalUI
             this.bumpBehav.greyedOut = this.greyedOut;
             this.bumpBehav.Update();
             if (greyedOut || isInactive) { return; }
+            this.rect.Update();
 
             if (this.MouseOver)
             {
@@ -160,13 +163,6 @@ namespace OptionalUI
                 this.bumpBehav.held = false;
                 this.click = false;
             }
-        }
-
-        public override void OnChange()
-        {
-            base.OnChange();
-
-            this.rect.pos = this.pos;
         }
 
         private float symbolHalfVisible;
