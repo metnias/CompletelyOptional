@@ -133,31 +133,34 @@ namespace OptionalUI
         /// <returns></returns>
         public static string TrimText(string text, float width, bool addDots = false, bool bigText = false)
         {
-            float o = 0f;
+            float dotsWidth = 0f;
             if (addDots)
-            {
-                o = omit[(bigText ? 1 : 0) + (HasNonASCIIChars(text) ? 2 : 0)];
-                if (o < 0f)
+            { // Get dotsWidth
+                dotsWidth = omit[(bigText ? 1 : 0) + (HasNonASCIIChars(text) ? 2 : 0)];
+                if (dotsWidth < 0f)
                 {
-                    o = !HasNonASCIIChars(text) ? GetWidth(omitDots, bigText) : (GetWidth("à" + omitDots, bigText) - GetWidth("à", bigText));
-                    omit[(bigText ? 1 : 0) + (HasNonASCIIChars(text) ? 2 : 0)] = o;
+                    dotsWidth = !HasNonASCIIChars(text) ? GetWidth(omitDots, bigText) : (GetWidth("à" + omitDots, bigText) - GetWidth("à", bigText));
+                    omit[(bigText ? 1 : 0) + (HasNonASCIIChars(text) ? 2 : 0)] = dotsWidth;
                 }
             }
             float curWidth = GetWidth(text, bigText);
             if (curWidth < width) { return text; }
 
-            if (addDots) { width -= o; }
+            // Trim
+            if (addDots) { width -= dotsWidth; }
             if (curWidth > width * 2f)
             {
                 for (int i = 0; i < text.Length; i++)
-                { if (GetWidth(text.Substring(0, i), bigText) < width) { return text.Substring(0, i) + (addDots ? omitDots : ""); } }
+                {
+                    if (GetWidth(text.Substring(0, i), bigText) > width) { return text.Substring(0, i - 1) + (addDots ? omitDots : ""); }
+                }
             }
             else
             {
                 for (int i = text.Length - 1; i > 0; i--)
                 { if (GetWidth(text.Substring(0, i), bigText) < width) { return text.Substring(0, i) + (addDots ? omitDots : ""); } }
             }
-            return text.Substring(0, 1);
+            return omitDots;
         }
 
         private const string omitDots = "...";

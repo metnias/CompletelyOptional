@@ -96,17 +96,17 @@ namespace CompletelyOptional
             if (TabCount != _tabCount) { OnChange(); }
 
             lastScrollBump = scrollBump;
-            scrollBump = Mathf.Lerp(scrollBump, 0f, 0.2f);
+            scrollBump = Custom.LerpAndTick(scrollBump, 0f, 0.1f, 0.1f / frameMulti);
 
             // Scroll to Focus
             if (focusedIndex < topIndex)
             {
-                scrollBump = Mathf.Max(scrollBump - 2.5f * (topIndex - focusedIndex), -8f);
+                scrollBump = Mathf.Max(scrollBump - 2.5f * (topIndex - focusedIndex), -12f);
                 topIndex = focusedIndex;
             }
             else if (focusedIndex >= topIndex + tabButtonLimit)
             {
-                scrollBump = Mathf.Min(scrollBump + 2.5f * (topIndex - focusedIndex), 8f);
+                scrollBump = Mathf.Min(scrollBump + 2.5f * (topIndex - focusedIndex), 12f);
                 topIndex = focusedIndex - tabButtonLimit - 1;
             }
 
@@ -253,6 +253,35 @@ namespace CompletelyOptional
             }
             if (trigger is TabScrollButton)
             {
+                if (index < 0)
+                {
+                    if (topIndex > 0)
+                    { // Scroll Up
+                        topIndex--;
+                        PlaySound(index < -1 ? SoundID.MENU_Scroll_Tick : SoundID.MENU_First_Scroll_Tick);
+                        scrollBump = Mathf.Max(scrollBump - 6f, -12f);
+                    }
+                    else
+                    { // No more scroll
+                        PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Mouse);
+                        scrollBump = Mathf.Max(scrollBump - 3f, -12f);
+                    }
+                }
+                else
+                {
+                    if (topIndex < _tabCount - tabButtonLimit)
+                    { // Scroll Down
+                        topIndex++;
+                        PlaySound(index > 1 ? SoundID.MENU_Scroll_Tick : SoundID.MENU_First_Scroll_Tick);
+                        scrollBump = Mathf.Min(scrollBump + 6f, 12f);
+                    }
+                    else
+                    { // No more scroll
+                        PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Mouse);
+                        scrollBump = Mathf.Min(scrollBump + 3f, 12f);
+                        return;
+                    }
+                }
             }
         }
 
@@ -309,8 +338,8 @@ namespace CompletelyOptional
                 if (lastName != curName)
                 {
                     lastName = curName;
-                    if (LabelTest.GetWidth(curName) > height - 14f) // Omit name too long
-                    { curName = LabelTest.TrimText(curName, height - 14f, true); }
+                    if (LabelTest.GetWidth(curName) > height - 16f) // Omit name too long
+                    { curName = LabelTest.TrimText(curName, height - 16f, true); }
                     this.label.text = curName;
                 }
                 this.OnChange();
@@ -329,7 +358,7 @@ namespace CompletelyOptional
 
                 float addSize = this.active ? 1f : this.bumpBehav.AddSize;
                 float bump = Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker);
-                this.label.x = -addSize * 4f + 15f; this.label.y = bump + 8f;
+                this.label.x = -addSize * 4f + 15f; this.label.y = bump + 6f;
                 this.rect.addSize = new Vector2(8f, 4f) * addSize;
                 this.rect.pos.x = -this.rect.addSize.x * 0.5f; this.rect.pos.y = bump;
                 this.rectH.addSize = new Vector2(4f, -4f) * addSize;
@@ -337,27 +366,6 @@ namespace CompletelyOptional
                 this.rect.GrafUpdate(timeStacker); this.rectH.GrafUpdate(timeStacker);
                 float highlight = this.MouseOver ? (0.5f + 0.5f * this.bumpBehav.Sin(10f)) * addSize : 0f;
                 for (int j = 0; j < 8; j++) { this.rectH.sprites[j].alpha = active ? 1f : highlight; }
-
-                /*
-                Color color = this.bumpBehav.GetColor(this.colorButton);
-                this.label.color = Color.Lerp(MenuColorEffect.MidToDark(color), color, Mathf.Lerp(this.darken, 1f, 0.6f));
-                this.label.y = Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker);
-                color = Color.Lerp(MenuColorEffect.MidToDark(color), color, this.darken);
-                this.rect.colorEdge = color;
-                this.rect.colorFill = MenuColorEffect.MidToVeryDark(color);
-
-                this.rect.fillAlpha = this.bumpBehav.FillAlpha;
-                float addSize = this.active ? 1f : this.bumpBehav.AddSize;
-                this.rect.addSize = new Vector2(8f, 4f) * addSize;
-                this.rect.pos = new Vector2(-this.rect.addSize.x * 0.5f, Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker));
-                this.label.x = -addSize * 4f;
-
-                this.rectH.colorEdge = color;
-                this.rectH.addSize = new Vector2(4f, -4f) * addSize;
-                this.rectH.pos = new Vector2(-this.rectH.addSize.x * 0.5f, Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker));
-                float highlight = this.MouseOver ? (0.5f + 0.5f * this.bumpBehav.Sin(10f)) * addSize : 0f;
-                for (int j = 0; j < 8; j++) { this.rectH.sprites[j].alpha = active ? 1f : highlight; }
-                */
             }
 
             public override void Update()
@@ -374,31 +382,40 @@ namespace CompletelyOptional
             }
         }
 
-        internal class TabScrollButton : UIelement
+        internal class TabScrollButton : OpSimpleImageButton
         {
-            public TabScrollButton(bool up, ConfigTabController ctrl) : base(Vector2.one, new Vector2(30f, 20f))
+            public TabScrollButton(bool up, ConfigTabController ctrl) : base(Vector2.one, Vector2.one, "", "Big_Menu_Arrow")
             {
+                this._size = new Vector2(30f, 20f);
                 this.up = up;
                 this.ctrl = ctrl;
                 if (up) { this._pos = ctrl.pos + new Vector2(0f, 605f); }
                 else { this._pos = ctrl.pos + new Vector2(0f, -25f); }
-                bumpBehav = new BumpBehaviour(this);
-                this.sprite = new FSprite("Big_Menu_Arrow")
-                { rotation = up ? 0f : 180f, scale = 0.5f, x = 15f, y = 10f };
-                this.myContainer.AddChild(this.sprite);
+
+                this.sprite.rotation = up ? 0f : 180f;
+                this.sprite.scale = 0.5f;
+                this.sprite.x = 15f;
+                this.clickSound = SoundID.MENU_First_Scroll_Tick;
+                this.rect.Hide(); this.rectH.Hide();
                 this.ctrl.menuTab.AddItems(this);
             }
 
-            internal readonly FSprite sprite;
             internal readonly bool up;
-            private bool mouseTop = false, click = false;
-            public readonly BumpBehaviour bumpBehav;
-            public readonly ConfigTabController ctrl;
+            private readonly ConfigTabController ctrl;
+
+            public override void OnChange()
+            {
+                base.OnChange();
+                this._size = new Vector2(30f, 20f);
+            }
+
+            public override bool CurrentlyFocusableNonMouse => false;
 
             public override void GrafUpdate(float timeStacker)
             {
                 base.GrafUpdate(timeStacker);
-                if (Mathf.Abs(ctrl.scrollBump) > Mathf.Abs(ctrl.scrollBump))
+                this.rect.Hide(); this.rectH.Hide();
+                if (Mathf.Abs(ctrl.scrollBump) > Mathf.Abs(ctrl.lastScrollBump))
                 { bumpBehav.flash += 0.6f; }
                 this.sprite.y = 10f + (up ? 1 : -1) * Mathf.Abs(Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker));
                 this.sprite.color = bumpBehav.GetColor(Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey));
@@ -406,58 +423,25 @@ namespace CompletelyOptional
 
             public override void Update()
             {
-                this.bumpBehav.Update();
+                this.greyedOut = up ? ctrl.topIndex == 0 : ctrl.topIndex > ctrl._tabCount - ConfigTabController.tabButtonLimit + 1;
+                base.Update();
                 if (MenuMouseMode)
                 {
                     if (MouseOver)
                     {
-                        if (!mouseTop)
-                        {
-                            mouseTop = true;
-                            PlaySound(SoundID.MENU_Button_Select_Mouse);
-                        }
-
-                        if (Input.GetMouseButton(0)) { this.click = true; this.bumpBehav.held = true; }
-                        else if (this.click)
-                        {
-                            this.click = false; this.bumpBehav.held = false;
-                            if (up)
-                            {
-                                if (ctrl.topIndex > 0)
-                                { // Scroll Up
-                                    ctrl.topIndex--;
-                                    PlaySound(SoundID.MENU_Button_Select_Mouse);
-                                    ctrl.scrollBump = Mathf.Max(ctrl.scrollBump - 4f, -8f);
-                                }
-                                else
-                                { // No more scroll
-                                    PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Mouse);
-                                    ctrl.scrollBump = Mathf.Max(ctrl.scrollBump - 2f, -8f);
-                                }
-                            }
-                            else
-                            {
-                                if (ctrl.topIndex < ctrl._tabCount - tabButtonLimit)
-                                { // Scroll Down
-                                    ctrl.topIndex++;
-                                    PlaySound(SoundID.MENU_Button_Select_Mouse);
-                                    ctrl.scrollBump = Mathf.Min(ctrl.scrollBump + 4f, 8f);
-                                }
-                                else
-                                { // No more scroll
-                                    PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Mouse);
-                                    ctrl.scrollBump = Mathf.Min(ctrl.scrollBump + 2f, 8f);
-                                    return;
-                                }
-                            }
-                        }
                     }
                     else
                     {
-                        mouseTop = false;
-                        if (!Input.GetMouseButton(0)) { this.bumpBehav.held = false; this.click = false; }
                     }
                 }
+                else
+                {
+                }
+            }
+
+            public override void Signal()
+            {
+                ctrl.Signal(this, up ? -1 : 1);
             }
         }
     }

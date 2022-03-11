@@ -27,15 +27,36 @@ namespace CompletelyOptional
             #region init
 
             base.Initialize();
-            this.Tabs = new OpTab[3];
+            this.Tabs = new OpTab[10];
             this.Tabs[0] = new OpTab(this, "TEST0");
             this.Tabs[1] = new OpTab(this, "TEST1");
             this.Tabs[2] = new OpTab(this, "TESTSCROLL");
+            this.Tabs[3] = new OpTab(this, "TEST3");
+            this.Tabs[4] = new OpTab(this, "TEST4");
+            this.Tabs[5] = new OpTab(this, "TEST5asdfsdfkasjflksasjlk");
+            this.Tabs[6] = new OpTab(this);
+            this.Tabs[7] = new OpTab(this, "skfhaahsgeyioreiroqrqhrqklhklr");
+            this.Tabs[8] = new OpTab(this, "TESTSERSETSE");
+            this.Tabs[9] = new OpTab(this, "TEST");
 
-            Tabs[0].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
-                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
-            Tabs[1].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
-                    new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
+            Tabs[0].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 0", FLabelAlignment.Center, true),
+                                new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
+            Tabs[1].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 1", FLabelAlignment.Center, true),
+                                new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
+            Tabs[3].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 3", FLabelAlignment.Center, true),
+                                new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
+            Tabs[4].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 4", FLabelAlignment.Center, true),
+                                new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
+            Tabs[5].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 5", FLabelAlignment.Center, true),
+                                new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
+            Tabs[6].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 6", FLabelAlignment.Center, true),
+                                new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
+            Tabs[7].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 7", FLabelAlignment.Center, true),
+                                new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
+            Tabs[8].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 8", FLabelAlignment.Center, true),
+                                new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
+            Tabs[9].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 9", FLabelAlignment.Center, true),
+                                new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
 
             #endregion init
 
