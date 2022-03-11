@@ -468,8 +468,11 @@ namespace OptionalUI
 
         internal Vector2 CenterPos()
         {
-            if (this.isRectangular) { return this.ScreenPos + this.size / 2f; }
-            return this.ScreenPos + (this.rad / 2f * Vector2.one);
+            Vector2 p;
+            if (this.isRectangular) { p = this.ScreenPos + this.size / 2f; }
+            else { p = this.ScreenPos + ((this.rad / 2f) * Vector2.one); }
+            if (this.tab != null) { p += this.myContainer.GetPosition(); }
+            return p;
         }
 
         /// <summary>

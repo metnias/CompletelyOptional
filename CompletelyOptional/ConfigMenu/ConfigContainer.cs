@@ -424,6 +424,8 @@ namespace CompletelyOptional
 
         internal bool allowFocusMove;
 
+        private bool lastPressZ;
+
         // Called by ModConfigMenu.Update
         public override void Update()
         {
@@ -482,7 +484,7 @@ namespace CompletelyOptional
                     }
                     //Undo
                     if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
-                    { if (Input.GetKeyDown(KeyCode.Z)) { UndoConfigChange(); } }
+                    { if (Input.GetKey(KeyCode.Z) && !lastPressZ) { UndoConfigChange(); lastPressZ = true; } else { lastPressZ = false; } }
                 }
                 else // holdElement
                 {
@@ -623,10 +625,15 @@ namespace CompletelyOptional
             if (history.Count > 0)
             {
                 ConfigHistory last = history.Pop();
+                string curValue = last.config.value;
                 last.config.ForceValue(last.origValue);
                 last.config.OnChange();
                 OptItfChanged[FindItfIndex(last.config)] = true;
                 // Alert
+                ModConfigMenu.instance.ShowAlert(
+                    "Undo change of the value of [<UIconfigKey>] from [<CurrentValue>] to [<OriginalValue>]"
+                    .Replace("<UIconfigKey>", last.config.key).Replace("<CurrentValue>", curValue).Replace("<OriginalValue>", last.config.value)
+                    );
             }
         }
 

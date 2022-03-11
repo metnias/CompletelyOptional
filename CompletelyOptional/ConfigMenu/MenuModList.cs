@@ -270,6 +270,8 @@ namespace CompletelyOptional
                     {
                         if (menu.input.mp && !menu.lastInput.mp) // Starred
                         { list.Star(index); }
+                        // pressing right: jump to its alphabet button
+                        // pressing left: jump to slider if it's available
                     }
                 }
             }
@@ -313,7 +315,7 @@ namespace CompletelyOptional
                 switch (this.role)
                 {
                     case Role.Stat:
-                        this._pos = new Vector2(462f, 700f);
+                        this._pos = new Vector2(466f, 700f); // x462f : centered
                         this.soundClick = SoundID.MENU_Switch_Arena_Gametype; break;
                     case Role.ScrollUp:
                         this._pos = new Vector2(321f, 720f);

@@ -51,6 +51,7 @@ Copied <Text> to Clipboard|kor$클립보드로 <Text> 복사함|spa$Copiado <Tex
 Copied <Text> to Clipboard from <ObjectName>|kor$<ObjectName>에서 클립보드로 <Text> 복사함|spa$Copiado <Text> al Portapapeles desde <ObjectName>|fre$<Text> copié vers le presse-papier depuis <ObjectName>|rus$<Text> скопирован <ObjectName> из буфера обмена|chi$从<ObjectName>拷贝<Text>到剪贴板
 <ModID> had an issue with saving its configuration|kor$<ModID> 설정 저장 중 문제 발생|chi$保存<ModID>的配置时出现问题
 <ModID> has saved its configuration|kor$<ModID> 설정 저장됨|chi$已保存<ModID>的配置
+Undo change of the value of [<UIconfigKey>] from [<CurrentValue>] to [<OriginalValue>]|kor$[<UIconfigKey>]의 값을 [<CurrentValue>]에서 [<OriginalValue>](으)로 실행취소
 
 /// Description for provided UIelements ///
 Click to Check/Uncheck|kor$클릭해서 체크 및 해제|spa$Click para marcar/desmarcar|fre$Cliquez pour cocher/décocher|rus$Нажмите, чтобы отметить/снять отметку|chi$单击以选中/取消选中

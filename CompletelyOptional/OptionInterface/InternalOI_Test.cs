@@ -31,8 +31,8 @@ namespace CompletelyOptional
             this.Tabs[0] = new OpTab(this, "TEST0");
             this.Tabs[1] = new OpTab(this, "TEST1");
             this.Tabs[2] = new OpTab(this, "TESTSCROLL");
-            this.Tabs[3] = new OpTab(this, "TEST3");
-            this.Tabs[4] = new OpTab(this, "TEST4");
+            this.Tabs[3] = new OpTab(this, "TEST3") { colorButton = Color.blue };
+            this.Tabs[4] = new OpTab(this, "TEST4") { colorCanvas = Color.yellow };
             this.Tabs[5] = new OpTab(this, "TEST5asdfsdfkasjflksasjlk");
             this.Tabs[6] = new OpTab(this);
             this.Tabs[7] = new OpTab(this, "skfhaahsgeyioreiroqrqhrqklhklr");

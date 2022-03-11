@@ -135,7 +135,7 @@ namespace OptionalUI
 
             if (KeyboardOn)
             {
-                cursorAlpha -= 0.05f;
+                cursorAlpha -= 0.05f / frameMulti;
                 if (cursorAlpha < -0.5f) { cursorAlpha = 2f; }
 
                 //input spotted! ->cursorAlpha = 2.5f;
@@ -424,16 +424,6 @@ namespace OptionalUI
         {
             base.Deactivate();
             this.KeyboardOn = false;
-        }
-
-        protected internal override void Unload()
-        {
-            base.Unload();
-            //this.subObjects.Remove(this.label);
-            //this.subObjects.Remove(this.rect);
-
-            //this.myContainer.RemoveChild(this.cursor);
-            this.cursor.RemoveFromContainer();
         }
 
         protected internal override bool CopyFromClipboard(string value)
