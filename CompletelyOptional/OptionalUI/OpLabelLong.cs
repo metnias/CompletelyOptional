@@ -50,6 +50,7 @@ namespace OptionalUI
                 if (lblTxt + a.Length > LabelTest.CharLimit(false, isVFont) || sLines > 8)
                 { sLines = 0; lblTxt = 0; num++; splits.Add(string.Empty); }
                 if (lblTxt > 0) { splits[num] += '\n'; }
+                if (l == lineMax) { a = LabelTest.TrimText(a, this.size.x, true, false); }
                 splits[num] += a;
                 lblTxt += a.Length + 1;
                 sLines++;
@@ -113,7 +114,7 @@ namespace OptionalUI
             }
         }
 
-        private float lineHeight; // lineHeight of current font
+        private readonly float lineHeight; // lineHeight of current font
 
         public override void GrafUpdate(float timeStacker)
         {

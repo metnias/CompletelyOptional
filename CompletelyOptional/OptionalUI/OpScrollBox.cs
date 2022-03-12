@@ -677,6 +677,7 @@ namespace OptionalUI
         private void MoveCam()
         {
             Vector3 v = (Vector3)owner.ScreenPos + (Vector3)camPos + new Vector3(size.x / 2f, size.y / 2f, -50f) + (horizontal ? Vector3.left : Vector3.down) * scrollOffset;
+            if (this.tab != null) { v += (Vector3)tab.container.GetPosition(); }
             _cam.gameObject.transform.position = new Vector3(Mathf.Round(v.x), Mathf.Round(v.y), Mathf.Round(v.z));
         }
     }

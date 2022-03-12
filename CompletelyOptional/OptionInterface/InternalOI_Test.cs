@@ -115,7 +115,6 @@ namespace CompletelyOptional
             sb.AddItems(new OpSliderTick(new Vector2(100f, 1400f), "", new IntVector2(0, 20), 200));
             sb.AddItems(new OpSliderTick(new Vector2(500f, 1300f), "", new IntVector2(0, 20), 200, true));
 
-            /*
             sb.AddItems(new OpRect(new Vector2(25f, 1000f), new Vector2(150f, 150f)));
             sb.AddItems(new OpRect(new Vector2(225f, 1000f), new Vector2(150f, 150f)));
             sb.AddItems(new OpRect(new Vector2(425f, 1000f), new Vector2(150f, 150f)));
@@ -134,7 +133,6 @@ namespace CompletelyOptional
             sb.AddItems(new OpLabelLong(new Vector2(25f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Top });
             sb.AddItems(new OpLabelLong(new Vector2(225f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Center });
             sb.AddItems(new OpLabelLong(new Vector2(425f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
-            */
 
             /*
             OpComboBox cb = new OpComboBox(new Vector2(100f, 1000f), 150f, "", new List<ListItem>() {
@@ -172,14 +170,14 @@ namespace CompletelyOptional
         }
 
         private OpHoldButton hold;
-        private float perc = 0f;
+        // private float perc = 0f;
 
         public override void Update()
         {
             base.Update();
-            if (Random.value < 0.3f) { perc += Mathf.Pow(Random.value, 2f); }
-            if (perc > 100f) { perc = Random.value > 0.1f ? 100f : 0f; }
-            hold.SetProgress(perc);
+            // if (Random.value < 0.3f) { perc += Mathf.Pow(Random.value, 2f); }
+            // if (perc > 100f) { perc = Random.value > 0.1f ? 100f : 0f; }
+            // hold.SetProgress(perc);
         }
     }
 }

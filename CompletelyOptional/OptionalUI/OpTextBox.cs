@@ -124,6 +124,8 @@ namespace OptionalUI
 
         private float col;
 
+        private int inputDelay;
+
         public override void Update()
         {
             this.rect.Update();
@@ -138,12 +140,14 @@ namespace OptionalUI
                 cursorAlpha -= 0.05f / frameMulti;
                 if (cursorAlpha < -0.5f) { cursorAlpha = 2f; }
 
-                //input spotted! ->cursorAlpha = 2.5f;
+                int lastInputDelay = inputDelay;
                 foreach (char c in Input.inputString)
                 {
-                    //ComOptPlugin.LogInfo(string.Concat("input: ", c));
+                    // ComOptPlugin.LogInfo($"cA({cursorAlpha:F2}) input: {c}");
                     if (c == '\b')
                     {
+                        inputDelay++;
+                        if (inputDelay > 1 && (inputDelay <= ModConfigMenu.DASinit || inputDelay % ModConfigMenu.DASdelay != 1)) { break; }
                         cursorAlpha = 2.5f; this.bumpBehav.flash = 2.5f;
                         if (this.value.Length > 0)
                         {
@@ -161,13 +165,16 @@ namespace OptionalUI
                     }
                     else
                     {
-                        cursorAlpha = 2.5f;
-                        this.bumpBehav.flash = 2.5f;
+                        inputDelay++;
+                        if (inputDelay > 1 && (inputDelay <= ModConfigMenu.DASinit || inputDelay % ModConfigMenu.DASdelay != 1)) { break; }
+                        cursorAlpha = 2.5f; this.bumpBehav.flash = 2.5f;
                         this.value += c;
+                        break;
                     }
                 }
+                if (lastInputDelay == inputDelay) { inputDelay = 0; } // Key not pressed
             }
-            else { cursorAlpha = 0f; }
+            else { cursorAlpha = 0f; inputDelay = 0; }
             if (Input.GetMouseButton(0) && !mouseDown)
             {
                 if (this is OpUpdown ud && ud.mouseOverArrow) { return; }

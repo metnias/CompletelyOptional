@@ -92,7 +92,7 @@ namespace OptionalUI
                 this.lineSprites[2].anchorY = 1f;
                 this.lineSprites[3].scaleY = 2f;
                 this.lineSprites[3].scaleX = 6f;
-                if (!tickSlider) this.rect = new DyeableRect(myContainer, new Vector2(4f, -8f), new Vector2(24f, 16f), true);
+                if (!tickSlider) { this.rect = new DyeableRect(myContainer, new Vector2(4f, -8f), new Vector2(24f, 16f), true); }
                 //if (rangeSlider) { this.lineSprites[4].scaleX = 2f; this.lineSprites[4].anchorY = 1f; }
             }
             else
@@ -105,7 +105,7 @@ namespace OptionalUI
                 this.lineSprites[2].anchorX = 1f;
                 this.lineSprites[3].scaleX = 2f;
                 this.lineSprites[3].scaleY = 6f;
-                if (!tickSlider) this.rect = new DyeableRect(myContainer, new Vector2(-8f, 4f), new Vector2(16f, 24f), true);
+                if (!tickSlider) { this.rect = new DyeableRect(myContainer, new Vector2(-8f, 4f), new Vector2(16f, 24f), true); }
                 //if (rangeSlider) { this.lineSprites[4].scaleY = 2f; this.lineSprites[4].anchorX = 1f; }
             }
             if (!tickSlider)
@@ -146,9 +146,9 @@ namespace OptionalUI
         /// </summary>
         public Color colorLine;
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
+            base.GrafUpdate(timeStacker);
 
             float add = this.greyedOut ? 0f : this.bumpBehav.AddSize;
             Vector2 cutPos, cutSize;
@@ -259,6 +259,7 @@ namespace OptionalUI
                 else { this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill); }
 
                 this.rect.fillAlpha = this.held ? 1f : this.bumpBehav.FillAlpha;
+                this.rect.GrafUpdate(timeStacker);
             }
 
             Color color = this.bumpBehav.GetColor(this.colorLine);
@@ -287,6 +288,7 @@ namespace OptionalUI
         public override void Update()
         {
             base.Update();
+            if (!tickSlider) { this.rect.Update(); }
             if (greyedOut) { return; }
 
             if (MenuMouseMode)

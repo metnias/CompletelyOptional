@@ -351,7 +351,7 @@ namespace OptionalUI
                 Vector2 p = new Vector2(menu.mousePosition.x - ScreenPos.x, menu.mousePosition.y - ScreenPos.y);
                 if (inScrollBox)
                 { p += scrollBox.camPos - (scrollBox.horizontal ? Vector2.right : Vector2.up) * scrollBox.scrollOffset - scrollBox.pos; }
-                else if (tab != null) { p -= new Vector2(tab.container.x, tab.container.y); }
+                if (tab != null) { p -= new Vector2(tab.container.x, tab.container.y); }
                 return p;
             }
         }
