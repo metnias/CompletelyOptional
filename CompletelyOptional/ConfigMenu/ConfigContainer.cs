@@ -433,6 +433,9 @@ namespace CompletelyOptional
             _soundFill = _soundFill > 0 ? _soundFill - 1 : 0;
             if (menu.ForceNoMouseMode) { focusedElement = null; return; } // == FreezeMenuFunctions
 
+            bool ctrlKey = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
+            if (ctrlKey) { menu.manager.menuesMouseMode = true; }
+
             UIelement focusedElementBeforeUpdate = focusedElement;
             allowFocusMove = true;
 
@@ -462,11 +465,6 @@ namespace CompletelyOptional
 
             allowFocusMove = allowFocusMove && focusedElementBeforeUpdate == focusedElement;
 
-            if (!holdElement && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
-            { //Undo
-                if (Input.GetKey(KeyCode.Z)) { if (!lastPressZ) { UndoConfigChange(); } lastPressZ = true; }
-                else { lastPressZ = false; }
-            }
             if (menu.manager.menuesMouseMode)
             { // Mouse Mode
                 if (!holdElement)
@@ -487,10 +485,15 @@ namespace CompletelyOptional
                             break;
                         }
                     }
+                    if (ctrlKey)
+                    { //Undo
+                        if (Input.GetKey(KeyCode.Z)) { if (!lastPressZ) { UndoConfigChange(); } lastPressZ = true; }
+                        else { lastPressZ = false; }
+                    }
                 }
                 else // holdElement
                 {
-                    if (focusedElement is UIconfig && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
+                    if (focusedElement is UIconfig && ctrlKey)
                     { // Copy & Paste
                         if (Input.GetKey(KeyCode.V) && !string.IsNullOrEmpty(UniClipboard.GetText()))
                         {
