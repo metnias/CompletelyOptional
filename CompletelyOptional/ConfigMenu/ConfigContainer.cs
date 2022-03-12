@@ -618,14 +618,12 @@ namespace CompletelyOptional
                 }
             }
             history.Push(new ConfigHistory() { config = config, origValue = oldValue });
-            ComOptPlugin.LogMessage($"ConfigChange[{history.Count}]) {history.Peek().config.GetType()}({history.Peek().config.key}): [{history.Peek().origValue}] ==> [{value}]");
-            // configChanged = true; == history.Count > 0
-            // cfgContainer.menuTab.saveButton.text = InternalTranslator.Translate("APPLY");
+            // ComOptPlugin.LogMessage($"ConfigChange[{history.Count}]) {history.Peek().config.GetType()}({history.Peek().config.key}): [{history.Peek().origValue}] ==> [{value}]");
         }
 
         internal void UndoConfigChange() // Ctrl + Z or Grab + Jump
         {
-            ComOptPlugin.LogMessage($"UndoConfig[{history.Count}]) {history.Peek().config.GetType()}({history.Peek().config.key}): [{history.Peek().origValue}] <== [{history.Peek().config.value}]");
+            // ComOptPlugin.LogMessage($"UndoConfig[{history.Count}]) {history.Peek().config.GetType()}({history.Peek().config.key}): [{history.Peek().origValue}] <== [{history.Peek().config.value}]");
 
             if (history.Count > 0)
             {

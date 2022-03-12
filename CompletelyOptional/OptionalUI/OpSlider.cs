@@ -164,10 +164,8 @@ namespace OptionalUI
                     this.rect.pos.x = p - 8f;
                     this.rect.addSize = new Vector2(4f, 4f) * add;
                     LabelPlaceAtCenter(this.label, new Vector2(this.rect.pos.x - 14f, this.rect.pos.y + 25f), new Vector2(40f, 20f));
-                    cutPos = this.rect.pos;
-                    cutSize = this.rect.size;
-                    cutPos -= this.rect.addSize / 2f;
-                    cutSize += this.rect.addSize;
+                    cutPos = this.rect.pos - this.rect.addSize / 2f + Vector2.one;
+                    cutSize = this.rect.size + this.rect.addSize - Vector2.one;
                 }
                 else
                 {
@@ -204,10 +202,8 @@ namespace OptionalUI
                     this.rect.pos.y = p - 8f;
                     this.rect.addSize = new Vector2(4f, 4f) * add;
                     LabelPlaceAtCenter(this.label, new Vector2(this.rect.pos.x - 10f, this.rect.pos.y + 18f), new Vector2(40f, 20f));
-                    cutPos = this.rect.pos;
-                    cutSize = this.rect.size;
-                    cutPos -= this.rect.addSize / 2f;
-                    cutSize += this.rect.addSize;
+                    cutPos = this.rect.pos - this.rect.addSize / 2f + Vector2.one;
+                    cutSize = this.rect.size + this.rect.addSize - Vector2.one;
                 }
                 else
                 {

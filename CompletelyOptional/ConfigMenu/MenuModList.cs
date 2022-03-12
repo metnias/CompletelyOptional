@@ -185,7 +185,7 @@ namespace CompletelyOptional
                 // Get Type
                 if (itf is InternalOI)
                 {
-                    if ((itf as InternalOI).reason == InternalOI.Reason.Error) { type = ItfType.Error; }
+                    if ((itf as InternalOI).reason == InternalOI.Reason.Error) { type = ItfType.Error; CreateIcon(IconContext.Error); }
                     else if ((itf as InternalOI).reason == InternalOI.Reason.TestOI) { type = ItfType.Inconfigurable; }
                     else { type = ItfType.Blank; }
                 }
@@ -218,6 +218,43 @@ namespace CompletelyOptional
 
             public readonly ItfType type;
 
+            private FSprite icon;
+
+            /// <summary>
+            /// Star: Multiplayer_Star x 0.8
+            /// Error: Sandbox_SmallQuestionmark
+            /// UnsavedChange: Menu_Symbol_Clear_All
+            /// SavedChange: Menu_Symbol_CheckBox > fade
+            /// </summary>
+            /// <param name="context">0: star, 1: Error, 2: UnsavedChange, 3: SavedChange</param>
+            private void CreateIcon(IconContext context)
+            {
+                if (icon != null) { icon.isVisible = false; icon.RemoveFromContainer(); icon = null; }
+                string name = "";
+                switch (context)
+                {
+                    case IconContext.Star: name = "Multiplayer_Star"; break;
+                    case IconContext.Error: name = "Sandbox_SmallQuestionmark"; break;
+                    case IconContext.UnsavedChange: name = "keyArrowA"; break;
+                    case IconContext.SavedChange: name = "keyArrowB"; break;
+                }
+                icon = new FSprite(name) { anchorX = 0.5f, anchorY = 0.5f, x = 1.01f, y = this.size.y / 2f, color = this.colorEdge };
+                switch (context)
+                {
+                    case IconContext.Star: icon.scale = 0.5f; break;
+                    case IconContext.Error: icon.scale = 0.8f; break;
+                    case IconContext.UnsavedChange:
+                    case IconContext.SavedChange:
+                        icon.rotation = 90f; icon.x = 0.01f; break;
+                }
+                this.myContainer.AddChild(icon);
+            }
+
+            private enum IconContext
+            {
+                Star, Error, UnsavedChange, SavedChange
+            }
+
             public enum ItfType
             {
                 Blank,
@@ -244,10 +281,9 @@ namespace CompletelyOptional
                 if (greyedOut) { this.label.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.DarkGrey); }
                 this.label.alpha = Mathf.Pow(1f - Mathf.Lerp(lastFade, fade, timeStacker), 2f);
                 if (this.labelVer != null)
-                {
-                    this.labelVer.alpha = this.label.alpha;
-                    this.labelVer.color = this.label.color;
-                }
+                { this.labelVer.alpha = this.label.alpha; this.labelVer.color = this.label.color; }
+                if (this.icon != null)
+                { this.icon.color = this.label.color; this.icon.alpha = this.label.alpha; }
             }
 
             public override void Update()
@@ -343,7 +379,7 @@ namespace CompletelyOptional
                 switch (role)
                 {
                     case Role.Stat:
-                        return "Menu_Symbol_Show_List";
+                        return "Menu_InfoI"; //"Menu_Symbol_Show_List";
 
                     case Role.ScrollUp:
                     case Role.ScrollDown:
