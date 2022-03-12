@@ -112,6 +112,7 @@ namespace OptionalUI
             {
                 this.label = OpLabel.CreateFLabel(this.value);
                 this.label.alpha = 0f;
+                this.myContainer.AddChild(this.label);
                 LabelPlaceAtCenter(this.label, this.rect.pos, new Vector2(40f, 20f));
             }
         }
@@ -158,13 +159,12 @@ namespace OptionalUI
                 if (!tickSlider)
                 {
                     float p = this.mul * (float)(valueInt - this.min);
-                    if (MenuMouseMode && this.held) { p = MousePos.x; }
+                    if (MenuMouseMode && this.held) { p = Mathf.Clamp(MousePos.x, 0f, size.x); }
                     this.rect.pos.y = 4f;
                     this.rect.pos.x = p - 8f;
                     this.rect.addSize = new Vector2(4f, 4f) * add;
-                    this.label.x = this.rect.pos.x - 14f;
-                    this.label.y = this.rect.pos.y + 25f;
-                    cutPos = this.rect.pos - this.pos;
+                    LabelPlaceAtCenter(this.label, new Vector2(this.rect.pos.x - 14f, this.rect.pos.y + 25f), new Vector2(40f, 20f));
+                    cutPos = this.rect.pos;
                     cutSize = this.rect.size;
                     cutPos -= this.rect.addSize / 2f;
                     cutSize += this.rect.addSize;
@@ -199,13 +199,12 @@ namespace OptionalUI
                 if (!tickSlider)
                 {
                     float p = this.mul * (float)(valueInt - this.min);
-                    if (MenuMouseMode && this.held) { p = MousePos.y; }
+                    if (MenuMouseMode && this.held) { p = Mathf.Clamp(MousePos.y, 0f, size.y); }
                     this.rect.pos.x = 4f;
                     this.rect.pos.y = p - 8f;
                     this.rect.addSize = new Vector2(4f, 4f) * add;
-                    this.label.x = this.rect.pos.x - 10f;
-                    this.label.y = this.rect.pos.y + 18f;
-                    cutPos = this.rect.pos - this.pos;
+                    LabelPlaceAtCenter(this.label, new Vector2(this.rect.pos.x - 10f, this.rect.pos.y + 18f), new Vector2(40f, 20f));
+                    cutPos = this.rect.pos;
                     cutSize = this.rect.size;
                     cutPos -= this.rect.addSize / 2f;
                     cutSize += this.rect.addSize;

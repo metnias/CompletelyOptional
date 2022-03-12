@@ -462,6 +462,11 @@ namespace CompletelyOptional
 
             allowFocusMove = allowFocusMove && focusedElementBeforeUpdate == focusedElement;
 
+            if (!holdElement && (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl)))
+            { //Undo
+                if (Input.GetKey(KeyCode.Z)) { if (!lastPressZ) { UndoConfigChange(); } lastPressZ = true; }
+                else { lastPressZ = false; }
+            }
             if (menu.manager.menuesMouseMode)
             { // Mouse Mode
                 if (!holdElement)
@@ -482,9 +487,6 @@ namespace CompletelyOptional
                             break;
                         }
                     }
-                    //Undo
-                    if (Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl))
-                    { if (Input.GetKey(KeyCode.Z) && !lastPressZ) { UndoConfigChange(); lastPressZ = true; } else { lastPressZ = false; } }
                 }
                 else // holdElement
                 {
@@ -609,19 +611,22 @@ namespace CompletelyOptional
             if (history.Count > 0)
             {
                 ConfigHistory last = history.Peek();
-                if (last.config.key == config.key)
+                if (last.config == config) //(last.config.key == config.key)
                 {
                     oldValue = history.Pop().origValue;
                     if (oldValue == value) { return; } // User-reverted config; Remove history
                 }
             }
             history.Push(new ConfigHistory() { config = config, origValue = oldValue });
+            ComOptPlugin.LogMessage($"ConfigChange[{history.Count}]) {history.Peek().config.GetType()}({history.Peek().config.key}): [{history.Peek().origValue}] ==> [{value}]");
             // configChanged = true; == history.Count > 0
             // cfgContainer.menuTab.saveButton.text = InternalTranslator.Translate("APPLY");
         }
 
         internal void UndoConfigChange() // Ctrl + Z or Grab + Jump
         {
+            ComOptPlugin.LogMessage($"UndoConfig[{history.Count}]) {history.Peek().config.GetType()}({history.Peek().config.key}): [{history.Peek().origValue}] <== [{history.Peek().config.value}]");
+
             if (history.Count > 0)
             {
                 ConfigHistory last = history.Pop();
