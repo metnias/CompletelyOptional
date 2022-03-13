@@ -24,6 +24,7 @@ namespace CompletelyOptional
             _soundFill = 0;
             holdElement = false;
             history = new Stack<ConfigHistory>();
+            OpKeyBinder.InitBoundKey();
 
             // Load OptionInterfaces
             if (!cfgMenu.isReload) { LoadItfs(); }

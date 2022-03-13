@@ -110,7 +110,7 @@
     <None Include="OptionalUI\OpColorPicker.cs" />
     <Compile Include="OptionalUI\OpDragger.cs" />
     <Compile Include="OptionalUI\OpImage.cs" />
-    <None Include="OptionalUI\OpKeyBinder.cs" />
+    <Compile Include="OptionalUI\OpKeyBinder.cs" />
     <Compile Include="OptionalUI\OpLabel.cs" />
     <Compile Include="OptionalUI\OpPathSelector.cs" />
     <Compile Include="OptionalUI\OpRadioButton.cs" />

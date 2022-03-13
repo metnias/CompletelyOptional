@@ -134,6 +134,8 @@ namespace CompletelyOptional
             sb.AddItems(new OpLabelLong(new Vector2(225f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Center });
             sb.AddItems(new OpLabelLong(new Vector2(425f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
 
+            Tabs[3].AddItems(new OpKeyBinder(new Vector2(100f, 300f), new Vector2(200f, 30f), rwMod, "_KeyTest", "Enter", false));
+
             /*
             OpComboBox cb = new OpComboBox(new Vector2(100f, 1000f), 150f, "", new List<ListItem>() {
                 new ListItem("Slugcat"), new ListItem("Is"), new ListItem("HalfSlug"),

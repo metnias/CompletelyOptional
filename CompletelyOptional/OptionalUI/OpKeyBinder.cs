@@ -17,18 +17,18 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">LeftBottom Position of this UI</param>
         /// <param name="size">Size; minimum size is 30x30.</param>
-        /// <param name="modID">Your ModID</param>
+        /// <param name="rwMod">Your <see cref="RainWorldMod"/>. Use <see cref="OptionInterface.rwMod"/>.</param>
         /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="defaultKey">Default <see cref="KeyCode"/> name. Set to empty to bind to <see cref="KeyCode.None"/> in default.</param>
         /// <param name="collisionCheck">Whether you will check the key is colliding with other <see cref="OpKeyBinder"/> or not</param>
         /// <param name="ctrlerNo">Which Controller this <see cref="OpKeyBinder"/> can bind</param>
         /// <exception cref="ElementFormatException">Thrown when defaultKey is null or empty</exception>
-        public OpKeyBinder(Vector2 pos, Vector2 size, string modID, string key, string defaultKey, bool collisionCheck = true, BindController ctrlerNo = BindController.AnyController) : base(pos, size, key, defaultKey)
+        public OpKeyBinder(Vector2 pos, Vector2 size, RainWorldMod rwMod, string key, string defaultKey, bool collisionCheck = true, BindController ctrlerNo = BindController.AnyController) : base(pos, size, key, defaultKey)
         {
             // if (string.IsNullOrEmpty(defaultKey)) { throw new ElementFormatException(this, "OpKeyBinderNull: defaultKey for this keyBinder is null.", key); }
             if (string.IsNullOrEmpty(defaultKey)) { this._value = none; }
-            this.controlKey = !this.cosmetic ? string.Concat(modID, "_", key) : "_";
-            this.modID = modID;
+            this.modID = ConfigContainer.GenerateID(rwMod);
+            this.controlKey = this.cosmetic ? "_" : "" + string.Concat(modID, "-", key);
             this._size = new Vector2(Mathf.Max(30f, size.x), Mathf.Max(30f, size.y));
             this.collisionCheck = !this.cosmetic && collisionCheck;
             this.bind = ctrlerNo;
@@ -50,7 +50,7 @@ namespace OptionalUI
                 {
                     if (item.Value == defaultKey)
                     {
-                        string anotherMod = Regex.Split(item.Key, "_")[0];
+                        string anotherMod = Regex.Split(item.Key, "-")[0] + "-" + Regex.Split(item.Key, "-")[1];
 
                         if (modID != anotherMod)
                         {
@@ -72,11 +72,12 @@ namespace OptionalUI
             }
             this._description = "";
 
-            this.rect = new DyeableRect(myContainer, this.pos, this.size, true);
+            this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true);
             this.rect.fillAlpha = 0.3f;
 
             this.label = OpLabel.CreateFLabel(defaultKey, true);
-            LabelPlaceAtCenter(this.label, this.pos, this.size);
+            LabelPlaceAtCenter(this.label, Vector2.zero, this.size);
+            this.myContainer.AddChild(this.label);
 
             this.sprite = new FSprite("GamepadIcon", true) { anchorX = 0f, anchorY = 0.5f, scale = 0.333f };
             this.myContainer.AddChild(sprite);
@@ -89,13 +90,45 @@ namespace OptionalUI
         /// </summary>
         protected bool collisionCheck;
 
-        private static Dictionary<string, string> BoundKey
+        internal static Dictionary<string, string> BoundKey;
+
+        internal static void InitBoundKey()
         {
-            get { return ConfigMenu.BoundKey; }
-            set { ConfigMenu.BoundKey = value; }
+            // Load Illust
+            MenuIllustration icon = new MenuIllustration(ModConfigMenu.instance, ConfigContainer.instance, string.Empty, "GamepadIcon", Vector2.zero, true, true);
+            ConfigContainer.instance.subObjects.Add(icon);
+            icon.sprite.isVisible = false;
+
+            BoundKey = new Dictionary<string, string>();
+            //Get Vanilla Keys
+            for (int i = 0; i < ComOptPlugin.rw.options.controls.Length; i++)
+            {
+                Options.ControlSetup setup = ComOptPlugin.rw.options.controls[i];
+                if (setup.preset == Options.ControlSetup.Preset.KeyboardSinglePlayer)
+                {
+                    for (int p = 0; p < setup.keyboardKeys.Length; p++)
+                    {
+                        if (!BoundKey.ContainsValue(setup.keyboardKeys[p].ToString()))
+                        { BoundKey.Add(string.Concat("Vanilla_", i.ToString(), "_", p.ToString()), setup.keyboardKeys[p].ToString()); }
+                    }
+                }
+                else
+                {
+                    for (int p = 0; p < setup.gamePadButtons.Length; p++)
+                    {
+                        string key = setup.gamePadButtons[p].ToString();
+                        if (key.Length > 9 && int.TryParse(key.Substring(8, 1), out int _))
+                        { }
+                        else
+                        { key = key.Substring(0, 8) + i.ToString() + key.Substring(8); }
+                        if (!BoundKey.ContainsValue(key))
+                        { BoundKey.Add(string.Concat("Vanilla_", i.ToString(), "_", p.ToString()), key); }
+                    }
+                }
+            }
         }
 
-        private readonly string controlKey; private readonly string modID;
+        private readonly string controlKey, modID;
 
         //clicked ==> input key (Mouse out ==> reset)
         /// <summary>
@@ -122,15 +155,9 @@ namespace OptionalUI
         /// <returns></returns>
         public static BindController GetControllerForPlayer(int player)
         {
-            if (player < 1 || player > 4) { throw new ElementFormatException(string.Concat("OpKeyBinder.GetControllerForPlayer threw error: Player number must be 1 ~ 4.")); }
-            return (BindController)OptionScript.rw.options.controls[player - 1].gamePadNumber;
+            if (player < 1 || player > 4) { throw new ElementFormatException("OpKeyBinder.GetControllerForPlayer threw error: Player number must be 1 ~ 4."); }
+            return (BindController)ComOptPlugin.rw.options.controls[player - 1].gamePadNumber;
         }
-
-        /// <summary>
-        /// Abandoned because this only created confusion. Use <see cref="GetControllerForPlayer(int)"/>.
-        /// </summary>
-        [Obsolete]
-        public int player;
 
         /// <summary>
         /// If you want to convert <see cref="string"/> to <see cref="KeyCode"/> but you are too lazy to code that by yourself.
@@ -192,9 +219,9 @@ namespace OptionalUI
             this.value = newValue;
         }
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
+            base.GrafUpdate(timeStacker);
 
             this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
             this.sprite.color = this.bumpBehav.GetColor(this.colorEdge);
@@ -202,6 +229,7 @@ namespace OptionalUI
             if (greyedOut)
             {
                 this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
+                this.rect.GrafUpdate(timeStacker);
                 if (string.IsNullOrEmpty(this._desError))
                 { this.label.color = this.bumpBehav.GetColor(this.colorEdge); }
                 else
@@ -212,6 +240,7 @@ namespace OptionalUI
             this.rect.colorFill = this.colorFill;
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
+            this.rect.GrafUpdate(timeStacker);
 
             Color myColor = this.bumpBehav.GetColor(string.IsNullOrEmpty(this._desError) ? this.colorEdge : Color.red);
             if (this.MouseOver)
@@ -240,16 +269,6 @@ namespace OptionalUI
 
         private string _description;
         private string _desError;
-
-        /// <summary>
-        /// Use <see cref="SetDescription(string)"/> and <see cref="GetDescription"/> instead.
-        /// </summary>
-        [Obsolete]
-        public new string description
-        {
-            get { return GetDescription(); }
-            set { SetDescription(value); }
-        }
 
         public override string value
         {
@@ -311,12 +330,11 @@ namespace OptionalUI
         public override void Update()
         {
             base.Update();
+            this.rect.Update();
             if (greyedOut) { return; }
 
             if (this.MouseOver && Input.GetMouseButton(0))
-            {
-                this.held = true;
-            }
+            { this.held = true; }
 
             this.lastAnyKeyDown = this.anyKeyDown;
             this.anyKeyDown = Input.anyKey;
@@ -396,14 +414,13 @@ namespace OptionalUI
             {
                 this.sprite.SetPosition(5f, this.size.y / 2f);
                 this.label.text = this.value.Replace("Joystick", "");
-                LabelPlaceAtCenter(this.label, this.pos + new Vector2(20f, 0), this.size - new Vector2(20f, 0));
+                LabelPlaceAtCenter(this.label, new Vector2(20f, 0), this.size - new Vector2(20f, 0));
             }
             else
             {
                 this.label.text = this.value;
-                LabelPlaceAtCenter(this.label, this.pos, this.size);
+                LabelPlaceAtCenter(this.label, Vector2.zero, this.size);
             }
-            this.rect.pos = this.pos;
             this.rect.size = this.size;
         }
 
