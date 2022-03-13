@@ -153,27 +153,27 @@ namespace OptionalUI
         internal readonly FContainer container;
 
         /// <summary>
-        /// Graphical Update of OpTab called by <see cref="CompletelyOptional.ConfigContainer.GrafUpdate"/>. Calls <see cref="UIelement.GrafUpdate"/>.
+        /// Graphical Update of OpTab called by <see cref="ConfigContainer.GrafUpdate"/>. Calls <see cref="UIelement.GrafUpdate"/>.
         /// </summary>
         internal void GrafUpdate(float timeStacker)
         {
-            foreach (UIelement item in this.items)
+            foreach (UIelement item in this.items.ToArray())
             { if (!item.isInactive) { item.GrafUpdate(timeStacker); } }
         }
 
         /// <summary>
-        /// Update for OpTab called by <see cref="CompletelyOptional.ConfigContainer.Update"/>. Calls <see cref="UIelement.Update"/>.
+        /// Update for OpTab called by <see cref="ConfigContainer.Update"/>. Calls <see cref="UIelement.Update"/>.
         /// </summary>
         internal void Update()
         {
-            foreach (UIelement item in this.items) { if (!item.isInactive) { item.Update(); } }
+            foreach (UIelement item in this.items.ToArray()) { if (!item.isInactive) { item.Update(); } }
         }
 
         internal void Deactivate()
         {
             this.isInactive = true;
             this.container.isVisible = false;
-            foreach (UIelement element in this.items)
+            foreach (UIelement element in this.items.ToArray())
             { element.Deactivate(); }
         }
 
@@ -181,7 +181,7 @@ namespace OptionalUI
         {
             this.isInactive = false;
             this.container.isVisible = true;
-            foreach (UIelement element in this.items)
+            foreach (UIelement element in this.items.ToArray())
             { element.Reactivate(); }
         }
 
@@ -230,7 +230,7 @@ namespace OptionalUI
 
         internal void Unload()
         {
-            foreach (UIelement item in this.items)
+            foreach (UIelement item in this.items.ToArray())
             { item.Unload(); }
             this.container.RemoveAllChildren();
             this.container.RemoveFromContainer();
