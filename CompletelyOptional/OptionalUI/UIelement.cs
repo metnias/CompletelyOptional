@@ -385,15 +385,26 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Set <see cref="FLabel"/>'s pos in the Center of the size
+        /// Set <see cref="FLabel"/>'s position in the Center of the size
         /// </summary>
         /// <param name="label"><see cref="FLabel"/> to be placed</param>
-        /// <param name="pos">Leftbottom position of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
+        /// <param name="pos">Leftbottom offset of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
         /// <param name="size">An arbitary rectangular for this label to be in its center</param>
-        protected static void LabelPlaceAtCenter(FLabel label, Vector2 pos, Vector2 size)
+        protected static void LabelPlaceAtCenter(FLabel label, Vector2 pos, Vector2 size) => LabelPlaceAtCenter(label, pos.x, pos.y, size.x, size.y);
+
+        /// <summary>
+        /// Set <see cref="FLabel"/>'s position in the Center of the rect (width x height)
+        /// </summary>
+        /// <param name="label"><see cref="FLabel"/> to be placed</param>
+        /// <param name="offsetLeft">Left offset of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
+        /// <param name="offsetBottom">Bottom offset of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
+        /// <param name="width">An arbitary rectangular's width for this label to be in its center</param>
+        /// <param name="height">An arbitary rectangular's height for this label to be in its center</param>
+        protected static void LabelPlaceAtCenter(FLabel label, float offsetLeft, float offsetBottom, float width, float height)
         {
-            label.x = pos.x + size.x / 2f;
-            label.y = pos.y + size.y / 2f;
+            label.alignment = FLabelAlignment.Center;
+            label.x = offsetLeft + width / 2f;
+            label.y = offsetBottom + height / 2f;
         }
 
         /// <summary>

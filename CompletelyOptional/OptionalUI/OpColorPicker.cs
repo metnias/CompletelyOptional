@@ -55,20 +55,16 @@ namespace OptionalUI
             Color grey = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorEdge = grey;
             //lblR/G/B: Displays R/G/B value
-            lblB = new MenuLabel(menu, owner, r.ToString(), pos + _offset + new Vector2(124f, 30f), new Vector2(20f, 20f), false);
-            lblG = new MenuLabel(menu, owner, g.ToString(), pos + _offset + new Vector2(124f, 70f), new Vector2(20f, 20f), false);
-            lblR = new MenuLabel(menu, owner, b.ToString(), pos + _offset + new Vector2(124f, 110f), new Vector2(20f, 20f), false);
-            this.subObjects.Add(lblR);
-            this.subObjects.Add(lblG);
-            this.subObjects.Add(lblB);
-            lblR.label.color = grey;
-            lblG.label.color = grey;
-            lblB.label.color = grey;
+            lblB = OpLabel.CreateFLabel(r.ToString()); lblB.alignment = FLabelAlignment.Left;
+            lblB.x = 124f; lblB.y = 30f; lblB.color = grey; myContainer.AddChild(lblB);
+            lblG = OpLabel.CreateFLabel(r.ToString()); lblG.alignment = FLabelAlignment.Left;
+            lblG.x = 124f; lblG.y = 70f; lblG.color = grey; myContainer.AddChild(lblG);
+            lblR = OpLabel.CreateFLabel(r.ToString()); lblR.alignment = FLabelAlignment.Left;
+            lblR.x = 124f; lblR.y = 110f; lblR.color = grey; myContainer.AddChild(lblR);
             //lblP: Displays Selected Palette Color Name
-            lblP = new MenuLabel(menu, owner, "X", pos + _offset + new Vector2(10f, 5f), new Vector2(60f, 20f), false);
-            this.subObjects.Add(lblP);
-            lblP.label.isVisible = false;
-            lblP.label.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
+            lblP = OpLabel.CreateFLabel("X"); LabelPlaceAtCenter(lblP, 10f, 5f, 60f, 20f);
+            lblP.isVisible = false; lblP.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
+            myContainer.AddChild(lblP);
 
             //Hex Value Label
             lblHex = new MenuLabel(menu, owner, value.ToString(), pos + _offset + new Vector2(25f, 5f), new Vector2(80f, 20f), false);

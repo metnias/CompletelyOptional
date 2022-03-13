@@ -452,7 +452,7 @@ namespace CompletelyOptional
                 base.OnChange();
                 this._size = new Vector2(18f, 18f);
                 this.rectH.pos = new Vector2(-3f, -3f);
-                LabelPlaceAtCenter(this.label, new Vector2(-3f, -3f), new Vector2(24f, 24f));
+                LabelPlaceAtCenter(this.label, -3f, -3f, 24f, 24f);
                 rect.Hide();
             }
 

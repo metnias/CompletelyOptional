@@ -107,7 +107,7 @@
     <Compile Include="ConfigMenu\MenuTab.cs" />
     <Compile Include="OptionalUI\SubObjects\DyeableRect.cs" />
     <Compile Include="OptionalUI\OpCheckBox.cs" />
-    <None Include="OptionalUI\OpColorPicker.cs" />
+    <Compile Include="OptionalUI\OpColorPicker.cs" />
     <Compile Include="OptionalUI\OpDragger.cs" />
     <Compile Include="OptionalUI\OpImage.cs" />
     <Compile Include="OptionalUI\OpKeyBinder.cs" />
