@@ -2,7 +2,6 @@
 using Music;
 using OptionalUI;
 using RWCustom;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -21,31 +20,42 @@ namespace CompletelyOptional
             // Initialize
             instance = this;
             description = ""; lastDescription = "";
-            redUnlocked = (this.manager.rainWorld.progression.miscProgressionData.redUnlocked ||
-                File.Exists(string.Concat(Custom.RootFolderDirectory(), "unlockred.txt")) ||
-                this.manager.rainWorld.progression.miscProgressionData.redMeatEatTutorial > 2
-                );
+            if (!isReload)
+            {
+                redUnlocked = (this.manager.rainWorld.progression.miscProgressionData.redUnlocked ||
+                    File.Exists(string.Concat(Custom.RootFolderDirectory(), "unlockred.txt")) ||
+                    this.manager.rainWorld.progression.miscProgressionData.redMeatEatTutorial > 2
+                    );
+            }
 
             this.pages.Add(new Page(this, null, "hub", 0));
             LabelTest.Initialize(this);
 
             // Play song
-            if (this.manager.musicPlayer == null && this.manager.rainWorld.options.musicVolume > 0f)
+            if (!isReload)
             {
-                this.manager.musicPlayer = new MusicPlayer(this.manager);
-                this.manager.sideProcesses.Add(this.manager.musicPlayer);
+                if (this.manager.musicPlayer == null && this.manager.rainWorld.options.musicVolume > 0f)
+                {
+                    this.manager.musicPlayer = new MusicPlayer(this.manager);
+                    this.manager.sideProcesses.Add(this.manager.musicPlayer);
+                }
+                this.manager.musicPlayer.MenuRequestsSong(randomSong, 1f, 2f);
+                this.mySoundLoopID = SoundID.MENU_Main_Menu_LOOP;
             }
-            this.manager.musicPlayer.MenuRequestsSong(randomSong, 1f, 2f);
-            this.mySoundLoopID = SoundID.MENU_Main_Menu_LOOP;
 
             // Show Background
             if (!ComOptPlugin.testing)
             {
-                if (!redUnlocked)
-                { this.scene = new InteractiveMenuScene(this, this.pages[0], (MenuScene.SceneID)(bgList[Mathf.FloorToInt(UnityEngine.Random.value * (bgList.Length))])); }
+                if (isReload)
+                { this.scene = new InteractiveMenuScene(this, this.pages[0], reloadScene); }
                 else
-                { this.scene = new InteractiveMenuScene(this, this.pages[0], (MenuScene.SceneID)(bgListRed[Mathf.FloorToInt(UnityEngine.Random.value * (bgListRed.Length))])); }
-                ComOptPlugin.LogInfo($"Chosen Background : {this.scene.sceneID}");
+                {
+                    if (!redUnlocked)
+                    { this.scene = new InteractiveMenuScene(this, this.pages[0], (MenuScene.SceneID)(bgList[Mathf.FloorToInt(UnityEngine.Random.value * (bgList.Length))])); }
+                    else
+                    { this.scene = new InteractiveMenuScene(this, this.pages[0], (MenuScene.SceneID)(bgListRed[Mathf.FloorToInt(UnityEngine.Random.value * (bgListRed.Length))])); }
+                    ComOptPlugin.LogInfo($"Chosen Background : {this.scene.sceneID}");
+                }
                 this.pages[0].subObjects.Add(this.scene);
             }
             else
@@ -141,6 +151,7 @@ namespace CompletelyOptional
 
         public override void Update()
         {
+            lastDescription = description;
             if (!string.IsNullOrEmpty(description) && string.IsNullOrEmpty(this.UpdateInfoText()))
             {
                 this.infoLabelFade = 1f;
@@ -151,7 +162,7 @@ namespace CompletelyOptional
                     this.infoLabelSin = 0f;
                 }
             }
-            lastDescription = description;
+            this.lastInfoLabelFade = this.infoLabelFade;
 
             if (!string.IsNullOrEmpty(alertText))
             {
@@ -219,6 +230,19 @@ namespace CompletelyOptional
             }
         }
 
+        internal bool isReload = false;
+        private MenuScene.SceneID reloadScene;
+
+        public override void CommunicateWithUpcomingProcess(MainLoopProcess nextProcess)
+        {
+            base.CommunicateWithUpcomingProcess(nextProcess);
+            if (nextProcess is ModConfigMenu cm)
+            {
+                cm.isReload = true;
+                reloadScene = this.scene.sceneID;
+            }
+        }
+
         public override string UpdateInfoText()
         {
             return base.UpdateInfoText();
@@ -226,6 +250,7 @@ namespace CompletelyOptional
 
         public override void ShutDownProcess()
         {
+            cfgContainer.ShutdownConfigContainer();
             base.ShutDownProcess();
         }
 

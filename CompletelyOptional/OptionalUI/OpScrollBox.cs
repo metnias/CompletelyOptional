@@ -91,7 +91,7 @@ namespace OptionalUI
         /// <returns>Whether this call is valid or not</returns>
         public bool SetContentSize(float newSize, bool sortToTop = true)
         {
-            float ns = Mathf.Clamp(newSize, horizontal ? size.x : size.y, 10000f);
+            float ns = Mathf.Clamp(newSize, horizontal ? size.x : size.y, MaxContentSize);
             if (Mathf.Approximately(contentSize, ns)) { return false; }
             if (sortToTop)
             {
@@ -134,7 +134,7 @@ namespace OptionalUI
         public RedrawEvents redrawFlags = RedrawEvents.Always;
 
         /// <summary>
-        /// Whether or not scrolling is currently locked. Use <see cref="Lock(bool)"/> and <see cref="Unlock"/> to manipulate.
+        /// Whether or not scrolling is currently locked. Use <see cref="Lock"/> and <see cref="Unlock"/> to manipulate.
         /// </summary>
         public bool ScrollLocked { get; private set; }
 
@@ -159,19 +159,21 @@ namespace OptionalUI
 
         protected float ScrollSize => horizontal ? size.x : size.y;
 
+        private const float MaxContentSize = 10000f;
+
         /// <summary>
         /// Creates an empty scrollbox.
         /// </summary>
         /// <param name="pos">Bottom left position</param>
         /// <param name="size">Size of the visual box - for interior height see <see cref="contentSize"/></param>
-        /// <param name="contentSize">The size of this box's contents (max 10000). Represents width if <see cref="horizontal"/> is true, height otherwise. See <see cref="contentSize"/></param>
+        /// <param name="contentSize">The size of this box's contents (max 10000f). Represents width if <see cref="horizontal"/> is true, height otherwise. See <see cref="contentSize"/></param>
         /// <param name="hasBack">Whether or not to create a box behind this scrollbox</param>
         /// <param name="hasSlideBar">Whether or not to create a slider at the right/bottom edge</param>
         public OpScrollBox(Vector2 pos, Vector2 size, float contentSize, bool horizontal = false, bool hasBack = true, bool hasSlideBar = true) : base(pos, size)
         {
             this._size.x = Mathf.Min(this._size.x, 800f); this._size.y = Mathf.Min(this._size.y, 800f);
             this.horizontal = horizontal;
-            this.contentSize = Mathf.Clamp(contentSize, horizontal ? size.x : size.y, 10000f);
+            this.contentSize = Mathf.Clamp(contentSize, horizontal ? size.x : size.y, MaxContentSize);
             this.isTab = false; this.hasScrolled = false;
             this.doesBackBump = true;
 
@@ -201,7 +203,7 @@ namespace OptionalUI
             // Camera position must be different for horizontal vs vertical scrollboxes, otherwise contents may overlap
             // Assumes that content width is below 10000 pxls.
             // 300 pixels are added as a safety, in case some elements are slightly off screen
-            camPos = horizontal ? new Vector2(10000f, -10000f - 10300f * _camIndex) : new Vector2(10000f + 10300f * _camIndex, 10000f);
+            camPos = horizontal ? new Vector2(MaxContentSize, -MaxContentSize - (MaxContentSize + 300f) * _camIndex) : new Vector2(MaxContentSize + (MaxContentSize + 300f) * _camIndex, MaxContentSize);
 
             childOffset = camPos; // - new Vector2(Mathf.Round(_offset.x), Mathf.Round(_offset.y));
 
@@ -214,7 +216,7 @@ namespace OptionalUI
             }
             if (hasSlideBar)
             {
-                bumpScroll = new BumpBehaviour(this);
+                bumpSlidebar = new BumpBehaviour(this);
                 rectSlidebar = new DyeableRect(this.myContainer, Vector2.zero, SliderSize);
                 rectSlidebar.colorEdge = colorEdge;
                 rectSlidebar.colorFill = Color.Lerp(colorEdge, colorFill, 0.5f);
@@ -227,13 +229,13 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Creates an empty scrollbox that fits <see cref="OpTab"/>. This constructor will call <see cref="OpTab.AddItems"/> automatically.
+        /// Creates an empty scrollbox that fits <see cref="OpTab"/>. This constructor will call <see cref="OpTab.AddItems"/> automatically to add itself to its tab.
         /// </summary>
         /// <remarks>Example: <code>
         /// OpScrollBox sb = new OpScrollBox(Tabs[0], 2400f, false);
         /// sb.AddItems(new OpImage(new Vector2(420f, 1850f), "Futile_White"));
         /// </code></remarks>
-        /// <param name="contentSize">The size of this box's contents (max 10000). Represents width if <see cref="horizontal"/> is true, height otherwise. See <see cref="contentSize"/></param>
+        /// <param name="contentSize">The size of this box's contents (max 10000f). Represents width if <see cref="horizontal"/> is true, height otherwise. See <see cref="contentSize"/></param>
         /// <param name="hasSlideBar">Whether or not to create a slider at the right/bottom edge</param>
         public OpScrollBox(OpTab tab, float contentSize, bool horizontal = false, bool hasSlideBar = true)
             : this(Vector2.zero, new Vector2(600f, 600f), contentSize, horizontal, false, hasSlideBar)
@@ -242,6 +244,7 @@ namespace OptionalUI
 
             this._labelNotify = OpLabel.CreateFLabel(string.Concat(">>> ", InternalTranslator.Translate(hasSlideBar ? "Use Scroll Wheel or Scrollbar to see more" : "Use Scroll Wheel to see more"), " <<<"));
             LabelPlaceAtCenter(this._labelNotify, new Vector2(200f, 0f), new Vector2(200f, 20f));
+            this.myContainer.AddChild(this._labelNotify);
         }
 
         private readonly bool isTab; private bool hasScrolled;
@@ -289,9 +292,9 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Called after <see cref="Lock(bool)"/> to allow the user to scroll again.
+        /// Called after <see cref="Lock"/> to allow the user to scroll again.
         /// </summary>
-        /// <seealso cref="Lock(bool)"/>
+        /// <seealso cref="Lock"/>
         /// <seealso cref="ScrollLocked"/>
         public void Unlock()
         {
@@ -381,7 +384,7 @@ namespace OptionalUI
 
         private bool _firstUpdate = true;
         private float _dragOffset = 0f;
-        private bool _lastMouseOver = false;
+        private bool _lastMouseOver = false, _lastMouseDown = false;
         private float _lastScrollOffset = 1f;
 
         public BumpBehaviour bumpBehav { get; private set; }
@@ -394,12 +397,12 @@ namespace OptionalUI
 
         public bool CurrentlyFocusableNonMouse => true;
 
-        private readonly BumpBehaviour bumpScroll;
+        private readonly BumpBehaviour bumpSlidebar;
         private bool scrollMouseOver;
 
-        private bool IsThereMouseOver()
+        private bool IsThereChildMouseOver()
         {
-            foreach (UIelement e in this.tab.items)
+            foreach (UIelement e in this.children)
             {
                 if (e.isInactive) { continue; }
                 if (e is ICanBeFocused && (e as ICanBeFocused).CurrentlyFocusableMouse && e.MouseOver) { return true; }
@@ -429,92 +432,117 @@ namespace OptionalUI
 
             rectBack?.Update(); rectSlidebar?.Update();
             this.bumpBehav.Update();
+
+            #region CheckRedraw
+
             // Check redraw conditions
             if ((redrawFlags & RedrawEvents.Always) != 0)
-                _contentsDirty = true;
+            { _contentsDirty = true; }
             else if (((redrawFlags & RedrawEvents.OnHover) != 0) && (MouseOver || _lastMouseOver))
+            {
                 // Continue animation for a small amount of time after the user moves the mouse away
                 // ... so then elements such as buttons have time to complete their mouse-off animations
                 MarkDirty(0.5f);
+            }
             else if (Time.unscaledTime <= _dirtyUntil)
-                _contentsDirty = true;
+            { _contentsDirty = true; }
             else if (((redrawFlags & RedrawEvents.OnKeypress) != 0) && Input.anyKey)
-                MarkDirty(0.5f);
-            _lastMouseOver = MouseOver;
-
-            // Lock the mouse inside or outside the box if it was pressed down
-            /*
-            if (Input.GetMouseButtonDown(0))
-                _lockMouseFocus = MouseOver;
-            if (!Input.GetMouseButton(0))
-                _lockMouseFocus = null; */
+            { MarkDirty(0.5f); }
+            #endregion CheckRedraw
 
             bool hasMoved = false;
 
-            // Do mouse drag scrolling
-            scrollMouseOver = false;
-            if (_draggingSlider)
+            if (MenuMouseMode)
             {
-                if (ScrollLocked) { _draggingSlider = false; }
-                else
-                {
-                    float scrollPerc = ((horizontal ? MousePos.x : MousePos.y) + _dragOffset) / ScrollSize;
-                    scrollPerc *= -contentSize;
-                    scrollOffset = scrollPerc;
-                    targetScrollOffset = scrollOffset;
-                    hasMoved = true;
-                    if (!Input.GetMouseButton(0)) { _draggingSlider = false; }
-                }
-            }
-            else if ((rectSlidebar != null) && !ScrollLocked && MouseOver)
-            {
-                if (horizontal)
-                {
-                    if ((MousePos.y > SliderPos.y) && (MousePos.y < SliderPos.y + SliderSize.y))
-                        if ((MousePos.x > SliderPos.x) && (MousePos.x < SliderPos.x + SliderSize.x))
-                        {
-                            scrollMouseOver = true;
-                            if (Input.GetMouseButtonDown(0))
-                            {
-                                _dragOffset = SliderPos.x - MousePos.x;
-                                _draggingSlider = true; this.hasScrolled = true;
-                            }
-                        }
-                }
-                else
-                {
-                    if ((MousePos.x > SliderPos.x) && (MousePos.x < SliderPos.x + SliderSize.x))
-                        if ((MousePos.y > SliderPos.y) && (MousePos.y < SliderPos.y + SliderSize.y))
-                        {
-                            scrollMouseOver = true;
-                            if (Input.GetMouseButtonDown(0))
-                            {
-                                _dragOffset = SliderPos.y - MousePos.y;
-                                _draggingSlider = true; this.hasScrolled = true;
-                            }
-                        }
-                }
-            }
+                _lastMouseOver = MouseOver;
 
-            // Do scroll wheel scrolling
-            if (!ScrollLocked)
-            {
-                if (this.menu.mouseScrollWheelMovement != 0 && MouseOver)
+                // Lock the mouse inside or outside the box if it was pressed down
+                /*
+                if (Input.GetMouseButtonDown(0))
+                    _lockMouseFocus = MouseOver;
+                if (!Input.GetMouseButton(0))
+                    _lockMouseFocus = null; */
+
+                // Do mouse drag slider scrolling
+                scrollMouseOver = false;
+                if (_draggingSlider)
                 {
-                    if (!IsThereMouseOver() && !_draggingSlider)
-                        targetScrollOffset -= (horizontal ? 40f : -40f) * Mathf.Sign(this.menu.mouseScrollWheelMovement);
-                    if (targetScrollOffset != scrollOffset)
+                    if (ScrollLocked) { _draggingSlider = false; ConfigContainer.holdElement = false; }
+                    else
                     {
-                        hasMoved = true; this.hasScrolled = true;
-                        PlaySound(SoundID.MENU_Scroll_Tick);
-                        if (this.bumpScroll != null)
+                        float scrollPerc = ((horizontal ? MousePos.x : MousePos.y) + _dragOffset) / ScrollSize;
+                        scrollPerc *= -contentSize;
+                        scrollOffset = scrollPerc;
+                        targetScrollOffset = scrollOffset;
+                        hasMoved = true;
+                        if (!Input.GetMouseButton(0)) { _draggingSlider = false; ConfigContainer.holdElement = false; }
+                    }
+                }
+                else if ((rectSlidebar != null) && !ScrollLocked)
+                {
+                    if (MousePos.x > SliderPos.x && MousePos.x < SliderPos.x + SliderSize.x
+                        && MousePos.y > SliderPos.y && MousePos.y < SliderPos.y + SliderSize.y)
+                    {
+                        scrollMouseOver = true;
+                        if (Input.GetMouseButton(0) && !_lastMouseDown)
                         {
-                            this.bumpScroll.flash = Mathf.Min(1f, this.bumpScroll.flash + 0.2f);
-                            this.bumpScroll.sizeBump = Mathf.Min(2.5f, this.bumpScroll.sizeBump + 0.3f);
+                            _dragOffset = horizontal ? SliderPos.x - MousePos.x : SliderPos.y - MousePos.y;
+                            _draggingSlider = true; this.hasScrolled = true; ConfigContainer.holdElement = true;
+                        }
+                    }
+                }
+                _lastMouseDown = Input.GetMouseButton(0);
+
+                // Do mouse scrollwheel scrolling
+                if (!ScrollLocked)
+                {
+                    if (this.menu.mouseScrollWheelMovement != 0 && MouseOver)
+                    {
+                        if (!IsThereChildMouseOver() && !_draggingSlider)
+                        { targetScrollOffset -= (horizontal ? 40f : -40f) * this.menu.mouseScrollWheelMovement; }
+                        if (targetScrollOffset != scrollOffset)
+                        {
+                            hasMoved = true; this.hasScrolled = true;
+                            PlaySound(SoundID.MENU_Scroll_Tick);
+                            if (this.bumpSlidebar != null)
+                            {
+                                this.bumpSlidebar.flash = Mathf.Min(1f, this.bumpSlidebar.flash + 0.2f);
+                                this.bumpSlidebar.sizeBump = Mathf.Min(2.5f, this.bumpSlidebar.sizeBump + 0.3f);
+                            }
                         }
                     }
                 }
             }
+            else
+            {
+                if (this.Focused())
+                {
+                    // Focused > (jmp) > !ScrollLocked ? holdElement : focus <- lastFocusedElement
+                    if (!ScrollLocked)
+                    {
+                        if ((horizontal && CtlrInput.x != 0) || (!horizontal && CtlrInput.y != 0))
+                        {
+                            // Add input delay here
+                            if (horizontal) { targetScrollOffset -= 40f * Mathf.Sign(CtlrInput.x); }
+                            else { targetScrollOffset += 40f * Mathf.Sign(CtlrInput.y); }
+                            if (targetScrollOffset != scrollOffset)
+                            {
+                                hasMoved = true; this.hasScrolled = true;
+                                PlaySound(SoundID.MENU_Scroll_Tick);
+                                if (this.bumpSlidebar != null)
+                                {
+                                    this.bumpSlidebar.flash = Mathf.Min(1f, this.bumpSlidebar.flash + 0.2f);
+                                    this.bumpSlidebar.sizeBump = Mathf.Min(2.5f, this.bumpSlidebar.sizeBump + 0.3f);
+                                }
+                            }
+                        }
+                    }
+                }
+                else if (ConfigContainer.focusedElement.inScrollBox && ConfigContainer.focusedElement.scrollBox == this) // Child Focused
+                { // Auto Scroll To Element
+                }
+            }
+
             scrollOffset = Mathf.SmoothDamp(scrollOffset, targetScrollOffset, ref _scrollVel, 0.15f * frameMulti);
             // Snap the scrollbox to its target when it is within 0.5 of a pixel
             // This is to keep from rendering the box's contents each frame even when the difference in scroll is not visible
@@ -571,27 +599,27 @@ namespace OptionalUI
             }
             if (rectSlidebar != null)
             {
-                this.bumpScroll.MouseOver = this.scrollMouseOver;
-                this.bumpScroll.greyedOut = this.ScrollLocked;
-                this.bumpScroll.Update();
+                this.bumpSlidebar.MouseOver = this.scrollMouseOver;
+                this.bumpSlidebar.greyedOut = this.ScrollLocked;
+                this.bumpSlidebar.Update();
 
-                if (this._draggingSlider) { rectSlidebar.colorFill = this.bumpScroll.GetColor(this.colorEdge); rectSlidebar.fillAlpha = 1f; }
+                if (this._draggingSlider) { rectSlidebar.colorFill = this.bumpSlidebar.GetColor(this.colorEdge); rectSlidebar.fillAlpha = 1f; }
                 else
                 {
                     if (this.hasScrolled || this.ScrollLocked)
                     {
-                        rectSlidebar.colorFill = this.bumpScroll.GetColor(this.colorFill);
-                        rectSlidebar.fillAlpha = this.bumpScroll.FillAlpha;
+                        rectSlidebar.colorFill = this.bumpSlidebar.GetColor(this.colorFill);
+                        rectSlidebar.fillAlpha = this.bumpSlidebar.FillAlpha;
                     }
                     else
                     {
-                        rectSlidebar.colorFill = this.bumpScroll.GetColor(this.colorEdge);
+                        rectSlidebar.colorFill = this.bumpSlidebar.GetColor(this.colorEdge);
                         rectSlidebar.fillAlpha = 0.3f + 0.6f * sin;
                     }
                 }
-                rectSlidebar.colorEdge = this.bumpScroll.GetColor(this.colorEdge);
+                rectSlidebar.colorEdge = this.bumpSlidebar.GetColor(this.colorEdge);
                 rectSlidebar.size = SliderSize;
-                rectSlidebar.addSize = new Vector2(2f, 2f) * this.bumpScroll.AddSize;
+                rectSlidebar.addSize = new Vector2(2f, 2f) * this.bumpSlidebar.AddSize;
                 rectSlidebar.pos = SliderPos;
                 rectSlidebar.GrafUpdate(timeStacker);
             }
@@ -600,13 +628,14 @@ namespace OptionalUI
                 if (this.ScrollLocked) { this._labelNotify.alpha = 0f; }
                 else
                 {
-                    this._labelNotify.color = Color.Lerp(Color.white, this.bumpScroll.GetColor(this.colorEdge), 0.5f);
+                    this._labelNotify.color = Color.Lerp(Color.white, this.bumpSlidebar.GetColor(this.colorEdge), 0.5f);
                     if (!this.hasScrolled) { this._labelNotify.alpha = 0.5f + 0.5f * sin; }
                     else
                     {
-                        this._labelNotify.alpha -= 0.03333f; // move to Update
+                        this._labelNotify.alpha -= 0.03333f / frameMulti; // move to Update
                         if (this._labelNotify.alpha < float.Epsilon)
                         {
+                            this._labelNotify.isVisible = false;
                             this._labelNotify.RemoveFromContainer();
                             this._labelNotify = null;
                         }

@@ -389,6 +389,7 @@ namespace OptionalUI
                 {
                     PlaySound(SoundID.MENU_Checkbox_Uncheck);
                 }
+                ConfigContainer.instance.NotifyConfigChange(this, _lastValue, this._value);
 
                 OnChange();
             }

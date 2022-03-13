@@ -95,13 +95,13 @@ namespace CompletelyOptional
         {
             if (focusedIndex < topIndex)
             {
-                scrollBump = Mathf.Max(scrollBump - 2.5f * (topIndex - focusedIndex), -12f);
+                //scrollBump = Mathf.Max(scrollBump - 2.5f * (topIndex - focusedIndex), -12f);
                 topIndex = focusedIndex;
             }
             else if (focusedIndex >= topIndex + tabButtonLimit)
             {
-                scrollBump = Mathf.Min(scrollBump + 2.5f * (topIndex - focusedIndex), 12f);
-                topIndex = focusedIndex - tabButtonLimit - 1;
+                //scrollBump = Mathf.Min(scrollBump + 2.5f * (topIndex - focusedIndex), 12f);
+                topIndex = focusedIndex - tabButtonLimit + 1;
             }
         }
 

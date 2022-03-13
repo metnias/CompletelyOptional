@@ -26,14 +26,15 @@ namespace CompletelyOptional
             history = new Stack<ConfigHistory>();
 
             // Load OptionInterfaces
-            LoadItfs();
+            if (!cfgMenu.isReload) { LoadItfs(); }
+            else { ReloadItfs(false); }
 
             menuTab = new MenuTab();
             lastFocusedElement = menuTab.backButton;
             focusedElement = menuTab.backButton;
 
-            activeItfIndex = 0;
-            activeTabIndex = 0;
+            activeItfIndex = activeItfIndex >= OptItfs.Length ? 0 : activeItfIndex;
+            activeTabIndex = savedActiveTabIndex[activeItfIndex];
             activeTab = activeInterface.Tabs[activeTabIndex];
 
             menuTab.Activate();
@@ -191,6 +192,22 @@ namespace CompletelyOptional
             if (listItf.Count > 0)
             {
                 listItf.Sort(CompareOIModID);
+                if (OptItfs != null && OptItfs.Length == listItf.Count + 1)
+                {
+                    for (int i = 0; i < listItf.Count; i++)
+                    {
+                        if (OptItfID[i + 1] != GenerateID(listItf[i].rwMod))
+                        { goto newMods; } // Mods has changed
+                    }
+                    // No mod changes; Refresh OptItfs anyway
+                    OptItfs = new OptionInterface[listItf.Count + 1];
+                    OptItfs[0] = new InternalOI_Stats();
+                    OptItfs[0].Initialize();
+                    for (int k = 0; k < listItf.Count; k++)
+                    { OptItfs[k + 1] = listItf[k]; }
+                    ReloadItfs(true); return;
+                }
+            newMods:
                 OptItfs = new OptionInterface[listItf.Count + 1];
                 OptItfs[0] = new InternalOI_Stats();
                 OptItfs[0].Initialize();
@@ -199,6 +216,7 @@ namespace CompletelyOptional
             }
             else
             { // No Mod
+                if (OptItfs != null && OptItfs.Length == 1) { ReloadItfs(false); return; }
                 OptItfs = new OptionInterface[] { new InternalOI_NoMod() };
                 OptItfID = new string[] { OptItfs[0].rwMod.ModID };
                 savedActiveTabIndex = new int[] { 0 };
@@ -210,38 +228,93 @@ namespace CompletelyOptional
 
             #endregion Sort
 
-            #region Regist
+            RegistItfs(false);
 
-            OptItfID = new string[OptItfs.Length];
-            savedActiveTabIndex = new int[OptItfs.Length];
-            OptItfChanged = new bool[OptItfs.Length];
-            OptItfABC = new int[26]; // ABC
+        sorted:
+
+            mute = false;
+        }
+
+        private void ReloadItfs(bool noInit)
+        {
+            mute = true;
+
+            if (!noInit)
+            {
+                for (int i = 0; i < OptItfs.Length; i++)
+                {
+                    try
+                    {
+                        OptItfs[i].Initialize();
+                    }
+                    catch (Exception ex)
+                    {
+                        OptItfs[i] = new InternalOI_Error(OptItfs[i].rwMod, ex);
+                        OptItfs[i].Initialize();
+                    }
+                }
+            }
+
+            RegistItfs(true);
+
+            mute = false;
+        }
+
+        private void RegistItfs(bool reload)
+        {
+            if (!reload)
+            {
+                OptItfID = new string[OptItfs.Length];
+                savedActiveTabIndex = new int[OptItfs.Length];
+                OptItfChanged = new bool[OptItfs.Length];
+                OptItfABC = new int[26]; // ABC
+            }
             uint a = 97; //a - 1
             for (int i = 0; i < OptItfs.Length; i++)
             {
                 // Save IDs
-                OptItfID[i] = GenerateID(OptItfs[i].rwMod);
-                string name = ListItem.GetRealName(OptItfs[i].rwMod.ModID);
-                savedActiveTabIndex[i] = 0; OptItfChanged[i] = false;
+                if (!reload)
+                {
+                    OptItfID[i] = GenerateID(OptItfs[i].rwMod);
+                    savedActiveTabIndex[i] = 0;
+                }
+                else { savedActiveTabIndex[i] = savedActiveTabIndex[i] >= OptItfs[i].Tabs.Length ? 0 : savedActiveTabIndex[i]; }
+                string name = !reload ? ListItem.GetRealName(OptItfs[i].rwMod.ModID) : "";
+                OptItfChanged[i] = false;
 
                 // Deactivate Tabs
                 for (int t = 0; t < OptItfs[i].Tabs.Length; t++)
-                { OptItfs[i].Tabs[t].Deactivate(); }
+                { OptItfs[i].Tabs[t]?.Deactivate(); }
 
                 // Save indexes of mods starting with ABC
-                if (i == 0) { continue; } //Ignore InternalOI_Stats
-                if (name[0] < a || !char.IsLetter(name[0])) { continue; }
-                while (name[0] > a && a < 123)
-                { OptItfABC[a - 97] = -1; a++; }
-                if (name[0] == a) { OptItfABC[a - 97] = i; a++; continue; }
+                if (!reload)
+                {
+                    if (i == 0) { continue; } //Ignore InternalOI_Stats
+                    if (name[0] < a || !char.IsLetter(name[0])) { continue; }
+                    while (name[0] > a && a < 123)
+                    { OptItfABC[a - 97] = -1; a++; }
+                    if (name[0] == a) { OptItfABC[a - 97] = i; a++; continue; }
+                }
             }
-            while (a < 123) { OptItfABC[a - 97] = -1; a++; }
+            if (!reload) { while (a < 123) { OptItfABC[a - 97] = -1; a++; } }
+        }
 
-        #endregion Regist
+        internal void ShutdownConfigContainer()
+        {
+            savedActiveTabIndex[activeItfIndex] = activeTabIndex;
 
-        sorted:
+            #region UnloadItfs
 
-            ConfigContainer.mute = false;
+            for (int i = 0; i < OptItfs.Length; i++)
+            {
+                for (int j = 0; j < OptItfs[i].Tabs.Length; j++)
+                {
+                    OptItfs[i].Tabs[j]?.Unload();
+                }
+            }
+            menuTab.Unload();
+
+            #endregion UnloadItfs
         }
 
         /// <summary>
@@ -265,7 +338,7 @@ namespace CompletelyOptional
         /// </summary>
         internal static int[] OptItfABC;
 
-        internal static int activeItfIndex { get; private set; }
+        internal static int activeItfIndex { get; private set; } = 0;
         internal static int[] savedActiveTabIndex;
         internal static bool[] OptItfChanged { get; private set; }
 
@@ -477,7 +550,7 @@ namespace CompletelyOptional
                         if ((list[j] as ICanBeFocused).CurrentlyFocusableMouse && list[j].MouseOver)
                         {
                             focusedElement = list[j];
-                            if (focusedElement != lastFocus)
+                            if (focusedElement != lastFocus && !focusedElement.mute)
                             {
                                 PlaySound((focusedElement as ICanBeFocused).GreyedOut
                                     ? SoundID.MENU_Greyed_Out_Button_Select_Mouse : SoundID.MENU_Button_Select_Mouse);
@@ -583,7 +656,7 @@ namespace CompletelyOptional
                         bool moved;
                         if (curFocusedElement != focusedElement) { lastFocusedElement = curFocusedElement; moved = true; }
                         else { moved = false; }
-                        if (moved)
+                        if (moved && !focusedElement.mute)
                         {
                             PlaySound((focusedElement as ICanBeFocused).GreyedOut
                                 ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
@@ -608,7 +681,7 @@ namespace CompletelyOptional
         /// <param name="config">Changed <see cref="UIconfig"/></param>
         /// <param name="oldValue">Original <see cref="UIconfig.value"/> before the change</param>
         /// <param name="value">New <see cref="UIconfig.value"/></param>
-        internal void NotifyConfigChange(UIconfig config, string oldValue, string value)
+        public void NotifyConfigChange(UIconfig config, string oldValue, string value)
         {
             OptItfChanged[FindItfIndex(config)] = true;
             if (history.Count > 0)

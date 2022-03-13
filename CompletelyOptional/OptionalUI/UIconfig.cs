@@ -92,6 +92,7 @@ namespace OptionalUI
 
         /// <summary>
         /// Value in <see cref="string"/> form, which is how it is saved. Changing this will call <see cref="OnChange"/> automatically.
+        /// When you're overriding this completely, make sure to call <see cref="ConfigContainer.NotifyConfigChange"/> in your override.
         /// See also <seealso cref="ForceValue"/>.
         /// </summary>
         public virtual string value
