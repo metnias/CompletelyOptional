@@ -195,7 +195,7 @@ namespace CompletelyOptional
                 this.text = itf.rwMod.ModID;
                 if (itf.rwMod.Version != RainWorldMod.authorNull)
                 {
-                    this.labelVer = CreateFLabel(itf.rwMod.Version);
+                    this.labelVer = FLabelCreate(itf.rwMod.Version);
                     this.myContainer.AddChild(this.labelVer);
                     this.labelVer.y = this.label.y;
                     this.labelVer.alignment = FLabelAlignment.Right;
@@ -452,7 +452,7 @@ namespace CompletelyOptional
                 base.OnChange();
                 this._size = new Vector2(18f, 18f);
                 this.rectH.pos = new Vector2(-3f, -3f);
-                LabelPlaceAtCenter(this.label, -3f, -3f, 24f, 24f);
+                FLabelPlaceAtCenter(this.label, -3f, -3f, 24f, 24f);
                 rect.Hide();
             }
 

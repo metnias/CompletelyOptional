@@ -25,27 +25,13 @@ namespace OptionalUI
             ctor = false; //to prevent OnChange from running before ready
             this.fixedSize = new Vector2(150f, 150f);
             mod = 0;
-
-            { //If this is called in main menu, just load the value, not ui.
-                this._value = "XXXXXX";
-                try
-                { this.value = defaultHex; }
-                catch
-                {
-                    ComOptPlugin.LogError(string.Concat("DefaultHex is in incorrect format! key: ", key, " defaultHex: ", defaultHex));
-                    this.value = "FF00FF";
-                }
-                this.defaultValue = this.value;
-
-                //ComOptPlugin.LogInfo(string.Concat(key, ") dH: ", defaultHex, " v: ", this.value, " /rgb: ", r, ",", g, ",", b));
-                return;
-            }
+            if (!MenuColorEffect.IsStringHexColor(defaultHex))
+            { throw new ElementFormatException(this, "OpColorPicker Error: DefaultHex is not a proper value.\nMust be in form of \'FFFFFF\'.", key); }
 
             this.PaletteHex = OpColorPicker.PaletteHexDefault;
             this.PaletteName = OpColorPicker.PaletteNameDefault;
-            this.clickDelay = 0;
 
-            this.rect = new DyeableRect(myContainer, this.pos, this.fixedSize.Value, true) { fillAlpha = 0.8f }; //Boundary Rectangle
+            this.rect = new DyeableRect(myContainer, Vector2.zero, this.fixedSize.Value, true) { fillAlpha = 0.8f }; //Boundary Rectangle
             this._size = this.fixedSize.Value;
 
             r = 0; g = 0; b = 0;
@@ -55,53 +41,43 @@ namespace OptionalUI
             Color grey = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorEdge = grey;
             //lblR/G/B: Displays R/G/B value
-            lblB = CreateFLabel(r.ToString()); lblB.alignment = FLabelAlignment.Left;
-            lblB.x = 124f; lblB.y = 30f; myContainer.AddChild(lblB);
-            lblG = CreateFLabel(r.ToString()); lblG.alignment = FLabelAlignment.Left;
-            lblG.x = 124f; lblG.y = 70f; myContainer.AddChild(lblG);
-            lblR = CreateFLabel(r.ToString()); lblR.alignment = FLabelAlignment.Left;
-            lblR.x = 124f; lblR.y = 110f; myContainer.AddChild(lblR);
+            lblB = FLabelCreate(r.ToString()); lblB.alignment = FLabelAlignment.Left;
+            lblB.x = 124f; lblB.y = 40f; myContainer.AddChild(lblB);
+            lblG = FLabelCreate(r.ToString()); lblG.alignment = FLabelAlignment.Left;
+            lblG.x = 124f; lblG.y = 80f; myContainer.AddChild(lblG);
+            lblR = FLabelCreate(r.ToString()); lblR.alignment = FLabelAlignment.Left;
+            lblR.x = 124f; lblR.y = 120f; myContainer.AddChild(lblR);
             //lblP: Displays Selected Palette Color Name
-            lblP = CreateFLabel("X"); LabelPlaceAtCenter(lblP, 10f, 5f, 60f, 20f);
+            lblP = FLabelCreate("X"); FLabelPlaceAtCenter(lblP, 15f, 88f, 120f, 20f);
             lblP.isVisible = false; lblP.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
             myContainer.AddChild(lblP);
 
             //Hex Value Label
-            lblHex = CreateFLabel(value); lblHex.alignment = FLabelAlignment.Left;
-            lblHex.x = 25f; lblHex.y = 15f; myContainer.AddChild(lblHex);
+            lblHex = FLabelCreate(value); lblHex.alignment = FLabelAlignment.Left;
+            lblHex.x = 60f; lblHex.y = 15f; myContainer.AddChild(lblHex);
             //Top Menu RGB mode Button
-            lblRGB = CreateFLabel("RGB"); LabelPlaceAtCenter(lblRGB, 20f, 130f, 30f, 15f);
+            lblRGB = FLabelCreate("RGB"); FLabelPlaceAtCenter(lblRGB, 20f, 130f, 30f, 15f);
             myContainer.AddChild(lblRGB);
-            new MenuLabel(menu, owner, "RGB", pos + _offset + new Vector2(20f, 130f), new Vector2(30f, 15f), false);
-            this.subObjects.Add(lblRGB);
-            lblRGB.label.color = grey;
             //Top Menu HSL mode Button
-            lblHSL = new MenuLabel(menu, owner, "HSL", pos + _offset + new Vector2(60f, 130f), new Vector2(30f, 15f), false);
-            this.subObjects.Add(lblHSL);
-            lblHSL.label.color = grey;
+            lblHSL = FLabelCreate("HSL"); FLabelPlaceAtCenter(lblHSL, 60f, 130f, 30f, 15f);
+            myContainer.AddChild(lblHSL);
             //Top Menu Palette mode Button
-            lblPLT = new MenuLabel(menu, owner, "PLT", pos + _offset + new Vector2(100f, 130f), new Vector2(30f, 15f), false);
-            this.subObjects.Add(lblPLT);
-            lblPLT.label.color = grey;
+            lblPLT = FLabelCreate("PLT"); FLabelPlaceAtCenter(lblPLT, 100f, 130f, 30f, 15f);
+            myContainer.AddChild(lblPLT);
 
             //Calculate Texture for RGB Slider
             RecalculateTexture();
 
-            //Load Texture2D to Futile
-            //Futile.atlasManager.LoadAtlasFromTexture(salt + "ele1", ttre1);
-            //Futile.atlasManager.LoadAtlasFromTexture(salt + "ele2", ttre2);
-            //Futile.atlasManager.LoadAtlasFromTexture(salt + "ele3", ttre3);
-
             //Add R/G/B Sliders.
-            this.rect1 = new FTexture(ttre1, "cpk1" + key);
-            this.myContainer.AddChild(this.rect1);
-            this.rect2 = new FTexture(ttre2, "cpk2" + key);
-            this.myContainer.AddChild(this.rect2);
-            this.rect3 = new FTexture(ttre3, "cpk3" + key);
-            this.myContainer.AddChild(this.rect3);
-            this.rect3.SetPosition(new Vector2(60f, 40f));
-            this.rect2.SetPosition(new Vector2(60f, 80f));
-            this.rect1.SetPosition(new Vector2(60f, 120f));
+            this.ftxr1 = new FTexture(ttre1, "cpk1" + key);
+            this.myContainer.AddChild(this.ftxr1);
+            this.ftxr2 = new FTexture(ttre2, "cpk2" + key);
+            this.myContainer.AddChild(this.ftxr2);
+            this.ftxr3 = new FTexture(ttre3, "cpk3" + key);
+            this.myContainer.AddChild(this.ftxr3);
+            this.ftxr3.SetPosition(new Vector2(60f, 40f));
+            this.ftxr2.SetPosition(new Vector2(60f, 80f));
+            this.ftxr1.SetPosition(new Vector2(60f, 120f));
 
             //This displays current color.
             this.cdis0 = new FSprite("pixel", true)
@@ -109,38 +85,32 @@ namespace OptionalUI
                 color = new Color(0f, 0f, 0f),
                 scaleX = 18f,
                 scaleY = 12f,
-                alpha = 1f
+                alpha = 1f,
+                x = 135f,
+                y = 15f
             };
-            this.cdis0.SetPosition(135f, 15f);
             this.myContainer.AddChild(this.cdis0);
 
-            //This displays cursor color.
+            //This displays target color.
             this.cdis1 = new FSprite("pixel", true)
             {
                 color = new Color(0f, 0f, 0f),
                 scaleX = 12f,
                 scaleY = 12f,
                 alpha = 1f,
+                x = 45f,
+                y = 15f,
                 isVisible = false
             };
-            this.cdis1.SetPosition(55f, 15f);
             this.myContainer.AddChild(this.cdis1);
 
             this._description = "";
-            this.inputMode = false;
             ctor = true;
-            try
-            {
-                //Now doing this will do the job.
-                this._value = "XXXXXX";
-                this.value = defaultHex;
-                this.defaultValue = this.value;
-            }
-            catch
-            {
-                //Throw Error Screen.
-                throw new ElementFormatException(this, "OpColorPicker Error: DefaultHex is not a proper value.\nMust be in form of \'FFFFFF\'.", key);
-            }
+
+            this._value = "XXXXXX";
+            this.value = defaultHex;
+            this.defaultValue = this.value;
+
             //ComOptPlugin.LogInfo(string.Concat(key, ") dH: ", defaultHex, "/ v: ", this.value, "/ rgb: ", r, ",", g, ",", b));
         }
 
@@ -162,7 +132,7 @@ namespace OptionalUI
             get
             {
                 if (!string.IsNullOrEmpty(_description)) { return _description; }
-                if (inputMode)
+                if (typeMode)
                 {
                     return InternalTranslator.Translate("Type Hex Code for desired Colour");
                 }
@@ -190,14 +160,14 @@ namespace OptionalUI
             RecalculateTexture();
         }
 
-        private int clickDelay;
+        private int clickDelay = 0;
 
 #pragma warning disable IDE0044
         private FLabel lblHex, lblRGB, lblHSL, lblPLT;
-        private FTexture rect1, rect2, rect3;
+        private FTexture ftxr1, ftxr2, ftxr3;
         private Texture2D ttre1, ttre2, ttre3;
         private FSprite cdis0, cdis1;
-        private FSprite rectO; // For Covering Palette
+        private FSprite sprPltCover; // For Covering Palette
 
         /// <summary>
         /// Output in Color type.
@@ -218,20 +188,14 @@ namespace OptionalUI
             if (greyTrigger)
             { //Greyout
                 Color ctxt = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.DarkGrey);
-                lblHex.label.color = ctxt;
-                lblRGB.label.color = ctxt;
-                lblHSL.label.color = ctxt;
-                lblPLT.label.color = ctxt;
-
+                lblHex.color = ctxt; lblRGB.color = ctxt; lblHSL.color = ctxt; lblPLT.color = ctxt;
                 this.rect.colorEdge = ctxt;
 
                 RecalculateTexture();
                 this.cdis1.isVisible = false;
                 if (mod == 0)
                 { //RGB
-                    lblR.label.color = ctxt;
-                    lblG.label.color = ctxt;
-                    lblB.label.color = ctxt;
+                    lblR.color = ctxt; lblG.color = ctxt; lblB.color = ctxt;
                     //Texture Refresh
                     this.ttre1 = Grayscale(this.ttre1);
                     this.ttre2 = Grayscale(this.ttre2);
@@ -242,12 +206,12 @@ namespace OptionalUI
 
                     //Texture Reload
                     cdis0.color = new Color(r / 100f, g / 100f, b / 100f);
-                    this.rect1.SetTexture(ttre1);
-                    this.rect2.SetTexture(ttre2);
-                    this.rect3.SetTexture(ttre3);
-                    this.rect3.SetPosition(new Vector2(60f, 40f));
-                    this.rect2.SetPosition(new Vector2(60f, 80f));
-                    this.rect1.SetPosition(new Vector2(60f, 120f));
+                    this.ftxr1.SetTexture(ttre1);
+                    this.ftxr2.SetTexture(ttre2);
+                    this.ftxr3.SetTexture(ttre3);
+                    this.ftxr3.SetPosition(new Vector2(60f, 40f));
+                    this.ftxr2.SetPosition(new Vector2(60f, 80f));
+                    this.ftxr1.SetPosition(new Vector2(60f, 120f));
                 }
                 else if (mod == 1)
                 {
@@ -257,38 +221,30 @@ namespace OptionalUI
                     this.ttre2.Apply();
 
                     cdis0.color = Custom.HSL2RGB(h / 100f, s / 100f, l / 100f);
-                    this.rect1.SetTexture(ttre1);
-                    this.rect2.SetTexture(ttre2);
-                    this.rect1.SetPosition(new Vector2(60f, 80f));
-                    this.rect2.SetPosition(new Vector2(135f, 80f));
+                    this.ftxr1.SetTexture(ttre1);
+                    this.ftxr2.SetTexture(ttre2);
+                    this.ftxr1.SetPosition(new Vector2(60f, 80f));
+                    this.ftxr2.SetPosition(new Vector2(135f, 80f));
                     lblHex.text = "#" + value.ToString();
                 }
                 else
                 {
-                    this.lblP.label.isVisible = false;
-                    this.rectO.isVisible = false;
+                    this.lblP.isVisible = false;
+                    this.sprPltCover.isVisible = false;
 
                     this.ttre1 = Grayscale(this.ttre1);
                     this.ttre1.Apply();
 
                     cdis0.color = PaletteColor(pi);
-                    this.rect1.SetTexture(ttre1);
-                    this.rect1.SetPosition(new Vector2(75f, 80f));
+                    this.ftxr1.SetTexture(ttre1);
+                    this.ftxr1.SetPosition(new Vector2(75f, 80f));
                 }
             }
             else
             { //Revert
                 Color ctxt = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-                lblHex.label.color = ctxt;
-                lblRGB.label.color = ctxt;
-                lblHSL.label.color = ctxt;
-                lblPLT.label.color = ctxt;
-
-                lblR.label.color = ctxt;
-                lblG.label.color = ctxt;
-                lblB.label.color = ctxt;
-                lblP.label.color = ctxt;
-
+                lblHex.color = ctxt; lblRGB.color = ctxt; lblHSL.color = ctxt; lblPLT.color = ctxt;
+                lblR.color = ctxt; lblG.color = ctxt; lblB.color = ctxt; lblP.color = ctxt;
                 this.rect.colorEdge = ctxt;
 
                 RecalculateTexture();
@@ -317,38 +273,33 @@ namespace OptionalUI
         /// </summary>
         public Color colorEdge;
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         { //Visual polish.
             Color darkgrey = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.DarkGrey);
             if (greyedOut)
             {
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
+                this.rect.GrafUpdate(timeStacker);
                 return;
             }
             Color grey = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             Color white = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
 
-            lblRGB.label.color = grey;
-            lblHSL.label.color = grey;
-            lblPLT.label.color = grey;
-            lblR.label.color = grey;
-            lblG.label.color = grey;
-            lblB.label.color = grey;
-            lblP.label.color = white;
+            lblRGB.color = grey; lblHSL.color = grey; lblPLT.color = grey;
+            lblR.color = grey; lblG.color = grey; lblB.color = grey;
+            lblP.color = white;
 
             if (this.MouseOver)
             {
-                ConfigMenu.description = this.description;
-
                 if (this.MousePos.y > 135f)
                 { //mod settings
                     FLabel pick; bool flagBump = true;
                     if (this.MousePos.x > 20f && this.MousePos.x < 50f)
-                    { pick = lblRGB.label; }
+                    { pick = lblRGB; }
                     else if (this.MousePos.x > 60f && this.MousePos.x < 90f)
-                    { pick = lblHSL.label; }
+                    { pick = lblHSL; }
                     else if (this.MousePos.x > 100f && this.MousePos.x < 130f)
-                    { pick = lblPLT.label; }
+                    { pick = lblPLT; }
                     else { pick = null; flagBump = false; }
 
                     if (flagBump)
@@ -368,35 +319,36 @@ namespace OptionalUI
                         {
                             if (this.MousePos.x >= 10f && this.MousePos.y > 30f && this.MousePos.x <= 110f && this.MousePos.y < 130f)
                             {
-                                if (this.MousePos.y < 50f) { lblB.label.color = Color.Lerp(grey, white, this.bumpBehav.Sin(10f)); }
-                                else if (this.MousePos.y > 70f && this.MousePos.y < 90f) { lblG.label.color = Color.Lerp(grey, white, this.bumpBehav.Sin(10f)); }
-                                else if (this.MousePos.y > 110f) { lblR.label.color = Color.Lerp(grey, white, this.bumpBehav.Sin(10f)); }
+                                if (this.MousePos.y < 50f) { lblB.color = Color.Lerp(grey, white, this.bumpBehav.Sin(10f)); }
+                                else if (this.MousePos.y > 70f && this.MousePos.y < 90f) { lblG.color = Color.Lerp(grey, white, this.bumpBehav.Sin(10f)); }
+                                else if (this.MousePos.y > 110f) { lblR.color = Color.Lerp(grey, white, this.bumpBehav.Sin(10f)); }
                             }
                         }
                     }
                 }
             }
 
-            if (this.inputMode)
+            if (this.typeMode)
             {
-                this.lblHex.label.color = Color.Lerp(white, grey, this.bumpBehav.Sin());
+                this.lblHex.color = Color.Lerp(white, grey, this.bumpBehav.Sin());
                 this.cursor.color = Color.Lerp(white, grey, this.bumpBehav.Sin());
             }
             else
             {
                 if (this.MouseOverHex())
-                { this.lblHex.label.color = Input.GetMouseButton(0) ? darkgrey : Color.Lerp(white, grey, this.bumpBehav.Sin(10f)); }
-                else { this.lblHex.label.color = grey; }
+                { this.lblHex.color = Input.GetMouseButton(0) ? darkgrey : Color.Lerp(white, grey, this.bumpBehav.Sin(10f)); }
+                else { this.lblHex.color = grey; }
             }
 
             this.rect.fillAlpha = Mathf.Lerp(0.6f, 0.8f, this.bumpBehav.col);
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
             this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
+            this.rect.GrafUpdate(timeStacker);
         }
 
-        private bool mouseDown;
-        private bool inputMode; private bool input;
-        private string inputHex;
+        private bool mouseDown = false;
+        private bool typeMode = false; private bool typed;
+        private string typeHex;
 
         private static readonly string[] acceptKeys = new string[]
         {
@@ -407,19 +359,19 @@ namespace OptionalUI
         private void SwitchMod(int newmod)
         {
             //Unload current mod
-            this.rect1.isVisible = false;
-            this.rect2.alpha = 1f;
-            this.rect2.isVisible = false;
-            this.rect3.isVisible = false;
-            lblR.label.isVisible = false;
-            lblG.label.isVisible = false;
-            lblB.label.isVisible = false;
-            lblP.label.isVisible = false;
+            this.ftxr1.isVisible = false;
+            this.ftxr2.alpha = 1f;
+            this.ftxr2.isVisible = false;
+            this.ftxr3.isVisible = false;
+            lblR.isVisible = false;
+            lblG.isVisible = false;
+            lblB.isVisible = false;
+            lblP.isVisible = false;
             if (this.mod == 2)
             {
-                this.myContainer.RemoveChild(this.rectO);
-                this.rectO.RemoveFromContainer();
-                this.rectO = null;
+                this.myContainer.RemoveChild(this.sprPltCover);
+                this.sprPltCover.RemoveFromContainer();
+                this.sprPltCover = null;
             }
 
             ctor = false;
@@ -435,28 +387,28 @@ namespace OptionalUI
             switch (mod)
             {
                 case 0:
-                    lblR.label.isVisible = true;
-                    lblG.label.isVisible = true;
-                    lblB.label.isVisible = true;
+                    lblR.isVisible = true;
+                    lblG.isVisible = true;
+                    lblB.isVisible = true;
 
-                    this.rect1.SetTexture(ttre1);
-                    this.rect2.SetTexture(ttre2);
-                    this.rect3.SetTexture(ttre3);
-                    this.rect1.isVisible = true;
-                    this.rect2.isVisible = true;
-                    this.rect3.isVisible = true;
-                    this.rect3.SetPosition(new Vector2(60f, 40f));
-                    this.rect2.SetPosition(new Vector2(60f, 80f));
-                    this.rect1.SetPosition(new Vector2(60f, 120f));
+                    this.ftxr1.SetTexture(ttre1);
+                    this.ftxr2.SetTexture(ttre2);
+                    this.ftxr3.SetTexture(ttre3);
+                    this.ftxr1.isVisible = true;
+                    this.ftxr2.isVisible = true;
+                    this.ftxr3.isVisible = true;
+                    this.ftxr3.SetPosition(new Vector2(60f, 40f));
+                    this.ftxr2.SetPosition(new Vector2(60f, 80f));
+                    this.ftxr1.SetPosition(new Vector2(60f, 120f));
                     break;
 
                 case 1:
-                    this.rect1.SetTexture(ttre1);
-                    this.rect2.SetTexture(ttre2);
-                    this.rect1.isVisible = true;
-                    this.rect2.isVisible = true;
-                    this.rect1.SetPosition(new Vector2(60f, 80f));
-                    this.rect2.SetPosition(new Vector2(135f, 80f));
+                    this.ftxr1.SetTexture(ttre1);
+                    this.ftxr2.SetTexture(ttre2);
+                    this.ftxr1.isVisible = true;
+                    this.ftxr2.isVisible = true;
+                    this.ftxr1.SetPosition(new Vector2(60f, 80f));
+                    this.ftxr2.SetPosition(new Vector2(135f, 80f));
 
                     break;
 
@@ -480,10 +432,10 @@ namespace OptionalUI
                     value = this.PaletteHex[pi];
                     mod = 2;
 
-                    this.rect1.SetTexture(ttre1);
-                    this.rect1.isVisible = true;
-                    this.rect1.SetPosition(new Vector2(75f, 80f));
-                    this.rectO = new FSprite("pixel", true)
+                    this.ftxr1.SetTexture(ttre1);
+                    this.ftxr1.isVisible = true;
+                    this.ftxr1.SetPosition(new Vector2(75f, 80f));
+                    this.sprPltCover = new FSprite("pixel", true)
                     {
                         color = new Color(0f, 0f, 0f),
                         scaleX = 120f,
@@ -491,12 +443,10 @@ namespace OptionalUI
                         alpha = 0.5f,
                         isVisible = false
                     };
-                    this.rectO.SetPosition(new Vector2(75f, 56f));
-                    this.myContainer.AddChild(this.rectO);
+                    this.sprPltCover.SetPosition(new Vector2(75f, 56f));
+                    this.myContainer.AddChild(this.sprPltCover);
                     this.cdis1.isVisible = false;
-                    this.lblP.pos = pos + new Vector2(10f, 30f);
-                    this.lblP.pos = pos + new Vector2(15f, 52f);
-                    this.lblP.label.isVisible = false;
+                    this.lblP.isVisible = false;
                     break;
             }
 
@@ -507,13 +457,14 @@ namespace OptionalUI
         protected bool MouseOverHex()
         {
             if (this.MousePos.y < 3f || this.MousePos.y > 27f) { return false; }
-            if (this.MousePos.x < 60f || this.MousePos.x > 125f) { return false; }
+            if (this.MousePos.x < 55f || this.MousePos.x > 120f) { return false; }
             return true; // new Vector2(25f, 5f), new Vector2(80f, 20f)
         }
 
         public override void Update()
         {
             base.Update();
+            this.rect.Update();
             if (isInactive) { return; }
             this.cdis1.isVisible = false;
             this.cdis1.color = this.cdis0.color;
@@ -532,31 +483,31 @@ namespace OptionalUI
             }
 
             if (this.clickDelay > 0) { clickDelay--; }
-            if (this.inputMode)
+            if (this.typeMode)
             {
                 this.held = true;
-                if (!input && Input.anyKey)
+                if (!typed && Input.anyKey)
                 {
-                    input = true;
+                    typed = true;
                     for (int n = 0; n < acceptKeys.Length; n++)
                     {
                         if (Input.GetKey(acceptKeys[n]))
                         {
-                            inputHex += acceptKeys[n].Substring(0, 1).ToUpper();
-                            lblHex.text = "#" + inputHex;
-                            this.cursor.SetPosition(80f + LabelTest.GetWidth(inputHex), 5f);
+                            typeHex += acceptKeys[n].Substring(0, 1).ToUpper();
+                            lblHex.text = "#" + typeHex;
+                            this.cursor.x = 70f + LabelTest.GetWidth(typeHex); // this.cursor.y = 5f;
                             PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
                             break;
                         }
                     }
                 }
-                else if (input && !Input.anyKey)
-                { input = false; }
-                if (inputHex.Length >= 6)
+                else if (typed && !Input.anyKey)
+                { typed = false; }
+                if (typeHex.Length >= 6)
                 {
                     if (mod == 2) { this.SwitchMod(0); }
-                    value = inputHex;
-                    this.inputMode = false;
+                    value = typeHex;
+                    this.typeMode = false;
                     this.held = false;
                     this.myContainer.RemoveChild(this.cursor);
                     this.cursor = null;
@@ -566,7 +517,7 @@ namespace OptionalUI
                 {
                     if (mod == 2) { this.SwitchMod(0); }
                     lblHex.text = "#" + value;
-                    this.inputMode = false;
+                    this.typeMode = false;
                     this.held = false;
                     this.myContainer.RemoveChild(this.cursor);
                     this.cursor = null;
@@ -577,6 +528,7 @@ namespace OptionalUI
 
             if (this.MouseOver)
             {
+                ModConfigMenu.instance.ShowDescription(this.description);
                 if (!isDirty) { PlaySound(SoundID.MENU_Button_Select_Mouse); isDirty = true; }
                 if (this.MousePos.y > 135f)
                 { //mod settings
@@ -709,8 +661,8 @@ namespace OptionalUI
                         case 2:
                             if (this.MousePos.x <= 135f && this.MousePos.x >= 15f && this.MousePos.y >= 32f && this.MousePos.y <= 128f)
                             {
-                                lblP.label.isVisible = true;
-                                rectO.isVisible = true;
+                                lblP.isVisible = true;
+                                sprPltCover.isVisible = true;
                                 int _i = Mathf.FloorToInt((128f - this.MousePos.y) / 8f) * 15 + Mathf.FloorToInt((this.MousePos.x - 15f) / 8f);
 
                                 if (_i < this.PaletteHex.Length)
@@ -735,49 +687,38 @@ namespace OptionalUI
                                 }
                                 else { lblP.text = ""; }
 
-                                lblP.size = new Vector2(120f, 20f);
-                                if (this.MousePos.y < 80f)
-                                {
-                                    lblP.pos = pos + new Vector2(15f, 88f);
-                                    rectO.SetPosition(new Vector2(75f, 104f));
-                                }
-                                else
-                                {
-                                    lblP.pos = pos + new Vector2(15f, 52f);
-                                    rectO.SetPosition(new Vector2(75f, 56f));
-                                }
-                                rectO.MoveToFront();
-                                lblP.label.MoveToFront();
+                                FLabelPlaceAtCenter(lblP, 15f, this.MousePos.y < 80f ? 88f : 52f, 120f, 20f);
+                                sprPltCover.x = 75f; sprPltCover.y = this.MousePos.y < 80f ? 104f : 56f;
+                                sprPltCover.MoveToFront();
+                                lblP.MoveToFront();
                             }
                             else
                             {
                                 cdis1.isVisible = false;
-                                lblP.label.isVisible = false;
-                                rectO.isVisible = false;
+                                lblP.isVisible = false;
+                                sprPltCover.isVisible = false;
                             }
-
                             break;
                     }
                 }
 
-                if (this.MouseOverHex() && Input.GetMouseButton(0) && !input)
+                if (this.MouseOverHex() && Input.GetMouseButton(0) && !typed)
                 {
                     clickDelay += FrameMultiply(60);
-                    input = true;
+                    typed = true;
                     if (clickDelay > FrameMultiply(100))
                     {
-                        this.inputMode = true;
+                        this.typeMode = true;
                         this.clickDelay = 0;
-                        this.input = false;
-                        this.inputHex = "";
+                        this.typed = true;
+                        this.typeHex = "";
                         this.lblHex.text = "#";
                         PlaySound(SoundID.MENU_Player_Join_Game);
-                        this.cursor = new FCursor();
+                        this.cursor = new FCursor() { x = 70f, y = 5f };
                         this.myContainer.AddChild(this.cursor);
-                        this.cursor.SetPosition(80f, 5f);
                     }
                 }
-                else if (input && !Input.GetMouseButton(0)) { input = false; }
+                else if (typed && !Input.GetMouseButton(0)) { typed = false; }
             }
             else
             {
@@ -797,8 +738,8 @@ namespace OptionalUI
                             break;
 
                         case 2:
-                            lblP.label.isVisible = false;
-                            rectO.isVisible = false;
+                            lblP.isVisible = false;
+                            sprPltCover.isVisible = false;
                             break;
                     }
 
@@ -859,13 +800,23 @@ namespace OptionalUI
                     r = Mathf.RoundToInt(c.r * 100f);
                     g = Mathf.RoundToInt(c.g * 100f);
                     b = Mathf.RoundToInt(c.b * 100f);
-                    this._value = string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
+                    string newVal = string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
                         Mathf.RoundToInt(g * 255f / 100f).ToString("X2"),
                         Mathf.RoundToInt(b * 255f / 100f).ToString("X2"));
+                    if (this._value != newVal)
+                    {
+                        if (this.tab != null) { ConfigContainer.instance.NotifyConfigChange(this, this._value, newVal); }
+                        this._value = newVal;
+                    }
                 }
                 else if (mod == 2) //palette
                 {
-                    this._value = this.PaletteHex[pi];
+                    string newVal = this.PaletteHex[pi];
+                    if (this._value != newVal)
+                    {
+                        if (this.tab != null) { ConfigContainer.instance.NotifyConfigChange(this, this._value, newVal); }
+                        this._value = newVal;
+                    }
                     return this.PaletteHex[pi];
                 }
 
@@ -876,7 +827,8 @@ namespace OptionalUI
             set
             {
                 if (base.value == value) { return; }
-                try { MenuColorEffect.HexToColor(value); } catch (Exception e) { ComOptPlugin.LogError(e); return; }
+                if (!MenuColorEffect.IsStringHexColor(value)) { return; }
+                if (this.tab != null) { ConfigContainer.instance.NotifyConfigChange(this, base.value, value); }
                 this._value = value;
 
                 r = Mathf.RoundToInt(Convert.ToInt32(value.Substring(0, 2), 16) / 255f * 100f);
@@ -893,7 +845,6 @@ namespace OptionalUI
                 l = Mathf.FloorToInt(_hsl.l * 100f);
 
                 // if (mod == 2) { mod = 0; }
-
                 OnChange();
                 if (greyedOut) { GreyOut(); }
             }
@@ -907,16 +858,6 @@ namespace OptionalUI
             base.OnChange();
             if (!ctor) { return; }
 
-            this.rect.pos = this.pos;
-            this.lblB.pos = this.pos + new Vector2(124f, 30f);
-            this.lblG.pos = this.pos + new Vector2(124f, 70f);
-            this.lblR.pos = this.pos + new Vector2(124f, 110f);
-            this.lblP.pos = this.pos + new Vector2(10f, 5f);
-            this.lblHex.pos = this.pos + new Vector2(25f, 5f);
-            this.lblRGB.pos = this.pos + new Vector2(20f, 130f);
-            this.lblHSL.pos = this.pos + new Vector2(60f, 130f);
-            this.lblPLT.pos = this.pos + new Vector2(100f, 130f);
-
             RecalculateTexture();
 
             switch (mod)
@@ -927,29 +868,29 @@ namespace OptionalUI
                     lblB.text = b.ToString();
 
                     cdis0.color = new Color(r / 100f, g / 100f, b / 100f);
-                    this.rect1.SetTexture(ttre1);
-                    this.rect2.SetTexture(ttre2);
-                    this.rect3.SetTexture(ttre3);
+                    this.ftxr1.SetTexture(ttre1);
+                    this.ftxr2.SetTexture(ttre2);
+                    this.ftxr3.SetTexture(ttre3);
 
-                    this.rect3.SetPosition(new Vector2(60f, 40f));
-                    this.rect2.SetPosition(new Vector2(60f, 80f));
-                    this.rect1.SetPosition(new Vector2(60f, 120f));
+                    this.ftxr3.SetPosition(new Vector2(60f, 40f));
+                    this.ftxr2.SetPosition(new Vector2(60f, 80f));
+                    this.ftxr1.SetPosition(new Vector2(60f, 120f));
                     lblHex.text = "#" + value;
                     break;
 
                 case 1:
                     cdis0.color = Custom.HSL2RGB(h / 100f, s / 100f, l / 100f);
-                    this.rect1.SetTexture(ttre1);
-                    this.rect2.SetTexture(ttre2);
-                    this.rect1.SetPosition(new Vector2(60f, 80f));
-                    this.rect2.SetPosition(new Vector2(135f, 80f));
+                    this.ftxr1.SetTexture(ttre1);
+                    this.ftxr2.SetTexture(ttre2);
+                    this.ftxr1.SetPosition(new Vector2(60f, 80f));
+                    this.ftxr2.SetPosition(new Vector2(135f, 80f));
                     lblHex.text = "#" + value;
                     break;
 
                 case 2:
                     cdis0.color = this.PaletteColor(pi);
-                    this.rect1.SetTexture(ttre1);
-                    this.rect1.SetPosition(new Vector2(75f, 80f));
+                    this.ftxr1.SetTexture(ttre1);
+                    this.ftxr1.SetPosition(new Vector2(75f, 80f));
                     lblHex.text = "#" + this.PaletteHex[pi];
                     break;
             }
@@ -1053,12 +994,12 @@ namespace OptionalUI
 
             if (this.mod == 2)
             {
-                this.myContainer.RemoveChild(this.rectO);
-                this.rectO.RemoveFromContainer();
+                this.myContainer.RemoveChild(this.sprPltCover);
+                this.sprPltCover.RemoveFromContainer();
             }
-            this.rect1.Destroy();
-            this.rect2.Destroy();
-            this.rect3.Destroy();
+            this.ftxr1.Destroy();
+            this.ftxr2.Destroy();
+            this.ftxr3.Destroy();
 
             mod = 0;
         }
@@ -1082,7 +1023,7 @@ namespace OptionalUI
 
         /// <summary>
         /// Edit this and <see cref="PaletteName"/> to change the Palette of this <see cref="OpColorPicker"/>
-        /// <para>See also <seealso cref="ColorToHex(Color)"/></para>
+        /// <para>See also <seealso cref="MenuColorEffect.ColorToHex"/></para>
         /// </summary>
         public string[] PaletteHex;
 
@@ -1416,7 +1357,7 @@ namespace OptionalUI
 
         protected internal override string CopyToClipboard()
         {
-            this.inputHex = this.value; this.lblHex.text = "#" + this.inputHex;
+            this.typeHex = this.value; this.lblHex.text = "#" + this.typeHex;
             return this.value;
         }
 
@@ -1424,7 +1365,7 @@ namespace OptionalUI
         {
             value = value.Trim().TrimStart('#');
             if (MenuColorEffect.IsStringHexColor(value))
-            { this.inputHex = value.Substring(0, 6).ToUpper(); this.lblHex.text = "#" + this.inputHex; return true; }
+            { this.typeHex = value.Substring(0, 6).ToUpper(); this.lblHex.text = "#" + this.typeHex; return true; }
             return false;
         }
     }

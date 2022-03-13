@@ -58,13 +58,13 @@ namespace OptionalUI
         private const string _Vfont = "font", _VfontB = "DisplayFont";
 
         /// <summary>
-        /// Create <see cref="FLabel"/> with a font automatically selected, and centered.
-        /// <para>Make sure to call <see cref="UIelement.myContainer"/>'s <see cref="FContainer.AddChild"/> to display this. See also <seealso cref="UIelement.LabelPlaceAtCenter(FLabel, Vector2, Vector2)"/>.</para>
+        /// Create <see cref="FLabel"/> with a font automatically selected, and centered, and greyed.
+        /// <para>Make sure to call <see cref="UIelement.myContainer"/>'s <see cref="FContainer.AddChild"/> to display this. See also <seealso cref="UIelement.FLabelPlaceAtCenter(FLabel, Vector2, Vector2)"/>.</para>
         /// </summary>
         /// <param name="text">Initial text to be inserted</param>
         /// <param name="bigText">Whether to use big font or not</param>
         /// <returns></returns>
-        public static FLabel CreateFLabel(string text, bool bigText = false) => UIelement.CreateFLabel(text, bigText);
+        public static FLabel CreateFLabel(string text, bool bigText = false) => UIelement.FLabelCreate(text, bigText);
 
         /// <summary>
         /// LineHeight of current font

@@ -60,8 +60,8 @@ namespace CompletelyOptional
 
             #endregion init
 
-            //OpColorPicker cpk = new OpColorPicker(new Vector2(100f, 100f), "_TEST", "CCCCCC") { colorEdge = Color.yellow };
-            //Tabs[0].AddItems(cpk, new OpLabel(new Vector2(100f, 260f), new Vector2(150f, 20f), "OpColorPicker Test") { bumpBehav = cpk.bumpBehav });
+            OpColorPicker cpk = new OpColorPicker(new Vector2(100f, 300f), "_TEST", "CCCCCC") { colorEdge = Color.yellow };
+            Tabs[0].AddItems(cpk, new OpLabel(new Vector2(100f, 460f), new Vector2(150f, 20f), "OpColorPicker Test") { bumpBehav = cpk.bumpBehav, color = Color.yellow });
 
             Texture2D t = new Texture2D(64, 64);
             Color[] n = new Color[64 * 64];
@@ -104,12 +104,12 @@ namespace CompletelyOptional
             sb.AddItems(new OpLabel(new Vector2(100f, 540f + 1800f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
                     new OpLabel(new Vector2(420f, 510f + 1800f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
             sb.AddItems(new OpImage(new Vector2(420f, 50f), t));
-            //sb.AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
-            //Tabs[2].AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
-            //OpColorPicker cpk0 = new OpColorPicker(new Vector2(100f, 100f), "_TEST", "CCCCCC") { colorEdge = Color.red };
-            //sb.AddItems(cpk0, new OpLabel(new Vector2(300f, 100f), new Vector2(100f, 20f), "Red Colorpicker") { bumpBehav = cpk0.bumpBehav, color = Color.red });
-            //OpColorPicker cpk1 = new OpColorPicker(new Vector2(100f, 2000f), "_TEST", "AAAAAA") { colorEdge = Color.blue };
-            //sb.AddItems(cpk1, new OpLabel(new Vector2(300f, 2000f), new Vector2(100f, 20f), "Blue Colorpicker") { bumpBehav = cpk1.bumpBehav, color = Color.blue });
+            sb.AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
+            Tabs[2].AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
+            OpColorPicker cpk0 = new OpColorPicker(new Vector2(100f, 100f), "_TEST", "CCCCCC") { colorEdge = Color.red };
+            sb.AddItems(cpk0, new OpLabel(new Vector2(300f, 100f), new Vector2(100f, 20f), "Red Colorpicker") { bumpBehav = cpk0.bumpBehav, color = Color.red });
+            OpColorPicker cpk1 = new OpColorPicker(new Vector2(100f, 2000f), "_TEST", "AAAAAA") { colorEdge = Color.blue };
+            sb.AddItems(cpk1, new OpLabel(new Vector2(300f, 2000f), new Vector2(100f, 20f), "Blue Colorpicker") { bumpBehav = cpk1.bumpBehav, color = Color.blue });
             sb.AddItems(new OpSlider(new Vector2(100f, 1800f), "", new IntVector2(0, 100), 300));
             sb.AddItems(new OpSlider(new Vector2(500f, 1700f), "", new IntVector2(0, 100), 300, true));
             sb.AddItems(new OpSliderTick(new Vector2(100f, 1400f), "", new IntVector2(0, 20), 200));

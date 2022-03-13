@@ -413,12 +413,12 @@ namespace OptionalUI
 
         /// <summary>
         /// Create <see cref="FLabel"/> with a font automatically selected, and centered, and greyed.
-        /// <para>Make sure to call <see cref="UIelement.myContainer"/>'s <see cref="FContainer.AddChild"/> to display this. See also <seealso cref="UIelement.LabelPlaceAtCenter(FLabel, Vector2, Vector2)"/>.</para>
+        /// <para>Make sure to call <see cref="UIelement.myContainer"/>'s <see cref="FContainer.AddChild"/> to display this. See also <seealso cref="UIelement.FLabelPlaceAtCenter(FLabel, Vector2, Vector2)"/>.</para>
         /// </summary>
         /// <param name="text">Initial text to be inserted</param>
         /// <param name="bigText">Whether to use big font or not</param>
         /// <returns></returns>
-        protected internal static FLabel CreateFLabel(string text, bool bigText = false) =>
+        protected internal static FLabel FLabelCreate(string text, bool bigText = false) =>
             new FLabel(LabelTest.GetFont(bigText, !LabelTest.HasNonASCIIChars(text)), text)
             { color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey), alignment = FLabelAlignment.Center };
 
@@ -428,7 +428,7 @@ namespace OptionalUI
         /// <param name="label"><see cref="FLabel"/> to be placed</param>
         /// <param name="pos">Leftbottom offset of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
         /// <param name="size">An arbitary rectangular for this label to be in its center</param>
-        protected static void LabelPlaceAtCenter(FLabel label, Vector2 pos, Vector2 size) => LabelPlaceAtCenter(label, pos.x, pos.y, size.x, size.y);
+        protected static void FLabelPlaceAtCenter(FLabel label, Vector2 pos, Vector2 size) => FLabelPlaceAtCenter(label, pos.x, pos.y, size.x, size.y);
 
         /// <summary>
         /// Set <see cref="FLabel"/>'s position in the Center of the rect (width x height)
@@ -438,7 +438,7 @@ namespace OptionalUI
         /// <param name="offsetBottom">Bottom offset of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
         /// <param name="width">An arbitary rectangular's width for this label to be in its center</param>
         /// <param name="height">An arbitary rectangular's height for this label to be in its center</param>
-        protected static void LabelPlaceAtCenter(FLabel label, float offsetLeft, float offsetBottom, float width, float height)
+        protected static void FLabelPlaceAtCenter(FLabel label, float offsetLeft, float offsetBottom, float width, float height)
         {
             label.alignment = FLabelAlignment.Center;
             label.x = offsetLeft + width / 2f;

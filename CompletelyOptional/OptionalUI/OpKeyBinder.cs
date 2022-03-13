@@ -75,8 +75,8 @@ namespace OptionalUI
             this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true);
             this.rect.fillAlpha = 0.3f;
 
-            this.label = CreateFLabel(defaultKey, true);
-            LabelPlaceAtCenter(this.label, Vector2.zero, this.size);
+            this.label = FLabelCreate(defaultKey, true);
+            FLabelPlaceAtCenter(this.label, Vector2.zero, this.size);
             this.myContainer.AddChild(this.label);
 
             this.sprite = new FSprite("GamepadIcon", true) { anchorX = 0f, anchorY = 0.5f, scale = 0.333f };
@@ -414,12 +414,12 @@ namespace OptionalUI
             {
                 this.sprite.SetPosition(5f, this.size.y / 2f);
                 this.label.text = this.value.Replace("Joystick", "");
-                LabelPlaceAtCenter(this.label, new Vector2(20f, 0), this.size - new Vector2(20f, 0));
+                FLabelPlaceAtCenter(this.label, new Vector2(20f, 0), this.size - new Vector2(20f, 0));
             }
             else
             {
                 this.label.text = this.value;
-                LabelPlaceAtCenter(this.label, Vector2.zero, this.size);
+                FLabelPlaceAtCenter(this.label, Vector2.zero, this.size);
             }
             this.rect.size = this.size;
         }

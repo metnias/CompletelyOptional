@@ -32,9 +32,9 @@ namespace OptionalUI
             circles[4] = new FSprite("Futile_White")
             { shader = menu.manager.rainWorld.Shaders["VectorCircleFadable"] };
             for (int i = 0; i < circles.Length; i++) { myContainer.AddChild(circles[i]); circles[i].SetPosition(55f, 55f); }
-            label = CreateFLabel(text);
+            label = FLabelCreate(text);
             myContainer.AddChild(label);
-            LabelPlaceAtCenter(label, Vector2.zero, Vector2.one * rad * 2f);
+            FLabelPlaceAtCenter(label, Vector2.zero, Vector2.one * rad * 2f);
         }
 
         /// <summary>
@@ -65,8 +65,8 @@ namespace OptionalUI
                 color = this.color,
                 alpha = 1f
             };
-            label = CreateFLabel(text);
-            LabelPlaceAtCenter(label, Vector2.zero, this.size);
+            label = FLabelCreate(text);
+            FLabelPlaceAtCenter(label, Vector2.zero, this.size);
             this.myContainer.AddChild(this.fillSprite);
             this.myContainer.AddChild(this.label);
         }
@@ -100,11 +100,11 @@ namespace OptionalUI
         public override void OnChange()
         {
             base.OnChange();
-            if (!isRectangular) { LabelPlaceAtCenter(label, Vector2.zero, Vector2.one * rad * 2f); }
+            if (!isRectangular) { FLabelPlaceAtCenter(label, Vector2.zero, Vector2.one * rad * 2f); }
             else
             {
                 this._size = new Vector2(Mathf.Max(24f, this.size.x), Mathf.Max(24f, this.size.y)); // Min Size
-                LabelPlaceAtCenter(label, Vector2.zero, this.size);
+                FLabelPlaceAtCenter(label, Vector2.zero, this.size);
                 this.rect.size = this.size;
                 this.rectH.size = this.size;
             }
