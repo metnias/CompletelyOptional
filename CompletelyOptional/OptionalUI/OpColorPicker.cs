@@ -55,23 +55,24 @@ namespace OptionalUI
             Color grey = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorEdge = grey;
             //lblR/G/B: Displays R/G/B value
-            lblB = OpLabel.CreateFLabel(r.ToString()); lblB.alignment = FLabelAlignment.Left;
-            lblB.x = 124f; lblB.y = 30f; lblB.color = grey; myContainer.AddChild(lblB);
-            lblG = OpLabel.CreateFLabel(r.ToString()); lblG.alignment = FLabelAlignment.Left;
-            lblG.x = 124f; lblG.y = 70f; lblG.color = grey; myContainer.AddChild(lblG);
-            lblR = OpLabel.CreateFLabel(r.ToString()); lblR.alignment = FLabelAlignment.Left;
-            lblR.x = 124f; lblR.y = 110f; lblR.color = grey; myContainer.AddChild(lblR);
+            lblB = CreateFLabel(r.ToString()); lblB.alignment = FLabelAlignment.Left;
+            lblB.x = 124f; lblB.y = 30f; myContainer.AddChild(lblB);
+            lblG = CreateFLabel(r.ToString()); lblG.alignment = FLabelAlignment.Left;
+            lblG.x = 124f; lblG.y = 70f; myContainer.AddChild(lblG);
+            lblR = CreateFLabel(r.ToString()); lblR.alignment = FLabelAlignment.Left;
+            lblR.x = 124f; lblR.y = 110f; myContainer.AddChild(lblR);
             //lblP: Displays Selected Palette Color Name
-            lblP = OpLabel.CreateFLabel("X"); LabelPlaceAtCenter(lblP, 10f, 5f, 60f, 20f);
+            lblP = CreateFLabel("X"); LabelPlaceAtCenter(lblP, 10f, 5f, 60f, 20f);
             lblP.isVisible = false; lblP.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
             myContainer.AddChild(lblP);
 
             //Hex Value Label
-            lblHex = new MenuLabel(menu, owner, value.ToString(), pos + _offset + new Vector2(25f, 5f), new Vector2(80f, 20f), false);
-            this.subObjects.Add(lblHex);
-            lblHex.label.alignment = FLabelAlignment.Left;
+            lblHex = CreateFLabel(value); lblHex.alignment = FLabelAlignment.Left;
+            lblHex.x = 25f; lblHex.y = 15f; myContainer.AddChild(lblHex);
             //Top Menu RGB mode Button
-            lblRGB = new MenuLabel(menu, owner, "RGB", pos + _offset + new Vector2(20f, 130f), new Vector2(30f, 15f), false);
+            lblRGB = CreateFLabel("RGB"); LabelPlaceAtCenter(lblRGB, 20f, 130f, 30f, 15f);
+            myContainer.AddChild(lblRGB);
+            new MenuLabel(menu, owner, "RGB", pos + _offset + new Vector2(20f, 130f), new Vector2(30f, 15f), false);
             this.subObjects.Add(lblRGB);
             lblRGB.label.color = grey;
             //Top Menu HSL mode Button

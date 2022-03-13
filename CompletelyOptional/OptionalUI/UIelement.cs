@@ -385,29 +385,6 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Set <see cref="FLabel"/>'s position in the Center of the size
-        /// </summary>
-        /// <param name="label"><see cref="FLabel"/> to be placed</param>
-        /// <param name="pos">Leftbottom offset of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
-        /// <param name="size">An arbitary rectangular for this label to be in its center</param>
-        protected static void LabelPlaceAtCenter(FLabel label, Vector2 pos, Vector2 size) => LabelPlaceAtCenter(label, pos.x, pos.y, size.x, size.y);
-
-        /// <summary>
-        /// Set <see cref="FLabel"/>'s position in the Center of the rect (width x height)
-        /// </summary>
-        /// <param name="label"><see cref="FLabel"/> to be placed</param>
-        /// <param name="offsetLeft">Left offset of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
-        /// <param name="offsetBottom">Bottom offset of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
-        /// <param name="width">An arbitary rectangular's width for this label to be in its center</param>
-        /// <param name="height">An arbitary rectangular's height for this label to be in its center</param>
-        protected static void LabelPlaceAtCenter(FLabel label, float offsetLeft, float offsetBottom, float width, float height)
-        {
-            label.alignment = FLabelAlignment.Center;
-            label.x = offsetLeft + width / 2f;
-            label.y = offsetBottom + height / 2f;
-        }
-
-        /// <summary>
         /// Frame multiplier for Many More Fixes' framerate unlock feature. See also <see cref="FrameMultiply(int)"/>
         /// </summary>
         public static float frameMulti => Mathf.Max(1.00f, ComOptPlugin.curFramerate / 60.0f);
@@ -431,6 +408,44 @@ namespace OptionalUI
         /// User's <see cref="Player.InputPackage"/> in the last frame for Controller/Keyboard support
         /// </summary>
         public Player.InputPackage LastCtlrInput => menu.lastInput;
+
+        #region FLabel
+
+        /// <summary>
+        /// Create <see cref="FLabel"/> with a font automatically selected, and centered, and greyed.
+        /// <para>Make sure to call <see cref="UIelement.myContainer"/>'s <see cref="FContainer.AddChild"/> to display this. See also <seealso cref="UIelement.LabelPlaceAtCenter(FLabel, Vector2, Vector2)"/>.</para>
+        /// </summary>
+        /// <param name="text">Initial text to be inserted</param>
+        /// <param name="bigText">Whether to use big font or not</param>
+        /// <returns></returns>
+        protected internal static FLabel CreateFLabel(string text, bool bigText = false) =>
+            new FLabel(LabelTest.GetFont(bigText, !LabelTest.HasNonASCIIChars(text)), text)
+            { color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey), alignment = FLabelAlignment.Center };
+
+        /// <summary>
+        /// Set <see cref="FLabel"/>'s position in the Center of the size
+        /// </summary>
+        /// <param name="label"><see cref="FLabel"/> to be placed</param>
+        /// <param name="pos">Leftbottom offset of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
+        /// <param name="size">An arbitary rectangular for this label to be in its center</param>
+        protected static void LabelPlaceAtCenter(FLabel label, Vector2 pos, Vector2 size) => LabelPlaceAtCenter(label, pos.x, pos.y, size.x, size.y);
+
+        /// <summary>
+        /// Set <see cref="FLabel"/>'s position in the Center of the rect (width x height)
+        /// </summary>
+        /// <param name="label"><see cref="FLabel"/> to be placed</param>
+        /// <param name="offsetLeft">Left offset of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
+        /// <param name="offsetBottom">Bottom offset of arbitary rectangular, relative from <see cref="UIelement.pos"/></param>
+        /// <param name="width">An arbitary rectangular's width for this label to be in its center</param>
+        /// <param name="height">An arbitary rectangular's height for this label to be in its center</param>
+        protected static void LabelPlaceAtCenter(FLabel label, float offsetLeft, float offsetBottom, float width, float height)
+        {
+            label.alignment = FLabelAlignment.Center;
+            label.x = offsetLeft + width / 2f;
+            label.y = offsetBottom + height / 2f;
+        }
+
+        #endregion FLabel
 
         #endregion Deep
 

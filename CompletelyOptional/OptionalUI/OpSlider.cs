@@ -110,7 +110,7 @@ namespace OptionalUI
             }
             if (!tickSlider)
             {
-                this.label = OpLabel.CreateFLabel(this.value);
+                this.label = CreateFLabel(this.value);
                 this.label.alpha = 0f;
                 this.myContainer.AddChild(this.label);
                 LabelPlaceAtCenter(this.label, this.rect.pos, new Vector2(40f, 20f));

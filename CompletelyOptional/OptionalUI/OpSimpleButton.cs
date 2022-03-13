@@ -22,7 +22,7 @@ namespace OptionalUI
             this.rectH = new DyeableRect(this.myContainer, Vector2.zero, this.size, false);
             if (!IsImageButton)
             {
-                this.label = OpLabel.CreateFLabel(text);
+                this.label = CreateFLabel(text);
                 this.myContainer.AddChild(this.label);
                 LabelPlaceAtCenter(this.label, Vector2.zero, this.size);
             }

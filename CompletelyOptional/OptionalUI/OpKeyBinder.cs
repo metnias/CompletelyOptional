@@ -75,7 +75,7 @@ namespace OptionalUI
             this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true);
             this.rect.fillAlpha = 0.3f;
 
-            this.label = OpLabel.CreateFLabel(defaultKey, true);
+            this.label = CreateFLabel(defaultKey, true);
             LabelPlaceAtCenter(this.label, Vector2.zero, this.size);
             this.myContainer.AddChild(this.label);
 

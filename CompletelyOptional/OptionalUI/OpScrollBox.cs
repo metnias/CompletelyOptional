@@ -242,7 +242,7 @@ namespace OptionalUI
         {
             tab.AddItems(this); this.isTab = true;
 
-            this._labelNotify = OpLabel.CreateFLabel(string.Concat(">>> ", InternalTranslator.Translate(hasSlideBar ? "Use Scroll Wheel or Scrollbar to see more" : "Use Scroll Wheel to see more"), " <<<"));
+            this._labelNotify = CreateFLabel(string.Concat(">>> ", InternalTranslator.Translate(hasSlideBar ? "Use Scroll Wheel or Scrollbar to see more" : "Use Scroll Wheel to see more"), " <<<"));
             LabelPlaceAtCenter(this._labelNotify, 200f, 0f, 200f, 20f);
             this.myContainer.AddChild(this._labelNotify);
         }

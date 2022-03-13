@@ -32,7 +32,7 @@ namespace OptionalUI
             circles[4] = new FSprite("Futile_White")
             { shader = menu.manager.rainWorld.Shaders["VectorCircleFadable"] };
             for (int i = 0; i < circles.Length; i++) { myContainer.AddChild(circles[i]); circles[i].SetPosition(55f, 55f); }
-            label = OpLabel.CreateFLabel(text);
+            label = CreateFLabel(text);
             myContainer.AddChild(label);
             LabelPlaceAtCenter(label, Vector2.zero, Vector2.one * rad * 2f);
         }
@@ -65,7 +65,7 @@ namespace OptionalUI
                 color = this.color,
                 alpha = 1f
             };
-            label = OpLabel.CreateFLabel(text);
+            label = CreateFLabel(text);
             LabelPlaceAtCenter(label, Vector2.zero, this.size);
             this.myContainer.AddChild(this.fillSprite);
             this.myContainer.AddChild(this.label);

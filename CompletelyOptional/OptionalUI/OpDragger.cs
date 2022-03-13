@@ -25,7 +25,7 @@ namespace OptionalUI
             this.colorFill = Color.black;
 
             this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true);
-            this.label = OpLabel.CreateFLabel(defaultInt.ToString());
+            this.label = CreateFLabel(defaultInt.ToString());
             LabelPlaceAtCenter(this.label, 0f, 2f, 24f, 20f);
 
             this.min = 0; this._min = 0; this.max = 99; this._max = 99;

@@ -195,7 +195,7 @@ namespace CompletelyOptional
                 this.text = itf.rwMod.ModID;
                 if (itf.rwMod.Version != RainWorldMod.authorNull)
                 {
-                    this.labelVer = OpLabel.CreateFLabel(itf.rwMod.Version);
+                    this.labelVer = CreateFLabel(itf.rwMod.Version);
                     this.myContainer.AddChild(this.labelVer);
                     this.labelVer.y = this.label.y;
                     this.labelVer.alignment = FLabelAlignment.Right;

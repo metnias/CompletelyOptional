@@ -39,7 +39,7 @@ namespace OptionalUI
             this.colorFill = Color.black;
             this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true) { fillAlpha = 0.5f };
 
-            this.label = OpLabel.CreateFLabel(defaultValue);
+            this.label = CreateFLabel(defaultValue);
             this.label.anchorX = 0f; this.label.anchorY = 1f;
             this.label.color = this.colorText;
             this.myContainer.AddChild(this.label);
