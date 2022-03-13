@@ -74,21 +74,19 @@ namespace OptionalUI
                 else if (!allowEmpty) { this.defaultValue = itemList[0].name; this._value = itemList[0].name; }
                 else { this.defaultValue = ""; this._value = ""; }
             }
-            if (!_init) { return; }
 
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
-            this.rect = new DyeableRect(this.menu, this.owner, this.pos, this.size);
-            this.lblText = new MenuLabel(this.menu, this.owner, this.value, new Vector2(this.pos.x - this.size.x / 2f + 12f, this.pos.y), this.size - new Vector2(12f, 0f), false);
-            this.lblText.label.alignment = FLabelAlignment.Left;
+            this.rect = new DyeableRect(this.myContainer, Vector2.zero, this.size);
+            this.lblText = FLabelCreate(this.value); this.lblText.alignment = FLabelAlignment.Left;
+            this.lblText.x = -this.size.x / 2f + 12f; this.lblText.y = this.size.y / 2f;
+            this.myContainer.AddChild(this.lblText);
             if (IsListBox)
             {
                 neverOpened = false;
-                this.rectList = new DyeableRect(this.menu, this.owner, this.pos, this.size);
-                this.rectScroll = new DyeableRect(this.menu, this.owner, this.pos, this.size);
-                this.subObjects.Add(this.rectList);
-                this.subObjects.Add(this.rectScroll);
+                this.rectList = new DyeableRect(this.myContainer, Vector2.zero, this.size);
+                this.rectScroll = new DyeableRect(this.myContainer, Vector2.zero, this.size);
             }
             else
             {
@@ -99,8 +97,6 @@ namespace OptionalUI
                 this.sprArrow.SetPosition(this.size.x - 12f, this.size.y / 2f);
             }
             this.lblList = new FLabel[0];
-            this.subObjects.Add(this.rect);
-            this.subObjects.Add(this.lblText);
             this.searchCursor = new FCursor();
             this.myContainer.AddChild(this.searchCursor);
             this.searchCursor.isVisible = false;
@@ -161,46 +157,49 @@ namespace OptionalUI
         /// </summary>
         public bool allowEmpty = false;
 
-        public override void GrafUpdate(float dt)
+        public override void GrafUpdate(float timeStacker)
         {
-            base.GrafUpdate(dt);
+            base.GrafUpdate(timeStacker);
 
             this.bumpBehav.greyedOut = this.greyedOut;
             this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
             this.rect.colorFill = greyedOut ? this.bumpBehav.GetColor(this.colorFill) : this.colorFill;
+            this.rect.GrafUpdate(timeStacker);
 
             Color c = this.held ? MenuColorEffect.MidToDark(this.rect.colorEdge) : this.rect.colorEdge;
             if (!IsListBox)
             {
                 this.sprArrow.color = c;
-                this.lblText.label.color = this.searchMode ? this.rect.colorEdge : c;
+                this.lblText.color = this.searchMode ? this.rect.colorEdge : c;
             }
-            this.lblText.label.color = this.searchMode ? this.rect.colorEdge : c;
+            this.lblText.color = this.searchMode ? this.rect.colorEdge : c;
 
             if (!IsListBox && !held) { this.lblText.text = string.IsNullOrEmpty(this.value) ? "------" : GetDisplayValue(); return; }
 
             this.rectList.size.x = this.size.x;
-            this.rectList.pos = new Vector2(this.pos.x, this.pos.y + (downward ? -this.rectList.size.y : this.size.y));
+            this.rectList.pos = new Vector2(0f, (downward ? -this.rectList.size.y : this.size.y));
             if (IsListBox && downward) { this.rectList.pos.y += this.rectList.size.y; }
             this.rectList.addSize = new Vector2(4f, 4f) * bumpList.AddSize;
             this.rectList.colorEdge = bumpList.GetColor(this.colorEdge);
             this.rectList.colorFill = this.colorFill;
             this.rectList.fillAlpha = IsListBox ? bumpList.FillAlpha : Mathf.Lerp(0.5f, 0.7f, bumpList.col);
+            this.rectList.GrafUpdate(timeStacker);
 
             for (int i = 0; i < this.lblList.Length; i++)
             {
                 this.lblList[i].text = this.searchMode ? (this.searchList.Count > this.listTop + i ? this.searchList[this.listTop + i].displayName : "")
                     : this.itemList[this.listTop + i].displayName;
-                this.lblList[i].label.color = this.lblList[i].text == this.value ? c : this.rectList.colorEdge;
+                this.lblList[i].color = this.lblList[i].text == this.value ? c : this.rectList.colorEdge;
                 if (i == listHover)
                 {
-                    this.lblList[i].label.color = Color.Lerp(this.lblList[i].label.color,
-                        mouseDown || this.lblList[i].text == this.value ? MenuColorEffect.MidToDark(this.lblList[i].label.color) : Color.white, bumpList.Sin(this.lblList[i].text == GetDisplayValue() ? 60f : 10f));
+                    this.lblList[i].color = Color.Lerp(this.lblList[i].color,
+                        mouseDown || this.lblList[i].text == this.value ? MenuColorEffect.MidToDark(this.lblList[i].color) : Color.white, bumpList.Sin(this.lblList[i].text == GetDisplayValue() ? 60f : 10f));
                 }
-                this.lblList[i].pos = new Vector2(this.pos.x - this.size.x / 2f + 12f, this.pos.y - 25f - 20f * i + (downward ? 0f : this.size.y + this.rectList.size.y));
-                if (IsListBox && downward) { this.lblList[i].pos.y += this.rectList.size.y; }
+                this.lblList[i].x = 12f;
+                this.lblList[i].y = -25f - 20f * i + (downward ? 0f : this.size.y + this.rectList.size.y);
+                if (IsListBox && downward) { this.lblList[i].y += this.rectList.size.y; }
             }
             this.lblText.text = this.searchMode ? this.searchQuery : (string.IsNullOrEmpty(this.value) ? "------" : GetDisplayValue());
             //lblList[0].text = $"MO:{(MouseOver ? "O" : "X")}, lsMO:{(bumpList.MouseOver ? "O" : "X")}, scMO:{(bumpScroll.MouseOver ? "O" : "X")}, MD:{(mouseDown ? "O" : "X")}"; // Test
@@ -222,11 +221,12 @@ namespace OptionalUI
                     this.rectScroll.pos.y = ScrollPos(listSize);
                 }
                 else
-                { this.rectScroll.pos.y = Custom.LerpAndTick(this.rectScroll.pos.y, ScrollPos(listSize), bumpScroll.held ? 0.6f : 0.2f, (bumpScroll.held ? 0.6f : 0.2f) * DTMultiply(dt)); }
+                { this.rectScroll.pos.y = Custom.LerpAndTick(this.rectScroll.pos.y, ScrollPos(listSize), bumpScroll.held ? 0.6f : 0.2f, (bumpScroll.held ? 0.6f : 0.2f) / frameMulti); }
                 this.rectScroll.addSize = new Vector2(2f, 2f) * bumpScroll.AddSize;
                 this.rectScroll.colorEdge = bumpScroll.GetColor(this.colorEdge);
                 this.rectScroll.colorFill = bumpScroll.held ? this.rectScroll.colorEdge : this.colorFill;
                 this.rectScroll.fillAlpha = bumpScroll.held ? 1f : bumpScroll.FillAlpha;
+                this.rectScroll.GrafUpdate(timeStacker);
             }
             else { this.rectScroll.Hide(); }
         }
@@ -267,6 +267,8 @@ namespace OptionalUI
         public override void Update()
         {
             base.Update();
+            this.rect.Update();
+            this.rectList?.Update(); this.rectScroll?.Update();
 
             // this.searchMode = false; //temp
             if (dTimer > 0) { dTimer--; }
@@ -415,8 +417,8 @@ namespace OptionalUI
                 { // Mouse out
                     if (Input.GetMouseButton(0) && !mouseDown || mouseDown && !Input.GetMouseButton(0)) { PlaySound(SoundID.MENU_Checkbox_Uncheck); goto close; }
                 }
-                this.bumpList.Update(dt);
-                this.bumpScroll.Update(dt);
+                this.bumpList.Update();
+                this.bumpScroll.Update();
                 // Update Scroll
                 return;
             close:
@@ -425,7 +427,7 @@ namespace OptionalUI
                 this.CloseList();
                 return;
             }
-            if (disabled) { return; }
+            if (isInactive) { return; }
             if (base.MouseOver)
             {
                 if (Input.GetMouseButton(0)) { mouseDown = true; }
@@ -465,14 +467,13 @@ namespace OptionalUI
             this._size = new Vector2(Mathf.Max(24f, size.x), 24f);
             base.OnChange();
 
-            this.rect.pos = this.pos;
             this.rect.size = this.size;
-            this.lblText.pos = new Vector2(this.pos.x - this.size.x / 2f + 12f, this.pos.y);
-            this.lblText.size = this.size - new Vector2(12f, 0f);
+            this.lblText.x = 12f;
+            this.lblText.y = this.size.y / 2f;
             if (IsListBox && downward)
             {
                 this.rect.pos.y += this.rectList.size.y;
-                this.lblText.pos.y += this.rectList.size.y;
+                this.lblText.y += this.rectList.size.y;
             }
             //this.lblText.text = this.value;
             if (!IsListBox) { this.sprArrow.SetPosition(this.size.x - 12f, this.size.y / 2f); }
@@ -501,7 +502,7 @@ namespace OptionalUI
                 {
                     float upHeight = 600f; // OpTab height
                     if (this.inScrollBox)
-                    { upHeight = this.scrollBox.horizontal ? this.scrollBox.size.y : this.scrollBox.GetContentSize(); }
+                    { upHeight = this.scrollBox.horizontal ? this.scrollBox.size.y : this.scrollBox.contentSize; }
                     upHeight -= this.GetPos().y + this.size.y;
                     if (upHeight < this.GetPos().y) { downward = true; listHeight = Mathf.Floor(this.GetPos().y / 20f) * 20f - 10f; }
                     else { downward = false; listHeight = Mathf.Min(listHeight, Mathf.Clamp(Mathf.Floor(upHeight / 20f), 1, _listHeight) * 20f + 10f); }
@@ -510,10 +511,8 @@ namespace OptionalUI
                 // Initialize Rects
                 if (neverOpened)
                 {
-                    this.rectList = new DyeableRect(this.menu, this.owner, this.pos, this.size);
-                    this.rectScroll = new DyeableRect(this.menu, this.owner, this.pos, this.size);
-                    this.subObjects.Add(this.rectList);
-                    this.subObjects.Add(this.rectScroll);
+                    this.rectList = new DyeableRect(this.myContainer, Vector2.zero, this.size);
+                    this.rectScroll = new DyeableRect(this.myContainer, Vector2.zero, this.size);
                     neverOpened = false;
                 }
                 this.sprArrow.rotation = downward ? 180f : 0f;
@@ -523,7 +522,7 @@ namespace OptionalUI
             this.rectList.pos = new Vector2(this.pos.x, this.pos.y + (downward ? -listHeight : this.size.y));
             this.rectList.Show();
             // Set LabelList
-            this.lblList = new MenuLabel[Mathf.FloorToInt(listHeight / 20f)];
+            this.lblList = new FLabel[Mathf.FloorToInt(listHeight / 20f)];
             if (downward)
             {
                 this.listTop = GetIndex() + 1;
@@ -535,9 +534,9 @@ namespace OptionalUI
             if (listTop < 0) { listTop = 0; }
             for (int i = 0; i < this.lblList.Length; i++)
             {
-                this.lblList[i] = new MenuLabel(menu, menu.pages[0], this.itemList[this.listTop + i].EffectiveDisplayName, new Vector2(-10000f, -10000f), new Vector2(this.size.x - 12f, 20f), false);
-                this.lblList[i].label.alignment = FLabelAlignment.Left;
-                this.subObjects.Add(this.lblList[i]);
+                this.lblList[i] = FLabelCreate(this.itemList[this.listTop + i].EffectiveDisplayName);
+                this.lblList[i].alignment = FLabelAlignment.Left;
+                this.myContainer.AddChild(this.lblList[i]);
             }
             // Set RectScroll
             this.rectScroll.size = new Vector2(15f, ScrollLen(itemList.Length));
@@ -557,8 +556,8 @@ namespace OptionalUI
             this.fixedSize = null;
             if (!neverOpened) { this.rectList.Hide(); this.rectScroll.Hide(); }
             for (int i = 0; i < this.lblList.Length; i++)
-            { this.lblList[i].RemoveSprites(); this.subObjects.Remove(this.lblList[i]); }
-            this.lblList = new MenuLabel[0];
+            { this.lblList[i].isVisible = false; this.lblList[i].RemoveFromContainer(); }
+            this.lblList = new FLabel[0];
             this.bumpScroll.held = false;
         }
 

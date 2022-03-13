@@ -1,4 +1,5 @@
-﻿using RWCustom;
+﻿using CompletelyOptional;
+using RWCustom;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -40,7 +41,7 @@ namespace OptionalUI
             this.itemList = list.ToArray();
             this.ResetIndex();
             this.Initialize(defaultName);
-            if (_init) { this.OpenList(); }
+            this.OpenList();
         }
 
         /// <summary>
@@ -59,7 +60,7 @@ namespace OptionalUI
             {
                 case SpecialEnum.Enum: throw new ElementFormatException(this, "Do NOT use SpecialEnum.Enum. That's for another ctor.", this.key);
                 case SpecialEnum.Shaders:
-                    foreach (string k in OptionScript.rw.Shaders.Keys.ToArray()) { list.Add(new ListItem(k)); }
+                    foreach (string k in ComOptPlugin.rw.Shaders.Keys.ToArray()) { list.Add(new ListItem(k)); }
                     break;
 
                 case SpecialEnum.Decals:
@@ -111,7 +112,7 @@ namespace OptionalUI
             //ComOptPlugin.LogInfo(listType);
             //for (int i = 0; i < itemList.Length; i++) { ComOptPlugin.LogInfo(string.Concat(i, ": ", itemList[i].name)); }
             this.Initialize(defaultName);
-            if (_init) { this.OpenList(); }
+            this.OpenList();
         }
 
         public readonly SpecialEnum listType;

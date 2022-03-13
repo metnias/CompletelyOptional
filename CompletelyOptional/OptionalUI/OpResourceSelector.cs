@@ -1,4 +1,5 @@
-﻿using RWCustom;
+﻿using CompletelyOptional;
+using RWCustom;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -56,7 +57,7 @@ namespace OptionalUI
             {
                 case SpecialEnum.Enum: throw new ElementFormatException(this, "Do NOT use SpecialEnum.Enum. That's for another ctor.", this.key);
                 case SpecialEnum.Shaders:
-                    foreach (string k in OptionScript.rw.Shaders.Keys.ToArray()) { list.Add(new ListItem(k)); }
+                    foreach (string k in ComOptPlugin.rw.Shaders.Keys.ToArray()) { list.Add(new ListItem(k)); }
                     break;
 
                 case SpecialEnum.Decals:

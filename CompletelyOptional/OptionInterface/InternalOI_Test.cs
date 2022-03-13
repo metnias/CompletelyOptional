@@ -105,16 +105,18 @@ namespace CompletelyOptional
                     new OpLabel(new Vector2(420f, 510f + 1800f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
             sb.AddItems(new OpImage(new Vector2(420f, 50f), t));
             sb.AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
-            Tabs[2].AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
-            OpColorPicker cpk0 = new OpColorPicker(new Vector2(100f, 100f), "_TEST", "CCCCCC") { colorEdge = Color.red };
-            sb.AddItems(cpk0, new OpLabel(new Vector2(300f, 100f), new Vector2(100f, 20f), "Red Colorpicker") { bumpBehav = cpk0.bumpBehav, color = Color.red });
-            OpColorPicker cpk1 = new OpColorPicker(new Vector2(100f, 2000f), "_TEST", "AAAAAA") { colorEdge = Color.blue };
-            sb.AddItems(cpk1, new OpLabel(new Vector2(300f, 2000f), new Vector2(100f, 20f), "Blue Colorpicker") { bumpBehav = cpk1.bumpBehav, color = Color.blue });
+            // OpColorPicker cpk0 = new OpColorPicker(new Vector2(100f, 100f), "_Red", "CCCCCC") { colorEdge = Color.red };
+            // sb.AddItems(cpk0, new OpLabel(new Vector2(300f, 100f), new Vector2(100f, 20f), "Red Colorpicker") { bumpBehav = cpk0.bumpBehav, color = Color.red });
+            // OpColorPicker cpk1 = new OpColorPicker(new Vector2(100f, 2000f), "_Blue", "AAAAAA") { colorEdge = Color.blue };
+            // sb.AddItems(cpk1, new OpLabel(new Vector2(300f, 2000f), new Vector2(100f, 20f), "Blue Colorpicker") { bumpBehav = cpk1.bumpBehav, color = Color.blue });
             sb.AddItems(new OpSlider(new Vector2(100f, 1800f), "", new IntVector2(0, 100), 300));
             sb.AddItems(new OpSlider(new Vector2(500f, 1700f), "", new IntVector2(0, 100), 300, true));
             sb.AddItems(new OpSliderTick(new Vector2(100f, 1400f), "", new IntVector2(0, 20), 200));
             sb.AddItems(new OpSliderTick(new Vector2(500f, 1300f), "", new IntVector2(0, 20), 200, true));
 
+            Tabs[3].AddItems(new OpKeyBinder(new Vector2(100f, 300f), new Vector2(200f, 30f), rwMod, "_KeyTest", "Enter", false));
+
+            sb = new OpScrollBox(Tabs[4], 2400f, false);
             sb.AddItems(new OpRect(new Vector2(25f, 1000f), new Vector2(150f, 150f)));
             sb.AddItems(new OpRect(new Vector2(225f, 1000f), new Vector2(150f, 150f)));
             sb.AddItems(new OpRect(new Vector2(425f, 1000f), new Vector2(150f, 150f)));
@@ -134,9 +136,7 @@ namespace CompletelyOptional
             sb.AddItems(new OpLabelLong(new Vector2(225f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Center });
             sb.AddItems(new OpLabelLong(new Vector2(425f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
 
-            Tabs[3].AddItems(new OpKeyBinder(new Vector2(100f, 300f), new Vector2(200f, 30f), rwMod, "_KeyTest", "Enter", false));
-
-            /*
+            sb = new OpScrollBox(Tabs[5], 2400f, false);
             OpComboBox cb = new OpComboBox(new Vector2(100f, 1000f), 150f, "", new List<ListItem>() {
                 new ListItem("Slugcat"), new ListItem("Is"), new ListItem("HalfSlug"),
                 new ListItem("And"), new ListItem("HalfBunny"), new ListItem("Creature") }, "Slugcat");
@@ -152,23 +152,22 @@ namespace CompletelyOptional
                 new ListItem("The Survivor", 0), new ListItem("The Monk", 1), new ListItem("The Hunter", 2),
                 new ListItem("The Sporecat", 3), new ListItem("The Electric Cat", 4), new ListItem("The Programmer Cat", 5)}, OpListBox.GetLineCountFromHeight(200f)));
             sb.AddItems(new OpLabel(330f, 780f, "Player 2 plays as", true));
-            */
+
             // Use OpScrollBox.AddItems instead of OpTab.AddItems.
-            /*
-            OpResourceSelector rs = new OpResourceSelector(new Vector2(100f, 1600f), new Vector2(200f, 30f), "", typeof(CreatureTemplate.Type));
+            OpResourceSelector rs = new OpResourceSelector(new Vector2(100f, 1600f), 200f, "", typeof(CreatureTemplate.Type));
             sb.AddItems(rs, new OpLabel(100f, 1630f, "CreatureTemplate.Type") { bumpBehav = rs.bumpBehav });
-            rs = new OpResourceSelector(new Vector2(100f, 1500f), new Vector2(200f, 30f), "", OpResourceSelector.SpecialEnum.Decals);
+            rs = new OpResourceSelector(new Vector2(100f, 1500f), 200f, "", OpResourceSelector.SpecialEnum.Decals);
             sb.AddItems(rs, new OpLabel(100f, 1530f, "Decals") { bumpBehav = rs.bumpBehav });
-            rs = new OpResourceSelector(new Vector2(100f, 1400f), new Vector2(200f, 30f), "", OpResourceSelector.SpecialEnum.Illustrations);
+            rs = new OpResourceSelector(new Vector2(100f, 1400f), 200f, "", OpResourceSelector.SpecialEnum.Illustrations);
             sb.AddItems(rs, new OpLabel(100f, 1430f, "Illustrations") { bumpBehav = rs.bumpBehav });
-            rs = new OpResourceSelector(new Vector2(100f, 1300f), new Vector2(200f, 30f), "", OpResourceSelector.SpecialEnum.Palettes);
+            rs = new OpResourceSelector(new Vector2(100f, 1300f), 200f, "", OpResourceSelector.SpecialEnum.Palettes);
             sb.AddItems(rs, new OpLabel(100f, 1330f, "Palettes") { bumpBehav = rs.bumpBehav });
-            rs = new OpResourceSelector(new Vector2(100f, 1200f), new Vector2(200f, 30f), "", OpResourceSelector.SpecialEnum.Regions);
+            rs = new OpResourceSelector(new Vector2(100f, 1200f), 200f, "", OpResourceSelector.SpecialEnum.Regions);
             sb.AddItems(rs, new OpLabel(100f, 1230f, "Regions") { bumpBehav = rs.bumpBehav });
-            rs = new OpResourceSelector(new Vector2(100f, 1100f), new Vector2(200f, 30f), "", OpResourceSelector.SpecialEnum.Shaders);
+            rs = new OpResourceSelector(new Vector2(100f, 1100f), 200f, "", OpResourceSelector.SpecialEnum.Shaders);
             sb.AddItems(rs, new OpLabel(100f, 1130f, "Shaders") { bumpBehav = rs.bumpBehav });
-            rs = new OpResourceSelector(new Vector2(100f, 1000f), new Vector2(200f, 30f), "", OpResourceSelector.SpecialEnum.Songs);
-            sb.AddItems(rs, new OpLabel(100f, 1030f, "Songs") { bumpBehav = rs.bumpBehav });*/
+            rs = new OpResourceSelector(new Vector2(100f, 1000f), 200f, "", OpResourceSelector.SpecialEnum.Songs);
+            sb.AddItems(rs, new OpLabel(100f, 1030f, "Songs") { bumpBehav = rs.bumpBehav });
         }
 
         private OpHoldButton hold;
