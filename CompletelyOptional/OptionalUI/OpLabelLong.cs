@@ -8,7 +8,7 @@ namespace OptionalUI
     public class OpLabelLong : OpLabel
     {
         /// <summary>
-        /// Special Label that creates multiple <see cref="MenuLabel"/>s to break Futile's character limits.
+        /// Special Label that creates multiple <see cref="FLabel"/>s to break Futile's character limits.
         /// </summary>
         /// <param name="pos">BottomLeft Position</param>
         /// <param name="size">Size of the Box</param>
