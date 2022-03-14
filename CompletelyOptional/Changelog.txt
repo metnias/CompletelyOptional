@@ -1,5 +1,5 @@
 ﻿###2.0 CompletelyOptional Update#!#20220330#!#
-To Do: Fix OpLabelLong's OnChange; Port OpComboBox/ResourceSelector, OpListBox/ResourceList; Write InternalOI_Stats
+To Do: Fix OpLabelLong's OnChange; Rewrite Save/LoadConfig to use BepInEx.Configuration; Write ConfigContainer.InterfaceUpdateError; Write Reset Config function; Write InternalOI_Stats
 v Rewrote ConfigMachine to BepInEx Plugin, removed support for Partiality Mods
 o Use only BepInEx.Configuration for saving configs
  o So OI won't get even called until MOD CONFIG screen is loaded (As BepInEx will load the settings instead)
@@ -9,7 +9,7 @@ o Clean up OptionInterface so only things the modders need are there
   o FlatLight, and insects colours
  v Removed usages of MenuObject in UIelements
   v This allows more controlled sorting
-o Added Undo function (framework)
+v Added Undo function
 ###1.5.5#!#20220130#!#
 - Reworked OptionInterface's Data API (by Henpemaz)
  + This WILL BREAK backward compatibility with mods that use older progData

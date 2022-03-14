@@ -16,14 +16,15 @@ namespace OptionalUI
         /// DropDown box that can be also be searched
         /// </summary>
         /// <param name="pos">LeftBottom Position of folded <see cref="OpComboBox"/></param>
-        /// <param name="width">The box width of folded <see cref="OpComboBox"/>. The height is fixed to 24f.</param>
+        /// <param name="width">The box width of folded <see cref="OpComboBox"/>. The minimum width is 30f. The height is fixed to 24f.</param>
         /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="list">Will be sorted automatically by <see cref="ListItem.value"/>, then <see cref="ListItem.name"/></param>
         /// <param name="defaultName">Set to empty to have no default selection</param>
         /// <exception cref="ElementFormatException">Thrown when list has no <see cref="ListItem"/>.</exception>
         public OpComboBox(Vector2 pos, float width, string key, List<ListItem> list, string defaultName = "") : base(pos, new Vector2(width, 24f), key, defaultName)
         {
-            this._size = new Vector2(Mathf.Max(24f, size.x), 24f);
+            this._size = new Vector2(Mathf.Max(30f, size.x), 24f);
+            this.fixedSize = new Vector2(-1f, 24f);
             this.description = InternalTranslator.Translate("Click to open the list, Double Click to search");
             if (IsResourceSelector) { return; }
             if (list is null || list.Count < 1) { throw new ElementFormatException(this, "The list must contain at least one ListItem", this.key); }
@@ -103,6 +104,8 @@ namespace OptionalUI
 
             this.bumpList = new BumpBehaviour(this) { held = false, MouseOver = false };
             this.bumpScroll = new BumpBehaviour(this) { held = false, MouseOver = false };
+
+            GrafUpdate(0f);
         }
 
         protected ListItem[] itemList;
@@ -189,8 +192,10 @@ namespace OptionalUI
 
             for (int i = 0; i < this.lblList.Length; i++)
             {
-                this.lblList[i].text = this.searchMode ? (this.searchList.Count > this.listTop + i ? this.searchList[this.listTop + i].displayName : "")
-                    : this.itemList[this.listTop + i].displayName;
+                this.lblList[i].text = LabelTest.TrimText(this.searchMode ?
+                    (this.searchList.Count > this.listTop + i ? this.searchList[this.listTop + i].displayName : "")
+                    : this.itemList[this.listTop + i].displayName,
+                    this.size.x - 24f, true);
                 this.lblList[i].color = this.lblList[i].text == this.value ? c : this.rectList.colorEdge;
                 if (i == listHover)
                 {
@@ -198,14 +203,17 @@ namespace OptionalUI
                         mouseDown || this.lblList[i].text == this.value ? MenuColorEffect.MidToDark(this.lblList[i].color) : Color.white, bumpList.Sin(this.lblList[i].text == GetDisplayValue() ? 60f : 10f));
                 }
                 this.lblList[i].x = 12f;
-                this.lblList[i].y = -25f - 20f * i + (downward ? 0f : this.size.y + this.rectList.size.y);
+                this.lblList[i].y = -15f - 20f * i + (downward ? 0f : this.size.y + this.rectList.size.y);
                 if (IsListBox && downward) { this.lblList[i].y += this.rectList.size.y; }
             }
-            this.lblText.text = this.searchMode ? this.searchQuery : (string.IsNullOrEmpty(this.value) ? "------" : GetDisplayValue());
+            this.lblText.text = LabelTest.TrimText(this.searchMode ?
+                this.searchQuery : (string.IsNullOrEmpty(this.value) ? "------" : GetDisplayValue()),
+                this.size.x - 24f, true);
             //lblList[0].text = $"MO:{(MouseOver ? "O" : "X")}, lsMO:{(bumpList.MouseOver ? "O" : "X")}, scMO:{(bumpScroll.MouseOver ? "O" : "X")}, MD:{(mouseDown ? "O" : "X")}"; // Test
             if (this.searchMode)
             {
-                this.searchCursor.SetPosition(LabelTest.GetWidth(this.searchQuery) + LabelTest.CharMean(false) * 1.5f, this.size.y * 0.5f - 7f + (IsListBox && downward ? this.rectList.size.y : 0f));
+                this.searchCursor.x = Mathf.Min(this.size.x - 24f, 12f + LabelTest.GetWidth(this.searchQuery) + LabelTest.CharMean(false));
+                this.searchCursor.y = this.size.y * 0.5f - 7f + (IsListBox && downward ? this.rectList.size.y : 0f);
                 this.searchCursor.color = Color.Lerp(this.colorEdge, MenuColorEffect.MidToDark(this.colorEdge), this.bumpBehav.Sin(this.searchList.Count > 0 ? 10f : 30f));
                 this.searchCursor.alpha = 0.4f + 0.6f * Mathf.Clamp01((float)this.searchIdle / this.searchDelay);
             }
@@ -264,6 +272,47 @@ namespace OptionalUI
             return -1;
         }
 
+        private int inputDelay = 0;
+
+        protected void SearchModeUpdate()
+        {
+            // Input
+            int lastInputDelay = inputDelay;
+            foreach (char c in Input.inputString)
+            {
+                if (c == '\b')
+                {
+                    if (this.searchQuery.Length > 0)
+                    {
+                        inputDelay++;
+                        if (inputDelay > 1 && (inputDelay <= ModConfigMenu.DASinit || inputDelay % ModConfigMenu.DASdelay != 1)) { break; }
+                        this.searchQuery = (this.searchQuery.Substring(0, this.searchQuery.Length - 1));
+                        this.searchIdle = -1;
+                        PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
+                    }
+                    break;
+                }
+                else if ((c == '\n') || (c == '\r')) // enter/return
+                { continue; }
+                else
+                {
+                    inputDelay++;
+                    if (inputDelay > 1 && (inputDelay <= ModConfigMenu.DASinit || inputDelay % ModConfigMenu.DASdelay != 1)) { break; }
+                    this.bumpBehav.flash = 2.5f;
+                    this.searchQuery += c;
+                    this.searchIdle = -1;
+                    PlaySound(SoundID.MENU_Checkbox_Uncheck);
+                    break;
+                }
+            }
+            if (lastInputDelay == inputDelay) { inputDelay = 0; } // Key not pressed
+            if (inputDelay == 0 && this.searchIdle < this.searchDelay)
+            {
+                this.searchIdle++;
+                if (this.searchIdle == this.searchDelay) { RefreshSearchList(); }
+            }
+        }
+
         public override void Update()
         {
             base.Update();
@@ -282,34 +331,7 @@ namespace OptionalUI
                 this.bumpScroll.MouseOver = this.bumpScroll.MouseOver && this.MousePos.y >= this.rectScroll.pos.y - this.pos.y && this.MousePos.y <= this.rectScroll.pos.y + this.rectScroll.size.y - this.pos.y;
                 if (this.searchMode && !this.bumpScroll.held)
                 {
-                    // Input
-                    foreach (char c in Input.inputString)
-                    {
-                        if (c == '\b')
-                        {
-                            if (this.searchQuery.Length > 0)
-                            {
-                                this.searchQuery = (this.searchQuery.Substring(0, this.searchQuery.Length - 1));
-                                this.searchIdle = -1;
-                                PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
-                            }
-                            break;
-                        }
-                        else if ((c == '\n') || (c == '\r')) // enter/return
-                        { continue; }
-                        else
-                        {
-                            this.bumpBehav.flash = 2.5f;
-                            this.searchQuery += c;
-                            this.searchIdle = -1;
-                            PlaySound(SoundID.MENU_Checkbox_Uncheck);
-                        }
-                    }
-                    if (this.searchIdle < this.searchDelay)
-                    {
-                        this.searchIdle++;
-                        if (this.searchIdle == this.searchDelay) { RefreshSearchList(); }
-                    }
+                    SearchModeUpdate();
                 }
                 int listSize = this.searchMode ? this.searchList.Count : this.itemList.Length;
                 if (this.bumpScroll.held)
@@ -464,18 +486,17 @@ namespace OptionalUI
 
         public override void OnChange()
         {
-            this._size = new Vector2(Mathf.Max(24f, size.x), 24f);
             base.OnChange();
+            this._size.x = Mathf.Max(30f, this._size.x);
 
             this.rect.size = this.size;
             this.lblText.x = 12f;
             this.lblText.y = this.size.y / 2f;
             if (IsListBox && downward)
             {
-                this.rect.pos.y += this.rectList.size.y;
+                this.rect.pos.y = this.rectList.size.y;
                 this.lblText.y += this.rectList.size.y;
             }
-            //this.lblText.text = this.value;
             if (!IsListBox) { this.sprArrow.SetPosition(this.size.x - 12f, this.size.y / 2f); }
         }
 

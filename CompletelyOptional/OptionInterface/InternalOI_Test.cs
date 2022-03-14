@@ -45,12 +45,6 @@ namespace CompletelyOptional
                                 new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
             Tabs[3].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 3", FLabelAlignment.Center, true),
                                 new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
-            Tabs[4].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 4", FLabelAlignment.Center, true),
-                                new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
-            Tabs[5].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 5", FLabelAlignment.Center, true),
-                                new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
-            Tabs[6].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 6", FLabelAlignment.Center, true),
-                                new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
             Tabs[7].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 7", FLabelAlignment.Center, true),
                                 new OpLabel(new Vector2(420f, 510f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
             Tabs[8].AddItems(new OpLabel(new Vector2(100f, 540f), new Vector2(400f, 50f), "ConfigMachine Internal Test 8", FLabelAlignment.Center, true),
@@ -101,8 +95,8 @@ namespace CompletelyOptional
             // For canvas-sized ScrollBox
             OpScrollBox sb = new OpScrollBox(Tabs[2], 2400f, false);
             // Use OpScrollBox.AddItems instead of OpTab.AddItems.
-            sb.AddItems(new OpLabel(new Vector2(100f, 540f + 1800f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
-                    new OpLabel(new Vector2(420f, 510f + 1800f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
+            sb.AddItems(new OpLabel(new Vector2(100f, sb.contentSize - 60f), new Vector2(400f, 50f), "ConfigMachine Internal Test", FLabelAlignment.Center, true),
+                    new OpLabel(new Vector2(420f, sb.contentSize - 90f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
             sb.AddItems(new OpImage(new Vector2(420f, 50f), t));
             sb.AddItems(new OpImage(new Vector2(420f, 120f), "gateSymbol0"));
             // OpColorPicker cpk0 = new OpColorPicker(new Vector2(100f, 100f), "_Red", "CCCCCC") { colorEdge = Color.red };
@@ -116,7 +110,9 @@ namespace CompletelyOptional
 
             Tabs[3].AddItems(new OpKeyBinder(new Vector2(100f, 300f), new Vector2(200f, 30f), rwMod, "_KeyTest", "Enter", false));
 
-            sb = new OpScrollBox(Tabs[4], 2400f, false);
+            sb = new OpScrollBox(Tabs[4], 1300f, false);
+            sb.AddItems(new OpLabel(new Vector2(100f, sb.contentSize - 60f), new Vector2(400f, 50f), "ConfigMachine Internal Test 4", FLabelAlignment.Center, true),
+                                new OpLabel(new Vector2(420f, sb.contentSize - 90f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
             sb.AddItems(new OpRect(new Vector2(25f, 1000f), new Vector2(150f, 150f)));
             sb.AddItems(new OpRect(new Vector2(225f, 1000f), new Vector2(150f, 150f)));
             sb.AddItems(new OpRect(new Vector2(425f, 1000f), new Vector2(150f, 150f)));
@@ -136,12 +132,14 @@ namespace CompletelyOptional
             sb.AddItems(new OpLabelLong(new Vector2(225f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Center });
             sb.AddItems(new OpLabelLong(new Vector2(425f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
 
-            sb = new OpScrollBox(Tabs[5], 2400f, false);
+            sb = new OpScrollBox(Tabs[5], 1500f, false);
+            sb.AddItems(new OpLabel(new Vector2(100f, sb.contentSize - 60f), new Vector2(400f, 50f), "ConfigMachine Internal Test 5", FLabelAlignment.Center, true),
+                                new OpLabel(new Vector2(420f, sb.contentSize - 90f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
             OpComboBox cb = new OpComboBox(new Vector2(100f, 1000f), 150f, "", new List<ListItem>() {
                 new ListItem("Slugcat"), new ListItem("Is"), new ListItem("HalfSlug"),
                 new ListItem("And"), new ListItem("HalfBunny"), new ListItem("Creature") }, "Slugcat");
             sb.AddItems(cb, new OpLabel(100f, 1050f, "AutoSort") { bumpBehav = cb.bumpBehav });
-            cb = new OpComboBox(new Vector2(350f, 1000f), 150f, "", new List<ListItem>() {
+            cb = new OpComboBox(new Vector2(350f, 50f), 150f, "", new List<ListItem>() {
                 new ListItem("The0", 0), new ListItem("quick1", 1), new ListItem("brown2", 2),
                 new ListItem("fox3", 3), new ListItem("jumps4", 4), new ListItem("over5", 5),
                 new ListItem("the6", 6), new ListItem("lazy7", 7), new ListItem("dog8", 8)}, "brown2");
@@ -150,24 +148,27 @@ namespace CompletelyOptional
             // sb.AddItems(new OpResourceList(new Vector2(330f, 600f), 200f, "", typeof(AbstractPhysicalObject.AbstractObjectType), 10, downward: false));
             sb.AddItems(new OpListBox(new Vector2(330f, 600f), 200f, "", new List<ListItem>() {
                 new ListItem("The Survivor", 0), new ListItem("The Monk", 1), new ListItem("The Hunter", 2),
-                new ListItem("The Sporecat", 3), new ListItem("The Electric Cat", 4), new ListItem("The Programmer Cat", 5)}, OpListBox.GetLineCountFromHeight(200f)));
+                new ListItem("The Sporecat", 3), new ListItem("The Electric Cat", 4), new ListItem("The Programmer Cat", 5)}, OpListBox.GetLineCountFromHeight(200f), false));
             sb.AddItems(new OpLabel(330f, 780f, "Player 2 plays as", true));
 
+            sb = new OpScrollBox(Tabs[6], 1000f, false);
+            sb.AddItems(new OpLabel(new Vector2(100f, sb.contentSize - 60f), new Vector2(400f, 50f), "ConfigMachine Internal Test 6", FLabelAlignment.Center, true),
+                                new OpLabel(new Vector2(420f, sb.contentSize - 90f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
             // Use OpScrollBox.AddItems instead of OpTab.AddItems.
-            OpResourceSelector rs = new OpResourceSelector(new Vector2(100f, 1600f), 200f, "", typeof(CreatureTemplate.Type));
-            sb.AddItems(rs, new OpLabel(100f, 1630f, "CreatureTemplate.Type") { bumpBehav = rs.bumpBehav });
-            rs = new OpResourceSelector(new Vector2(100f, 1500f), 200f, "", OpResourceSelector.SpecialEnum.Decals);
-            sb.AddItems(rs, new OpLabel(100f, 1530f, "Decals") { bumpBehav = rs.bumpBehav });
-            rs = new OpResourceSelector(new Vector2(100f, 1400f), 200f, "", OpResourceSelector.SpecialEnum.Illustrations);
-            sb.AddItems(rs, new OpLabel(100f, 1430f, "Illustrations") { bumpBehav = rs.bumpBehav });
-            rs = new OpResourceSelector(new Vector2(100f, 1300f), 200f, "", OpResourceSelector.SpecialEnum.Palettes);
-            sb.AddItems(rs, new OpLabel(100f, 1330f, "Palettes") { bumpBehav = rs.bumpBehav });
-            rs = new OpResourceSelector(new Vector2(100f, 1200f), 200f, "", OpResourceSelector.SpecialEnum.Regions);
-            sb.AddItems(rs, new OpLabel(100f, 1230f, "Regions") { bumpBehav = rs.bumpBehav });
-            rs = new OpResourceSelector(new Vector2(100f, 1100f), 200f, "", OpResourceSelector.SpecialEnum.Shaders);
-            sb.AddItems(rs, new OpLabel(100f, 1130f, "Shaders") { bumpBehav = rs.bumpBehav });
-            rs = new OpResourceSelector(new Vector2(100f, 1000f), 200f, "", OpResourceSelector.SpecialEnum.Songs);
-            sb.AddItems(rs, new OpLabel(100f, 1030f, "Songs") { bumpBehav = rs.bumpBehav });
+            OpResourceSelector rs = new OpResourceSelector(new Vector2(100f, 700f), 200f, "", typeof(CreatureTemplate.Type));
+            sb.AddItems(rs, new OpLabel(100f, 730f, "CreatureTemplate.Type") { bumpBehav = rs.bumpBehav });
+            rs = new OpResourceSelector(new Vector2(100f, 600f), 200f, "", OpResourceSelector.SpecialEnum.Decals);
+            sb.AddItems(rs, new OpLabel(100f, 630f, "Decals") { bumpBehav = rs.bumpBehav });
+            rs = new OpResourceSelector(new Vector2(100f, 500f), 200f, "", OpResourceSelector.SpecialEnum.Illustrations);
+            sb.AddItems(rs, new OpLabel(100f, 530f, "Illustrations") { bumpBehav = rs.bumpBehav });
+            rs = new OpResourceSelector(new Vector2(100f, 400f), 200f, "", OpResourceSelector.SpecialEnum.Palettes);
+            sb.AddItems(rs, new OpLabel(100f, 430f, "Palettes") { bumpBehav = rs.bumpBehav });
+            rs = new OpResourceSelector(new Vector2(100f, 300f), 200f, "", OpResourceSelector.SpecialEnum.Regions);
+            sb.AddItems(rs, new OpLabel(100f, 330f, "Regions") { bumpBehav = rs.bumpBehav });
+            rs = new OpResourceSelector(new Vector2(100f, 200f), 200f, "", OpResourceSelector.SpecialEnum.Shaders);
+            sb.AddItems(rs, new OpLabel(100f, 230f, "Shaders") { bumpBehav = rs.bumpBehav });
+            rs = new OpResourceSelector(new Vector2(100f, 100f), 200f, "", OpResourceSelector.SpecialEnum.Songs);
+            sb.AddItems(rs, new OpLabel(100f, 130f, "Songs") { bumpBehav = rs.bumpBehav });
         }
 
         private OpHoldButton hold;

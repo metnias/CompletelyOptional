@@ -259,6 +259,7 @@ namespace CompletelyOptional
                     this.label.text = curName;
                 }
                 this.OnChange();
+                this.label.alignment = FLabelAlignment.Left;
                 this.GrafUpdate(0f);
             }
 

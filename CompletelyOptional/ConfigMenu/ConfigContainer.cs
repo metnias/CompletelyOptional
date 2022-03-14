@@ -671,9 +671,13 @@ namespace CompletelyOptional
 
         internal void InterfaceUpdateError(bool tab, Exception ex)
         {
-            // Fade out
             // Change itf to Error version
+            OptItfs[activeItfIndex] = new InternalOI_Error(OptItfs[activeItfIndex].rwMod, ex);
+
             // Recreate List's mod button to error version
+
+            // Fade out
+            ModConfigMenu.instance.manager.RequestMainProcessSwitch(EnumExt_ComOpt.ModConfigMenu);
         }
 
         /// <summary>

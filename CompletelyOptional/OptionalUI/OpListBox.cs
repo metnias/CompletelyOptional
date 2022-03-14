@@ -65,34 +65,7 @@ namespace OptionalUI
 
             if (this.searchMode && !this.bumpScroll.held)
             {
-                // Input
-                foreach (char c in Input.inputString)
-                {
-                    if (c == '\b')
-                    {
-                        if (this.searchQuery.Length > 0)
-                        {
-                            this.searchQuery = (this.searchQuery.Substring(0, this.searchQuery.Length - 1));
-                            this.searchIdle = -1;
-                            PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
-                        }
-                        break;
-                    }
-                    else if ((c == '\n') || (c == '\r')) // enter/return
-                    { continue; }
-                    else
-                    {
-                        this.bumpBehav.flash = 2.5f;
-                        this.searchQuery += c;
-                        this.searchIdle = -1;
-                        PlaySound(SoundID.MENU_Checkbox_Uncheck);
-                    }
-                }
-                if (this.searchIdle < this.searchDelay)
-                {
-                    this.searchIdle++;
-                    if (this.searchIdle == this.searchDelay) { RefreshSearchList(); }
-                }
+                SearchModeUpdate();
             }
             int listSize = this.searchMode ? this.searchList.Count : this.itemList.Length;
             if (this.bumpScroll.held)
