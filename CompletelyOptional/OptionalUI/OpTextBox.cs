@@ -129,9 +129,9 @@ namespace OptionalUI
         /// <summary>
         /// Standard method that accepts keyboard typing
         /// </summary>
-        /// <param name="inputDelay"></param>
+        /// <param name="inputDelay">private int instance</param>
         /// <returns>null: no key, \b: backspace, \n or \r: enter/return, else: letter or digit</returns>
-        public static char? AcceptTyping(ref int inputDelay)
+        public static char? TypingAccept(ref int inputDelay)
         {
             ConfigContainer.ForceMenuMouseMode(true); // because pressing Z causes exiting MouseMode
             int lastInputDelay = inputDelay;
@@ -174,7 +174,7 @@ namespace OptionalUI
                 cursorAlpha -= 0.05f / frameMulti;
                 if (cursorAlpha < -0.5f) { cursorAlpha = 2f; }
 
-                char? c = AcceptTyping(ref inputDelay);
+                char? c = TypingAccept(ref inputDelay);
                 if (c.HasValue)
                 {
                     if (c.Value == '\b')

@@ -277,7 +277,7 @@ namespace OptionalUI
         protected void SearchModeUpdate()
         {
             // Input
-            char? c = OpTextBox.AcceptTyping(ref inputDelay);
+            char? c = OpTextBox.TypingAccept(ref inputDelay);
             if (c.HasValue)
             {
                 if (c.Value == '\b')

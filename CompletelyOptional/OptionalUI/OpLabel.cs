@@ -230,7 +230,7 @@ namespace OptionalUI
                     break;
 
                 case LabelVAlignment.Top:
-                    this.label.y = this.size.y - lh;
+                    this.label.y = this.size.y - lh / 2f;
                     break;
 
                 case LabelVAlignment.Bottom:

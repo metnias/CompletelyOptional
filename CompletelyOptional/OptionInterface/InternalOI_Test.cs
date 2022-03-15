@@ -110,27 +110,27 @@ namespace CompletelyOptional
 
             Tabs[3].AddItems(new OpKeyBinder(new Vector2(100f, 300f), new Vector2(200f, 30f), rwMod, "_KeyTest", "Enter", false));
 
-            sb = new OpScrollBox(Tabs[4], 1300f, false);
+            sb = new OpScrollBox(Tabs[4], 1500f, false);
             sb.AddItems(new OpLabel(new Vector2(100f, sb.contentSize - 60f), new Vector2(400f, 50f), "ConfigMachine Internal Test 4", FLabelAlignment.Center, true),
                                 new OpLabel(new Vector2(420f, sb.contentSize - 60f), new Vector2(100f, 20f), ComOptPlugin.PLUGIN_VERSION, FLabelAlignment.Right));
+            sb.AddItems(new OpRect(new Vector2(25f, 1200f), new Vector2(150f, 150f)));
+            sb.AddItems(new OpRect(new Vector2(225f, 1200f), new Vector2(150f, 150f)));
+            sb.AddItems(new OpRect(new Vector2(425f, 1200f), new Vector2(150f, 150f)));
+            sb.AddItems(new OpLabel(new Vector2(25f, 1200f), new Vector2(150f, 150f), bigText: true) { verticalAlignment = OpLabel.LabelVAlignment.Top });
+            sb.AddItems(new OpLabel(new Vector2(225f, 1200f), new Vector2(150f, 150f), bigText: true) { verticalAlignment = OpLabel.LabelVAlignment.Center });
+            sb.AddItems(new OpLabel(new Vector2(425f, 1200f), new Vector2(150f, 150f), bigText: true) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
             sb.AddItems(new OpRect(new Vector2(25f, 1000f), new Vector2(150f, 150f)));
             sb.AddItems(new OpRect(new Vector2(225f, 1000f), new Vector2(150f, 150f)));
             sb.AddItems(new OpRect(new Vector2(425f, 1000f), new Vector2(150f, 150f)));
-            sb.AddItems(new OpLabel(new Vector2(25f, 1000f), new Vector2(150f, 150f), bigText: true) { verticalAlignment = OpLabel.LabelVAlignment.Top });
-            sb.AddItems(new OpLabel(new Vector2(225f, 1000f), new Vector2(150f, 150f), bigText: true) { verticalAlignment = OpLabel.LabelVAlignment.Center });
-            sb.AddItems(new OpLabel(new Vector2(425f, 1000f), new Vector2(150f, 150f), bigText: true) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
-            sb.AddItems(new OpRect(new Vector2(25f, 800f), new Vector2(150f, 150f)));
-            sb.AddItems(new OpRect(new Vector2(225f, 800f), new Vector2(150f, 150f)));
-            sb.AddItems(new OpRect(new Vector2(425f, 800f), new Vector2(150f, 150f)));
-            sb.AddItems(new OpLabel(new Vector2(25f, 800f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Top });
-            sb.AddItems(new OpLabel(new Vector2(225f, 800f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Center });
-            sb.AddItems(new OpLabel(new Vector2(425f, 800f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
-            sb.AddItems(new OpRect(new Vector2(25f, 600f), new Vector2(150f, 150f)));
-            sb.AddItems(new OpRect(new Vector2(225f, 600f), new Vector2(150f, 150f)));
-            sb.AddItems(new OpRect(new Vector2(425f, 600f), new Vector2(150f, 150f)));
-            sb.AddItems(new OpLabelLong(new Vector2(25f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Top });
-            sb.AddItems(new OpLabelLong(new Vector2(225f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Center });
-            sb.AddItems(new OpLabelLong(new Vector2(425f, 600f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
+            sb.AddItems(new OpLabel(new Vector2(25f, 1000f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Top });
+            sb.AddItems(new OpLabel(new Vector2(225f, 1000f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Center });
+            sb.AddItems(new OpLabel(new Vector2(425f, 1000f), new Vector2(150f, 150f)) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
+            sb.AddItems(new OpRect(new Vector2(25f, 650f), new Vector2(550f, 250f)));
+            sb.AddItems(new OpRect(new Vector2(25f, 350f), new Vector2(550f, 250f)));
+            sb.AddItems(new OpRect(new Vector2(25f, 50f), new Vector2(550f, 250f)));
+            sb.AddItems(new OpLabelLong(new Vector2(25f, 650f), new Vector2(550f, 250f)) { verticalAlignment = OpLabel.LabelVAlignment.Top });
+            sb.AddItems(new OpLabelLong(new Vector2(25f, 350f), new Vector2(550f, 250f)) { verticalAlignment = OpLabel.LabelVAlignment.Center });
+            sb.AddItems(new OpLabelLong(new Vector2(25f, 50f), new Vector2(550f, 250f)) { verticalAlignment = OpLabel.LabelVAlignment.Bottom });
 
             sb = new OpScrollBox(Tabs[5], 1500f, false);
             sb.AddItems(new OpLabel(new Vector2(100f, sb.contentSize - 60f), new Vector2(400f, 50f), "ConfigMachine Internal Test 5", FLabelAlignment.Center, true),
