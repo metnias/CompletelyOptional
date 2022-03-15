@@ -158,7 +158,7 @@ namespace CompletelyOptional
                 if (oi is InternalOI && plugin.Config.Keys.Count > 0)
                 {
                     // Use BepInEx Configuration
-                    oi = new GeneratedOI(oi.rwMod, plugin.Config); // temp disable
+                    oi = new GeneratedOI(plugin);
                 }
 
                 // Initialize

@@ -18,10 +18,9 @@ namespace CompletelyOptional
         /// If you're using BepInEx.Configuration and not using LoadOI, this is called automatically.
         /// <para>Sections will be separated by OpTab.</para>
         /// </summary>
-        public GeneratedOI(RainWorldMod mod, ConfigFile config) : base(mod)
+        public GeneratedOI(BaseUnityPlugin plugin) : base(plugin)
         {
             mode = GenMode.BepInExConfig;
-            bepConfigObj = config;
         }
 
         /// <summary>
@@ -37,13 +36,6 @@ namespace CompletelyOptional
         /// Keeps track on which ctor this OI used
         /// </summary>
         public readonly GenMode mode;
-
-        /// <summary>
-        /// BaseUnityPlugin.Config
-        /// </summary>
-        public ConfigFile bepConfig => bepConfigObj as ConfigFile;
-
-        protected readonly object bepConfigObj;
 
         public string modDescription;
 
@@ -360,15 +352,6 @@ namespace CompletelyOptional
                 }
             }
             bepConfig.Save();
-            return true;
-        }
-
-        /// <summary>
-        /// Reloads Config from BepInEx's cfg format. One of the bridges between Config Machine and BepInEx.Config
-        /// </summary>
-        internal bool LoadBepConfig()
-        {
-            bepConfig.Reload();
             return true;
         }
 

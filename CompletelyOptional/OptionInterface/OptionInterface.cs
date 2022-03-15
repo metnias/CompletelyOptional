@@ -1,4 +1,5 @@
 using BepInEx;
+using BepInEx.Configuration;
 using CompletelyOptional;
 using System;
 using System.Collections.Generic;
@@ -84,38 +85,20 @@ namespace OptionalUI
         private const string rawConfigDef = "Unconfiguable";
 
         /// <summary>
+        /// BaseUnityPlugin.Config
+        /// </summary>
+        public ConfigFile bepConfig => (rwMod.mod as BaseUnityPlugin).Config;
+
+        /// <summary>
         /// This will be called by ConfigMachine manager automatically.
         /// If you called this directly, also call <see cref="ShowConfig"/> to apply them in UI.
         /// </summary>
-        internal bool LoadConfig()
+        internal void LoadConfig()
         {
             config = new Dictionary<string, string>();
             rawConfig = rawConfigDef;
-            if (!Configurable()) { return true; }
-            if (this is GeneratedOI && (this as GeneratedOI).mode == GeneratedOI.GenMode.BepInExConfig)
-            { return (this as GeneratedOI).LoadBepConfig(); }
-            if (!directory.Exists) { return false; } //directory.Create();
-
-            string path = string.Concat(directory.FullName, "config.json");
-            if (File.Exists(path)) { this.rawConfig = File.ReadAllText(path, Encoding.UTF8); }
-            else { return false; }
-
-            Dictionary<string, object> loadedConfig = MiniJsonExtensions.dictionaryFromJson(this.rawConfig);
-            foreach (KeyValuePair<string, object> item in loadedConfig)
-            { config.Add(item.Key, item.Value.ToString()); }
-
-            try
-            { ConfigOnChange(); }
-            catch (Exception e)
-            {
-                ComOptPlugin.LogWarning("Lost backward compatibility in Config! Reset Config.");
-                ComOptPlugin.LogWarning(new LoadDataException(e.ToString()).ToString());
-                File.Delete(path);
-                config = new Dictionary<string, string>();
-                rawConfig = rawConfigDef;
-                return false;
-            }
-            return true;
+            if (!Configurable()) { return; }
+            bepConfig.Reload();
         }
 
         /// <summary>

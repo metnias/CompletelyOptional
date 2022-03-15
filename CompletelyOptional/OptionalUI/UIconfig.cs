@@ -1,5 +1,6 @@
 using CompletelyOptional;
 using UnityEngine;
+using BepInEx.Configuration;
 
 namespace OptionalUI
 {
@@ -21,7 +22,7 @@ namespace OptionalUI
         /// <param name="size">Size</param>
         /// <param name="key">Key: this must be unique. Setting this to '_' will make this <see cref="cosmetic"/></param>
         /// <param name="defaultValue">Default Value</param>
-        public UIconfig(Vector2 pos, Vector2 size, string key, string defaultValue = "") : base(pos, size)
+        public UIconfig(ConfigDefinition config, Vector2 pos, Vector2 size, string defaultValue = "") : base(pos, size)
         {
             if (string.IsNullOrEmpty(key)) { this.cosmetic = true; this.key = "_"; }
             else if (key.Substring(0, 1) == "_") { this.cosmetic = true; this.key = key; }
@@ -38,7 +39,7 @@ namespace OptionalUI
         /// <param name="rad">Radius</param>
         /// <param name="key">Key: this must be unique</param>
         /// <param name="defaultValue">Default Value</param>
-        public UIconfig(Vector2 pos, float rad, string key, string defaultValue = "") : base(pos, rad)
+        public UIconfig(ConfigDefinition config, Vector2 pos, float rad, string defaultValue = "") : base(pos, rad)
         {
             if (string.IsNullOrEmpty(key)) { this.cosmetic = true; this.key = "_"; }
             else if (key.Substring(0, 1) == "_") { this.cosmetic = true; this.key = key; }
@@ -47,6 +48,11 @@ namespace OptionalUI
             this.defaultValue = this._value;
             this.bumpBehav = new BumpBehaviour(this);
         }
+
+        /// <summary>
+        /// <see cref="ConfigDefinition"/> which this <see cref="UIconfig"/> is connected to
+        /// </summary>
+        public readonly ConfigDefinition cfgDef;
 
         /// <summary>
         /// This is set in ctor.
