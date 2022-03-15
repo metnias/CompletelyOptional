@@ -126,6 +126,40 @@ namespace OptionalUI
 
         private int inputDelay;
 
+        /// <summary>
+        /// Standard method that accepts keyboard typing
+        /// </summary>
+        /// <param name="inputDelay"></param>
+        /// <returns>null: no key, \b: backspace, \n or \r: enter/return, else: letter or digit</returns>
+        public static char? AcceptTyping(ref int inputDelay)
+        {
+            ConfigContainer.ForceMenuMouseMode(true); // because pressing Z causes exiting MouseMode
+            int lastInputDelay = inputDelay;
+            foreach (char c in Input.inputString)
+            {
+                if (c == '\b')
+                {
+                    inputDelay++;
+                    if (inputDelay <= 1 || inputDelay > ModConfigMenu.DASinit && inputDelay % ModConfigMenu.DASdelay == 1)
+                    { return c; }
+                    break;
+                }
+                else if ((c == '\n') || (c == '\r')) // enter/return
+                {
+                    return c;
+                }
+                else if (char.IsLetterOrDigit(c) || c == ' ')
+                {
+                    inputDelay++;
+                    if (inputDelay <= 1 || inputDelay > ModConfigMenu.DASinit && inputDelay % ModConfigMenu.DASdelay == 1)
+                    { return c; }
+                    break;
+                }
+            }
+            if (lastInputDelay == inputDelay) { inputDelay = 0; } // Key not pressed
+            return null;
+        }
+
         public override void Update()
         {
             this.rect.Update();
@@ -140,14 +174,11 @@ namespace OptionalUI
                 cursorAlpha -= 0.05f / frameMulti;
                 if (cursorAlpha < -0.5f) { cursorAlpha = 2f; }
 
-                int lastInputDelay = inputDelay;
-                foreach (char c in Input.inputString)
+                char? c = AcceptTyping(ref inputDelay);
+                if (c.HasValue)
                 {
-                    // ComOptPlugin.LogInfo($"cA({cursorAlpha:F2}) input: {c}");
-                    if (c == '\b')
+                    if (c.Value == '\b')
                     {
-                        inputDelay++;
-                        if (inputDelay > 1 && (inputDelay <= ModConfigMenu.DASinit || inputDelay % ModConfigMenu.DASdelay != 1)) { break; }
                         cursorAlpha = 2.5f; this.bumpBehav.flash = 2.5f;
                         if (this.value.Length > 0)
                         {
@@ -155,24 +186,18 @@ namespace OptionalUI
                             PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
                             OnChange();
                         }
-                        break;
                     }
-                    else if ((c == '\n') || (c == '\r')) // enter/return
+                    else if ((c.Value == '\n') || (c.Value == '\r')) // enter/return
                     {
                         KeyboardOn = false;
                         PlaySound(SoundID.MENU_Checkbox_Check);
-                        break;
                     }
                     else
                     {
-                        inputDelay++;
-                        if (inputDelay > 1 && (inputDelay <= ModConfigMenu.DASinit || inputDelay % ModConfigMenu.DASdelay != 1)) { break; }
                         cursorAlpha = 2.5f; this.bumpBehav.flash = 2.5f;
-                        this.value += c;
-                        break;
+                        this.value += c.Value;
                     }
                 }
-                if (lastInputDelay == inputDelay) { inputDelay = 0; } // Key not pressed
             }
             else { cursorAlpha = 0f; inputDelay = 0; }
             if (Input.GetMouseButton(0) && !mouseDown)

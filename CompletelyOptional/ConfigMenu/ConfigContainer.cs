@@ -498,6 +498,10 @@ namespace CompletelyOptional
 
         internal bool allowFocusMove;
 
+        public static void ForceMenuMouseMode(bool? value) => instance.forceMouseMode = value;
+
+        private bool? forceMouseMode = null;
+
         private bool lastPressZ;
 
         // Called by ModConfigMenu.Update
@@ -508,7 +512,9 @@ namespace CompletelyOptional
             if (menu.ForceNoMouseMode) { focusedElement = null; return; } // == FreezeMenuFunctions
 
             bool ctrlKey = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
-            if (ctrlKey) { menu.manager.menuesMouseMode = true; }
+            if (ctrlKey) { forceMouseMode = true; }
+            if (forceMouseMode.HasValue) { menu.manager.menuesMouseMode = forceMouseMode.Value; }
+            forceMouseMode = null;
 
             UIelement focusedElementBeforeUpdate = focusedElement;
             allowFocusMove = true;
@@ -534,6 +540,8 @@ namespace CompletelyOptional
             }
 
             #endregion UIelement.Update
+
+            if (forceMouseMode.HasValue) { menu.manager.menuesMouseMode = forceMouseMode.Value; }
 
             #region FocusManage
 

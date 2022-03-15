@@ -277,35 +277,27 @@ namespace OptionalUI
         protected void SearchModeUpdate()
         {
             // Input
-            int lastInputDelay = inputDelay;
-            foreach (char c in Input.inputString)
+            char? c = OpTextBox.AcceptTyping(ref inputDelay);
+            if (c.HasValue)
             {
-                if (c == '\b')
+                if (c.Value == '\b')
                 {
                     if (this.searchQuery.Length > 0)
                     {
-                        inputDelay++;
-                        if (inputDelay > 1 && (inputDelay <= ModConfigMenu.DASinit || inputDelay % ModConfigMenu.DASdelay != 1)) { break; }
                         this.searchQuery = (this.searchQuery.Substring(0, this.searchQuery.Length - 1));
                         this.searchIdle = -1;
                         PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
                     }
-                    break;
                 }
-                else if ((c == '\n') || (c == '\r')) // enter/return
-                { continue; }
-                else
+                else if (char.IsLetterOrDigit(c.Value) || c == ' ')
                 {
-                    inputDelay++;
-                    if (inputDelay > 1 && (inputDelay <= ModConfigMenu.DASinit || inputDelay % ModConfigMenu.DASdelay != 1)) { break; }
                     this.bumpBehav.flash = 2.5f;
                     this.searchQuery += c;
                     this.searchIdle = -1;
                     PlaySound(SoundID.MENU_Checkbox_Uncheck);
-                    break;
                 }
             }
-            if (lastInputDelay == inputDelay) { inputDelay = 0; } // Key not pressed
+
             if (inputDelay == 0 && this.searchIdle < this.searchDelay)
             {
                 this.searchIdle++;
