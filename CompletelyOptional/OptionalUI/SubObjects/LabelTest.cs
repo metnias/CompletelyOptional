@@ -179,6 +179,7 @@ namespace OptionalUI
             FFont font = Futile.atlasManager.GetFontWithName(GetFont(bigText, ascii));
             string[] lines = text.Replace("\r\n", "\n").Split('\n');
             StringBuilder ret = new StringBuilder();
+            if (width > CharMean(bigText, ascii) * 20f) { width -= CharMean(bigText, ascii); }
             for (int i = 0; i < lines.Length; i++)
             {
                 ret.Append(WrapLine(lines[i]));

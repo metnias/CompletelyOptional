@@ -94,21 +94,20 @@ namespace OptionalUI
                         this.labels[b].x = this.size.x;
                         break;
                 }
-                float sizeY = ln * lineHeight;
                 num += ln;
                 switch (this.verticalAlignment)
-                { // Needs testing
+                {
                     default:
                     case LabelVAlignment.Top:
-                        this.labels[b].y = this.size.y / 2f + sizeY - num * lineHeight;
+                        this.labels[b].y = this.size.y + (ln / 2f - num) * lineHeight;
                         break;
 
-                    case LabelVAlignment.Bottom:
-                        this.labels[b].y = this.size.y / 2f + lh - num * lineHeight;
+                    case LabelVAlignment.Bottom: // lh - num * lineHeight + (ln * lineHeight) / 2f
+                        this.labels[b].y = lh + (ln / 2f - num) * lineHeight;
                         break;
 
                     case LabelVAlignment.Center:
-                        this.labels[b].y = this.size.y / 2f + (sizeY + lh) / 2f - num * lineHeight;
+                        this.labels[b].y = (this.size.y + lh) / 2f + (ln / 2f - num) * lineHeight;
                         break;
                 }
             }

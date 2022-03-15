@@ -223,7 +223,7 @@ namespace OptionalUI
 
             float lh = LabelTest.LineHeight(_bigText, isVFont) * GetLineCount();
             switch (this._verticalAlignment)
-            { // Needs testing
+            {
                 default:
                 case LabelVAlignment.Center:
                     this.label.y = this.size.y / 2f;
