@@ -101,6 +101,36 @@ namespace OptionalUI
             bepConfig.Reload();
         }
 
+        [Obsolete]
+        internal bool RegacyLoadConfig()
+        {
+            config = new Dictionary<string, string>();
+            rawConfig = rawConfigDef;
+            if (!Configurable()) { return true; }
+            if (!directory.Exists) { return false; } //directory.Create();
+
+            string path = string.Concat(directory.FullName, "config.json");
+            if (File.Exists(path)) { this.rawConfig = File.ReadAllText(path, Encoding.UTF8); }
+            else { return false; }
+
+            Dictionary<string, object> loadedConfig = MiniJsonExtensions.dictionaryFromJson(this.rawConfig);
+            foreach (KeyValuePair<string, object> item in loadedConfig)
+            { config.Add(item.Key, item.Value.ToString()); }
+
+            try
+            { ConfigOnChange(); }
+            catch (Exception e)
+            {
+                Debug.Log("CompletelyOptional) Lost backward compatibility in Config! Reset Config.");
+                Debug.Log(new LoadDataException(e.ToString()));
+                File.Delete(path);
+                config = new Dictionary<string, string>();
+                rawConfig = rawConfigDef;
+                return false;
+            }
+            return true;
+        }
+
         /// <summary>
         /// Displays loaded config to <see cref="UIconfig"/>s. It's called automatically.
         /// </summary>
@@ -157,10 +187,14 @@ namespace OptionalUI
             return displayedConfig;
         }
 
+        internal void SaveConfig()
+        {
+        }
+
         /// <summary>
         /// Saving Config. It's called automatically.
         /// </summary>
-        internal bool SaveConfig(Dictionary<string, string> newConfig)
+        internal bool RegacySaveConfig(Dictionary<string, string> newConfig)
         {
             if (!Configurable()) { return true; }
             if (this is GeneratedOI && (this as GeneratedOI).mode == GeneratedOI.GenMode.BepInExConfig)

@@ -427,7 +427,7 @@ namespace CompletelyOptional
         public static void AddBasicProfile(OpTab tab, RainWorldMod mod)
         {
             tab.AddItems(new OpLabel(new Vector2(100f, 550f), new Vector2(400f, 50f), mod.ModID, FLabelAlignment.Center, true));
-            tab.AddItems(new OpLabel(new Vector2(50f, 500f), new Vector2(100f, 20f), InternalTranslator.Translate("Version: <ModVersion>").Replace("<ModVersion>", mod.Version), FLabelAlignment.Left));
+            tab.AddItems(new OpLabel(new Vector2(50f, 500f), new Vector2(100f, 20f), InternalTranslator.Translate("Version: <ModVersion>").Replace("<ModVersion>", mod.version), FLabelAlignment.Left));
 
             if (mod.author != RainWorldMod.authorNull)
             {
@@ -457,7 +457,7 @@ namespace CompletelyOptional
         public static void AddBasicProfile(OpScrollBox box, RainWorldMod mod)
         {
             box.AddItems(new OpLabel(new Vector2(100f, box.contentSize - 600f + 550f), new Vector2(400f, 50f), mod.ModID, FLabelAlignment.Center, true));
-            box.AddItems(new OpLabel(new Vector2(50f, box.contentSize - 600f + 500f), new Vector2(100f, 20f), InternalTranslator.Translate("Version: <ModVersion>").Replace("<ModVersion>", mod.Version), FLabelAlignment.Left));
+            box.AddItems(new OpLabel(new Vector2(50f, box.contentSize - 600f + 500f), new Vector2(100f, 20f), InternalTranslator.Translate("Version: <ModVersion>").Replace("<ModVersion>", mod.version), FLabelAlignment.Left));
 
             if (mod.author != RainWorldMod.authorNull)
             {

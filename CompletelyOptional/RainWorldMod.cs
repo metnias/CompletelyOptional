@@ -18,7 +18,8 @@ namespace OptionalUI
             this.ModID = id;
             this.author = authorNull;
             this.description = authorNull;
-            this.Version = authorNull;
+            this.version = authorNull;
+            this.license = authorNull;
         }
 
         public RainWorldMod(BaseUnityPlugin plugin)
@@ -29,7 +30,8 @@ namespace OptionalUI
             this.ModID = plugin.Info.Metadata.Name.Trim();
             this.author = authorNull;
             this.description = authorNull;
-            this.Version = plugin.Info.Metadata.Version.ToString().Trim();
+            this.version = plugin.Info.Metadata.Version.ToString().Trim();
+            this.license = authorNull;
             try
             {
                 Assembly assm = Assembly.GetAssembly(plugin.GetType());
@@ -45,20 +47,24 @@ namespace OptionalUI
                 {
                     description = descAttr.Description.Trim();
                 }
+                if (assm.GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false).FirstOrDefault() is AssemblyCopyrightAttribute descCpyr && !string.IsNullOrEmpty(descCpyr.Copyright))
+                {
+                    license = descCpyr.Copyright.Trim();
+                }
             }
             catch (Exception) { }
         }
 
         public readonly Type type;
-        public string ModID, author, Version, description;
+        public readonly string ModID, author, version, description, license;
         public readonly object mod;
 
-        // public PartialityMod PartialityMod => mod as PartialityMod;
+        public BaseUnityPlugin plugin => mod as BaseUnityPlugin;
         public const string authorNull = "_NULL_";
 
-        public enum Type
+        public enum Type : int
         {
-            Dummy,
+            Dummy = -1,
             BepInExPlugin
         }
     }

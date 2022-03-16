@@ -193,9 +193,9 @@ namespace CompletelyOptional
                 greyedOut = type == ItfType.Blank;
 
                 this.text = itf.rwMod.ModID;
-                if (itf.rwMod.Version != RainWorldMod.authorNull)
+                if (itf.rwMod.version != RainWorldMod.authorNull)
                 {
-                    this.labelVer = FLabelCreate(itf.rwMod.Version);
+                    this.labelVer = FLabelCreate(itf.rwMod.version);
                     this.myContainer.AddChild(this.labelVer);
                     this.labelVer.y = this.label.y;
                     this.labelVer.alignment = FLabelAlignment.Right;

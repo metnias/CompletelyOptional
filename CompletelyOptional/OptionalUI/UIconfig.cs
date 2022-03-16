@@ -1,6 +1,7 @@
 using CompletelyOptional;
 using UnityEngine;
 using BepInEx.Configuration;
+using System;
 
 namespace OptionalUI
 {
@@ -18,15 +19,14 @@ namespace OptionalUI
         /// <summary>
         /// Rectangular <see cref="UIconfig"/>.
         /// </summary>
+        /// <param name="config"><see cref="ConfigEntryBase.Definition"/> which this UIconfig is connected to.</param>
         /// <param name="pos">BottomLeft Position</param>
         /// <param name="size">Size</param>
-        /// <param name="key">Key: this must be unique. Setting this to '_' will make this <see cref="cosmetic"/></param>
         /// <param name="defaultValue">Default Value</param>
         public UIconfig(ConfigDefinition config, Vector2 pos, Vector2 size, string defaultValue = "") : base(pos, size)
         {
-            if (string.IsNullOrEmpty(key)) { this.cosmetic = true; this.key = "_"; }
-            else if (key.Substring(0, 1) == "_") { this.cosmetic = true; this.key = key; }
-            else { this.cosmetic = false; this.key = key; }
+            if (config == null) { this.cosmetic = true; cfgDef = null; }
+            else { this.cosmetic = false; cfgDef = config; }
             this._value = defaultValue;
             this.defaultValue = this._value;
             this.bumpBehav = new BumpBehaviour(this);
@@ -35,15 +35,14 @@ namespace OptionalUI
         /// <summary>
         /// Circular <see cref="UIconfig"/>.
         /// </summary>
+        /// <param name="config"><see cref="ConfigEntryBase.Definition"/> which this UIconfig is connected to.</param>
         /// <param name="pos">BottomLeft Position (NOT center!)</param>
         /// <param name="rad">Radius</param>
-        /// <param name="key">Key: this must be unique</param>
         /// <param name="defaultValue">Default Value</param>
         public UIconfig(ConfigDefinition config, Vector2 pos, float rad, string defaultValue = "") : base(pos, rad)
         {
-            if (string.IsNullOrEmpty(key)) { this.cosmetic = true; this.key = "_"; }
-            else if (key.Substring(0, 1) == "_") { this.cosmetic = true; this.key = key; }
-            else { this.cosmetic = false; this.key = key; }
+            if (config == null) { this.cosmetic = true; cfgDef = null; }
+            else { this.cosmetic = false; cfgDef = config; }
             this._value = defaultValue;
             this.defaultValue = this._value;
             this.bumpBehav = new BumpBehaviour(this);
@@ -78,9 +77,9 @@ namespace OptionalUI
         public BumpBehaviour bumpBehav { get; private set; }
 
         /// <summary>
-        /// Unique key for this <see cref="UIconfig"/>
+        /// Unique key for this <see cref="UIconfig"/>.
         /// </summary>
-        public readonly string key;
+        public string key => cosmetic ? this.GetType().Name : cfgDef.Key;
 
         /// <summary>
         /// If this is true, this <see cref="UIconfig"/> will be greyed out and can't be interacted.

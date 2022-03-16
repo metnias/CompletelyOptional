@@ -14,7 +14,7 @@ namespace CompletelyOptional
         {
             author = "topicular",
             description = "Internal OI for testing new features of Config Machine",
-            Version = ComOptPlugin.PLUGIN_VERSION
+            version = ComOptPlugin.PLUGIN_VERSION
         }, Reason.TestOI)
         {
         }
