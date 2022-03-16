@@ -231,7 +231,7 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Event that's called every frame. Do not call this by your own.
+        /// Event that's called every frame. Do note that this is called right after <see cref="UIelement.Update"/>s in currently active <see cref="OpTab"/> are called.
         /// </summary>
         public virtual void Update()
         {

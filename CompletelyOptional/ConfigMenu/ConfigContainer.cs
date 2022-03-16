@@ -71,7 +71,7 @@ namespace CompletelyOptional
             activeTab.Activate();
         }
 
-        internal void ChangeActiveMod(int newIndex)
+        internal static void ChangeActiveMod(int newIndex)
         {
             // Close
             activeTab?.Deactivate();
@@ -311,6 +311,8 @@ namespace CompletelyOptional
 
         internal static int FindItfIndex(RainWorldMod rwMod) => Array.IndexOf(OptItfID, GenerateID(rwMod));
 
+        internal static int FindItfIndex(string generatedID) => Array.IndexOf(OptItfID, generatedID);
+
         /// <summary>
         /// ABC index of ModIDs
         /// </summary>
@@ -498,8 +500,6 @@ namespace CompletelyOptional
 
             #region UIelement.Update
 
-            try { activeInterface.Update(); }
-            catch (Exception ex) { InterfaceUpdateError(false, ex); }
             if (holdElement)
             {
                 try
@@ -515,6 +515,8 @@ namespace CompletelyOptional
                 try { activeTab.Update(); }
                 catch (Exception ex) { InterfaceUpdateError(true, ex); }
             }
+            try { activeInterface.Update(); }
+            catch (Exception ex) { InterfaceUpdateError(false, ex); }
 
             #endregion UIelement.Update
 

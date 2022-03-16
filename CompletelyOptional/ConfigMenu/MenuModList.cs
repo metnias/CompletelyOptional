@@ -137,7 +137,7 @@ namespace CompletelyOptional
             if (element is ModButton)
             { // Switch Mod
                 if (index != ConfigContainer.activeItfIndex)
-                { PlaySound(SoundID.MENU_MultipleChoice_Clicked); cfgContainer.ChangeActiveMod(index); }
+                { PlaySound(SoundID.MENU_MultipleChoice_Clicked); ConfigContainer.ChangeActiveMod(index); }
                 else { PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked); }
             }
             else if (element is AlphabetButton)
@@ -150,7 +150,7 @@ namespace CompletelyOptional
             {
                 if (index == 0)
                 { // Switch Mod to InternalOI_Stats
-                    cfgContainer.ChangeActiveMod(0);
+                    ConfigContainer.ChangeActiveMod(0);
                 }
                 else
                 { // Scroll Up(-1) or Down(+1)

@@ -109,14 +109,14 @@ namespace CompletelyOptional
         /// <summary>
         /// Send Menu description text to display
         /// </summary>
-        public void ShowDescription(string text) => this.description = text;
+        internal void ShowDescription(string text) => this.description = text;
 
         #region Alert
 
         /// <summary>
         /// Send Menu alert text to display
         /// </summary>
-        public void ShowAlert(string text) => this.alertText = text;
+        internal void ShowAlert(string text) => this.alertText = text;
 
         private readonly MenuLabel alertLabel;
         private string alertText = "";
