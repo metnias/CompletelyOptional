@@ -127,7 +127,7 @@ namespace OptionalUI
             this.cursor.color = Color.Lerp(Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White), this.colorText, this.bumpBehav.Sin());
             this.cursor.alpha = Mathf.Clamp01(Mathf.Lerp(lastCursorAlpha, cursorAlpha, timeStacker));
             this.cursor.x = IsUpdown ? this.size.x - (LabelTest.GetWidth(this.label.text) + LabelTest.CharMean(false) + 35f)
-                : 10f + LabelTest.GetWidth(this.label.text) + LabelTest.CharMean(false);
+                : 5f + LabelTest.GetWidth(this.label.text) + LabelTest.CharMean(false);
             this.cursor.y = this.size.y * 0.5f - 7f;
 
             this.bumpBehav.col = this.col;
