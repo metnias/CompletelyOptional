@@ -118,47 +118,22 @@ namespace CompletelyOptional
 
             #region Load
 
-            BaseUnityPlugin[] plugins = UnityEngine.Object.FindObjectsOfType<BaseUnityPlugin>();
-            foreach (BaseUnityPlugin plugin in plugins)
+            foreach (KeyValuePair<string, PluginInfo> pair in BepInEx.Bootstrap.Chainloader.PluginInfos)
             {
+                BaseUnityPlugin plugin = pair.Value.Instance;
+                RainWorldMod rwMod = new RainWorldMod(plugin);
+                if (blackList.Contains(rwMod.ModID) || !char.IsLetter(rwMod.ModID[0])) { continue; }
+                if (rwMod.ModID == "SlugBase") { OptionInterface.SlugBaseExists = true; }
+
                 OptionInterface oi;
 
-                // Load OI
-                try
+                // See if registered
+                if (!MachineConnector.registeredOIs.TryGetValue(GenerateID(rwMod), out oi))
                 {
-                    var method = plugin.GetType().GetMethod("LoadOI");
-                    if (method == null || method.GetParameters().Length > 0 || method.ContainsGenericParameters)
-                    {
-                        // Mod didn't attempt to interface with CompletelyOptional, don't bother logging it.
-                        oi = new InternalOI_Blank(plugin);
-                    }
-                    else if (method.Invoke(plugin, null) is OptionInterface itf)
-                    {
-                        oi = itf;
-                        //Your code
-                        ComOptPlugin.LogInfo($"Loaded OptionInterface from {oi.rwMod.ModID} (type: {oi.GetType()})");
-                    }
-                    else
-                    {
-                        oi = new InternalOI_Blank(plugin);
-                        ComOptPlugin.LogInfo($"{oi.rwMod.ModID} did not return an OptionInterface in LoadOI.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    oi = new InternalOI_Blank(plugin);
-                    if (blackList.Contains(oi.rwMod.ModID) || !char.IsLetter(oi.rwMod.ModID[0]))
-                    { continue; }
-
-                    ComOptPlugin.LogWarning($"{oi.rwMod.ModID} threw an exception in LoadOI: {ex.Message}");
-                }
-                if (blackList.Contains(oi.rwMod.ModID) || !char.IsLetter(oi.rwMod.ModID[0])) { continue; }
-                if (oi.rwMod.ModID == "SlugBase") { OptionInterface.SlugBaseExists = true; }
-
-                if (oi is InternalOI && plugin.Config.Keys.Count > 0)
-                {
-                    // Use BepInEx Configuration
-                    oi = new GeneratedOI(plugin);
+                    if (plugin.Config.Keys.Count > 0) // Generate OI automatically
+                    { oi = new GeneratedOI(plugin); }
+                    else // Doesn't support CM
+                    { oi = new InternalOI_Blank(plugin); }
                 }
 
                 // Initialize
@@ -316,6 +291,8 @@ namespace CompletelyOptional
             menuTab.Unload();
 
             #endregion UnloadItfs
+
+            instance = null;
         }
 
         /// <summary>

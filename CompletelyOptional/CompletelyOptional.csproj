@@ -58,6 +58,7 @@
     <None Include="Old_15\ConfigMenu.cs" />
     <Compile Include="ConfigMenu\ConfigTabController.cs" />
     <Compile Include="EnumExt_ComOpt.cs" />
+    <Compile Include="OptionInterface\ConfigConnector.cs" />
     <Compile Include="OptionInterface\InternalOI_Blank.cs" />
     <Compile Include="OptionInterface\InternalOI_Error.cs" />
     <Compile Include="OptionInterface\InternalOI_NoMod.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="OptionalUI\SubObjects\FTexture.cs" />
     <Compile Include="OptionalUI\SubObjects\MenuColorEffect.cs" />
     <Compile Include="OptionalUI\SubObjects\Playlist.cs" />
+    <Compile Include="OptionInterface\MachineConnector.cs" />
     <Compile Include="OptionInterface\OptionInterface_DataAPI.cs" />
     <Compile Include="OptionInterface\OptionInterface_Translator.cs" />
     <Compile Include="UniClipboard.cs" />

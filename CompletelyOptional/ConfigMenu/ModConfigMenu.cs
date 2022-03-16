@@ -252,6 +252,7 @@ namespace CompletelyOptional
         {
             cfgContainer.ShutdownConfigContainer();
             base.ShutDownProcess();
+            instance = null;
         }
 
         public override void Singal(MenuObject sender, string message)
