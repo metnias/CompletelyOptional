@@ -1,8 +1,8 @@
 using CompletelyOptional;
-using Menu;
 using RWCustom;
 using System;
 using UnityEngine;
+using BepInEx.Configuration;
 
 namespace OptionalUI
 {
@@ -17,16 +17,16 @@ namespace OptionalUI
         /// The fixedSize is 150x150, and output is in form of Hex. (See also <seealso cref="MenuColorEffect.HexToColor"/>)
         /// </summary>
         /// <exception cref="ElementFormatException">Thrown when defaultHex is not a proper Hex code</exception>
+        /// <param name="config"><see cref="ConfigEntry{T}"/> which this UIconfig is connected to. Its <see cref="ConfigEntryBase.SettingType"/> must be <see cref="bool"/>.</param>
         /// <param name="pos">BottomLeft Position</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
-        /// <param name="defaultHex">default Hex. (See also <seealso cref="MenuColorEffect.ColorToHex"/>)</param>
-        public OpColorPicker(Vector2 pos, string key, string defaultHex = "FFFFFF") : base(pos, new Vector2(150f, 150f), key, defaultHex)
+        /// <param name="cosmeticHex">Default Hex for <see cref="UIconfig.cosmetic"/>. (See also <seealso cref="MenuColorEffect.ColorToHex"/>)</param>
+        public OpColorPicker(ConfigEntry<string> config, Vector2 pos, string cosmeticHex = "FFFFFF") : base(config, pos, new Vector2(150f, 150f), cosmeticHex)
         {
             ctor = false; //to prevent OnChange from running before ready
             this.fixedSize = new Vector2(150f, 150f);
             mod = 0;
-            if (!MenuColorEffect.IsStringHexColor(defaultHex))
-            { throw new ElementFormatException(this, "OpColorPicker Error: DefaultHex is not a proper value.\nMust be in form of \'FFFFFF\'.", key); }
+            if (!MenuColorEffect.IsStringHexColor(defaultValue))
+            { throw new ElementFormatException(this, "OpColorPicker Error: DefaultValue is not a proper value.\nMust be in form of \'FFFFFF\'.", key); }
 
             this.PaletteHex = OpColorPicker.PaletteHexDefault;
             this.PaletteName = OpColorPicker.PaletteNameDefault;
@@ -104,12 +104,9 @@ namespace OptionalUI
             };
             this.myContainer.AddChild(this.cdis1);
 
-            this._description = "";
             ctor = true;
-
             this._value = "XXXXXX";
-            this.value = defaultHex;
-            this.defaultValue = this.value;
+            this.value = defaultValue;
 
             //ComOptPlugin.LogInfo(string.Concat(key, ") dH: ", defaultHex, "/ v: ", this.value, "/ rgb: ", r, ",", g, ",", b));
         }
@@ -152,7 +149,7 @@ namespace OptionalUI
             set { _description = value; }
         }
 
-        private string _description;
+        private string _description = "";
 
         protected internal override void Reactivate()
         {

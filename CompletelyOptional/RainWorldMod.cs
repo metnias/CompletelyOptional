@@ -56,7 +56,7 @@ namespace OptionalUI
         }
 
         public readonly Type type;
-        public readonly string ModID, author, version, description, license;
+        public string ModID, author, version, description, license;
         public readonly object mod;
 
         public BaseUnityPlugin plugin => mod as BaseUnityPlugin;

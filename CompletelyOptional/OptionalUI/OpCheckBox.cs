@@ -2,6 +2,7 @@ using CompletelyOptional;
 using OptionalUI.ValueTypes;
 using RWCustom;
 using UnityEngine;
+using BepInEx.Configuration;
 
 namespace OptionalUI
 {
@@ -13,14 +14,12 @@ namespace OptionalUI
         /// <summary>
         /// Simple CheckBox which returns "true" of "false". The fixedSize is 24x24.
         /// </summary>
+        /// <param name="config"><see cref="ConfigEntry{T}"/> which this UIconfig is connected to.</param>
         /// <param name="pos">LeftBottom of Position</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
-        /// <param name="defaultBool">default bool</param>
-        public OpCheckBox(Vector2 pos, string key, bool defaultBool = false) : base(pos, new Vector2(24f, 24f), key, "false")
+        /// <param name="cosmeticBool">default bool for <see cref="UIconfig.cosmetic"/>.</param>
+        public OpCheckBox(ConfigEntry<bool> config, Vector2 pos, bool cosmeticBool = false) : base(config, pos, new Vector2(24f, 24f), cosmeticBool)
         {
             this.fixedSize = new Vector2(24f, 24f);
-            this._value = defaultBool ? "true" : "false";
-            this.defaultValue = this.value;
 
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
@@ -34,11 +33,11 @@ namespace OptionalUI
         /// <summary>
         /// Simple CheckBox which returns "true" of "false". The fixedSize is 24x24.
         /// </summary>
+        /// <param name="config"><see cref="ConfigEntry{T}"/> which this UIconfig is connected to. Its <see cref="ConfigEntryBase.SettingType"/> must be <see cref="bool"/>.</param>
         /// <param name="posX">Left of Position</param>
         /// <param name="posY">Bottom of Position</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="defaultBool">default bool</param>
-        public OpCheckBox(float posX, float posY, string key, bool defaultBool = false) : this(new Vector2(posX, posY), key, defaultBool)
+        public OpCheckBox(ConfigEntry<bool> config, float posX, float posY, bool defaultBool = false) : this(config, new Vector2(posX, posY), defaultBool)
         { }
 
         /// <summary>

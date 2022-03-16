@@ -1,4 +1,5 @@
-﻿using CompletelyOptional;
+﻿using BepInEx.Configuration;
+using CompletelyOptional;
 using OptionalUI.ValueTypes;
 using RWCustom;
 using System;
@@ -13,9 +14,8 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">LeftBottom <see cref="UIelement.pos"/>.</param>
         /// <param name="sizeX">Horizontal size (min = 40 pxl). The height is fixed to 30 pxl.</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
-        /// <param name="defaultInt">Default int value</param>
-        public OpUpdown(Vector2 pos, float sizeX, string key, int defaultInt) : base(pos, sizeX, key, defaultInt.ToString(), Accept.Int)
+        /// <param name="cosmeticInt">Default int value</param>
+        public OpUpdown(ConfigEntry<int> config, Vector2 pos, float sizeX, int cosmeticInt = 0) : base(config, pos, sizeX, cosmeticInt)
         {
             this.Initialize();
             // throw new NotImplementedException("OpUpdown might come to you, in future! If you're seeing this error as an user, download the latest ConfigMachine.");
@@ -26,10 +26,9 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">LeftBottom <see cref="UIelement.pos"/>.</param>
         /// <param name="sizeX">Horizontal size (min = 40 pxl). The height is fixed to 30 pxl.</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
-        /// <param name="defaultFloat">Defalut float value</param>
+        /// <param name="cosmeticFloat">Defalut float value</param>
         /// <param name="decimalNum">The number of decimal numbers after decimal point. 0 - 9. (e.g. decimalNum 1 => XX.X)</param>
-        public OpUpdown(Vector2 pos, float sizeX, string key, float defaultFloat, byte decimalNum = 1) : base(pos, sizeX, key, defaultFloat.ToString(), Accept.Float)
+        public OpUpdown(ConfigEntry<float> config, Vector2 pos, float sizeX, byte decimalNum = 1, float cosmeticFloat = 0f) : base(config, pos, sizeX, cosmeticFloat)
         {
             dNum = Math.Min(decimalNum, (byte)9);
 

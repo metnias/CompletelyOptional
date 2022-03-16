@@ -1,4 +1,5 @@
-﻿using CompletelyOptional;
+﻿using BepInEx.Configuration;
+using CompletelyOptional;
 using RWCustom;
 using System;
 using System.Collections.Generic;
@@ -18,11 +19,10 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">LeftBottom Position of folded <see cref="OpComboBox"/></param>
         /// <param name="width">The box width of folded <see cref="OpComboBox"/>. The height is fixed to 24f.</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="enumType">Type of Enum that you want to get items</param>
-        /// <param name="defaultName"></param>
+        /// <param name="cosmeticName"></param>
         /// <exception cref="ElementFormatException">Thrown when enumType is not <see cref="Enum"/>.</exception>
-        public OpResourceSelector(Vector2 pos, float width, string key, Type enumType, string defaultName = "") : base(pos, width, key, list: null)
+        public OpResourceSelector(ConfigEntry<string> config, Vector2 pos, float width, Type enumType, string cosmeticName = "") : base(config, pos, width, list: null)
         {
             if (!enumType.IsEnum) { throw new ElementFormatException(this, "OpResourceSelector's enumType is not Enum!", key); }
             this.listType = SpecialEnum.Enum;
@@ -38,7 +38,7 @@ namespace OptionalUI
             list.Sort(ListItem.Comparer);
             this.itemList = list.ToArray();
             this.ResetIndex();
-            this.Initialize(defaultName);
+            this.Initialize(!cosmetic ? defaultValue : cosmeticName);
         }
 
         /// <summary>
@@ -46,11 +46,10 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">LeftBottom Position of folded <see cref="OpComboBox"/></param>
         /// <param name="width">The box width of folded <see cref="OpComboBox"/>. The height is fixed to 24f.</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="listType">Type of List that you want to get items</param>
-        /// <param name="defaultName"></param>
+        /// <param name="cosmeticName"></param>
         /// <exception cref="ElementFormatException">Thrown when you used <see cref="SpecialEnum.Enum"/></exception>
-        public OpResourceSelector(Vector2 pos, float width, string key, SpecialEnum listType, string defaultName = "") : base(pos, width, key, list: null)
+        public OpResourceSelector(ConfigEntry<string> config, Vector2 pos, float width, SpecialEnum listType, string cosmeticName = "") : base(config, pos, width, list: null)
         {
             List<ListItem> list = new List<ListItem>();
             switch (listType)
@@ -108,7 +107,7 @@ namespace OptionalUI
             this.ResetIndex();
             //ComOptPlugin.LogInfo(listType);
             //for (int i = 0; i < itemList.Length; i++) { ComOptPlugin.LogInfo(string.Concat(i, ": ", itemList[i].name)); }
-            this.Initialize(defaultName);
+            this.Initialize(!cosmetic ? defaultValue : cosmeticName);
         }
 
         public readonly SpecialEnum listType;

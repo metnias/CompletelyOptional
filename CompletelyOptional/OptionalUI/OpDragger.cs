@@ -1,3 +1,4 @@
+using BepInEx.Configuration;
 using CompletelyOptional;
 using OptionalUI.ValueTypes;
 using RWCustom;
@@ -14,9 +15,8 @@ namespace OptionalUI
         /// Dragger to adjust int value in a cramped space. The fixedSize is 24x24.
         /// </summary>
         /// <param name="pos">BottomLeft</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="defaultInt">default value</param>
-        public OpDragger(Vector2 pos, string key, int defaultInt = 0) : base(pos, new Vector2(24f, 24f), key, defaultInt.ToString())
+        public OpDragger(ConfigEntry<int> config, Vector2 pos, int defaultInt = 0) : base(config, pos, new Vector2(24f, 24f), defaultInt.ToString())
         {
             this.fixedSize = new Vector2(24f, 24f);
 
@@ -39,9 +39,8 @@ namespace OptionalUI
         /// </summary>
         /// <param name="posX">Left position.</param>
         /// <param name="posY">Bottom position.</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="defaultInt">default value</param>
-        public OpDragger(float posX, float posY, string key, int defaultInt = 0) : this(new Vector2(posX, posY), key, defaultInt)
+        public OpDragger(ConfigEntry<int> config, float posX, float posY, int defaultInt = 0) : this(config, new Vector2(posX, posY), defaultInt)
         { }
 
         /// <summary>

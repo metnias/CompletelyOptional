@@ -484,7 +484,7 @@ namespace CompletelyOptional
         internal class ListSlider : OpSlider, IAmPartOfModList
         {
             public ListSlider(MenuModList list)
-                : base(new Vector2(458f, 60f), "_ModList_",
+                : base(null, new Vector2(458f, 60f),
                       new IntVector2(0, System.Math.Max(0, ConfigContainer.OptItfs.Length - scrollVisible + 1)),
                       650, true, 0)
             {

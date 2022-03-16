@@ -1,4 +1,5 @@
-﻿using CompletelyOptional;
+﻿using BepInEx.Configuration;
+using CompletelyOptional;
 using OptionalUI.ValueTypes;
 using RWCustom;
 using System;
@@ -16,23 +17,23 @@ namespace OptionalUI
         /// Slider that let you input integer more visually.
         /// </summary>
         /// <param name="pos">LeftBottom position. (excluding extra length in the end of slider line)</param>
-        /// <param name="key">unique keyword for this UIconfig</param>
         /// <param name="range">x = min, y = max</param>
         /// <param name="multi">Length of this slider will be this value * range. minimum 1f. (The width is 30 pxl)</param>
         /// <param name="vertical">if true, the slider will go vertical and the length will be used as height</param>
-        /// <param name="defaultValue">default integer value</param>
-        public OpSlider(Vector2 pos, string key, IntVector2 range, float multi = 1.0f, bool vertical = false, int defaultValue = 0) : base(pos, new Vector2(), key, defaultValue.ToString())
+        /// <param name="cosmeticValue">default integer value</param>
+        public OpSlider(ConfigEntry<int> config, Vector2 pos, IntVector2 range, float multi = 1.0f, bool vertical = false, int cosmeticValue = 0) : base(config, pos, new Vector2(), cosmeticValue)
         {
             this.vertical = vertical;
             this.description = InternalTranslator.Translate(this.vertical ?
                 "Hold your mouse button and Drag up/down to adjust value" : "Hold your mouse button and Drag left/right to adjust value");
             this.min = range.x; this.max = range.y;
             int r = this.max - this.min + 1;
-            this.wheelTick = r > 5 ? Math.Max(Mathf.CeilToInt(r / 12f), 4) : 1;
+            this.mousewheelTick = r > 5 ? Math.Max(Mathf.CeilToInt(r / 12f), 4) : 1;
             this.mul = Mathf.Max(multi, 1.0f);
             this._size = this.vertical ? new Vector2(30f, (r - 1) * this.mul) : new Vector2((r - 1) * this.mul, 30f);
             this.fixedSize = this._size;
-            this._value = Custom.IntClamp(defaultValue, min, max).ToString();
+            this._value = Custom.IntClamp(!cosmetic ? (int)config.DefaultValue : cosmeticValue, min, max).ToString();
+            this.defaultValue = this.value;
 
             Initialize();
         }
@@ -41,23 +42,22 @@ namespace OptionalUI
         /// Slider that let you input integer more visually.
         /// </summary>
         /// <param name="pos">left-bottom corner coordinate (excluding extra length in the end of slider line)</param>
-        /// <param name="key">unique keyword for this UIconfig</param>
         /// <param name="range">x = min, y = max</param>
         /// <param name="length">Length of this slider will be this (minimum is the range; and the width is 30 pxl)</param>
         /// <param name="vertical">if true, the slider will go vertical and the length will be used as height</param>
-        /// <param name="defaultValue">default integer value</param>
-        public OpSlider(Vector2 pos, string key, IntVector2 range, int length, bool vertical = false, int defaultValue = 0) : base(pos, new Vector2(), key, defaultValue.ToString())
+        /// <param name="cosmeticValue">default integer value</param>
+        public OpSlider(ConfigEntry<int> config, Vector2 pos, IntVector2 range, int length, bool vertical = false, int cosmeticValue = 0) : base(config, pos, new Vector2(), cosmeticValue)
         {
             this.vertical = vertical;
             this.description = InternalTranslator.Translate(this.vertical ?
                 "Hold your mouse button and Drag up/down to adjust value" : "Hold your mouse button and Drag left/right to adjust value");
             this.min = range.x; this.max = range.y;
             int r = this.max - this.min + 1;
-            this.wheelTick = r > 5 ? Math.Max(Mathf.CeilToInt(r / 12f), 4) : 1;
+            this.mousewheelTick = r > 5 ? Math.Max(Mathf.CeilToInt(r / 12f), 4) : 1;
             float l = Mathf.Max((float)(r - 1), (float)length);
             this.mul = l / (float)(r - 1);
             this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
-            this._value = Custom.IntClamp(defaultValue, min, max).ToString();
+            this._value = Custom.IntClamp(!cosmetic ? (int)config.DefaultValue : cosmeticValue, min, max).ToString();
             this.defaultValue = this.value;
 
             Initialize();
@@ -120,7 +120,7 @@ namespace OptionalUI
         /// <summary>
         /// The amount that changes when you scroll your mousewheel over <see cref="OpSlider"/>
         /// </summary>
-        public int wheelTick;
+        public int mousewheelTick;
 
         protected readonly int min, max;
         public readonly bool vertical;
@@ -309,7 +309,7 @@ namespace OptionalUI
                     }
                     else if (this.menu.mouseScrollWheelMovement != 0)
                     {
-                        int num = this.GetValueInt() - (int)Mathf.Sign(this.menu.mouseScrollWheelMovement) * this.wheelTick;
+                        int num = this.GetValueInt() - (int)Mathf.Sign(this.menu.mouseScrollWheelMovement) * this.mousewheelTick;
                         num = Custom.IntClamp(num, this.min, this.max);
                         if (num != this.GetValueInt()) { this.SetValueInt(num); }
                     }

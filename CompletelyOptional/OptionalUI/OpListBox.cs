@@ -1,4 +1,5 @@
-﻿using CompletelyOptional;
+﻿using BepInEx.Configuration;
+using CompletelyOptional;
 using RWCustom;
 using System;
 using System.Collections.Generic;
@@ -13,13 +14,12 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">LeftBottom Position of this <see cref="UIelement"/></param>
         /// <param name="width">The width of this element. The height is calculated by lineCount.</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="list">Will be sorted automatically by <see cref="ListItem.value"/>, then <see cref="ListItem.name"/></param>
-        /// <param name="defaultName">Set to empty to have no default selection</param>
+        /// <param name="cosmeticName">Set to empty to have no default selection</param>
         /// <param name="lineCount"><see cref="OpComboBox.listHeight"/> for its height. Use <see cref="GetLineCountFromHeight(float)"/> to calculate this from pixel height.</param>
         /// <param name="downward">whether this goes downward or not</param>
         /// <exception cref="ElementFormatException">Thrown when list has no <see cref="ListItem"/>.</exception>
-        public OpListBox(Vector2 pos, float width, string key, List<ListItem> list, int lineCount = 5, bool downward = true, string defaultName = "") : base(pos, width, key, list, defaultName)
+        public OpListBox(ConfigEntry<string> config, Vector2 pos, float width, List<ListItem> list, int lineCount = 5, bool downward = true, string cosmeticName = "") : base(config, pos, width, list, cosmeticName)
         {
             this.description = InternalTranslator.Translate("Scroll the list, Double Click to search");
             this.listHeight = lineCount;
@@ -32,13 +32,12 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">LeftBottom Position of this <see cref="UIelement"/></param>
         /// <param name="width">The width of this element. The height is calculated by lineCount.</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="array">The index will be <see cref="ListItem.value"/>, so the order will be kept</param>
-        /// <param name="defaultName">Set to empty to have no default selection</param>
+        /// <param name="cosmeticName">Set to empty to have no default selection</param>
         /// <param name="lineCount"><see cref="OpComboBox.listHeight"/> for its height. Use <see cref="GetLineCountFromHeight(float)"/> to calculate this from pixel height.</param>
         /// <param name="downward">whether this goes downward or not</param>
         /// <exception cref="ElementFormatException">Thrown when list has no <see cref="ListItem"/>.</exception>
-        public OpListBox(Vector2 pos, float width, string key, string[] array, int lineCount = 5, bool downward = true, string defaultName = "") : base(pos, width, key, array, defaultName)
+        public OpListBox(ConfigEntry<string> config, Vector2 pos, float width, string[] array, int lineCount = 5, bool downward = true, string cosmeticName = "") : base(config, pos, width, array, cosmeticName)
         {
             this.description = InternalTranslator.Translate("Scroll the list, Double Click to search");
             this.listHeight = lineCount;

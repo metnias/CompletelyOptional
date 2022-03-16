@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BepInEx.Configuration;
+using System;
 using System.IO;
 using UnityEngine;
 
@@ -13,17 +14,16 @@ namespace OptionalUI
         /// Allow users to choose relative path.
         /// </summary>
         /// <param name="pos">LeftBottom position. This is a circular button with radius of 30 pxl.</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
-        /// <param name="defaultPath"></param>
+        /// <param name="cosmeticPath"></param>
         /// <param name="extension">Requested extension ('dir' for directory, default is *)</param>
         /// <exception cref="ElementFormatException">Thrown when defaultPath is Invalid</exception>
-        public OpPathSelector(Vector2 pos, string key, string defaultPath = "", string extension = "*") : base(pos, 30f, key, defaultPath)
+        public OpPathSelector(ConfigEntry<string> config, Vector2 pos, string extension = "*", string cosmeticPath = "") : base(config, pos, 30f, cosmeticPath)
         {
             this.extension = extension;
-            if (!string.IsNullOrEmpty(defaultPath))
+            if (!string.IsNullOrEmpty(cosmeticPath))
             {
                 try { Path.GetFullPath(this.value); }
-                catch (Exception e) { throw new ElementFormatException($"OpPathSelector (key: {key} has Invalid defaultPath: {defaultPath}", e); }
+                catch (Exception e) { throw new ElementFormatException($"OpPathSelector (key: {key} has Invalid defaultPath: {defaultValue}", e); }
             }
 
             fixedRad = 30f;

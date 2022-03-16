@@ -120,7 +120,7 @@
     <None Include="OptionalUI\OpRadioButtonMultiGroup.cs" />
     <Compile Include="OptionalUI\OpRect.cs" />
     <Compile Include="OptionalUI\OpSlider.cs" />
-    <Compile Include="OptionalUI\OpSliderRange.cs" />
+    <None Include="OptionalUI\OpSliderRange.cs" />
     <Compile Include="OptionalUI\OpSliderTick.cs" />
     <None Include="OptionalUI\OpSlugcat.cs" />
     <Compile Include="OptionalUI\OpTab.cs" />

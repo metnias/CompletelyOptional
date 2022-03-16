@@ -1,4 +1,5 @@
-﻿using OptionalUI.ValueTypes;
+﻿using BepInEx.Configuration;
+using OptionalUI.ValueTypes;
 using RWCustom;
 using UnityEngine;
 
@@ -14,9 +15,9 @@ namespace OptionalUI
         /// <param name="range">x = min, y = max</param>
         /// <param name="length">Length of this slider will be this (Min: 20 * range; The width is 30 pxl)</param>
         /// <param name="vertical">if true, the slider will go vertical and the length will be used as height</param>
-        /// <param name="defaultValue">default integer value</param>
+        /// <param name="cosmeticValue">default integer value</param>
         /// <exception cref="ElementFormatException">Thrown when the range of this is less than 2 or more than 30</exception>
-        public OpSliderTick(Vector2 pos, string key, IntVector2 range, int length, bool vertical = false, int defaultValue = 0) : base(pos, key, range, length, vertical, defaultValue)
+        public OpSliderTick(ConfigEntry<int> config, Vector2 pos, IntVector2 range, int length, bool vertical = false, int cosmeticValue = 0) : base(config, pos, range, length, vertical, cosmeticValue)
         {
             int r = range.y - range.x + 1;
             if (r > 31) { throw new ElementFormatException(this, "The range of OpSliderSubtle should be lower than 31! Use normal OpSlider instead.", key); }
@@ -26,8 +27,8 @@ namespace OptionalUI
             l = Mathf.Max(this.mul * (r - 1), l);
             this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
             this.fixedSize = this._size;
-            this._value = Custom.IntClamp(defaultValue, min, max).ToString();
-            this.wheelTick = 1;
+            this._value = Custom.IntClamp(!cosmetic ? (int)config.DefaultValue : cosmeticValue, min, max).ToString();
+            this.mousewheelTick = 1;
             this.defaultValue = this.value;
 
             this.Nobs = new FSprite[r];

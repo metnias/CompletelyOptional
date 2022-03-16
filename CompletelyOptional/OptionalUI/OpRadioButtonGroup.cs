@@ -1,3 +1,4 @@
+using BepInEx.Configuration;
 using OptionalUI.ValueTypes;
 using UnityEngine;
 
@@ -15,11 +16,10 @@ namespace OptionalUI
         /// <summary>
         /// Ties a number of <see cref="OpRadioButton"/> together, so only one of them can be activated.
         /// </summary>
-        /// <param name="key"></param>
-        /// <param name="defaultValue"></param>
-        public OpRadioButtonGroup(string key, int defaultValue = 0) : base(Vector2.zero, new Vector2(1f, 1f), key, defaultValue.ToString())
+        /// <param name="cosmeticValue"></param>
+        public OpRadioButtonGroup(ConfigEntry<int> config, int cosmeticValue = 0) : base(config, Vector2.zero, new Vector2(1f, 1f), cosmeticValue)
         {
-            this._value = defaultValue.ToString();
+            this._value = cosmeticValue.ToString();
             this.defaultValue = this.value;
 
             this._greyedOut = false;

@@ -1,3 +1,4 @@
+using BepInEx.Configuration;
 using CompletelyOptional;
 using Menu;
 using System;
@@ -18,15 +19,14 @@ namespace OptionalUI
         /// <param name="pos">LeftBottom Position of this UI</param>
         /// <param name="size">Size; minimum size is 30x30.</param>
         /// <param name="rwMod">Your <see cref="RainWorldMod"/>. Use <see cref="OptionInterface.rwMod"/>.</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
-        /// <param name="defaultKey">Default <see cref="KeyCode"/> name. Set to empty to bind to <see cref="KeyCode.None"/> in default.</param>
+        /// <param name="cosmeticKey">Default <see cref="KeyCode"/> name. Set to empty to bind to <see cref="KeyCode.None"/> in default.</param>
         /// <param name="collisionCheck">Whether you will check the key is colliding with other <see cref="OpKeyBinder"/> or not</param>
         /// <param name="ctrlerNo">Which Controller this <see cref="OpKeyBinder"/> can bind</param>
         /// <exception cref="ElementFormatException">Thrown when defaultKey is null or empty</exception>
-        public OpKeyBinder(Vector2 pos, Vector2 size, RainWorldMod rwMod, string key, string defaultKey, bool collisionCheck = true, BindController ctrlerNo = BindController.AnyController) : base(pos, size, key, defaultKey)
+        public OpKeyBinder(ConfigEntry<KeyCode> config, Vector2 pos, Vector2 size, RainWorldMod rwMod, string cosmeticKey, bool collisionCheck = true, BindController ctrlerNo = BindController.AnyController) : base(config, pos, size, cosmeticKey)
         {
             // if (string.IsNullOrEmpty(defaultKey)) { throw new ElementFormatException(this, "OpKeyBinderNull: defaultKey for this keyBinder is null.", key); }
-            if (string.IsNullOrEmpty(defaultKey)) { this._value = none; }
+            if (string.IsNullOrEmpty(defaultValue)) { this._value = none; }
             this.modID = ConfigContainer.GenerateID(rwMod);
             this.controlKey = this.cosmetic ? "_" : "" + string.Concat(modID, "-", key);
             this._size = new Vector2(Mathf.Max(30f, size.x), Mathf.Max(30f, size.y));
@@ -36,7 +36,7 @@ namespace OptionalUI
 
             this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorFill = Color.black;
-            this.Initalize(defaultKey);
+            this.Initalize(defaultValue);
         }
 
         private static readonly string none = (KeyCode.None).ToString();

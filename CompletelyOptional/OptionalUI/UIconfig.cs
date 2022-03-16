@@ -19,39 +19,74 @@ namespace OptionalUI
         /// <summary>
         /// Rectangular <see cref="UIconfig"/>.
         /// </summary>
-        /// <param name="config"><see cref="ConfigEntryBase.Definition"/> which this UIconfig is connected to.</param>
+        /// <param name="config"><see cref="ConfigEntry{T}"/> which this UIconfig is connected to. Set this to null to make this cosmetic.</param>
         /// <param name="pos">BottomLeft Position</param>
         /// <param name="size">Size</param>
-        /// <param name="defaultValue">Default Value</param>
-        public UIconfig(ConfigDefinition config, Vector2 pos, Vector2 size, string defaultValue = "") : base(pos, size)
+        /// <param name="cosmeticValue">Default Value for <see cref="cosmetic"/> which doesn't use <see cref="ConfigEntry{T}"/>. Gets overriden by config.DefaultValue if it's available.</param>
+        public UIconfig(ConfigEntryBase config, Vector2 pos, Vector2 size, object cosmeticValue = null) : base(pos, size)
         {
-            if (config == null) { this.cosmetic = true; cfgDef = null; }
-            else { this.cosmetic = false; cfgDef = config; }
-            this._value = defaultValue;
-            this.defaultValue = this._value;
+            if (config == null) { this.cosmetic = true; cfgEntry = null; }
+            else { this.cosmetic = false; cfgEntry = config; }
+            if (!this.cosmetic) { this.defaultValue = GetStringValue(config.DefaultValue); }
+            else { this.defaultValue = GetStringValue(cosmeticValue); }
+            this._value = this.defaultValue;
             this.bumpBehav = new BumpBehaviour(this);
+        }
+
+        private string GetStringValue(object obj)
+        {
+            if (obj == null) { return ""; }
+            switch (obj.GetType().Name.ToLower())
+            {
+                case "bool":
+                case "boolean":
+                    return (bool)obj ? "true" : "false";
+
+                case "uint":
+                case "uint32":
+                    return ((uint)obj).ToString();
+
+                case "byte":
+                case "int":
+                case "int32":
+                    return ((int)obj).ToString();
+
+                case "float":
+                case "single":
+                    return ((float)obj).ToString();
+
+                case "string":
+                    return (string)obj;
+
+                case "keycode":
+                    return ((KeyCode)obj).ToString();
+
+                default:
+                    return !cosmetic ? cfgEntry.GetSerializedValue() : obj.ToString();
+            }
         }
 
         /// <summary>
         /// Circular <see cref="UIconfig"/>.
         /// </summary>
-        /// <param name="config"><see cref="ConfigEntryBase.Definition"/> which this UIconfig is connected to.</param>
+        /// <param name="config"><see cref="ConfigEntry{T}"/> which this UIconfig is connected to. Set this to null to make this cosmetic.</param>
         /// <param name="pos">BottomLeft Position (NOT center!)</param>
         /// <param name="rad">Radius</param>
-        /// <param name="defaultValue">Default Value</param>
-        public UIconfig(ConfigDefinition config, Vector2 pos, float rad, string defaultValue = "") : base(pos, rad)
+        /// <param name="cosmeticValue">Default Value for <see cref="cosmetic"/> which doesn't use <see cref="ConfigEntry{T}"/>. Gets overriden by config.DefaultValue if it's available.</param>
+        public UIconfig(ConfigEntryBase config, Vector2 pos, float rad, object cosmeticValue = null) : base(pos, rad)
         {
-            if (config == null) { this.cosmetic = true; cfgDef = null; }
-            else { this.cosmetic = false; cfgDef = config; }
-            this._value = defaultValue;
-            this.defaultValue = this._value;
+            if (config == null) { this.cosmetic = true; cfgEntry = null; }
+            else { this.cosmetic = false; cfgEntry = config; }
+            if (!this.cosmetic) { this.defaultValue = GetStringValue(config.DefaultValue); }
+            else { this.defaultValue = GetStringValue(cosmeticValue); }
+            this._value = this.defaultValue;
             this.bumpBehav = new BumpBehaviour(this);
         }
 
         /// <summary>
-        /// <see cref="ConfigDefinition"/> which this <see cref="UIconfig"/> is connected to
+        /// <see cref="ConfigEntry{T}"/> which this <see cref="UIconfig"/> is connected to
         /// </summary>
-        public readonly ConfigDefinition cfgDef;
+        public readonly ConfigEntryBase cfgEntry;
 
         /// <summary>
         /// This is set in ctor.
@@ -79,7 +114,7 @@ namespace OptionalUI
         /// <summary>
         /// Unique key for this <see cref="UIconfig"/>.
         /// </summary>
-        public string key => cosmetic ? this.GetType().Name : cfgDef.Key;
+        public string key => cosmetic ? this.GetType().Name : cfgEntry.Definition.Key;
 
         /// <summary>
         /// If this is true, this <see cref="UIconfig"/> will be greyed out and can't be interacted.

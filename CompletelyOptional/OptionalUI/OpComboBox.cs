@@ -1,9 +1,9 @@
 ﻿using CompletelyOptional;
-using Menu;
 using RWCustom;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using BepInEx.Configuration;
 
 namespace OptionalUI
 {
@@ -17,11 +17,10 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">LeftBottom Position of folded <see cref="OpComboBox"/></param>
         /// <param name="width">The box width of folded <see cref="OpComboBox"/>. The minimum width is 30f. The height is fixed to 24f.</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="list">Will be sorted automatically by <see cref="ListItem.value"/>, then <see cref="ListItem.name"/></param>
-        /// <param name="defaultName">Set to empty to have no default selection</param>
+        /// <param name="cosmeticName">Displayed item by default when this is <see cref="UIconfig.cosmetic"/>.</param>
         /// <exception cref="ElementFormatException">Thrown when list has no <see cref="ListItem"/>.</exception>
-        public OpComboBox(Vector2 pos, float width, string key, List<ListItem> list, string defaultName = "") : base(pos, new Vector2(width, 24f), key, defaultName)
+        public OpComboBox(ConfigEntry<string> config, Vector2 pos, float width, List<ListItem> list, string cosmeticName = "") : base(config, pos, new Vector2(width, 24f), cosmeticName)
         {
             this._size = new Vector2(Mathf.Max(30f, size.x), 24f);
             this.fixedSize = new Vector2(-1f, 24f);
@@ -31,7 +30,7 @@ namespace OptionalUI
             list.Sort(ListItem.Comparer);
             this.itemList = list.ToArray();
             this.ResetIndex();
-            this.Initialize(defaultName);
+            this.Initialize(defaultValue);
             // throw new NotImplementedException("OpComboBox will come to you, Soon(tm)! If you're seeing this error as an user, download the latest ConfigMachine.");
         }
 
@@ -40,11 +39,10 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">LeftBottom Position of folded <see cref="OpComboBox"/></param>
         /// <param name="width">The box width of folded <see cref="OpComboBox"/>. The height is fixed to 24f.</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
         /// <param name="array">The index will be <see cref="ListItem.value"/>, so the order will be kept</param>
-        /// <param name="defaultName">Set to empty to have no default selection</param>
+        /// <param name="cosmeticName">Displayed item by default when this is <see cref="UIconfig.cosmetic"/>.</param>
         /// <exception cref="ElementFormatException">Thrown when array has no item.</exception>
-        public OpComboBox(Vector2 pos, float width, string key, string[] array, string defaultName = "") : this(pos, width, key, ArrayToList(array), defaultName)
+        public OpComboBox(ConfigEntry<string> config, Vector2 pos, float width, string[] array, string cosmeticName = "") : this(config, pos, width, ArrayToList(array), cosmeticName)
         { }
 
         private static List<ListItem> ArrayToList(string[] array)

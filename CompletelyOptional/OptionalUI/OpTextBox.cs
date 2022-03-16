@@ -1,5 +1,5 @@
+using BepInEx.Configuration;
 using CompletelyOptional;
-using Menu;
 using System.Text.RegularExpressions;
 using UnityEngine;
 
@@ -15,15 +15,31 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">LeftBottom <see cref="UIelement.pos"/>.</param>
         /// <param name="sizeX">Horizontal size (min = 30 pxl). The height is fixed to 24 pxl.</param>
-        /// <param name="key">Unique <see cref="UIconfig.key"/></param>
-        /// <param name="defaultValue">Default string value</param>
-        /// <param name="accept">Which type of text you want to <see cref="Accept"/></param>
-        public OpTextBox(Vector2 pos, float sizeX, string key, string defaultValue = "TEXT", Accept accept = Accept.StringASCII) : base(pos, new Vector2(30f, 24f), key, defaultValue)
+        /// <param name="cosmeticValue">Default string value</param>
+        public OpTextBox(ConfigEntryBase config, Vector2 pos, float sizeX, object cosmeticValue = null) : base(config, pos, new Vector2(30f, 24f), cosmeticValue)
         {
             this._size = new Vector2(Mathf.Max(IsUpdown ? 40f : 30f, sizeX), IsUpdown ? 30f : 24f);
             this.description = InternalTranslator.Translate("Click and Type text");
 
-            this.accept = accept;
+            string valType = !cosmetic ? config.SettingType.Name.ToLower() : (cosmeticValue != null ? cosmeticValue.GetType().Name.ToLower() : "string");
+            switch (valType)
+            {
+                default:
+                case "string":
+                    this.accept = Regex.IsMatch(defaultValue, @"^[a-zA-Z]+$") ? Accept.StringEng : Accept.StringASCII; break;
+
+                case "uint":
+                case "uint32":
+                case "byte":
+                case "int":
+                case "int32":
+                    this.accept = Accept.Int; break;
+
+                case "float":
+                case "single":
+                    this.accept = Accept.Float; break;
+            }
+
             this._value = defaultValue;
             this._lastValue = defaultValue;
             this.defaultValue = this.value;

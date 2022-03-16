@@ -74,6 +74,7 @@ namespace CompletelyOptional
                     foreach (ConfigDefinition k in keys) { if (k.Section == sections[t]) { cds.Add(k); } }
                     cds.Sort(CompareCDkey);
                     List<UIelement> elms = new List<UIelement>();
+                    /*
                     for (int e = 0; e < cds.Count; e++)
                     {
                         if (TryGetBase(bepConfig, cds[e], out ConfigEntryBase entryBase))
@@ -236,6 +237,7 @@ namespace CompletelyOptional
                             h += 20f; // between gap
                         }
                     }
+                    */
                     if (h <= 600f)
                     {
                         if (t == 0) { AddBasicProfile(Tabs[0], rwMod); hasFirstScroll = false; }
