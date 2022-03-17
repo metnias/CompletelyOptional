@@ -14,6 +14,8 @@ namespace OptionalUI
     /// </summary>
     public abstract partial class OptionInterface
     {
+        #region Modders
+
         /// <summary>
         /// Custom OptionInterface for BepInEx Plugin.
         /// Create <c>public static [YourOIclass] LoadOI()</c> in your <see cref="BaseUnityPlugin"/>.
@@ -36,12 +38,36 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// This ctor is only used by Config Machine internally.
+        /// OpTab that contains UIelements for your config screen.
+        /// Initialize this in <see cref="Initialize"/> like <c>this.Tabs = new OpTab[count];</c>
         /// </summary>
-        internal OptionInterface(RainWorldMod rwMod)
+        public OpTab[] Tabs;
+
+        /// <summary>
+        /// Write your UI overlay here.
+        /// </summary>
+        public virtual void Initialize()
+        { //Also Reset Config (Initialize w/o LoadConfig), and call ConfigOnChange().
+            this.Tabs = null;
+            curLang = "";
+            CheckTestTranslation();
+        }
+
+        /// <summary>
+        /// Event that's called every frame. Do note that this is called right after <see cref="UIelement.Update"/>s in currently active <see cref="OpTab"/> are called.
+        /// </summary>
+        public virtual void Update()
         {
-            this.rwMod = rwMod;
-            this.rawConfig = rawConfigDef;
+        }
+
+        /// <summary>
+        /// Method that's called from <see cref="UItrigger"/>s.
+        /// Override this and write your own events.
+        /// </summary>
+        /// <param name="trigger"><see cref="UItrigger"/> instance.</param>
+        /// <param name="signal"><see cref="UItrigger.signal"/> value.</param>
+        public virtual void Signal(UItrigger trigger, string signal)
+        {
         }
 
         /// <summary>
@@ -57,16 +83,12 @@ namespace OptionalUI
             else { return false; }
         }
 
+        #endregion Modders
+
         /// <summary>
         /// <see cref="RainWorldMod"/> that holds basic information of Partiality Mod or BepInEx Plugin
         /// </summary>
         public RainWorldMod rwMod { get; internal set; }
-
-        /// <summary>
-        /// OpTab that contains UIelements for your config screen.
-        /// Initialize this in <see cref="Initialize"/> like <c>this.Tabs = new OpTab[count];</c>
-        /// </summary>
-        public OpTab[] Tabs;
 
         protected DirectoryInfo directory => new DirectoryInfo(string.Concat(
                     ComOptPlugin.directory.FullName,
@@ -87,7 +109,18 @@ namespace OptionalUI
         /// <summary>
         /// BaseUnityPlugin.Config
         /// </summary>
-        public ConfigFile bepConfig => (rwMod.mod as BaseUnityPlugin).Config;
+        public ConfigFile bepConfig => rwMod.plugin.Config;
+
+        #region Internal
+
+        /// <summary>
+        /// This ctor is only used by Config Machine internally.
+        /// </summary>
+        internal OptionInterface(RainWorldMod rwMod)
+        {
+            this.rwMod = rwMod;
+            this.rawConfig = rawConfigDef;
+        }
 
         /// <summary>
         /// This will be called by ConfigMachine manager automatically.
@@ -99,36 +132,6 @@ namespace OptionalUI
             rawConfig = rawConfigDef;
             if (!Configurable()) { return; }
             bepConfig.Reload();
-        }
-
-        [Obsolete]
-        internal bool RegacyLoadConfig()
-        {
-            config = new Dictionary<string, string>();
-            rawConfig = rawConfigDef;
-            if (!Configurable()) { return true; }
-            if (!directory.Exists) { return false; } //directory.Create();
-
-            string path = string.Concat(directory.FullName, "config.json");
-            if (File.Exists(path)) { this.rawConfig = File.ReadAllText(path, Encoding.UTF8); }
-            else { return false; }
-
-            Dictionary<string, object> loadedConfig = MiniJsonExtensions.dictionaryFromJson(this.rawConfig);
-            foreach (KeyValuePair<string, object> item in loadedConfig)
-            { config.Add(item.Key, item.Value.ToString()); }
-
-            try
-            { ConfigOnChange(); }
-            catch (Exception e)
-            {
-                Debug.Log("CompletelyOptional) Lost backward compatibility in Config! Reset Config.");
-                Debug.Log(new LoadDataException(e.ToString()));
-                File.Delete(path);
-                config = new Dictionary<string, string>();
-                rawConfig = rawConfigDef;
-                return false;
-            }
-            return true;
         }
 
         /// <summary>
@@ -189,6 +192,89 @@ namespace OptionalUI
 
         internal void SaveConfig()
         {
+            /*
+            if (TryGetBase(bepConfig, def, out ConfigEntryBase entBase))
+            {
+                switch (entBase.SettingType.Name.ToLower())
+                {
+                    case "bool":
+                    case "boolean":
+                        if (bepConfig.TryGetEntry(def, out ConfigEntry<bool> eBool))
+                        { eBool.Value = val == "true"; }
+                        break;
+
+                    case "byte":
+                        if (bepConfig.TryGetEntry(def, out ConfigEntry<byte> eByte))
+                        { eByte.Value = byte.Parse(val); }
+                        break;
+
+                    case "uint":
+                    case "uint32":
+                        if (bepConfig.TryGetEntry(def, out ConfigEntry<uint> eUint))
+                        { eUint.Value = uint.Parse(val); }
+                        break;
+
+                    case "int":
+                    case "int32":
+                        if (bepConfig.TryGetEntry(def, out ConfigEntry<int> eInt))
+                        { eInt.Value = int.Parse(val); }
+                        break;
+
+                    case "float":
+                    case "single":
+                        if (bepConfig.TryGetEntry(def, out ConfigEntry<float> eFloat))
+                        { eFloat.Value = float.Parse(val); }
+                        break;
+
+                    case "string":
+                        if (bepConfig.TryGetEntry(def, out ConfigEntry<string> eString))
+                        { eString.Value = val; }
+                        break;
+
+                    case "keycode":
+                        if (bepConfig.TryGetEntry(def, out ConfigEntry<KeyCode> eKeyCode))
+                        { eKeyCode.Value = (KeyCode)Enum.Parse(typeof(KeyCode), val); }
+                        break;
+
+                    default:
+                        entBase.SetSerializedValue(val);
+                        break;
+                }
+            }*/
+        }
+
+        #endregion Internal
+
+        #region Regacy
+
+        [Obsolete]
+        internal bool RegacyLoadConfig()
+        {
+            config = new Dictionary<string, string>();
+            rawConfig = rawConfigDef;
+            if (!Configurable()) { return true; }
+            if (!directory.Exists) { return false; } //directory.Create();
+
+            string path = string.Concat(directory.FullName, "config.json");
+            if (File.Exists(path)) { this.rawConfig = File.ReadAllText(path, Encoding.UTF8); }
+            else { return false; }
+
+            Dictionary<string, object> loadedConfig = MiniJsonExtensions.dictionaryFromJson(this.rawConfig);
+            foreach (KeyValuePair<string, object> item in loadedConfig)
+            { config.Add(item.Key, item.Value.ToString()); }
+
+            try
+            { ConfigOnChange(); }
+            catch (Exception e)
+            {
+                Debug.Log("CompletelyOptional) Lost backward compatibility in Config! Reset Config.");
+                Debug.Log(new LoadDataException(e.ToString()));
+                File.Delete(path);
+                config = new Dictionary<string, string>();
+                rawConfig = rawConfigDef;
+                return false;
+            }
+            return true;
         }
 
         /// <summary>
@@ -197,8 +283,6 @@ namespace OptionalUI
         internal bool RegacySaveConfig(Dictionary<string, string> newConfig)
         {
             if (!Configurable()) { return true; }
-            if (this is GeneratedOI && (this as GeneratedOI).mode == GeneratedOI.GenMode.BepInExConfig)
-            { return (this as GeneratedOI).SaveBepConfig(newConfig); } // Saving config is handled by BepInEx
 
             if (newConfig.Count < 1) { return false; } //Nothing to Save.
             config = newConfig;
@@ -230,6 +314,8 @@ namespace OptionalUI
             return false;
         }
 
+        #endregion Regacy
+
         /// <summary>
         /// Dictionary that contains configuable objects.
         /// Use <see cref="config"/> instead.
@@ -252,33 +338,6 @@ namespace OptionalUI
                     }
                 }
             }
-        }
-
-        /// <summary>
-        /// Write your UI overlay here.
-        /// </summary>
-        public virtual void Initialize()
-        { //Also Reset Config (Initialize w/o LoadConfig), and call ConfigOnChange().
-            this.Tabs = null;
-            curLang = "";
-            CheckTestTranslation();
-        }
-
-        /// <summary>
-        /// Event that's called every frame. Do note that this is called right after <see cref="UIelement.Update"/>s in currently active <see cref="OpTab"/> are called.
-        /// </summary>
-        public virtual void Update()
-        {
-        }
-
-        /// <summary>
-        /// Method that's called from <see cref="UItrigger"/>s.
-        /// Override this and write your own events.
-        /// </summary>
-        /// <param name="trigger"><see cref="UItrigger"/> instance.</param>
-        /// <param name="signal"><see cref="UItrigger.signal"/> value.</param>
-        public virtual void Signal(UItrigger trigger, string signal)
-        {
         }
     }
 }
