@@ -221,6 +221,8 @@ namespace CompletelyOptional
 
         private void ReloadItfs(bool noInit)
         {
+            ComOptPlugin.LogMessage($"Reload! isReload: {cfgMenu.isReload}; noInit: {noInit}");
+
             mute = true;
 
             if (!noInit)
@@ -291,15 +293,15 @@ namespace CompletelyOptional
 
             for (int i = 0; i < OptItfs.Length; i++)
             {
+                if (OptItfs[i].Tabs == null) { continue; }
                 for (int j = 0; j < OptItfs[i].Tabs.Length; j++)
-                {
-                    OptItfs[i].Tabs[j]?.Unload();
-                }
+                { OptItfs[i].Tabs[j]?.Unload(); }
             }
             menuTab.Unload();
 
             #endregion UnloadItfs
 
+            halt = true;
             instance = null;
         }
 
@@ -478,9 +480,10 @@ namespace CompletelyOptional
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);
+            if (halt) { return; }
             menuTab.GrafUpdate(timeStacker);
-            try { activeTab.GrafUpdate(timeStacker); }
-            catch (Exception ex) { InterfaceUpdateError(true, ex); }
+            try { activeTab?.GrafUpdate(timeStacker); }
+            catch (Exception ex) { InterfaceUpdateError(true, ex); return; }
         }
 
         internal bool allowFocusMove;
@@ -496,7 +499,7 @@ namespace CompletelyOptional
         {
             base.Update();
             _soundFill = _soundFill > 0 ? _soundFill - 1 : 0;
-            if (menu.ForceNoMouseMode) { focusedElement = null; return; } // == FreezeMenuFunctions
+            if (menu.ForceNoMouseMode || halt) { focusedElement = null; return; } // == FreezeMenuFunctions
 
             bool ctrlKey = Input.GetKey(KeyCode.LeftControl) || Input.GetKey(KeyCode.RightControl);
             if (ctrlKey) { forceMouseMode = true; }
@@ -515,16 +518,16 @@ namespace CompletelyOptional
                     if (focusedElement != null && !(focusedElement as ICanBeFocused).GreyedOut) { focusedElement.Update(); }
                     else { holdElement = false; }
                 }
-                catch (Exception ex) { InterfaceUpdateError(true, ex); }
+                catch (Exception ex) { InterfaceUpdateError(true, ex); return; }
             }
             if (!holdElement)
             {
                 menuTab.Update();
-                try { activeTab.Update(); }
-                catch (Exception ex) { InterfaceUpdateError(true, ex); }
+                try { activeTab?.Update(); }
+                catch (Exception ex) { InterfaceUpdateError(true, ex); return; }
             }
             try { activeInterface.Update(); }
-            catch (Exception ex) { InterfaceUpdateError(false, ex); }
+            catch (Exception ex) { InterfaceUpdateError(false, ex); return; }
 
             #endregion UIelement.Update
 
@@ -664,15 +667,27 @@ namespace CompletelyOptional
             #endregion FocusManage
         }
 
+        private bool halt = false;
+
         internal void InterfaceUpdateError(bool tab, Exception ex)
         {
+            halt = true;
             // Change itf to Error version
+            try
+            {
+                for (int i = 0; i < activeInterface.Tabs.Length; i++)
+                { if (activeInterface.Tabs[i] != null) { activeInterface.Tabs[i].Unload(); } }
+                activeTab = null;
+            }
+            catch { }
+
             OptItfs[activeItfIndex] = new InternalOI_Error(OptItfs[activeItfIndex].rwMod, ex);
 
             // Recreate List's mod button to error version
 
             // Fade out
-            ModConfigMenu.instance.manager.RequestMainProcessSwitch(EnumExt_ComOpt.ModConfigMenu);
+            cfgMenu.PlaySound(SoundID.MENU_Error_Ping);
+            ModConfigMenu.instance.manager.RequestMainProcessSwitch(EnumExt_ComOpt.ModConfigMenu, 0.05f);
         }
 
         /// <summary>

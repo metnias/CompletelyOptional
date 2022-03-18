@@ -237,8 +237,11 @@ namespace CompletelyOptional
         public override void CommunicateWithUpcomingProcess(MainLoopProcess nextProcess)
         {
             base.CommunicateWithUpcomingProcess(nextProcess);
+            ComOptPlugin.LogMessage("CommunicateWithUpcomingProcess");
+            if (nextProcess != null) { ComOptPlugin.LogMessage($"{nextProcess.ID}; {nextProcess.GetType().FullName}"); }
             if (nextProcess is ModConfigMenu cm)
             {
+                ComOptPlugin.LogMessage("CommunicateWithModConfigMenu!");
                 cm.isReload = true;
                 reloadScene = this.scene.sceneID;
             }

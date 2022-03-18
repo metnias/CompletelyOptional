@@ -74,8 +74,11 @@ namespace CompletelyOptional
         {
             base.GrafUpdate(timeStacker);
 
-            rectCanvas.colorEdge = ConfigContainer.activeTab.colorCanvas;
-            rectCanvas.colorFill = MenuColorEffect.MidToVeryDark(ConfigContainer.activeTab.colorCanvas);
+            if (ConfigContainer.activeTab != null)
+            {
+                rectCanvas.colorEdge = ConfigContainer.activeTab.colorCanvas;
+                rectCanvas.colorFill = MenuColorEffect.MidToVeryDark(ConfigContainer.activeTab.colorCanvas);
+            }
 
             rectCanvas.GrafUpdate(timeStacker); rectPpty.GrafUpdate(timeStacker);
         }
@@ -268,6 +271,7 @@ namespace CompletelyOptional
 
             public override void GrafUpdate(float timeStacker)
             {
+                if (representingTab == null) { return; }
                 colorEdge = this.colorButton;
                 colorFill = MenuColorEffect.MidToVeryDark(colorButton);
 
@@ -290,6 +294,7 @@ namespace CompletelyOptional
             public override void Update()
             {
                 base.Update();
+                if (representingTab == null) { return; }
 
                 if (!this.active && !this.MouseOver) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f / frameMulti); }
                 else { this.darken = Mathf.Min(1f, this.darken + 0.1f / frameMulti); }

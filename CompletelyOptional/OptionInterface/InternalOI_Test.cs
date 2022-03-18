@@ -169,10 +169,18 @@ namespace CompletelyOptional
             sb.AddItems(rs, new OpLabel(100f, 230f, "Shaders") { bumpBehav = rs.bumpBehav });
             rs = new OpResourceSelector(null, new Vector2(100f, 100f), 200f, OpResourceSelector.SpecialEnum.Songs);
             sb.AddItems(rs, new OpLabel(100f, 130f, "Songs") { bumpBehav = rs.bumpBehav });
+
+            Tabs[7].AddItems(new OpHoldButton(new Vector2(100f, 100f), "BREAK", "BREAK"));
         }
 
         private OpHoldButton hold;
         // private float perc = 0f;
+
+        public override void Signal(UItrigger trigger, string signal)
+        {
+            base.Signal(trigger, signal);
+            if (signal == "BREAK") { throw new System.Exception("TEST BREAK"); }
+        }
 
         public override void Update()
         {
