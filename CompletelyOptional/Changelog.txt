@@ -1,7 +1,7 @@
 ﻿###2.0 CompletelyOptional Update#!#20220330#!#
-To Do: Write Reset/Save/Load Config function; Write ConfigContainer.InterfaceUpdateError; Fix reactiveness of OpTextBox.TypingAccept; Write InternalOI_Stats
+To Do: Write Reset Config function; Write ConfigContainer.InterfaceUpdateError; Fix reactiveness of OpTextBox.TypingAccept; Write InternalOI_Stats
 v Rewrote ConfigMachine to BepInEx Plugin, removed support for Partiality Mods
-o Use only BepInEx.Configuration for saving configs
+v Use only BepInEx.Configuration for saving configs
  v So OI won't get even called until MOD CONFIG screen is loaded (As BepInEx will load the settings instead)
 o Clean up OptionInterface so only things the modders need are there
  o UIelements now support Controller and Keyboard control

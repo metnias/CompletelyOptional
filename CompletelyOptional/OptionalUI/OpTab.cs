@@ -150,7 +150,7 @@ namespace OptionalUI
 
         #region Internal
 
-        internal readonly FContainer container;
+        protected internal readonly FContainer container;
 
         /// <summary>
         /// Graphical Update of OpTab called by <see cref="ConfigContainer.GrafUpdate"/>. Calls <see cref="UIelement.GrafUpdate"/>.
@@ -183,49 +183,6 @@ namespace OptionalUI
             this.container.isVisible = true;
             foreach (UIelement element in this.items.ToArray())
             { element.Reactivate(); }
-        }
-
-        /// <summary>
-        /// Called by Config Machine.
-        /// </summary>
-        internal Dictionary<string, string> GetTabDictionary()
-        {
-            Dictionary<string, string> config = new Dictionary<string, string>();
-
-            foreach (UIelement element in this.items)
-            {
-                if (element.GetType().IsSubclassOf(typeof(UIconfig)))
-                {
-                    if ((element as UIconfig).cosmetic) { continue; }
-                    if (config.ContainsKey((element as UIconfig).key))
-                    {
-                        throw new DupelicateKeyException(this.name, (element as UIconfig).key);
-                    }
-                    config.Add((element as UIconfig).key, (element as UIconfig).value);
-                }
-            }
-
-            return config;
-        }
-
-        internal Dictionary<string, UIconfig> GetTabObject()
-        {
-            Dictionary<string, UIconfig> config = new Dictionary<string, UIconfig>();
-
-            foreach (UIelement element in this.items)
-            {
-                if (element.GetType().IsSubclassOf(typeof(UIconfig)))
-                {
-                    if ((element as UIconfig).cosmetic) { continue; }
-                    if (config.ContainsKey((element as UIconfig).key))
-                    {
-                        throw new DupelicateKeyException(this.name, (element as UIconfig).key);
-                    }
-                    config.Add((element as UIconfig).key, (element as UIconfig));
-                }
-            }
-
-            return config;
         }
 
         internal void Unload()

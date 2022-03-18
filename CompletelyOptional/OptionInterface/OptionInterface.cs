@@ -41,7 +41,7 @@ namespace OptionalUI
         /// OpTab that contains UIelements for your config screen.
         /// Initialize this in <see cref="Initialize"/> like <c>this.Tabs = new OpTab[count];</c>
         /// </summary>
-        public OpTab[] Tabs;
+        public OpTab[] Tabs = null;
 
         /// <summary>
         /// Write your UI overlay here.
@@ -77,13 +77,14 @@ namespace OptionalUI
         /// <returns>Whether the mod is configurable or not</returns>
         public virtual bool Configurable()
         {
-            //if (!OptionScript.isOptionMenu) { return false; }
-            Dictionary<string, string> temp = GrabConfig();
-            if (temp.Count > 0) { return true; }
+            if (rwMod.type == RainWorldMod.Type.Dummy) { return false; }
+            if (GrabConfigs().Count > 0) { return true; }
             else { return false; }
         }
 
         #endregion Modders
+
+        #region Internal
 
         /// <summary>
         /// <see cref="RainWorldMod"/> that holds basic information of Partiality Mod or BepInEx Plugin
@@ -97,21 +98,9 @@ namespace OptionalUI
                     ));
 
         /// <summary>
-        /// Config Data. Their Key is the key you set when add <see cref="UIconfig"/> in <see cref="OpTab.AddItems(UIelement[])"/>.
-        /// Value is the value of those configs, in string form.
-        /// </summary>
-        /// <remarks>As this is a <c>static</c>, add salt (e.g. ModID) to your keys to prevent collision with other mods.</remarks>
-        public static Dictionary<string, string> config;
-
-        private string rawConfig;
-        private const string rawConfigDef = "Unconfiguable";
-
-        /// <summary>
         /// BaseUnityPlugin.Config
         /// </summary>
-        public ConfigFile bepConfig => rwMod.plugin.Config;
-
-        #region Internal
+        protected internal ConfigFile bepConfig => rwMod.plugin.Config;
 
         /// <summary>
         /// This ctor is only used by Config Machine internally.
@@ -124,7 +113,6 @@ namespace OptionalUI
 
         /// <summary>
         /// This will be called by ConfigMachine manager automatically.
-        /// If you called this directly, also call <see cref="ShowConfig"/> to apply them in UI.
         /// </summary>
         internal void LoadConfig()
         {
@@ -139,113 +127,94 @@ namespace OptionalUI
         /// </summary>
         internal void ShowConfig()
         {
-            GrabObject();
-            if (this is GeneratedOI && (this as GeneratedOI).mode == GeneratedOI.GenMode.BepInExConfig)
-            { (this as GeneratedOI).ShowBepConfig(); return; }
-            if (!(config?.Count > 0)) { return; } //Nothing Loaded.
-            foreach (KeyValuePair<string, string> setting in config)
+            if (!Configurable()) { return; }
+            List<UIconfig> configs = GrabConfigs();
+            foreach (UIconfig config in configs.ToArray())
             {
-                if (objectDictionary.TryGetValue(setting.Key, out UIconfig obj))
-                {
-                    obj.value = setting.Value;
-                }
-                else
-                {
-                    ComOptPlugin.LogMessage($"{rwMod.ModID} setting has been removed. (key: {setting.Key} / value: {setting.Value})");
-                }
+                config.value = config.GetStringValue(config.cfgEntry.BoxedValue);
             }
         }
 
-        private void GrabObject()
+        private List<UIconfig> GrabConfigs()
         {
-            Dictionary<string, UIconfig> displayedConfig = new Dictionary<string, UIconfig>();
-            for (int i = 0; i < this.Tabs.Length; i++)
+            List<UIconfig> configs = new List<UIconfig>();
+            if (Tabs == null) { return configs; }
+            for (int i = 0; i < Tabs.Length; i++)
             {
-                Dictionary<string, UIconfig> tabDictionary = this.Tabs[i].GetTabObject();
-                if (tabDictionary.Count < 1) { continue; }
-
-                foreach (KeyValuePair<string, UIconfig> item in tabDictionary)
+                if (Tabs[i] == null) { continue; }
+                foreach (UIelement element in this.Tabs[i].items.ToArray())
                 {
-                    if (item.Value.cosmetic) { continue; }
-                    if (displayedConfig.ContainsKey(item.Key)) { throw new DupelicateKeyException(string.Empty, item.Key); }
-                    displayedConfig.Add(item.Key, item.Value);
+                    if (element.GetType().IsSubclassOf(typeof(UIconfig)))
+                    {
+                        if ((element as UIconfig).cosmetic) { continue; }
+                        configs.Add(element as UIconfig);
+                        //config.Add((element as UIconfig).key, (element as UIconfig).value);
+                    }
                 }
             }
-            this.objectDictionary = displayedConfig;
-        }
-
-        /// <summary>
-        /// Grabbing config from config menu. It's called automatically.
-        /// </summary>
-        internal Dictionary<string, string> GrabConfig()
-        {
-            GrabObject();
-            if (this.objectDictionary.Count < 1) { return new Dictionary<string, string>(0); }
-            Dictionary<string, string> displayedConfig = new Dictionary<string, string>();
-            foreach (KeyValuePair<string, UIconfig> setting in this.objectDictionary)
-            {
-                if (setting.Value.cosmetic) { continue; } //this won't happen
-                displayedConfig.Add(setting.Key, setting.Value.value);
-            }
-            return displayedConfig;
+            return configs;
         }
 
         internal void SaveConfig()
         {
-            /*
-            if (TryGetBase(bepConfig, def, out ConfigEntryBase entBase))
+            List<UIconfig> configs = GrabConfigs();
+            foreach (UIconfig config in configs.ToArray())
             {
-                switch (entBase.SettingType.Name.ToLower())
+                switch (config.cfgEntry.SettingType.Name.ToLower())
                 {
                     case "bool":
                     case "boolean":
-                        if (bepConfig.TryGetEntry(def, out ConfigEntry<bool> eBool))
-                        { eBool.Value = val == "true"; }
+                        (config.cfgEntry as ConfigEntry<bool>).Value = config.value == "true";
                         break;
 
                     case "byte":
-                        if (bepConfig.TryGetEntry(def, out ConfigEntry<byte> eByte))
-                        { eByte.Value = byte.Parse(val); }
+                        (config.cfgEntry as ConfigEntry<byte>).Value = byte.Parse(config.value);
                         break;
 
                     case "uint":
                     case "uint32":
-                        if (bepConfig.TryGetEntry(def, out ConfigEntry<uint> eUint))
-                        { eUint.Value = uint.Parse(val); }
+                        (config.cfgEntry as ConfigEntry<uint>).Value = uint.Parse(config.value);
                         break;
 
                     case "int":
                     case "int32":
-                        if (bepConfig.TryGetEntry(def, out ConfigEntry<int> eInt))
-                        { eInt.Value = int.Parse(val); }
+                        (config.cfgEntry as ConfigEntry<int>).Value = int.Parse(config.value);
                         break;
 
                     case "float":
                     case "single":
-                        if (bepConfig.TryGetEntry(def, out ConfigEntry<float> eFloat))
-                        { eFloat.Value = float.Parse(val); }
+                        (config.cfgEntry as ConfigEntry<float>).Value = float.Parse(config.value);
                         break;
 
                     case "string":
-                        if (bepConfig.TryGetEntry(def, out ConfigEntry<string> eString))
-                        { eString.Value = val; }
+                        (config.cfgEntry as ConfigEntry<string>).Value = config.value;
                         break;
 
                     case "keycode":
-                        if (bepConfig.TryGetEntry(def, out ConfigEntry<KeyCode> eKeyCode))
-                        { eKeyCode.Value = (KeyCode)Enum.Parse(typeof(KeyCode), val); }
+                        (config.cfgEntry as ConfigEntry<KeyCode>).Value = (KeyCode)Enum.Parse(typeof(KeyCode), config.value);
                         break;
 
                     default:
-                        entBase.SetSerializedValue(val);
+                        config.cfgEntry.SetSerializedValue(config.value);
                         break;
                 }
-            }*/
+            }
+            bepConfig.Save();
         }
 
         #endregion Internal
 
         #region Regacy
+
+        /// <summary>
+        /// Config Data. Their Key is the key you set when add <see cref="UIconfig"/> in <see cref="OpTab.AddItems(UIelement[])"/>.
+        /// Value is the value of those configs, in string form.
+        /// </summary>
+        /// <remarks>As this is a <c>static</c>, add salt (e.g. ModID) to your keys to prevent collision with other mods.</remarks>
+        private Dictionary<string, string> config;
+
+        private string rawConfig;
+        private const string rawConfigDef = "Unconfiguable";
 
         [Obsolete]
         internal bool RegacyLoadConfig()
@@ -277,9 +246,7 @@ namespace OptionalUI
             return true;
         }
 
-        /// <summary>
-        /// Saving Config. It's called automatically.
-        /// </summary>
+        [Obsolete]
         internal bool RegacySaveConfig(Dictionary<string, string> newConfig)
         {
             if (!Configurable()) { return true; }
@@ -315,12 +282,6 @@ namespace OptionalUI
         }
 
         #endregion Regacy
-
-        /// <summary>
-        /// Dictionary that contains configuable objects.
-        /// Use <see cref="config"/> instead.
-        /// </summary>
-        public Dictionary<string, UIconfig> objectDictionary;
 
         /// <summary>
         /// Event that happens when Config is loaded from file/changed by config menu.

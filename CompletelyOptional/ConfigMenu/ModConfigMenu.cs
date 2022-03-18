@@ -3,6 +3,7 @@ using Music;
 using OptionalUI;
 using RWCustom;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 
 namespace CompletelyOptional
@@ -266,6 +267,10 @@ namespace CompletelyOptional
                     break;
 
                 case MenuTab.saveSignal:
+                    if (ConfigContainer.OptItfChanged[ConfigContainer.activeItfIndex]) { ConfigContainer.activeInterface.SaveConfig(); }
+                    else if (ConfigContainer.OptItfChanged.Any(x => x))
+                    {
+                    }
                     break;
 
                 case MenuTab.resetSignal:

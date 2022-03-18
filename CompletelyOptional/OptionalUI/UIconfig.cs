@@ -1,7 +1,6 @@
 using CompletelyOptional;
 using UnityEngine;
 using BepInEx.Configuration;
-using System;
 
 namespace OptionalUI
 {
@@ -33,7 +32,7 @@ namespace OptionalUI
             this.bumpBehav = new BumpBehaviour(this);
         }
 
-        private string GetStringValue(object obj)
+        internal string GetStringValue(object obj)
         {
             if (obj == null) { return ""; }
             switch (obj.GetType().Name.ToLower())

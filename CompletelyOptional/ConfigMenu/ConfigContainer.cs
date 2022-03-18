@@ -147,6 +147,14 @@ namespace CompletelyOptional
                     oi.Initialize();
                 }
 
+                try { oi.LoadConfig(); oi.ShowConfig(); }
+                catch (Exception ex)
+                {
+                    oi = new InternalOI_Error(plugin, new LoadDataException(string.Concat("OILoad/ShowConfigError: ", rwMod.ModID, " had a problem in Load/ShowConfig()\nAre you editing LoadConfig()/ShowConfig()? That could cause serious error.",
+                           Environment.NewLine, ex
+                           )));
+                }
+
                 listItf.Add(oi);
             }
 
