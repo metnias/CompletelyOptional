@@ -110,6 +110,28 @@ namespace OptionalUI
             this.Initialize(!cosmetic ? defaultValue : cosmeticName);
         }
 
+        /// <summary>
+        /// For GeneratedOI
+        /// </summary>
+        internal OpResourceSelector(ConfigEntryBase config, Vector2 pos, float width, Type enumType, string cosmeticName = "") : base(config, pos, width, list: null)
+        {
+            if (!enumType.IsEnum) { throw new ElementFormatException(this, "OpResourceSelector's enumType is not Enum!", key); }
+            this.listType = SpecialEnum.Enum;
+            string[] nameList = Enum.GetNames(enumType);
+            List<ListItem> list = new List<ListItem>();
+            for (int i = 0; i < nameList.Length; i++)
+            {
+                var enumVal = (Enum)Enum.Parse(enumType, nameList[i]);
+                ListItem item = new ListItem(nameList[i], (int)(object)enumVal);
+                item.displayName = EnumHelper.GetEnumDesc(enumVal) ?? item.name;
+                list.Add(item);
+            }
+            list.Sort(ListItem.Comparer);
+            this.itemList = list.ToArray();
+            this.ResetIndex();
+            this.Initialize(!cosmetic ? defaultValue : cosmeticName);
+        }
+
         public readonly SpecialEnum listType;
 
         /// <summary>

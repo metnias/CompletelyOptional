@@ -45,6 +45,23 @@ namespace OptionalUI
         public OpComboBox(ConfigEntry<string> config, Vector2 pos, float width, string[] array, string cosmeticName = "") : this(config, pos, width, ArrayToList(array), cosmeticName)
         { }
 
+        /// <summary>
+        /// For GeneratedOI
+        /// </summary>
+        internal OpComboBox(ConfigEntryBase config, Vector2 pos, float width, List<ListItem> list, string cosmeticName = "") : base(config, pos, new Vector2(width, 24f), cosmeticName)
+        {
+            this._size = new Vector2(Mathf.Max(30f, size.x), 24f);
+            this.fixedSize = new Vector2(-1f, 24f);
+            this.description = InternalTranslator.Translate("Click to open the list, Double Click to search");
+            if (IsResourceSelector) { return; }
+            if (list is null || list.Count < 1) { throw new ElementFormatException(this, "The list must contain at least one ListItem", this.key); }
+            list.Sort(ListItem.Comparer);
+            this.itemList = list.ToArray();
+            this.ResetIndex();
+            this.Initialize(defaultValue);
+            // throw new NotImplementedException("OpComboBox will come to you, Soon(tm)! If you're seeing this error as an user, download the latest ConfigMachine.");
+        }
+
         private static List<ListItem> ArrayToList(string[] array)
         {
             List<ListItem> result = new List<ListItem>();

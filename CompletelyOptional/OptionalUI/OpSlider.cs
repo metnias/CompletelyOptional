@@ -63,6 +63,46 @@ namespace OptionalUI
             Initialize();
         }
 
+        /// <summary>
+        /// For GeneratedOI, 0-100
+        /// </summary>
+        internal OpSlider(ConfigEntry<uint> config, Vector2 pos, int length, bool vertical = false) : base(config, pos, new Vector2())
+        {
+            this.vertical = vertical;
+            this.description = InternalTranslator.Translate(this.vertical ?
+                "Hold your mouse button and Drag up/down to adjust value" : "Hold your mouse button and Drag left/right to adjust value");
+            this.min = 0; this.max = 100;
+            int r = this.max - this.min + 1;
+            this.mousewheelTick = r > 5 ? Math.Max(Mathf.CeilToInt(r / 12f), 4) : 1;
+            float l = Mathf.Max((float)(r - 1), (float)length);
+            this.mul = l / (float)(r - 1);
+            this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
+            this._value = Custom.IntClamp((int)config.DefaultValue, min, max).ToString();
+            this.defaultValue = this.value;
+
+            Initialize();
+        }
+
+        /// <summary>
+        /// For GeneratedOI
+        /// </summary>
+        internal OpSlider(ConfigEntry<byte> config, Vector2 pos, IntVector2 range, int length, bool vertical = false) : base(config, pos, new Vector2())
+        {
+            this.vertical = vertical;
+            this.description = InternalTranslator.Translate(this.vertical ?
+                "Hold your mouse button and Drag up/down to adjust value" : "Hold your mouse button and Drag left/right to adjust value");
+            this.min = range.x; this.max = range.y;
+            int r = this.max - this.min + 1;
+            this.mousewheelTick = r > 5 ? Math.Max(Mathf.CeilToInt(r / 12f), 4) : 1;
+            float l = Mathf.Max((float)(r - 1), (float)length);
+            this.mul = l / (float)(r - 1);
+            this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
+            this._value = Custom.IntClamp((int)config.DefaultValue, min, max).ToString();
+            this.defaultValue = this.value;
+
+            Initialize();
+        }
+
         private bool tickSlider => this is OpSliderTick;
 
         /* private bool rangeSlider

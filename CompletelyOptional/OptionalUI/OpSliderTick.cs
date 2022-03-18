@@ -11,7 +11,6 @@ namespace OptionalUI
         /// SubtleSlider that let you input integer in small range
         /// </summary>
         /// <param name="pos">left-bottom corner coordinate (excluding extra length in the end of slider line)</param>
-        /// <param name="key">unique keyword for this UIconfig</param>
         /// <param name="range">x = min, y = max</param>
         /// <param name="length">Length of this slider will be this (Min: 20 * range; The width is 30 pxl)</param>
         /// <param name="vertical">if true, the slider will go vertical and the length will be used as height</param>
@@ -28,6 +27,34 @@ namespace OptionalUI
             this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
             this.fixedSize = this._size;
             this._value = Custom.IntClamp(!cosmetic ? (int)config.DefaultValue : cosmeticValue, min, max).ToString();
+            this.mousewheelTick = 1;
+            this.defaultValue = this.value;
+
+            this.Nobs = new FSprite[r];
+            for (int i = 0; i < this.Nobs.Length; i++)
+            {
+                this.Nobs[i] = new FSprite("pixel", true) { anchorX = 0.5f, anchorY = 0.5f };
+                this.myContainer.AddChild(this.Nobs[i]);
+            }
+            this.circle = new FSprite("buttonCircleB", true) { anchorX = 0.5f, anchorY = 0.5f }; //"buttonCircleB"
+            this.myContainer.AddChild(this.circle);
+            this.myContainer.sortZ = this.Nobs[0].sortZ + 1f;
+        }
+
+        /// <summary>
+        /// For GeneratedOI; 0-20
+        /// </summary>
+        internal OpSliderTick(ConfigEntry<byte> config, Vector2 pos, int length, bool vertical = false) : base(config, pos, new IntVector2(0, 20), length, vertical)
+        {
+            int r = 21;
+            if (r > 31) { throw new ElementFormatException(this, "The range of OpSliderSubtle should be lower than 31! Use normal OpSlider instead.", key); }
+            else if (r < 2) { throw new ElementFormatException(this, "The range of OpSliderSubtle is less than 2! Check your \'range\' parameter.", key); }
+            float l = Mathf.Max(32f, (float)length);
+            this.mul = Mathf.Max(l / (r - 1), 8f);
+            l = Mathf.Max(this.mul * (r - 1), l);
+            this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
+            this.fixedSize = this._size;
+            this._value = Custom.IntClamp((int)config.DefaultValue, min, max).ToString();
             this.mousewheelTick = 1;
             this.defaultValue = this.value;
 

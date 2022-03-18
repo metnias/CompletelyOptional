@@ -23,9 +23,8 @@ namespace OptionalUI
         /// <param name="collisionCheck">Whether you will check the key is colliding with other <see cref="OpKeyBinder"/> or not</param>
         /// <param name="ctrlerNo">Which Controller this <see cref="OpKeyBinder"/> can bind</param>
         /// <exception cref="ElementFormatException">Thrown when defaultKey is null or empty</exception>
-        public OpKeyBinder(ConfigEntry<KeyCode> config, Vector2 pos, Vector2 size, RainWorldMod rwMod, string cosmeticKey, bool collisionCheck = true, BindController ctrlerNo = BindController.AnyController) : base(config, pos, size, cosmeticKey)
+        public OpKeyBinder(ConfigEntry<KeyCode> config, Vector2 pos, Vector2 size, RainWorldMod rwMod, bool collisionCheck = true, BindController ctrlerNo = BindController.AnyController, string cosmeticKey = "") : base(config, pos, size, cosmeticKey)
         {
-            // if (string.IsNullOrEmpty(defaultKey)) { throw new ElementFormatException(this, "OpKeyBinderNull: defaultKey for this keyBinder is null.", key); }
             if (string.IsNullOrEmpty(defaultValue)) { this._value = none; }
             this.modID = ConfigContainer.GenerateID(rwMod);
             this.controlKey = this.cosmetic ? "_" : "" + string.Concat(modID, "-", key);

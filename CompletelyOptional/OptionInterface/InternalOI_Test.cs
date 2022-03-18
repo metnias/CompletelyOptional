@@ -103,12 +103,12 @@ namespace CompletelyOptional
             // sb.AddItems(cpk0, new OpLabel(new Vector2(300f, 100f), new Vector2(100f, 20f), "Red Colorpicker") { bumpBehav = cpk0.bumpBehav, color = Color.red });
             // OpColorPicker cpk1 = new OpColorPicker(new Vector2(100f, 2000f), "_Blue", "AAAAAA") { colorEdge = Color.blue };
             // sb.AddItems(cpk1, new OpLabel(new Vector2(300f, 2000f), new Vector2(100f, 20f), "Blue Colorpicker") { bumpBehav = cpk1.bumpBehav, color = Color.blue });
-            sb.AddItems(new OpSlider(null, new Vector2(100f, 1800f), new IntVector2(0, 100), 300));
-            sb.AddItems(new OpSlider(null, new Vector2(500f, 1700f), new IntVector2(0, 100), 300, true));
-            sb.AddItems(new OpSliderTick(null, new Vector2(100f, 1400f), new IntVector2(0, 20), 200));
-            sb.AddItems(new OpSliderTick(null, new Vector2(500f, 1300f), new IntVector2(0, 20), 200, true));
+            sb.AddItems(new OpSlider(null, new Vector2(100f, 1800f), new IntVector2(0, 100), 300, cosmeticValue: 50));
+            sb.AddItems(new OpSlider(null, new Vector2(500f, 1700f), new IntVector2(0, 100), 300, true, cosmeticValue: 50));
+            sb.AddItems(new OpSliderTick(null, new Vector2(100f, 1400f), new IntVector2(0, 20), 200, cosmeticValue: 10));
+            sb.AddItems(new OpSliderTick(null, new Vector2(500f, 1300f), new IntVector2(0, 20), 200, true, cosmeticValue: 10));
 
-            Tabs[3].AddItems(new OpKeyBinder(null, new Vector2(100f, 300f), new Vector2(200f, 30f), rwMod, "Enter", false));
+            Tabs[3].AddItems(new OpKeyBinder(null, new Vector2(100f, 300f), new Vector2(200f, 30f), rwMod, false, cosmeticKey: "Enter"));
 
             sb = new OpScrollBox(Tabs[4], 1500f, false);
             sb.AddItems(new OpLabel(new Vector2(100f, sb.contentSize - 60f), new Vector2(400f, 50f), "ConfigMachine Internal Test 4", FLabelAlignment.Center, true),
