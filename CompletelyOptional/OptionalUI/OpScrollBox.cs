@@ -422,7 +422,7 @@ namespace OptionalUI
             get
             {
                 if (!isTab) { return base.MouseOver; }
-                return this.MousePos.x > -30f && this.MousePos.x < 630f && this.MousePos.y > -30f && this.MousePos.y < 630f;
+                return this.MousePos.x > -15f && this.MousePos.x < 615f && this.MousePos.y > -15f && this.MousePos.y < 615f;
             }
         }
 

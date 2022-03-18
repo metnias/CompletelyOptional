@@ -285,6 +285,8 @@ namespace CompletelyOptional
                 for (int j = 0; j < 8; j++) { this.rectH.sprites[j].alpha = active ? 1f : highlight; }
             }
 
+            private bool scrolled = false;
+
             public override void Update()
             {
                 base.Update();
@@ -292,7 +294,24 @@ namespace CompletelyOptional
                 if (!this.active && !this.MouseOver) { this.darken = Mathf.Max(0f, this.darken - 0.0333333351f / frameMulti); }
                 else { this.darken = Mathf.Min(1f, this.darken + 0.1f / frameMulti); }
 
-                if (!MenuMouseMode && this.Focused())
+                if (MenuMouseMode)
+                {
+                    if (this.MouseOver)
+                    {
+                        if (menu.mouseScrollWheelMovement != 0)
+                        {
+                            if (!scrolled)
+                            {
+                                bool up = menu.mouseScrollWheelMovement < 0;
+                                TabScrollButton scroll = ctrl.scrollButtons[up ? 0 : 1];
+                                if (!scroll.isInactive) { ctrl.Signal(scroll, up ? -1 : 1); }
+                                scrolled = true;
+                            }
+                        }
+                        else { scrolled = false; }
+                    }
+                }
+                else if (this.Focused())
                 {
                     if (this.isTop && this.CtlrInput.y < 0)
                     {
