@@ -14,13 +14,12 @@ namespace CompletelyOptional
             this.container.x = 0f; this.container.y = 0f;
             this.container.MoveToBack();
             isInactive = false;
-            modList = new MenuModList(this);
-            tabCtrler = new ConfigTabController(this);
             backButton = new MenuButton(new Vector2(490f, 50f), new Vector2(120f, 30f), backSignal, InternalTranslator.Translate("BACK"));
             saveButton = new MenuButton(new Vector2(630f, 50f), new Vector2(120f, 30f), saveSignal, InternalTranslator.Translate("APPLY"));
             resetButton = new MenuHoldButton(new Vector2(770f, 50f), new Vector2(120f, 30f), resetSignal, InternalTranslator.Translate("RESET CONFIG"));
-
             this.AddItems(backButton, saveButton, resetButton);
+            modList = new MenuModList(this);
+            tabCtrler = new ConfigTabController(this);
         }
 
         /* internal new void Update()

@@ -135,7 +135,7 @@ namespace OptionalUI
             }
         }
 
-        private List<UIconfig> GrabConfigs()
+        internal List<UIconfig> GrabConfigs()
         {
             List<UIconfig> configs = new List<UIconfig>();
             if (Tabs == null) { return configs; }

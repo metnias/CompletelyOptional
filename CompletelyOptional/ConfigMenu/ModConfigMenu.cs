@@ -21,6 +21,74 @@ namespace CompletelyOptional
             // Initialize
             instance = this;
             description = ""; lastDescription = "";
+        }
+
+        private bool _cfgInit = false;
+
+        private const int _DASinit = 20, _DASdelay = 6;
+
+        /// <summary>
+        /// Delayed Auto Shift initial delay frame (20)
+        /// </summary>
+        public static int DASinit => UIelement.FrameMultiply(_DASinit);
+
+        /// <summary>
+        /// Delayed Auto Shift delay frame after initial one (6)
+        /// </summary>
+        public static int DASdelay => UIelement.FrameMultiply(_DASdelay);
+
+        /// <summary>
+        /// Current Language of the game, including ComMod ones
+        /// </summary>
+        internal static string curLang;
+
+        private string description, lastDescription;
+
+        /// <summary>
+        /// Send Menu description text to display
+        /// </summary>
+        internal void ShowDescription(string text) => this.description = text;
+
+        #region Alert
+
+        /// <summary>
+        /// Send Menu alert text to display
+        /// </summary>
+        internal void ShowAlert(string text) => this.alertText = text;
+
+        private MenuLabel alertLabel;
+        private string alertText = "";
+        private float alertLabelFade = 0f, lastAlertLabelFade = 0f, alertLabelSin = 0f;
+
+        #endregion Alert
+
+        public static ModConfigMenu instance;
+
+        /// <summary>
+        /// Screensized Dark Screen for background
+        /// </summary>
+        private FSprite darkSprite;
+
+        /// <summary>
+        /// Container that connects and stores UIelements for Mod Configs
+        /// </summary>
+        internal ConfigContainer cfgContainer;
+
+        public override void GrafUpdate(float timeStacker)
+        {
+            base.GrafUpdate(timeStacker);
+            cfgContainer.GrafUpdate(timeStacker);
+
+            alertLabel.label.alpha = Custom.SCurve(Mathf.Clamp01(Mathf.Lerp(lastAlertLabelFade, alertLabelFade, timeStacker)), 0.3f);
+            if (lastAlertLabelFade > 0f)
+            {
+                alertLabel.label.color = Color.Lerp(MenuRGB(MenuColors.White), MenuRGB(MenuColors.MediumGrey),
+                        0.5f + 0.5f * Mathf.Sin((this.alertLabelSin + timeStacker) / 4f));
+            }
+        }
+
+        private void Initialize()
+        {
             if (!isReload)
             {
                 redUnlocked = (this.manager.rainWorld.progression.miscProgressionData.redUnlocked ||
@@ -82,70 +150,10 @@ namespace CompletelyOptional
             // AlertLabel
             alertLabel = new MenuLabel(this, this.pages[0], "", new Vector2(383f, 735f), new Vector2(600f, 30f), false);
             this.pages[0].subObjects.Add(this.alertLabel);
-        }
 
-        private bool _cfgInit = false;
-
-        private const int _DASinit = 20, _DASdelay = 6;
-
-        /// <summary>
-        /// Delayed Auto Shift initial delay frame (20)
-        /// </summary>
-        public static int DASinit => UIelement.FrameMultiply(_DASinit);
-
-        /// <summary>
-        /// Delayed Auto Shift delay frame after initial one (6)
-        /// </summary>
-        public static int DASdelay => UIelement.FrameMultiply(_DASdelay);
-
-        /// <summary>
-        /// Current Language of the game, including ComMod ones
-        /// </summary>
-        internal static string curLang;
-
-        private string description, lastDescription;
-
-        /// <summary>
-        /// Send Menu description text to display
-        /// </summary>
-        internal void ShowDescription(string text) => this.description = text;
-
-        #region Alert
-
-        /// <summary>
-        /// Send Menu alert text to display
-        /// </summary>
-        internal void ShowAlert(string text) => this.alertText = text;
-
-        private readonly MenuLabel alertLabel;
-        private string alertText = "";
-        private float alertLabelFade = 0f, lastAlertLabelFade = 0f, alertLabelSin = 0f;
-
-        #endregion Alert
-
-        public static ModConfigMenu instance;
-
-        /// <summary>
-        /// Screensized Dark Screen for fading
-        /// </summary>
-        private readonly FSprite darkSprite;
-
-        /// <summary>
-        /// Container that connects and stores UIelements for Mod Configs
-        /// </summary>
-        internal ConfigContainer cfgContainer;
-
-        public override void GrafUpdate(float timeStacker)
-        {
-            base.GrafUpdate(timeStacker);
-            cfgContainer.GrafUpdate(timeStacker);
-
-            alertLabel.label.alpha = Custom.SCurve(Mathf.Clamp01(Mathf.Lerp(lastAlertLabelFade, alertLabelFade, timeStacker)), 0.3f);
-            if (lastAlertLabelFade > 0f)
-            {
-                alertLabel.label.color = Color.Lerp(MenuRGB(MenuColors.White), MenuRGB(MenuColors.MediumGrey),
-                        0.5f + 0.5f * Mathf.Sin((this.alertLabelSin + timeStacker) / 4f));
-            }
+            // UIContainer
+            cfgContainer = new ConfigContainer(this, this.pages[0]);
+            this.pages[0].subObjects.Add(cfgContainer);
         }
 
         public override void Update()
@@ -178,9 +186,7 @@ namespace CompletelyOptional
 
             if (!_cfgInit)
             {
-                // UIContainer
-                cfgContainer = new ConfigContainer(this, this.pages[0]);
-                this.pages[0].subObjects.Add(cfgContainer);
+                Initialize();
                 _cfgInit = true;
                 return;
             }
@@ -244,13 +250,10 @@ namespace CompletelyOptional
         public override void CommunicateWithUpcomingProcess(MainLoopProcess nextProcess)
         {
             base.CommunicateWithUpcomingProcess(nextProcess);
-            ComOptPlugin.LogMessage("CommunicateWithUpcomingProcess");
-            if (nextProcess != null) { ComOptPlugin.LogMessage($"{nextProcess.ID}; {nextProcess.GetType().FullName}"); }
             if (nextProcess is ModConfigMenu cm)
             {
-                ComOptPlugin.LogMessage("CommunicateWithModConfigMenu!");
                 cm.isReload = true;
-                reloadScene = this.scene.sceneID;
+                cm.reloadScene = this.scene.sceneID;
             }
         }
 
@@ -261,6 +264,7 @@ namespace CompletelyOptional
 
         public override void ShutDownProcess()
         {
+            darkSprite.RemoveFromContainer();
             cfgContainer.ShutdownConfigContainer();
             base.ShutDownProcess();
             instance = null;
@@ -281,9 +285,12 @@ namespace CompletelyOptional
                     else if (ConfigContainer.OptItfChanged.Any(x => x))
                     {
                     }
+                    PlaySound(SoundID.MENU_Continue_From_Sleep_Death_Screen);
                     break;
 
                 case MenuTab.resetSignal:
+                    ConfigContainer.ResetCurrentConfig();
+                    PlaySound(SoundID.MENU_Continue_Game);
                     break;
             }
         }

@@ -734,6 +734,14 @@ namespace CompletelyOptional
             }
         }
 
+        internal static void ResetCurrentConfig()
+        {
+            mute = true;
+            foreach (UIconfig config in activeInterface.GrabConfigs().ToArray())
+            { config.value = config.GetStringValue(config.cfgEntry.DefaultValue); }
+            mute = false;
+        }
+
         /// <summary>
         /// History for undo
         /// </summary>

@@ -135,6 +135,12 @@ namespace CompletelyOptional
 
         private void Refresh()
         {
+            if (ConfigContainer.activeInterface != null)
+            {
+            }
+            menuTab.resetButton.greyedOut = !ConfigContainer.activeInterface.Configurable();
+            menuTab.saveButton.greyedOut = menuTab.resetButton.greyedOut;
+
             if (_tabCount < 2)
             { // No tab button
                 foreach (TabSelectButton btn in tabButtons)
