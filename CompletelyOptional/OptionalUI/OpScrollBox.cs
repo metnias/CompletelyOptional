@@ -41,12 +41,12 @@ namespace OptionalUI
         /// <summary>
         /// The color of the border of the box behind this scrollbox.
         /// </summary>
-        public Color colorEdge;
+        public Color colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
         /// The color of the fill of the box behind this scrollbox.
         /// </summary>
-        public Color colorFill;
+        public Color colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
         /// <summary>
         /// The alpha of the fill of the box behind this scrollbox.
@@ -207,8 +207,6 @@ namespace OptionalUI
 
             childOffset = camPos; // - new Vector2(Mathf.Round(_offset.x), Mathf.Round(_offset.y));
 
-            colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            colorFill = Color.black;
             if (hasBack)
             {
                 rectBack = new DyeableRect(this.myContainer, Vector2.zero, size);

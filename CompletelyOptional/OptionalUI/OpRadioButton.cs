@@ -17,8 +17,6 @@ namespace OptionalUI
             this._value = "false";
             this.fixedSize = new Vector2(24f, 24f);
 
-            this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            this.colorFill = Color.black;
             this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true);
             this.symbolSprite = new FSprite("Menu_Symbol_Clear_All", true);
             this.myContainer.AddChild(this.symbolSprite);
@@ -57,12 +55,12 @@ namespace OptionalUI
         /// <summary>
         /// Symbol and Edge Colour of DyeableRect. Default is MediumGrey.
         /// </summary>
-        public Color colorEdge;
+        public Color colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
         /// Fill Colour of DyeableRect. Default is Black.
         /// </summary>
-        public Color colorFill;
+        public Color colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
         bool ICanBeFocused.GreyedOut => greyedOut;
 

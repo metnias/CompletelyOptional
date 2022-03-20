@@ -70,7 +70,7 @@ namespace OptionalUI
         /// <summary>
         /// The colour of Rectangle Fill
         /// </summary>
-        public Color colorFill = Color.black;
+        public Color colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
         protected readonly FLabel label;
         protected readonly DyeableRect rect, rectH;

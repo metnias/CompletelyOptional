@@ -33,8 +33,6 @@ namespace OptionalUI
             this.bind = ctrlerNo;
             this.defaultValue = this.value;
 
-            this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            this.colorFill = Color.black;
             this.Initalize(defaultValue);
         }
 
@@ -138,12 +136,12 @@ namespace OptionalUI
         /// <summary>
         /// Text and Edge Colour of DyeableRect. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.
         /// </summary>
-        public Color colorEdge;
+        public Color colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
         /// Fill Colour of DyeableRect. Default is <see cref="Menu.Menu.MenuColors.Black"/>.
         /// </summary>
-        public Color colorFill;
+        public Color colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
         /// <summary>
         /// Get <see cref="BindController"/> of vanilla with player, useful for <see cref="SetController(BindController)"/>

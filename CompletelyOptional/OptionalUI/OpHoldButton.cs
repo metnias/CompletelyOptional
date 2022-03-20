@@ -18,7 +18,6 @@ namespace OptionalUI
             this.fillTime = Mathf.Max(0f, fillTime);
             fixedRad = 55f;
             _text = displayText;
-            color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
             circles = new FSprite[5];
             circles[0] = new FSprite("Futile_White")
@@ -50,7 +49,6 @@ namespace OptionalUI
             this.fillTime = Mathf.Max(0f, fillTime);
             this._size = new Vector2(Mathf.Max(24f, size.x), Mathf.Max(24f, size.y));
             _text = displayText;
-            this.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
             this.rect = new DyeableRect(this.myContainer, Vector2.zero, this.size, true);
             this.rectH = new DyeableRect(this.myContainer, Vector2.zero, this.size, false);
@@ -62,7 +60,7 @@ namespace OptionalUI
                 y = rect.sprites[DyeableRect.MainFillSprite].y,
                 scaleX = 9f,
                 scaleY = rect.sprites[DyeableRect.MainFillSprite].scaleY,
-                color = this.color,
+                color = this.colorEdge,
                 alpha = 1f
             };
             label = FLabelCreate(text);
@@ -95,7 +93,12 @@ namespace OptionalUI
         /// <summary>
         /// Main Colour for Label and Button
         /// </summary>
-        public Color color;
+        public Color colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
+
+        /// <summary>
+        /// Fill Colour for Rectangular OpHoldButton. Unused for Circular version.
+        /// </summary>
+        public Color colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
         public override void OnChange()
         {
@@ -116,7 +119,7 @@ namespace OptionalUI
         {
             base.GrafUpdate(timeStacker);
             float fill = Mathf.Clamp01(!isProgress ? filled : progress / 100f);
-            Color c = bumpBehav.GetColor(color);
+            Color c = bumpBehav.GetColor(colorEdge);
             label.color = c;
             if (!isRectangular)
             {
@@ -128,7 +131,7 @@ namespace OptionalUI
                 circles[1].alpha = 2f / r;
                 circles[2].scale = (r + 10f) / 8f;
                 circles[2].alpha = fill;
-                circles[2].color = Color.Lerp(Color.white, color, 0.7f);
+                circles[2].color = Color.Lerp(Color.white, colorEdge, 0.7f);
                 circles[3].color = Color.Lerp(c, MenuColorEffect.MidToDark(c), 0.5f);
                 circles[3].scale = (r + 15f) / 8f;
                 circles[3].alpha = 2f / (r + 15f);
@@ -144,21 +147,21 @@ namespace OptionalUI
                 // Similar to OpSimpleButton
                 if (greyedOut)
                 {
-                    this.rect.colorEdge = this.bumpBehav.GetColor(this.color);
-                    this.rect.colorFill = this.bumpBehav.GetColor(MenuColorEffect.MidToDark(this.color));
-                    this.rectH.colorEdge = this.bumpBehav.GetColor(this.color);
+                    this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
+                    this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
+                    this.rectH.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                     this.rect.GrafUpdate(timeStacker); this.rectH.GrafUpdate(timeStacker);
                     return;
                 }
-                this.rectH.colorEdge = this.bumpBehav.GetColor(this.color);
+                this.rectH.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 this.rectH.addSize = new Vector2(-2f, -2f) * this.bumpBehav.AddSize;
                 float highlight = this.MouseOver && !this.held ? (0.5f + 0.5f * this.bumpBehav.Sin(10f)) * this.bumpBehav.AddSize : 0f;
                 for (int j = 0; j < 8; j++) { this.rectH.sprites[j].alpha = highlight; }
 
-                this.rect.colorEdge = this.bumpBehav.GetColor(this.color);
+                this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 this.rect.fillAlpha = this.bumpBehav.FillAlpha;
                 this.rect.addSize = new Vector2(6f, 6f) * this.bumpBehav.AddSize;
-                this.rect.colorFill = MenuColorEffect.MidToDark(this.color);
+                this.rect.colorFill = this.colorFill;
                 this.rect.GrafUpdate(timeStacker); this.rectH.GrafUpdate(timeStacker);
 
                 if (fill > 0f)

@@ -43,7 +43,6 @@ namespace OptionalUI
             //this.lineLength = Mathf.FloorToInt((size.x - 10f) / 6f);
             string cleanText = Regex.Replace(_text, @"\s+", "");
             this.isVFont = cleanText.Length > 0 && !LabelTest.HasNonASCIIChars(cleanText);
-            this.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this._alignment = alignment;
             if (!this.IsLong)
             {
@@ -137,7 +136,7 @@ namespace OptionalUI
         /// <summary>
         /// Colour of the text. <see cref="Menu.Menu.MenuColors.MediumGrey"/> in default.
         /// </summary>
-        public Color color;
+        public Color color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
         /// Set this to <see cref="UIconfig.bumpBehav"/> or <see cref="UItrigger.bumpBehav"/> to make its colour reactive.

@@ -49,10 +49,6 @@ namespace OptionalUI
             this.password = false;
             this.mouseDown = false;
 
-            //this.keyboardOn = false;
-            this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            this.colorText = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            this.colorFill = Color.black;
             this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true) { fillAlpha = 0.5f };
 
             this.label = FLabelCreate(defaultValue);
@@ -91,17 +87,17 @@ namespace OptionalUI
         /// <summary>
         /// Edge Colour of DyeableRect. Default is MediumGrey.
         /// </summary>
-        public Color colorEdge;
+        public Color colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
         /// Text Colour, which affects Cursor Colour too. Default is MediumGrey.
         /// </summary>
-        public Color colorText;
+        public Color colorText = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
         /// Fill Colour of DyeableRect. Default is Black.
         /// </summary>
-        public Color colorFill;
+        public Color colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
         public override void GrafUpdate(float timeStacker)
         {

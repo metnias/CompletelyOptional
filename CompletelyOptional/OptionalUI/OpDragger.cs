@@ -20,10 +20,6 @@ namespace OptionalUI
         {
             this.fixedSize = new Vector2(24f, 24f);
 
-            this.colorText = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            this.colorFill = Color.black;
-
             this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true);
             this.label = FLabelCreate(defaultInt.ToString());
             FLabelPlaceAtCenter(this.label, 0f, 2f, 24f, 20f);
@@ -87,17 +83,17 @@ namespace OptionalUI
         /// <summary>
         /// Text Colour. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.
         /// </summary>
-        public Color colorText;
+        public Color colorText = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
         /// Edge Colour of DyeableRect. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.
         /// </summary>
-        public Color colorEdge;
+        public Color colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
         /// Fill Colour of DyeableRect. Default is <see cref="Menu.Menu.MenuColors.Black"/>.
         /// </summary>
-        public Color colorFill;
+        public Color colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
         public override void GrafUpdate(float timeStacker)
         {

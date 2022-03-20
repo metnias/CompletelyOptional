@@ -21,8 +21,6 @@ namespace OptionalUI
         {
             this.fixedSize = new Vector2(24f, 24f);
 
-            this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            this.colorFill = Color.black;
             this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true);
             this.symbolSprite = new FSprite("Menu_Symbol_CheckBox", true)
             { anchorX = 0.5f, anchorY = 0.5f, x = 12f, y = 12f };
@@ -53,12 +51,12 @@ namespace OptionalUI
         /// <summary>
         /// Symbol and Edge Colour of <see cref="DyeableRect"/>. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.
         /// </summary>
-        public Color colorEdge;
+        public Color colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
         /// Fill Colour of <see cref="DyeableRect"/>. Default is <see cref="Menu.Menu.MenuColors.Black"/>.
         /// </summary>
-        public Color colorFill;
+        public Color colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
         string IValueType.valueString { get => this.value; set => this.value = value; }
 

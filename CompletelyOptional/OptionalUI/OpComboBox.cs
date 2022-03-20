@@ -91,9 +91,6 @@ namespace OptionalUI
                 else { this.defaultValue = ""; this._value = ""; }
             }
 
-            this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            this.colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
-
             this.rect = new DyeableRect(this.myContainer, Vector2.zero, this.size);
             this.lblText = FLabelCreate(this.value); this.lblText.alignment = FLabelAlignment.Left;
             this.lblText.x = -this.size.x / 2f + 12f; this.lblText.y = this.size.y / 2f;
@@ -163,12 +160,12 @@ namespace OptionalUI
         /// <summary>
         /// Edge Colour of <see cref="DyeableRect"/>. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.
         /// </summary>
-        public Color colorEdge;
+        public Color colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
         /// Fill Colour of <see cref="DyeableRect"/>. Default is <see cref="Menu.Menu.MenuColors.Black"/>.
         /// </summary>
-        public Color colorFill;
+        public Color colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
         /// <summary>
         /// If true, clicking the box again will choose None(<c>""</c>). If false, the user must choose one option.

@@ -28,7 +28,6 @@ namespace OptionalUI
 
             fixedRad = 30f;
 
-            color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             circles = new FSprite[5];
             circles[0] = new FSprite("Futile_White")
             { shader = menu.manager.rainWorld.Shaders["VectorCircleFadable"] };
@@ -50,7 +49,7 @@ namespace OptionalUI
         /// <summary>
         /// Main Colour for Label and Button
         /// </summary>
-        public Color color;
+        public Color colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
         /// Requested extension ('dir' for directory)
@@ -65,7 +64,7 @@ namespace OptionalUI
         public override void GrafUpdate(float dt)
         {
             base.GrafUpdate(dt);
-            Color c = bumpBehav.GetColor(color);
+            Color c = bumpBehav.GetColor(colorEdge);
             // label.color = c;
             float r = rad; // + 8f * (bumpBehav.sizeBump + 0.5f * Mathf.Sin(bumpBehav.extraSizeBump * Mathf.PI)) * ((!held) ? 1f : (0.5f + 0.5f * Mathf.Sin(pulse * Mathf.PI * 2f))) + 0.5f;
             for (int i = 0; i < circles.Length; i++) { circles[i].scale = r / 8f; circles[i].SetPosition(rad, rad); }
@@ -74,7 +73,7 @@ namespace OptionalUI
             circles[1].alpha = 2f / r;
             circles[2].scale = (r + 10f) / 8f;
             circles[2].alpha = 0f; // Mathf.Clamp01(!isProgress ? filled : progress / 100f);
-            circles[2].color = Color.Lerp(Color.white, color, 0.7f);
+            circles[2].color = Color.Lerp(Color.white, colorEdge, 0.7f);
             circles[3].color = Color.Lerp(c, MenuColorEffect.MidToDark(c), 0.5f);
             circles[3].scale = (r + 15f) / 8f;
             circles[3].alpha = 2f / (r + 15f);

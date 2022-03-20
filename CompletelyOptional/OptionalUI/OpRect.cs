@@ -17,8 +17,6 @@ namespace OptionalUI
         {
             this.fillAlpha = alpha;
             this.doesBump = false;
-            colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
             this.rect = new DyeableRect(this.myContainer, Vector2.zero, size, true)
             {
@@ -41,12 +39,12 @@ namespace OptionalUI
         /// <summary>
         /// Edge Colour of <see cref="DyeableRect"/>. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.
         /// </summary>
-        public Color colorEdge;
+        public Color colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
         /// Fill Colour of <see cref="DyeableRect"/>. Default is Black.
         /// </summary>
-        public Color colorFill;
+        public Color colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
         /// <summary>
         /// fillAlpha of <see cref="DyeableRect"/>. (Ignored when <see cref="doesBump"/> is true)
