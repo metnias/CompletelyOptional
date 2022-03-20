@@ -1,9 +1,5 @@
 ﻿using BepInEx;
 using OptionalUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CompletelyOptional
 {
@@ -16,7 +12,7 @@ namespace CompletelyOptional
         {
         }
 
-        public InternalOI_Blank(RainWorldMod rwMod) : base(rwMod, Reason.NoInterface)
+        internal InternalOI_Blank(RainWorldMod rwMod) : base(rwMod, Reason.NoInterface)
         {
         }
     }

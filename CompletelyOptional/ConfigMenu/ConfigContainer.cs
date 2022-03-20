@@ -287,6 +287,7 @@ namespace CompletelyOptional
         internal void ShutdownConfigContainer()
         {
             savedActiveTabIndex[activeItfIndex] = activeTabIndex;
+            // Save InternalOI_Stats & StarredMods to ComOptPlugin
 
             #region UnloadItfs
 

@@ -21,7 +21,7 @@ namespace CompletelyOptional
             Debug.LogException(exception); ComOptPlugin.LogError(this.exception);
         }
 
-        public InternalOI_Error(RainWorldMod rwMod, Exception exception) : base(rwMod, Reason.Error)
+        internal InternalOI_Error(RainWorldMod rwMod, Exception exception) : base(rwMod, Reason.Error)
         {
             if (this.rwMod.ModID != null)
             {

@@ -1,5 +1,6 @@
 ﻿using BepInEx;
 using BepInEx.Logging;
+using BepInEx.Configuration;
 using RWCustom;
 using System.IO;
 using System.Reflection;
@@ -43,9 +44,11 @@ namespace CompletelyOptional
         /// </summary>
         public static DirectoryInfo directory;
 
+        public static ComOptPlugin instance;
+
         public void Awake()
         {
-            logSource = this.Logger;
+            instance = this;
 
             directory = new DirectoryInfo(string.Concat(
                 Custom.RootFolderDirectory(),
@@ -66,7 +69,17 @@ namespace CompletelyOptional
             OptionsMenuPatch.SubPatch();
             On.ProcessManager.ctor += ProcessManagerCtor;
             // ProgressData.SubPatch(); moved to post-initialization of OIs, makes no sense to hook before the OIs are even instantiated.
+
+            #region ConfigEntries
+
+            cfgPlayCustomSong = Config.Bind("Settings", "PlayCustomSong", true, "Whether to play custom song or not");
+            dataStarredMods = Config.Bind("Data", "StarredMods", "", "List of starred mods"); // split by |
+
+            #endregion ConfigEntries
         }
+
+        internal ConfigEntry<bool> cfgPlayCustomSong;
+        internal ConfigEntry<string> dataStarredMods;
 
         /// <summary>
         /// <see cref="RainWorld"/> instance
@@ -114,7 +127,7 @@ namespace CompletelyOptional
 
         #region Logger
 
-        private static ManualLogSource logSource;
+        private static ManualLogSource logSource => instance.Logger;
 
         internal static void LogMessage(object msg) => logSource.LogMessage(msg);
 

@@ -9,7 +9,7 @@ namespace CompletelyOptional
     internal class InternalOI_Stats : InternalOI
     {
         public InternalOI_Stats() :
-            base(new RainWorldMod("Statistics"), Reason.Statistics)
+            base(new RainWorldMod("_Statistics_"), Reason.Statistics)
         {
         }
 

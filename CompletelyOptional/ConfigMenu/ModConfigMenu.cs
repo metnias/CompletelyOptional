@@ -264,6 +264,7 @@ namespace CompletelyOptional
 
         public override void ShutDownProcess()
         {
+            ComOptPlugin.instance.Config.Save();
             darkSprite.RemoveFromContainer();
             cfgContainer.ShutdownConfigContainer();
             base.ShutDownProcess();

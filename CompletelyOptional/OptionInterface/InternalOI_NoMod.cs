@@ -12,11 +12,6 @@ namespace CompletelyOptional
         public override void Initialize()
         {
             base.Initialize();
-            TutoInit();
-        }
-
-        private void TutoInit()
-        {
             labelID = new OpLabel(new Vector2(100f, 500f), new Vector2(400f, 50f), InternalTranslator.Translate("No Mod can be configured"), FLabelAlignment.Center, true);
 
             labelVersion = new OpLabel(new Vector2(100f, 440f), new Vector2(200f, 20f), "Config Machine (a.k.a. CompletelyOptional) by topicular", FLabelAlignment.Left);

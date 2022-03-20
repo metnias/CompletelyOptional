@@ -1,8 +1,5 @@
 using BepInEx;
 using OptionalUI;
-using System;
-using System.Collections.Generic;
-using UnityEngine;
 
 namespace CompletelyOptional
 {
@@ -52,10 +49,6 @@ namespace CompletelyOptional
         {
             return false;
         }
-
-        public new bool LoadConfig() => true;
-
-        public new bool SaveConfig(Dictionary<string, string> newConfig) => true;
 
         public override void Initialize()
         {
