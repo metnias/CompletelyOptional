@@ -29,8 +29,8 @@
      units="px"
      width="600px"
      inkscape:zoom="1.0998546"
-     inkscape:cx="290.49294"
-     inkscape:cy="239.12252"
+     inkscape:cx="297.76663"
+     inkscape:cy="299.13045"
      inkscape:window-width="2560"
      inkscape:window-height="1377"
      inkscape:window-x="-8"
@@ -48,8 +48,8 @@
        id="rect1311"
        width="30.691671"
        height="6.8791699"
-       x="37.318024"
-       y="104.20969" />
+       x="-38.218479"
+       y="94.827766" />
     <rect
        style="fill:none;stroke:#ff0000;stroke-width:1.05833;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect1311-5"
@@ -60,15 +60,101 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
-       x="47.40715"
-       y="-106.30605"
+       x="-28.129353"
+       y="-96.924133"
        id="text4534-0-2"
        transform="scale(1,-1)"><tspan
          sodipodi:role="line"
          style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
-         x="47.40715"
-         y="-106.30605"
+         x="-28.129353"
+         y="-96.924133"
          id="tspan10133-7">BACK</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="7.8006001"
+       y="-103.04539"
+       id="text4534-0-2-9"
+       transform="scale(1,-1)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
+         x="7.8006001"
+         y="-103.04539"
+         id="tspan10133-7-4">Loaded Plugins: ##</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="110.85603"
+       y="-111.60344"
+       id="text4534-0-2-9-6"
+       transform="scale(1,-1)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
+         x="110.85603"
+         y="-111.60344"
+         id="tspan10133-7-4-0">ConfigMachine 2.0.X.X</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="8.7156448"
+       y="-111.34203"
+       id="text4534-0-2-9-6-9"
+       transform="scale(1,-1)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
+         x="8.7156448"
+         y="-111.34203"
+         id="tspan10133-7-4-0-6">Rain World 1.X</tspan></text>
+    <rect
+       style="fill:none;stroke:#ff0000;stroke-width:1.05833;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1311-8"
+       width="5.2916703"
+       height="5.2916703"
+       x="99.308861"
+       y="-11.915128" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="107.27171"
+       y="10.414122"
+       id="text4534-0-2-3"
+       transform="scale(1,-1)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
+         x="107.27171"
+         y="10.414122"
+         id="tspan10133-7-57">SEPARATE CONFIG MUSIC</tspan></text>
+    <rect
+       style="fill:none;stroke:#ff0000;stroke-width:1.05833;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1311-8-1"
+       width="30.691671"
+       height="6.8791699"
+       x="121.1619"
+       y="-21.470512" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="125.55258"
+       y="19.204042"
+       id="text4534-0-2-3-7"
+       transform="scale(1,-1)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
+         x="125.55258"
+         y="19.204042"
+         id="tspan10133-7-57-4">CLEAR STARS</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="99.343658"
+       y="19.2194"
+       id="text4534-0-2-3-7-9"
+       transform="scale(1,-1)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
+         x="99.343658"
+         y="19.2194"
+         id="tspan10133-7-57-4-0">STARS: ##</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2889px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"

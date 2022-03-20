@@ -16,7 +16,7 @@ namespace CompletelyOptional
         {
         }
 
-        private void LoadIllustration()
+        private void LoadIllustrations()
         {
             string[] files = new string[] { imgTitle, imgTitleS };
             foreach (string file in files)
@@ -37,7 +37,7 @@ namespace CompletelyOptional
 
         public override void Initialize()
         {
-            LoadIllustration();
+            LoadIllustrations();
             base.Initialize();
 
             // MOD CONFIG
