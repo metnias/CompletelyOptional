@@ -151,6 +151,7 @@ namespace OptionalUI
                     this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
                     this.rectH.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                     this.rect.GrafUpdate(timeStacker); this.rectH.GrafUpdate(timeStacker);
+                    this.fillSprite.scaleX = 0f;
                     return;
                 }
                 this.rectH.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
