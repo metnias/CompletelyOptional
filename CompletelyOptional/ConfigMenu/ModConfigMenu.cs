@@ -101,7 +101,7 @@ namespace CompletelyOptional
             LabelTest.Initialize(this);
 
             // Play song
-            if (!isReload)
+            if (!isReload && ComOptPlugin.cfgPlayCustomSong.Value)
             {
                 if (this.manager.musicPlayer == null && this.manager.rainWorld.options.musicVolume > 0f)
                 {
@@ -237,7 +237,7 @@ namespace CompletelyOptional
             */
 
             // Play new song
-            if (this.manager.musicPlayer != null)
+            if (this.manager.musicPlayer != null && ComOptPlugin.cfgPlayCustomSong.Value)
             {
                 if (this.manager.musicPlayer.song == null && this.manager.musicPlayer.nextSong == null)
                 { this.manager.musicPlayer.MenuRequestsSong(randomSong, 1f, 2f); }

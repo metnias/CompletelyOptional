@@ -78,8 +78,8 @@ namespace CompletelyOptional
             #endregion ConfigEntries
         }
 
-        internal ConfigEntry<bool> cfgPlayCustomSong;
-        internal ConfigEntry<string> dataStarredMods;
+        internal static ConfigEntry<bool> cfgPlayCustomSong;
+        internal static ConfigEntry<string> dataStarredMods;
 
         /// <summary>
         /// <see cref="RainWorld"/> instance

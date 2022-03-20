@@ -19,6 +19,11 @@ namespace CompletelyOptional
         public override void Initialize()
         {
             base.Initialize();
+
+            // MOD CONFIG
+
+            // turn off CM music
+            // Reset starred mods
         }
 
         public override void Signal(UItrigger trigger, string signal)
