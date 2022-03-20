@@ -82,11 +82,9 @@ namespace CompletelyOptional
             // AlertLabel
             alertLabel = new MenuLabel(this, this.pages[0], "", new Vector2(383f, 735f), new Vector2(600f, 30f), false);
             this.pages[0].subObjects.Add(this.alertLabel);
-
-            // UIContainer
-            cfgContainer = new ConfigContainer(this, this.pages[0]);
-            this.pages[0].subObjects.Add(cfgContainer);
         }
+
+        private bool _cfgInit = false;
 
         private const int _DASinit = 20, _DASdelay = 6;
 
@@ -177,6 +175,15 @@ namespace CompletelyOptional
             this.alertLabelSin += this.alertLabelFade;
 
             base.Update(); //keep buttons to be sane
+
+            if (!_cfgInit)
+            {
+                // UIContainer
+                cfgContainer = new ConfigContainer(this, this.pages[0]);
+                this.pages[0].subObjects.Add(cfgContainer);
+                _cfgInit = true;
+                return;
+            }
 
             cfgContainer.Update();
 

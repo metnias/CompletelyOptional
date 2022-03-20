@@ -221,8 +221,7 @@ namespace CompletelyOptional
 
         private void ReloadItfs(bool noInit)
         {
-            ComOptPlugin.LogMessage($"Reload! isReload: {cfgMenu.isReload}; noInit: {noInit}");
-
+            // ComOptPlugin.LogMessage($"Reload! isReload: {cfgMenu.isReload}; noInit: {noInit}");
             mute = true;
 
             if (!noInit)
@@ -672,15 +671,19 @@ namespace CompletelyOptional
         internal void InterfaceUpdateError(bool tab, Exception ex)
         {
             halt = true;
-            // Change itf to Error version
-            try
-            {
-                for (int i = 0; i < activeInterface.Tabs.Length; i++)
-                { if (activeInterface.Tabs[i] != null) { activeInterface.Tabs[i].Unload(); } }
-                activeTab = null;
-            }
-            catch { }
 
+            // Unload current interface
+            for (int i = 0; i < activeInterface.Tabs.Length; i++)
+            {
+                if (activeInterface.Tabs[i] != null)
+                {
+                    try { activeInterface.Tabs[i].Unload(); }
+                    catch { continue; }
+                }
+            }
+            activeTab = null;
+
+            // Change itf to Error version
             OptItfs[activeItfIndex] = new InternalOI_Error(OptItfs[activeItfIndex].rwMod, ex);
 
             // Recreate List's mod button to error version

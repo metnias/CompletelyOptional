@@ -1,5 +1,5 @@
 ﻿###2.0 CompletelyOptional Update#!#20220330#!#
-To Do: ModConfigMenu: Delay Initialization after communicated with older process; Write Reset Config function; Write ConfigContainer.InterfaceUpdateError; Fix reactiveness of OpTextBox.TypingAccept; Write InternalOI_Stats
+To Do: ModConfigMenu: Write Reset Config function; Write ConfigContainer.InterfaceUpdateError; Fix reactiveness of OpTextBox.TypingAccept; Write InternalOI_Stats
 v Rewrote ConfigMachine to BepInEx Plugin, removed support for Partiality Mods
 v Use only BepInEx.Configuration for saving configs
  v So OI won't get even called until MOD CONFIG screen is loaded (As BepInEx will load the settings instead)

@@ -352,7 +352,7 @@ namespace CompletelyOptional
                 {
                     case Role.Stat:
                         this._pos = new Vector2(466f, 700f); // x462f : centered
-                        this.soundClick = SoundID.MENU_Switch_Arena_Gametype; break;
+                        this.soundClick = SoundID.MENU_Switch_Arena_Gametype; this.greyedOut = true; break;
                     case Role.ScrollUp:
                         this._pos = new Vector2(321f, 720f);
                         this.soundClick = SoundID.MENU_First_Scroll_Tick; this.canHold = true; break;

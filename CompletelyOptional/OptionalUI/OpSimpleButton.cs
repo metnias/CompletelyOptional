@@ -16,8 +16,6 @@ namespace OptionalUI
         {
             this._size = new Vector2(Mathf.Max(24f, size.x), Mathf.Max(24f, size.y));
 
-            this.colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            this.colorFill = Color.black;
             this.rect = new DyeableRect(this.myContainer, Vector2.zero, this.size, true);
             this.rectH = new DyeableRect(this.myContainer, Vector2.zero, this.size, false);
             if (!IsImageButton)
@@ -31,7 +29,7 @@ namespace OptionalUI
         /// <summary>
         /// Whether this triggers <see cref="UItrigger.Signal"/> when it's kept pressed or not. See also <seealso cref="soundHold"/>.
         /// </summary>
-        public bool canHold;
+        public bool canHold = false;
 
         /// <summary>
         /// How long this is held.
@@ -67,12 +65,12 @@ namespace OptionalUI
         /// <summary>
         /// The colour of Rectangle Edge and Text
         /// </summary>
-        public Color colorEdge;
+        public Color colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
         /// The colour of Rectangle Fill
         /// </summary>
-        public Color colorFill;
+        public Color colorFill = Color.black;
 
         protected readonly FLabel label;
         protected readonly DyeableRect rect, rectH;
