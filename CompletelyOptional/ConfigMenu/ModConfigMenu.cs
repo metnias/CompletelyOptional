@@ -12,15 +12,12 @@ namespace CompletelyOptional
     {
         public ModConfigMenu(ProcessManager manager) : base(manager, EnumExt_ComOpt.ModConfigMenu)
         {
-            ComOptPlugin.LogInfo("ModConfigMenu ctor called");
-
             // Update rw pm
             ComOptPlugin.pm = this.manager;
             ComOptPlugin.rw = this.manager.rainWorld;
 
             // Initialize
             instance = this;
-            description = ""; lastDescription = "";
         }
 
         private bool _cfgInit = false;
@@ -42,14 +39,14 @@ namespace CompletelyOptional
         /// </summary>
         internal static string curLang;
 
-        private string description, lastDescription;
+        #region AlertAndDescription
+
+        private string description = "", lastDescription = "";
 
         /// <summary>
         /// Send Menu description text to display
         /// </summary>
         internal void ShowDescription(string text) => this.description = text;
-
-        #region Alert
 
         /// <summary>
         /// Send Menu alert text to display
@@ -60,7 +57,7 @@ namespace CompletelyOptional
         private string alertText = "";
         private float alertLabelFade = 0f, lastAlertLabelFade = 0f, alertLabelSin = 0f;
 
-        #endregion Alert
+        #endregion AlertAndDescription
 
         public static ModConfigMenu instance;
 

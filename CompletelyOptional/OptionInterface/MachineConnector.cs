@@ -12,6 +12,16 @@ namespace CompletelyOptional
     /// </summary>
     public static class MachineConnector
     {
+        /// <summary>
+        /// <see cref="RainWorld"/> instance, useful for accessing <see cref="RainWorld.options"/>, <see cref="RainWorld.Shaders"/> etc.
+        /// </summary>
+        public static RainWorld rainWorld => ComOptPlugin.rw;
+
+        /// <summary>
+        /// <see cref="ProcessManager"/> instance, useful for accessing <see cref="ProcessManager.currentMainLoop"/>.
+        /// </summary>
+        public static ProcessManager processManager => ComOptPlugin.pm;
+
         internal static Dictionary<string, OptionInterface> registeredOIs = new Dictionary<string, OptionInterface>();
 
         /// <summary>

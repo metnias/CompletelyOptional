@@ -153,12 +153,15 @@
     <EmbeddedResource Include="Translations.txt" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="Resources\ConfigShadow.png" />
+    <EmbeddedResource Include="Resources\ConfigTitle.png" />
     <Content Include="lib\Assembly-CSharp.dll" />
     <Content Include="lib\BepInEx.dll" />
     <Content Include="lib\HOOKS-Assembly-CSharp.dll" />
     <Content Include="lib\Partiality.dll" />
     <Content Include="lib\UnityEngine.dll" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <LocalDir>E:\Game\Rain World\RainWorld.exe</LocalDir>

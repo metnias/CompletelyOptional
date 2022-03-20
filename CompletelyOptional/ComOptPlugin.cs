@@ -84,12 +84,12 @@ namespace CompletelyOptional
         /// <summary>
         /// <see cref="RainWorld"/> instance
         /// </summary>
-        public static RainWorld rw { get; internal set; }
+        internal static RainWorld rw;
 
         /// <summary>
         /// <see cref="ProcessManager"/> instance
         /// </summary>
-        public static ProcessManager pm { get; internal set; }
+        internal static ProcessManager pm;
 
         /// <summary>
         /// Catch <see cref="RainWorld"/> instance

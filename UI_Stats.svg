@@ -30,7 +30,7 @@
      width="600px"
      inkscape:zoom="1.0998546"
      inkscape:cx="290.49294"
-     inkscape:cy="384.59629"
+     inkscape:cy="239.12252"
      inkscape:window-width="2560"
      inkscape:window-height="1377"
      inkscape:window-x="-8"
@@ -50,6 +50,13 @@
        height="6.8791699"
        x="37.318024"
        y="104.20969" />
+    <rect
+       style="fill:none;stroke:#ff0000;stroke-width:1.05833;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect1311-5"
+       width="152.40001"
+       height="38.629169"
+       x="3.1749985"
+       y="119.59167" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:3.88056px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
@@ -62,5 +69,31 @@
          x="47.40715"
          y="-106.30605"
          id="tspan10133-7">BACK</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2889px;line-height:1.25;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="44.477528"
+       y="-134.95404"
+       id="text4534-0-2-6"
+       transform="scale(1,-1)"><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:11.2889px;font-family:'Segoe UI';-inkscape-font-specification:'Segoe UI';fill:#ff0000;fill-opacity:1;stroke-width:0.264583"
+         x="44.477528"
+         y="-134.95404"
+         id="tspan10133-7-5">MOD CONFIG</tspan></text>
+    <rect
+       style="fill:none;stroke:#ff0000;stroke-width:1.05833;stroke-miterlimit:4;stroke-dasharray:none;stop-color:#000000"
+       id="rect933"
+       width="165.62917"
+       height="165.62918"
+       x="-3.4395852"
+       y="-3.4395852" />
+    <rect
+       style="fill:none;fill-opacity:1;stroke:#ff0000;stroke-width:1.05833;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect7782"
+       width="63.764591"
+       height="21.695837"
+       x="93.133354"
+       y="-23.283335" />
   </g>
 </svg>
