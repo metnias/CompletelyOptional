@@ -13,9 +13,10 @@ namespace CompletelyOptional
     /// <summary>
     /// Contains all OptionInterfaces, and connects UIelements and Rain World Menu
     /// </summary>
-    public class ConfigContainer : MenuObject
+    public class ConfigContainer : PositionedMenuObject
     {
-        public ConfigContainer(Menu.Menu menu, MenuObject owner) : base(menu, owner)
+        public ConfigContainer(Menu.Menu menu, MenuObject owner)
+            : base(menu, owner, Vector2.zero) // new Vector2(menu.manager.rainWorld.options.ScreenSize.x / 2f - 683f, 0f)
         {
             // Initialize
             instance = this;
@@ -41,11 +42,15 @@ namespace CompletelyOptional
             menuTab.Activate();
             activeTab.Activate();
 
+            cursor = new FocusCursor(this);
+            this.subObjects.Add(cursor);
+
             // Update Once
             GrafUpdate(0f);
             Update();
         }
 
+        private FocusCursor cursor;
         public static ConfigContainer instance;
 
         private ModConfigMenu cfgMenu => this.menu as ModConfigMenu;
@@ -476,10 +481,14 @@ namespace CompletelyOptional
 
         #endregion FocusHandler
 
-        // Called by ModConfigMenu.GrafUpdate
+        /// <summary>
+        /// Called by <see cref="ModConfigMenu.GrafUpdate"/>
+        /// </summary>
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);
+            this.myContainer.x = Mathf.Lerp(this.ScreenLastPos.x, this.ScreenPos.x, timeStacker);
+            this.myContainer.y = Mathf.Lerp(this.ScreenLastPos.y, this.ScreenPos.y, timeStacker);
             if (halt) { return; }
             menuTab.GrafUpdate(timeStacker);
             try { activeTab?.GrafUpdate(timeStacker); }
@@ -494,7 +503,9 @@ namespace CompletelyOptional
 
         private bool lastPressZ;
 
-        // Called by ModConfigMenu.Update
+        /// <summary>
+        /// Called by <see cref="ModConfigMenu.Update"/>
+        /// </summary>
         public override void Update()
         {
             base.Update();
@@ -665,6 +676,68 @@ namespace CompletelyOptional
             }
 
             #endregion FocusManage
+        }
+
+        private class FocusCursor : RectangularMenuObject
+        {
+            public FocusCursor(ConfigContainer cfg) : base(cfg.menu, cfg.menu.pages[0], Vector2.zero, Vector2.one)
+            {
+                this.cfg = cfg;
+                this.sprites = new FSprite[4];
+                for (int i = 0; i < this.sprites.Length; i++)
+                {
+                    this.sprites[i] = new FSprite("stickLeftA")
+                    { rotation = 90f * i, anchorX = 1f, anchorY = 1f, scaleX = 1.25f, color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey) };
+                    this.Container.AddChild(this.sprites[i]);
+                }
+                testLabel = new FLabel(LabelTest.GetFont(false, true), "") { x = 181.01f, y = 10.01f, alignment = FLabelAlignment.Left };
+                Container.AddChild(testLabel);
+            }
+
+            public readonly ConfigContainer cfg;
+            private FSprite[] sprites; // BtmL, TopL, TopR, BtmR
+            private FLabel testLabel;
+            public Rect? focusRect => (focusedElement as ICanBeFocused)?.FocusRect;
+
+            public override void GrafUpdate(float timeStacker)
+            {
+                base.GrafUpdate(timeStacker);
+
+                for (int i = 0; i < this.sprites.Length; i++)
+                {
+                    this.sprites[i].element = Futile.atlasManager.GetElementWithName("stickLeft" + (!holdElement ? "A" : "B"));
+                }
+                this.sprites[0].x = Mathf.Lerp(lastPos.x, pos.x, timeStacker) + 0.01f;
+                this.sprites[0].y = Mathf.Lerp(lastPos.y, pos.y, timeStacker) + 0.01f;
+                this.sprites[1].x = Mathf.Lerp(lastPos.x, pos.x, timeStacker) + 0.01f;
+                this.sprites[1].y = Mathf.Lerp(lastPos.y + lastSize.y, pos.y + size.y, timeStacker) + 0.01f;
+                this.sprites[2].x = Mathf.Lerp(lastPos.x + lastSize.x, pos.x + size.x, timeStacker) + 0.01f;
+                this.sprites[2].y = Mathf.Lerp(lastPos.y + lastSize.y, pos.y + size.y, timeStacker) + 0.01f;
+                this.sprites[3].x = Mathf.Lerp(lastPos.x + lastSize.x, pos.x + size.x, timeStacker) + 0.01f;
+                this.sprites[3].y = Mathf.Lerp(lastPos.y, pos.y, timeStacker) + 0.01f;
+                testLabel.text = $"x:{sprites[0].x:F0}, y:{sprites[0].y:F0}; w:{sprites[2].x - sprites[0].x:F0}, h:{sprites[2].y - sprites[0].y:F0}";
+                //if (focusedElement?.inScrollBox == true) { testLabel.text += $" so:{focusedElement.scrollBox.childOffset}"; }
+            }
+
+            public override void Update()
+            {
+                base.Update();
+                if (this.focusRect.HasValue)
+                {
+                    Rect rect = this.focusRect.Value;
+                    if (focusedElement.inScrollBox)
+                    {
+                        // Also Trim to scrollBox
+                    }
+                    else
+                    {
+                        rect.x += focusedElement.tab.container.x;
+                        rect.y += focusedElement.tab.container.y;
+                    }
+                    this.pos = Vector2.Lerp(this.pos, new Vector2(rect.x, rect.y), 0.6f / UIelement.frameMulti);
+                    this.size = Vector2.Lerp(this.size, new Vector2(rect.width, rect.height), 0.6f / UIelement.frameMulti);
+                }
+            }
         }
 
         private bool halt = false;

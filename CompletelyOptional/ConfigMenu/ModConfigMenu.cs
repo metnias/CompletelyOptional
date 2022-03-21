@@ -18,9 +18,48 @@ namespace CompletelyOptional
 
             // Initialize
             instance = this;
-        }
 
-        private bool _cfgInit = false;
+            this.pages.Add(new Page(this, null, "hub", 0));
+
+            // Show Background
+            if (!ComOptPlugin.testing)
+            {
+                if (isReload)
+                { this.scene = new InteractiveMenuScene(this, this.pages[0], reloadScene); }
+                else
+                {
+                    if (!redUnlocked)
+                    { this.scene = new InteractiveMenuScene(this, this.pages[0], (MenuScene.SceneID)(bgList[Mathf.FloorToInt(UnityEngine.Random.value * (bgList.Length))])); }
+                    else
+                    { this.scene = new InteractiveMenuScene(this, this.pages[0], (MenuScene.SceneID)(bgListRed[Mathf.FloorToInt(UnityEngine.Random.value * (bgListRed.Length))])); }
+                    ComOptPlugin.LogInfo($"Chosen Background : {this.scene.sceneID}");
+                }
+                this.pages[0].subObjects.Add(this.scene);
+            }
+            else
+            {
+                this.scene = new SlideShowMenuScene(this, this.pages[0], MenuScene.SceneID.Intro_4_Walking);
+                this.pages[0].subObjects.Add(this.scene);
+            }
+
+            // darkSprite
+            this.darkSprite = new FSprite("pixel", true)
+            {
+                color = new Color(0.01f, 0.01f, 0.01f),
+                anchorX = 0f,
+                anchorY = 0f,
+                scaleX = 1368f,
+                scaleY = 770f,
+                x = -1f,
+                y = -1f,
+                alpha = 0.85f
+            };
+            this.pages[0].Container.AddChild(this.darkSprite);
+
+            // AlertLabel
+            alertLabel = new MenuLabel(this, this.pages[0], "", new Vector2(383f, 735f), new Vector2(600f, 30f), false);
+            this.pages[0].subObjects.Add(this.alertLabel);
+        }
 
         private const int _DASinit = 20, _DASdelay = 6;
 
@@ -84,69 +123,31 @@ namespace CompletelyOptional
             }
         }
 
-        private void Initialize()
+        protected override void Init()
         {
+            base.Init();
+
             if (!isReload)
             {
                 redUnlocked = (this.manager.rainWorld.progression.miscProgressionData.redUnlocked ||
                     File.Exists(string.Concat(Custom.RootFolderDirectory(), "unlockred.txt")) ||
                     this.manager.rainWorld.progression.miscProgressionData.redMeatEatTutorial > 2
                     );
-            }
 
-            this.pages.Add(new Page(this, null, "hub", 0));
-            LabelTest.Initialize(this);
+                LabelTest.Initialize(this);
 
-            // Play song
-            if (!isReload && ComOptPlugin.cfgPlayCustomSong.Value)
-            {
-                if (this.manager.musicPlayer == null && this.manager.rainWorld.options.musicVolume > 0f)
+                if (ComOptPlugin.cfgPlayCustomSong.Value)
                 {
-                    this.manager.musicPlayer = new MusicPlayer(this.manager);
-                    this.manager.sideProcesses.Add(this.manager.musicPlayer);
+                    // Play song
+                    if (this.manager.musicPlayer == null && this.manager.rainWorld.options.musicVolume > 0f)
+                    {
+                        this.manager.musicPlayer = new MusicPlayer(this.manager);
+                        this.manager.sideProcesses.Add(this.manager.musicPlayer);
+                    }
+                    this.manager.musicPlayer.MenuRequestsSong(randomSong, 1f, 2f);
+                    this.mySoundLoopID = SoundID.MENU_Main_Menu_LOOP;
                 }
-                this.manager.musicPlayer.MenuRequestsSong(randomSong, 1f, 2f);
-                this.mySoundLoopID = SoundID.MENU_Main_Menu_LOOP;
             }
-
-            // Show Background
-            if (!ComOptPlugin.testing)
-            {
-                if (isReload)
-                { this.scene = new InteractiveMenuScene(this, this.pages[0], reloadScene); }
-                else
-                {
-                    if (!redUnlocked)
-                    { this.scene = new InteractiveMenuScene(this, this.pages[0], (MenuScene.SceneID)(bgList[Mathf.FloorToInt(UnityEngine.Random.value * (bgList.Length))])); }
-                    else
-                    { this.scene = new InteractiveMenuScene(this, this.pages[0], (MenuScene.SceneID)(bgListRed[Mathf.FloorToInt(UnityEngine.Random.value * (bgListRed.Length))])); }
-                    ComOptPlugin.LogInfo($"Chosen Background : {this.scene.sceneID}");
-                }
-                this.pages[0].subObjects.Add(this.scene);
-            }
-            else
-            {
-                this.scene = new SlideShowMenuScene(this, this.pages[0], MenuScene.SceneID.Intro_4_Walking);
-                this.pages[0].subObjects.Add(this.scene);
-            }
-
-            // darkSprite
-            this.darkSprite = new FSprite("pixel", true)
-            {
-                color = new Color(0.01f, 0.01f, 0.01f),
-                anchorX = 0f,
-                anchorY = 0f,
-                scaleX = 1368f,
-                scaleY = 770f,
-                x = -1f,
-                y = -1f,
-                alpha = 0.85f
-            };
-            this.pages[0].Container.AddChild(this.darkSprite);
-
-            // AlertLabel
-            alertLabel = new MenuLabel(this, this.pages[0], "", new Vector2(383f, 735f), new Vector2(600f, 30f), false);
-            this.pages[0].subObjects.Add(this.alertLabel);
 
             // UIContainer
             cfgContainer = new ConfigContainer(this, this.pages[0]);
@@ -181,11 +182,9 @@ namespace CompletelyOptional
 
             base.Update(); //keep buttons to be sane
 
-            if (!_cfgInit)
-            {
-                Initialize();
-                _cfgInit = true;
-                return;
+            if (this.scene != null && (int)this.scene.sceneID < 12 && (int)this.scene.sceneID > 6)
+            { //clamp offset
+                this.scene.camPos = new Vector2(this.scene.camPos.x * 0.7f, this.scene.camPos.y * 0.7f);
             }
 
             cfgContainer.Update();

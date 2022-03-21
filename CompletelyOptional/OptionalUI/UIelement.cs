@@ -314,9 +314,9 @@ namespace OptionalUI
         protected ModConfigMenu menu;
 
         /// <summary>
-        /// You can alternatively use <c>menu.pages[0]</c> for this
+        /// <see cref="ConfigContainer"/> instance this element is in.
         /// </summary>
-        protected Page owner => menu.pages[0];
+        protected ConfigContainer owner => menu.cfgContainer;
 
         /// <summary>
         /// <see cref="FContainer"/> to add <see cref="FSprite"/>.

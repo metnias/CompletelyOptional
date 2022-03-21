@@ -87,7 +87,7 @@ namespace OptionalUI
         /// <returns></returns>
         protected int SideSprite(int side) => ((!this.filled) ? 0 : 9) + side;
 
-        /// <param name="corner">BottomLeft, TopLeft, TopRight, BottomRight</param>
+        /// <param name="corner">BtmL, TopL, TopR, BtmR</param>
         /// <returns></returns>
         protected int CornerSprite(int corner) => ((!this.filled) ? 0 : 9) + 4 + corner;
 
