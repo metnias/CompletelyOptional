@@ -26,7 +26,6 @@ namespace OptionalUI
             this.isRectangular = true;
             this._pos = pos;
             this._size = size;
-            this.menu = ModConfigMenu.instance;
             this.myContainer = new FContainer
             {
                 x = this.ScreenPos.x + 0.01f,
@@ -34,9 +33,6 @@ namespace OptionalUI
                 scaleX = 1f,
                 scaleY = 1f
             };
-            this.inScrollBox = false;
-            this.description = "";
-            this.hidden = false;
         }
 
         /// <summary>
@@ -49,7 +45,6 @@ namespace OptionalUI
             this.isRectangular = false;
             this._pos = pos;
             this._rad = rad;
-            this.menu = ModConfigMenu.instance;
             this.myContainer = new FContainer()
             {
                 x = this.ScreenPos.x + 0.01f,
@@ -57,9 +52,6 @@ namespace OptionalUI
                 scaleX = 1f,
                 scaleY = 1f
             };
-            this.inScrollBox = false;
-            this.description = "";
-            this.hidden = false;
         }
 
         /// <summary>
@@ -190,7 +182,7 @@ namespace OptionalUI
         /// <summary>
         /// Infotext that will be shown at the bottom of the screen.
         /// </summary>
-        public string description;
+        public string description = "";
 
         /// <summary>
         /// Whether the element is Rectangular(true) or Circular(false)
@@ -202,7 +194,7 @@ namespace OptionalUI
         /// Use <see cref="Hide"/> and <see cref="Show"/> to manipulate this.
         /// <para>To check whether this is actually inactive/invisible, use <see cref="isInactive"/></para>
         /// </summary>
-        public bool hidden { get; private set; }
+        public bool hidden { get; private set; } = false;
 
         /// <summary>
         /// Whether this is actually not Active/is hidden. See also <seealso cref="hidden"/>
@@ -311,12 +303,12 @@ namespace OptionalUI
         /// <summary>
         /// <see cref="ModConfigMenu"/> instance this element is in.
         /// </summary>
-        protected ModConfigMenu menu;
+        protected ModConfigMenu menu => ModConfigMenu.instance;
 
         /// <summary>
         /// <see cref="ConfigContainer"/> instance this element is in.
         /// </summary>
-        protected ConfigContainer owner => menu.cfgContainer;
+        protected ConfigContainer owner => ConfigContainer.instance;
 
         /// <summary>
         /// <see cref="FContainer"/> to add <see cref="FSprite"/>.
@@ -364,7 +356,7 @@ namespace OptionalUI
         /// <summary>
         /// Whether this is inside <see cref="OpScrollBox"/>. See also <seealso cref="scrollBox"/>
         /// </summary>
-        protected internal bool inScrollBox { get; private set; }
+        protected internal bool inScrollBox { get; private set; } = false;
 
         /// <summary>
         /// Called when exiting ConfigMenu.

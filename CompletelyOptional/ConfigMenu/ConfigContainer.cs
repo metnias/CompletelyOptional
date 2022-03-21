@@ -15,8 +15,7 @@ namespace CompletelyOptional
     /// </summary>
     public class ConfigContainer : PositionedMenuObject
     {
-        public ConfigContainer(Menu.Menu menu, MenuObject owner)
-            : base(menu, owner, Vector2.zero) // new Vector2(menu.manager.rainWorld.options.ScreenSize.x / 2f - 683f, 0f)
+        public ConfigContainer(Menu.Menu menu, MenuObject owner) : base(menu, owner, Vector2.zero)
         {
             // Initialize
             instance = this;
@@ -487,8 +486,6 @@ namespace CompletelyOptional
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);
-            this.myContainer.x = Mathf.Lerp(this.ScreenLastPos.x, this.ScreenPos.x, timeStacker);
-            this.myContainer.y = Mathf.Lerp(this.ScreenLastPos.y, this.ScreenPos.y, timeStacker);
             if (halt) { return; }
             menuTab.GrafUpdate(timeStacker);
             try { activeTab?.GrafUpdate(timeStacker); }
@@ -715,8 +712,11 @@ namespace CompletelyOptional
                 this.sprites[2].y = Mathf.Lerp(lastPos.y + lastSize.y, pos.y + size.y, timeStacker) + 0.01f;
                 this.sprites[3].x = Mathf.Lerp(lastPos.x + lastSize.x, pos.x + size.x, timeStacker) + 0.01f;
                 this.sprites[3].y = Mathf.Lerp(lastPos.y, pos.y, timeStacker) + 0.01f;
-                testLabel.text = $"x:{sprites[0].x:F0}, y:{sprites[0].y:F0}; w:{sprites[2].x - sprites[0].x:F0}, h:{sprites[2].y - sprites[0].y:F0}";
+                // testLabel.text = $"x:{sprites[0].x:F0}, y:{sprites[0].y:F0}; w:{sprites[2].x - sprites[0].x:F0}, h:{sprites[2].y - sprites[0].y:F0}";
                 //if (focusedElement?.inScrollBox == true) { testLabel.text += $" so:{focusedElement.scrollBox.childOffset}"; }
+                //testLabel.text = $"cfgX:{cfg.DrawX(timeStacker):F0}; {menu.manager.rainWorld.screenSize.x:F0} ({(menu.manager.rainWorld.options.ScreenSize.x - 1366f) / 2f})";
+                testLabel.text = $"cfgX:{cfg.DrawX(timeStacker):F0}; {menu.manager.rainWorld.screenSize.x:F0} ({(menu.manager.rainWorld.options.ScreenSize.x - 1366f) / 2f})";
+                if (focusedElement != null) { testLabel.text += $" EleX:{focusedElement.pos.x:F0}, ElSX:{focusedElement.ScreenPos.x:F0}, ElMX:{focusedElement.MousePos.x:F0}"; }
             }
 
             public override void Update()
@@ -725,15 +725,6 @@ namespace CompletelyOptional
                 if (this.focusRect.HasValue)
                 {
                     Rect rect = this.focusRect.Value;
-                    if (focusedElement.inScrollBox)
-                    {
-                        // Also Trim to scrollBox
-                    }
-                    else
-                    {
-                        rect.x += focusedElement.tab.container.x;
-                        rect.y += focusedElement.tab.container.y;
-                    }
                     this.pos = Vector2.Lerp(this.pos, new Vector2(rect.x, rect.y), 0.6f / UIelement.frameMulti);
                     this.size = Vector2.Lerp(this.size, new Vector2(rect.width, rect.height), 0.6f / UIelement.frameMulti);
                 }

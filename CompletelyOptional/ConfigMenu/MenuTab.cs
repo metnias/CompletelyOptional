@@ -11,7 +11,7 @@ namespace CompletelyOptional
         internal MenuTab() : base(null, "")
         {
             // 171 offset from left
-            this.container.x = 0f; this.container.y = 0f;
+            this.container.x -= _offset.x; this.container.y -= _offset.y; this.container.isVisible = true;
             this.container.MoveToBack();
             isInactive = false;
             backButton = new MenuButton(new Vector2(490f, 50f), new Vector2(120f, 30f), backSignal, InternalTranslator.Translate("BACK"));

@@ -65,12 +65,14 @@ namespace OptionalUI
         {
             get
             {
-                Rect res = new Rect(this.pos.x, this.pos.y, this.size.x, this.size.y);
+                Rect res = isRectangular ? new Rect(this.ScreenPos.x, this.ScreenPos.y, this.size.x, this.size.y)
+                    : new Rect(this.ScreenPos.x, this.ScreenPos.y, this.rad * 2f, this.rad * 2f);
                 if (inScrollBox)
                 {
                     Vector2 offset = scrollBox.camPos - (scrollBox.horizontal ? Vector2.right : Vector2.up) * scrollBox.scrollOffset - scrollBox.pos;
                     res.x += offset.x; res.y += offset.y;
                 }
+                if (tab != null) { res.x += tab.container.x; res.y += tab.container.y; }
                 return res;
             }
         }

@@ -389,7 +389,15 @@ namespace OptionalUI
 
         public bool GreyedOut => false;
 
-        public Rect FocusRect => new Rect(this.pos.x, this.pos.y, this.size.x, this.size.y);
+        public Rect FocusRect
+        {
+            get
+            {
+                Rect res = new Rect(this.ScreenPos.x, this.ScreenPos.y, this.size.x, this.size.y);
+                if (tab != null) { res.x += tab.container.x; res.y += tab.container.y; }
+                return res;
+            }
+        }
 
         public bool CurrentlyFocusableMouse => true;
 

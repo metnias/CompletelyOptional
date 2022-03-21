@@ -11,15 +11,14 @@ namespace OptionalUI
         /// </summary>
         public OpTab(OptionInterface owner, string name = "")
         {
-            this.container = new FContainer();
-            ConfigContainer.instance.Container.AddChild(this.container);
-            this.container.x = _offset.x; this.container.y = _offset.y;
-            this.container.isVisible = false;
-            this.isInactive = true;
             this.owner = owner;
+            this.name = name;
+            this.container = new FContainer()
+            { x = _offset.x, y = _offset.y, isVisible = false };
+            ConfigContainer.instance.Container.AddChild(this.container);
+            this.isInactive = true;
             this.items = new List<UIelement>();
             this.focusables = new List<UIelement>();
-            this.name = name;
             this.colorButton = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorCanvas = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
         }
