@@ -189,5 +189,17 @@ namespace OptionalUI
         /// </summary>
         /// <param name="height">pixel height, which is usually <see cref="UIelement.size"/>.y</param>
         public static int GetLineCountFromHeight(float height) => Math.Max(1, Mathf.FloorToInt((height - 34f) / 20f));
+
+        public override Rect FocusRect
+        {
+            get
+            {
+                if (!downward) { return base.FocusRect; }
+                Rect res = new Rect(this.ScreenPos.x, this.ScreenPos.y + this.rectList.size.y, this.size.x, this.size.y);
+                if (tab != null) { res.x += tab.container.x; res.y += tab.container.y; }
+                if (inScrollBox) { TrimFocusRectToScrollBox(ref res); }
+                return res;
+            }
+        }
     }
 }

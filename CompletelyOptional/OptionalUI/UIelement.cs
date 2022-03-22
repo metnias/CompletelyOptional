@@ -509,6 +509,18 @@ namespace OptionalUI
             if (!this.hidden) { this.myContainer.isVisible = true; }
         }
 
+        protected void TrimFocusRectToScrollBox(ref Rect res)
+        {
+            Vector2 offset = scrollBox.camPos - (scrollBox.horizontal ? Vector2.right : Vector2.up) * scrollBox.scrollOffset - scrollBox.pos;
+            res.x -= offset.x; res.y -= offset.y;
+            // Clamp
+            Rect scrollRect = scrollBox.FocusRect;
+            res.width = Mathf.Max(Mathf.Min(res.width, scrollRect.width, scrollRect.x + scrollRect.width - res.x, res.x + res.width - scrollRect.x), 0f);
+            res.height = Mathf.Max(Mathf.Min(res.height, scrollRect.height, scrollRect.y + scrollRect.height - res.y, res.y + res.height - scrollRect.y), 0f);
+            res.x = Mathf.Clamp(res.x, scrollRect.x, scrollRect.x + scrollRect.width);
+            res.y = Mathf.Clamp(res.y, scrollRect.y, scrollRect.y + scrollRect.height);
+        }
+
         #endregion Internal
     }
 }
