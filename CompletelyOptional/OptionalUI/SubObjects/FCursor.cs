@@ -5,7 +5,7 @@ namespace OptionalUI
     /// <summary>
     /// <see cref="FContainer"/> that acts like <see cref="FSprite"/>
     /// </summary>
-    public class FCursor : FContainer
+    public class FCursor : FContainer // We can replace this to an actual FCursor Sprite
     {
         public FCursor()
         {

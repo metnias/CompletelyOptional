@@ -58,6 +58,7 @@
     <None Include="Old_15\ConfigMenu.cs" />
     <Compile Include="ConfigMenu\ConfigTabController.cs" />
     <Compile Include="EnumExt_ComOpt.cs" />
+    <Compile Include="OptionalUI\SubObjects\GlowGradient.cs" />
     <Compile Include="OptionInterface\ConfigConnector.cs" />
     <Compile Include="OptionInterface\InternalOI_Blank.cs" />
     <Compile Include="OptionInterface\InternalOI_Error.cs" />

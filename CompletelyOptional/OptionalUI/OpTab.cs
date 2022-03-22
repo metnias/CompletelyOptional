@@ -52,8 +52,8 @@ namespace OptionalUI
 
         #region ItemManager
 
-        public List<UIelement> items;
-        public List<UIelement> focusables;
+        public List<UIelement> items { get; internal set; }
+        public List<UIelement> focusables { get; internal set; }
 
         private void _AddItem(UIelement element)
         {
@@ -61,7 +61,8 @@ namespace OptionalUI
             if (element.tab != null && element.tab != this) { RemoveItemsFromTab(element); }
             this.items.Add(element);
             this.container.AddChild(element.myContainer);
-            if (element is ICanBeFocused) { this.focusables.Add(element); }
+            if (element is ICanBeFocused)
+            { this.focusables.Add(element); }
             element.SetTab(this);
         }
 
