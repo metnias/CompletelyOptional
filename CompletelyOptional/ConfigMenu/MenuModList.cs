@@ -179,7 +179,7 @@ namespace CompletelyOptional
                 this.list = list;
                 this.index = index + 1; // starts from 1; index 0 is for StatOI
                 this.list.menuTab.AddItems(this);
-                this._pos = MyPos;
+                this._pos = new Vector2(list.pos.x, MyPos);
                 this.mute = true;
 
                 // Get Type
@@ -205,7 +205,7 @@ namespace CompletelyOptional
                 OnChange();
             }
 
-            private Vector2 MyPos => list.pos + new Vector2(0f, 650f - (index - list.floatScrollPos) * height);
+            private float MyPos => list.pos.y + 650f - (index - list.floatScrollPos) * height;
 
             public const float height = 25f;
 
@@ -276,10 +276,10 @@ namespace CompletelyOptional
 
             public override void GrafUpdate(float timeStacker)
             {
-                if (lastFade >= 1f) { return; }
+                // if (lastFade >= 1f) { return; }
                 base.GrafUpdate(timeStacker);
                 if (greyedOut) { this.label.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.DarkGrey); }
-                this.label.alpha = Mathf.Pow(1f - Mathf.Lerp(lastFade, fade, timeStacker), 2f);
+                // this.label.alpha = Mathf.Pow(1f - Mathf.Lerp(lastFade, fade, timeStacker), 2f);
                 if (this.labelVer != null)
                 { this.labelVer.alpha = this.label.alpha; this.labelVer.color = this.label.color; }
                 if (this.icon != null)
@@ -289,11 +289,12 @@ namespace CompletelyOptional
             public override void Update()
             {
                 this.lastFade = this.fade;
-                this.fade = Mathf.Clamp01(Mathf.Max(index - list.floatScrollPos, list.floatScrollPos - index - MenuModList.scrollVisible));
+                this.fade = Mathf.Clamp01(Mathf.Max(list.floatScrollPos - index + 1, list.floatScrollPos - index - MenuModList.scrollVisible));
+                this.label.text = (list.floatScrollPos + index - MenuModList.scrollVisible).ToString("F2");
                 // if (fade >= 1f) { return; }
 
                 base.Update();
-                this._pos = MyPos;
+                this.pos = new Vector2(list.pos.x, MyPos);
 
                 if (this.Focused())
                 {
@@ -407,7 +408,7 @@ namespace CompletelyOptional
                         break;
 
                     case Role.ScrollDown:
-                        greyedOut = list.scrollPos > list.modButtons.Length - MenuModList.scrollVisible + 1;
+                        greyedOut = list.scrollPos > list.modButtons.Length - MenuModList.scrollVisible;
                         break;
                 }
             }

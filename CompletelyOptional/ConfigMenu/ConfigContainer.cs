@@ -168,6 +168,13 @@ namespace CompletelyOptional
                 try { t.Initialize(); }
                 catch (Exception e) { t = new InternalOI_Error(t.rwMod, e); t.Initialize(); }
                 listItf.Add(t);
+
+                // dummy mods
+                for (int i = 0; i < 50; i++)
+                {
+                    listItf.Add(new InternalOI_Blank(new RainWorldMod(LoremIpsum.Generate(1, 1, 1).Split(' ')[0] + i)));
+                    listItf[listItf.Count - 1].Initialize();
+                }
             }
 
             #endregion Load
@@ -521,12 +528,20 @@ namespace CompletelyOptional
 
             if (holdElement)
             {
-                try
+                if (focusedElement == null) { holdElement = false; }
+                else
                 {
-                    if (focusedElement != null && !(focusedElement as ICanBeFocused).GreyedOut) { focusedElement.Update(); }
-                    else { holdElement = false; }
+                    if (!(focusedElement.tab is MenuTab))
+                    {
+                        try
+                        {
+                            if (!(focusedElement as ICanBeFocused).GreyedOut) { focusedElement.Update(); }
+                            else { holdElement = false; }
+                        }
+                        catch (Exception ex) { InterfaceUpdateError(true, ex); return; }
+                    }
                 }
-                catch (Exception ex) { InterfaceUpdateError(true, ex); return; }
+                if (holdElement) { menuTab.Update(); }
             }
             if (!holdElement)
             {
