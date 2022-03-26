@@ -145,8 +145,7 @@ namespace OptionalUI
                 if (_value != value)
                 {
                     ConfigContainer.instance.allowFocusMove = false;
-                    menu.cfgContainer.NotifyConfigChange(this, _value, value); // testing
-                    // if (!cosmetic) { menu.cfgContainer.NotifyConfigChange(this, _value, value); }
+                    menu.cfgContainer.NotifyConfigChange(this, _value, value);
                     _value = value;
                     OnChange();
                 }

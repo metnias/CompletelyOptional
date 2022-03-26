@@ -125,9 +125,11 @@ namespace CompletelyOptional
             abcSlide += 4f / UIelement.frameMulti * (listFocused ? 1f : -1f);
             abcSlide = Mathf.Clamp(abcSlide, -60f, 40f);
             // scrollPos
-            floatScrollPos = Custom.LerpAndTick(this.floatScrollPos, scrollPos, 0.01f, 0.01f);
-            floatScrollVel *= Custom.LerpMap(System.Math.Abs(scrollPos - floatScrollPos), 0.25f, 1.5f, 0.45f, 0.99f);
-            floatScrollVel += Mathf.Clamp(scrollPos - floatScrollPos, -2.5f, 2.5f) / 2.5f * 0.15f;
+            float targetPos = scrollPos;
+            if (slider != null && slider.held) { targetPos = slider.floatPos; }
+            floatScrollPos = Custom.LerpAndTick(this.floatScrollPos, targetPos, 0.01f, 0.01f);
+            floatScrollVel *= Custom.LerpMap(System.Math.Abs(targetPos - floatScrollPos), 0.25f, 1.5f, 0.45f, 0.99f);
+            floatScrollVel += Mathf.Clamp(targetPos - floatScrollPos, -2.5f, 2.5f) / 2.5f * 0.15f;
             floatScrollVel = Mathf.Clamp(floatScrollVel, -1.2f, 1.2f);
             floatScrollPos += floatScrollVel;
         }
@@ -142,7 +144,18 @@ namespace CompletelyOptional
             }
             else if (element is AlphabetButton)
             { // Scroll to Alphabet
-                ScrollToShow(ConfigContainer.OptItfABC[index]);
+                int target = ConfigContainer.OptItfABC[index];
+                if (target > scrollPos)
+                { // Going down; try showing all of this alphabet
+                    for (int i = index + 1; i <= ConfigContainer.OptItfABC.Length; i++)
+                    {
+                        if (i == ConfigContainer.OptItfABC.Length) { target += scrollVisible; break; } // Last alphabet
+                        if (ConfigContainer.OptItfABC[i] > 0)
+                        { target = Custom.IntClamp(ConfigContainer.OptItfABC[i] - 1, target, target + scrollVisible); break; }
+                    }
+                }
+                else { target--; }
+                ScrollToShow(target);
                 ClampScrollPos();
                 cfgContainer.FocusNewElement(modButtons[ConfigContainer.OptItfABC[index] - 1]);
             }
@@ -161,7 +174,7 @@ namespace CompletelyOptional
         }
 
         private void ClampScrollPos() =>
-            scrollPos = Custom.IntClamp(scrollPos, 0, System.Math.Max(0, ConfigContainer.OptItfs.Length - scrollVisible + 1));
+            scrollPos = Custom.IntClamp(scrollPos, 0, System.Math.Max(0, modButtons.Length - scrollVisible + 1));
 
         private void Star(int index)
         {
@@ -490,14 +503,15 @@ namespace CompletelyOptional
         internal class ListSlider : OpSlider, IAmPartOfModList
         {
             public ListSlider(MenuModList list)
-                : base(null, new Vector2(458f, 60f),
-                      new IntVector2(0, System.Math.Max(0, ConfigContainer.OptItfs.Length - scrollVisible + 1)),
-                      650, true, 0)
+                : base(null, new Vector2(list.pos.x - 30f, list.pos.y), //458f, 60f
+                      new IntVector2(0, System.Math.Max(0, ConfigContainer.OptItfs.Length - scrollVisible)),
+                      650, true, ConfigContainer.OptItfs.Length - scrollVisible)
             {
                 this.list = list;
                 this.subtleCircle = new FSprite("Menu_Subtle_Slider_Nob")
                 { anchorX = 0.5f, anchorY = 0.5f };
                 this.myContainer.AddChild(this.subtleCircle);
+                this.list.menuTab.AddItems(this);
             }
 
             private const float subSize = 10f;
@@ -508,14 +522,14 @@ namespace CompletelyOptional
             public override bool CurrentlyFocusableMouse => base.CurrentlyFocusableMouse;
             public override bool CurrentlyFocusableNonMouse => false;
 
-            protected internal override bool MouseOver => Custom.DistLess(new Vector2(0f, this.subtleCircle.y), this.MousePos, subSize / 2f);
+            protected internal override bool MouseOver => Custom.DistLess(new Vector2(15f, this.subtleCircle.y), this.MousePos, subSize / 2f);
 
             public override void GrafUpdate(float dt)
             {
                 base.GrafUpdate(dt);
-                this.rect.Hide();
+                this.rect.Hide(); this.label.alpha = 1f;  //this.label.isVisible = false;
                 this.lineSprites[0].isVisible = false; this.lineSprites[3].isVisible = false;
-                this.subtleCircle.x = 0f; this.subtleCircle.y = this.mul * (float)(list.floatScrollPos - this.min);
+                this.subtleCircle.x = 15f; this.subtleCircle.y = this.mul * (float)(this.span - list.floatScrollPos);
                 this.subtleCircle.scale = 10f / subSize;
                 this.subtleCircle.color = this.rect.colorEdge;
 
@@ -530,16 +544,19 @@ namespace CompletelyOptional
             public override void Update()
             {
                 base.Update();
-
-                if (!this.held) { this.SetValueInt(list.scrollPos); }
+                if (!this.held) { this.SetValueInt(this.max - list.scrollPos); }
+                else if (this.MenuMouseMode)
+                { floatPos = this.max - Mathf.Clamp(this.MousePos.y / this.mul, 0f, this.max); }
             }
+
+            public float floatPos;
 
             public override void OnChange()
             {
                 base.OnChange();
                 if (this.held)
                 {
-                    list.scrollPos = this.GetValueInt();
+                    list.scrollPos = Mathf.RoundToInt(floatPos);
                     list.ClampScrollPos();
                 }
             }

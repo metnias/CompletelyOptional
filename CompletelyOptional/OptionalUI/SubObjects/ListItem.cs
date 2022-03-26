@@ -86,7 +86,7 @@
             text = text.ToLower();
             if (text.StartsWith("a ")) { return text.Remove(0, 2); }
             else if (text.StartsWith("an ")) { return text.Remove(0, 3); }
-            else if (text.StartsWith("the ")) { return text.Remove(0, 4); }
+            else if (text.StartsWith("the ") || text.StartsWith("the_")) { return text.Remove(0, 4); }
             return text;
         }
 

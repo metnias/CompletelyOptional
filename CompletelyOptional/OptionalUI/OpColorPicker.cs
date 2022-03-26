@@ -802,7 +802,7 @@ namespace OptionalUI
                         Mathf.RoundToInt(b * 255f / 100f).ToString("X2"));
                     if (this._value != newVal)
                     {
-                        if (this.tab != null) { ConfigContainer.instance.NotifyConfigChange(this, this._value, newVal); }
+                        ConfigContainer.instance.NotifyConfigChange(this, this._value, newVal);
                         this._value = newVal;
                     }
                 }
@@ -811,7 +811,7 @@ namespace OptionalUI
                     string newVal = this.PaletteHex[pi];
                     if (this._value != newVal)
                     {
-                        if (this.tab != null) { ConfigContainer.instance.NotifyConfigChange(this, this._value, newVal); }
+                        ConfigContainer.instance.NotifyConfigChange(this, this._value, newVal);
                         this._value = newVal;
                     }
                     return this.PaletteHex[pi];
@@ -825,7 +825,7 @@ namespace OptionalUI
             {
                 if (base.value == value) { return; }
                 if (!MenuColorEffect.IsStringHexColor(value)) { return; }
-                if (this.tab != null) { ConfigContainer.instance.NotifyConfigChange(this, base.value, value); }
+                ConfigContainer.instance.NotifyConfigChange(this, base.value, value);
                 this._value = value;
 
                 r = Mathf.RoundToInt(Convert.ToInt32(value.Substring(0, 2), 16) / 255f * 100f);

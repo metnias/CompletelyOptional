@@ -27,10 +27,10 @@ namespace OptionalUI
             this.description = InternalTranslator.Translate(this.vertical ?
                 "Hold your mouse button and Drag up/down to adjust value" : "Hold your mouse button and Drag left/right to adjust value");
             this.min = range.x; this.max = range.y;
-            int r = this.max - this.min + 1;
-            this.mousewheelTick = r > 5 ? Math.Max(Mathf.CeilToInt(r / 12f), 4) : 1;
+            int span = this.span;
+            this.mousewheelTick = span > 5 ? Math.Max(Mathf.CeilToInt(span / 12f), 4) : 1;
             this.mul = Mathf.Max(multi, 1.0f);
-            this._size = this.vertical ? new Vector2(30f, (r - 1) * this.mul) : new Vector2((r - 1) * this.mul, 30f);
+            this._size = this.vertical ? new Vector2(30f, (span - 1) * this.mul) : new Vector2((span - 1) * this.mul, 30f);
             this.fixedSize = this._size;
             this._value = Custom.IntClamp(!cosmetic ? (int)config.DefaultValue : cosmeticValue, min, max).ToString();
             this.defaultValue = this.value;
@@ -52,10 +52,10 @@ namespace OptionalUI
             this.description = InternalTranslator.Translate(this.vertical ?
                 "Hold your mouse button and Drag up/down to adjust value" : "Hold your mouse button and Drag left/right to adjust value");
             this.min = range.x; this.max = range.y;
-            int r = this.max - this.min + 1;
-            this.mousewheelTick = r > 5 ? Math.Max(Mathf.CeilToInt(r / 12f), 4) : 1;
-            float l = Mathf.Max((float)(r - 1), (float)length);
-            this.mul = l / (float)(r - 1);
+            int span = this.span;
+            this.mousewheelTick = span > 5 ? Math.Max(Mathf.CeilToInt(span / 12f), 4) : 1;
+            float l = Mathf.Max((float)(span - 1), (float)length);
+            this.mul = l / (float)(span - 1);
             this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
             this._value = Custom.IntClamp(!cosmetic ? (int)config.DefaultValue : cosmeticValue, min, max).ToString();
             this.defaultValue = this.value;
@@ -72,10 +72,10 @@ namespace OptionalUI
             this.description = InternalTranslator.Translate(this.vertical ?
                 "Hold your mouse button and Drag up/down to adjust value" : "Hold your mouse button and Drag left/right to adjust value");
             this.min = 0; this.max = 100;
-            int r = this.max - this.min + 1;
-            this.mousewheelTick = r > 5 ? Math.Max(Mathf.CeilToInt(r / 12f), 4) : 1;
-            float l = Mathf.Max((float)(r - 1), (float)length);
-            this.mul = l / (float)(r - 1);
+            int span = this.span;
+            this.mousewheelTick = span > 5 ? Math.Max(Mathf.CeilToInt(span / 12f), 4) : 1;
+            float l = Mathf.Max((float)(span - 1), (float)length);
+            this.mul = l / (float)(span - 1);
             this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
             this._value = Custom.IntClamp((int)config.DefaultValue, min, max).ToString();
             this.defaultValue = this.value;
@@ -92,10 +92,10 @@ namespace OptionalUI
             this.description = InternalTranslator.Translate(this.vertical ?
                 "Hold your mouse button and Drag up/down to adjust value" : "Hold your mouse button and Drag left/right to adjust value");
             this.min = range.x; this.max = range.y;
-            int r = this.max - this.min + 1;
-            this.mousewheelTick = r > 5 ? Math.Max(Mathf.CeilToInt(r / 12f), 4) : 1;
-            float l = Mathf.Max((float)(r - 1), (float)length);
-            this.mul = l / (float)(r - 1);
+            int span = this.span;
+            this.mousewheelTick = span > 5 ? Math.Max(Mathf.CeilToInt(span / 12f), 4) : 1;
+            float l = Mathf.Max((float)(span - 1), (float)length);
+            this.mul = l / (float)(span - 1);
             this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);
             this._value = Custom.IntClamp((int)config.DefaultValue, min, max).ToString();
             this.defaultValue = this.value;
@@ -159,6 +159,7 @@ namespace OptionalUI
         public int mousewheelTick;
 
         protected readonly int min, max;
+        public int span => max - min + 1;
         public readonly bool vertical;
         protected float mul;
 
@@ -329,7 +330,7 @@ namespace OptionalUI
                     if (Input.GetMouseButton(0))
                     {
                         float t = this.vertical ? this.MousePos.y : this.MousePos.x;
-                        this.SetValueInt(Mathf.Clamp(Mathf.RoundToInt(t / this.mul) + this.min, this.min, this.max));
+                        this.SetValueInt(Custom.IntClamp(Mathf.RoundToInt(t / this.mul) + this.min, this.min, this.max));
                     }
                     else
                     {
@@ -422,7 +423,7 @@ namespace OptionalUI
             if (!tickSlider) this.label.text = this.value;
 
             /*
-            int r = this.max - this.min + 1;
+            int r = this.span;
             float l = Mathf.Max((float)(r - 1), (float)(!vertical ? this._size.x : this._size.y));
             this.mul = l / (r - 1);
             this._size = this.vertical ? new Vector2(30f, l) : new Vector2(l, 30f);

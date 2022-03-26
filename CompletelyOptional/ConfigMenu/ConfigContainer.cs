@@ -278,7 +278,7 @@ namespace CompletelyOptional
                     savedActiveTabIndex[i] = 0;
                 }
                 else { savedActiveTabIndex[i] = savedActiveTabIndex[i] >= OptItfs[i].Tabs.Length ? 0 : savedActiveTabIndex[i]; }
-                string name = !reload ? ListItem.GetRealName(OptItfs[i].rwMod.ModID) : ""; ComOptPlugin.LogInfo($"{OptItfs[i].rwMod.ModID}: {name}");
+                string name = !reload ? ListItem.GetRealName(OptItfs[i].rwMod.ModID) : "";
                 OptItfChanged[i] = false;
 
                 // Deactivate Tabs
@@ -349,7 +349,7 @@ namespace CompletelyOptional
         internal static string GenerateID(string ModID, string author)
         {
             ModID = ModID.Replace(' ', '_');
-            if (string.IsNullOrEmpty(author)) { return ModID; }
+            if (string.IsNullOrEmpty(author) || author == RainWorldMod.authorNull) { return ModID; }
             author = author.Replace(' ', '_');
             return $"{ModID}-{author}";
         }
@@ -784,6 +784,7 @@ namespace CompletelyOptional
         /// <param name="value">New <see cref="UIconfig.value"/></param>
         public void NotifyConfigChange(UIconfig config, string oldValue, string value)
         {
+            if (config.cosmetic || config.tab == null) { return; }
             OptItfChanged[FindItfIndex(config)] = true;
             if (history.Count > 0)
             {
