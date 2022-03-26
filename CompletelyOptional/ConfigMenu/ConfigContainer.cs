@@ -172,7 +172,10 @@ namespace CompletelyOptional
                 // dummy mods
                 for (int i = 0; i < 50; i++)
                 {
-                    listItf.Add(new InternalOI_Blank(new RainWorldMod(LoremIpsum.Generate(1, 1, 1).Split(' ')[0] + i)));
+                    string name = (UnityEngine.Random.value < 0.15f ? "The " + LoremIpsum.Generate(1, 1, 1).Split(' ')[0]
+                        : LoremIpsum.Generate(1, 1, 1).Split(' ')[0])
+                        + (UnityEngine.Random.value < 0.3f ? " Mod" : "");
+                    listItf.Add(new InternalOI_Blank(new RainWorldMod(name + i)));
                     listItf[listItf.Count - 1].Initialize();
                 }
             }
@@ -275,7 +278,7 @@ namespace CompletelyOptional
                     savedActiveTabIndex[i] = 0;
                 }
                 else { savedActiveTabIndex[i] = savedActiveTabIndex[i] >= OptItfs[i].Tabs.Length ? 0 : savedActiveTabIndex[i]; }
-                string name = !reload ? ListItem.GetRealName(OptItfs[i].rwMod.ModID) : "";
+                string name = !reload ? ListItem.GetRealName(OptItfs[i].rwMod.ModID) : ""; ComOptPlugin.LogInfo($"{OptItfs[i].rwMod.ModID}: {name}");
                 OptItfChanged[i] = false;
 
                 // Deactivate Tabs

@@ -84,9 +84,9 @@
         public static string GetRealName(string text)
         {
             text = text.ToLower();
-            if (text.StartsWith("a ")) { return text.Remove(2); }
-            else if (text.StartsWith("an ")) { return text.Remove(3); }
-            else if (text.StartsWith("the ")) { return text.Remove(4); }
+            if (text.StartsWith("a ")) { return text.Remove(0, 2); }
+            else if (text.StartsWith("an ")) { return text.Remove(0, 3); }
+            else if (text.StartsWith("the ")) { return text.Remove(0, 4); }
             return text;
         }
 

@@ -142,7 +142,7 @@ namespace CompletelyOptional
             }
             else if (element is AlphabetButton)
             { // Scroll to Alphabet
-                ScrollToShow(ConfigContainer.OptItfABC[index] - 1);
+                ScrollToShow(ConfigContainer.OptItfABC[index]);
                 ClampScrollPos();
                 cfgContainer.FocusNewElement(modButtons[ConfigContainer.OptItfABC[index] - 1]);
             }
@@ -276,10 +276,16 @@ namespace CompletelyOptional
 
             public override void GrafUpdate(float timeStacker)
             {
-                // if (lastFade >= 1f) { return; }
+                if (lastFade >= 1f)
+                {
+                    this.label.alpha = 0f;
+                    if (this.labelVer != null) { this.labelVer.alpha = 0f; }
+                    if (this.icon != null) { this.icon.alpha = 0f; }
+                    return;
+                }
                 base.GrafUpdate(timeStacker);
                 if (greyedOut) { this.label.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.DarkGrey); }
-                // this.label.alpha = Mathf.Pow(1f - Mathf.Lerp(lastFade, fade, timeStacker), 2f);
+                this.label.alpha = Mathf.Pow(1f - Mathf.Lerp(lastFade, fade, timeStacker), 2f);
                 if (this.labelVer != null)
                 { this.labelVer.alpha = this.label.alpha; this.labelVer.color = this.label.color; }
                 if (this.icon != null)
@@ -289,12 +295,11 @@ namespace CompletelyOptional
             public override void Update()
             {
                 this.lastFade = this.fade;
-                this.fade = Mathf.Clamp01(Mathf.Max(list.floatScrollPos - index + 1, list.floatScrollPos - index - MenuModList.scrollVisible));
-                this.label.text = (list.floatScrollPos + index - MenuModList.scrollVisible).ToString("F2");
-                // if (fade >= 1f) { return; }
+                this.fade = Mathf.Clamp01(Mathf.Max(list.floatScrollPos - index + 1, index - list.floatScrollPos - MenuModList.scrollVisible));
+                if (fade >= 1f) { return; }
 
-                base.Update();
                 this.pos = new Vector2(list.pos.x, MyPos);
+                base.Update();
 
                 if (this.Focused())
                 {
