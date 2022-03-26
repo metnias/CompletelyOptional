@@ -527,18 +527,18 @@ namespace CompletelyOptional
             public override void GrafUpdate(float dt)
             {
                 base.GrafUpdate(dt);
-                this.rect.Hide(); this.label.alpha = 1f;  //this.label.isVisible = false;
+                this.rect.Hide(); this.label.isVisible = false;
                 this.lineSprites[0].isVisible = false; this.lineSprites[3].isVisible = false;
-                this.subtleCircle.x = 15f; this.subtleCircle.y = this.mul * (float)(this.span - list.floatScrollPos);
+                this.subtleCircle.x = 15f; this.subtleCircle.y = this.mul * (float)(this.max - (MenuMouseMode && held ? floatPos : list.floatScrollPos));
                 this.subtleCircle.scale = 10f / subSize;
                 this.subtleCircle.color = this.rect.colorEdge;
 
                 this.lineSprites[1].isVisible = true; this.lineSprites[1].y = -25f;
                 this.lineSprites[2].isVisible = true;
-                float cutPos = this.subtleCircle.y - subSize / 2f;
+                float cutPos = this.subtleCircle.y - (subSize / 2f);
                 this.lineSprites[1].scaleY = 25f + cutPos;
-                this.lineSprites[2].y = cutPos + subSize;
-                this.lineSprites[2].scaleY = 700f - (cutPos + subSize);
+                this.lineSprites[2].y = this.size.y + 25f;
+                this.lineSprites[2].scaleY = this.size.y + 25f - (cutPos + subSize);
             }
 
             public override void Update()
@@ -546,7 +546,11 @@ namespace CompletelyOptional
                 base.Update();
                 if (!this.held) { this.SetValueInt(this.max - list.scrollPos); }
                 else if (this.MenuMouseMode)
-                { floatPos = this.max - Mathf.Clamp(this.MousePos.y / this.mul, 0f, this.max); }
+                {
+                    floatPos = this.max - Mathf.Clamp(this.MousePos.y / this.mul, 0f, this.max);
+                    list.scrollPos = Mathf.RoundToInt(floatPos);
+                    list.ClampScrollPos();
+                }
             }
 
             public float floatPos;
@@ -554,11 +558,6 @@ namespace CompletelyOptional
             public override void OnChange()
             {
                 base.OnChange();
-                if (this.held)
-                {
-                    list.scrollPos = Mathf.RoundToInt(floatPos);
-                    list.ClampScrollPos();
-                }
             }
         }
 

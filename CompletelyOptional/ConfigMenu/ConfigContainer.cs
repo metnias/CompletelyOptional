@@ -705,13 +705,11 @@ namespace CompletelyOptional
                     { rotation = 90f * i, anchorX = 1f, anchorY = 1f, scaleX = 1.25f, color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey) };
                     this.Container.AddChild(this.sprites[i]);
                 }
-                testLabel = new FLabel(LabelTest.GetFont(false, true), "") { x = 181.01f, y = 10.01f, alignment = FLabelAlignment.Left };
-                Container.AddChild(testLabel);
             }
 
             public readonly ConfigContainer cfg;
             private FSprite[] sprites; // BtmL, TopL, TopR, BtmR
-            private FLabel testLabel;
+
             public Rect? focusRect => (focusedElement as ICanBeFocused)?.FocusRect;
 
             public override void GrafUpdate(float timeStacker)
@@ -730,11 +728,6 @@ namespace CompletelyOptional
                 this.sprites[2].y = Mathf.Lerp(lastPos.y + lastSize.y, pos.y + size.y, timeStacker) + 0.01f;
                 this.sprites[3].x = Mathf.Lerp(lastPos.x + lastSize.x, pos.x + size.x, timeStacker) + 0.01f;
                 this.sprites[3].y = Mathf.Lerp(lastPos.y, pos.y, timeStacker) + 0.01f;
-                // testLabel.text = $"x:{sprites[0].x:F0}, y:{sprites[0].y:F0}; w:{sprites[2].x - sprites[0].x:F0}, h:{sprites[2].y - sprites[0].y:F0}";
-                //if (focusedElement?.inScrollBox == true) { testLabel.text += $" so:{focusedElement.scrollBox.childOffset}"; }
-                //testLabel.text = $"cfgX:{cfg.DrawX(timeStacker):F0}; {menu.manager.rainWorld.screenSize.x:F0} ({(menu.manager.rainWorld.options.ScreenSize.x - 1366f) / 2f})";
-                testLabel.text = $"cfgX:{cfg.DrawX(timeStacker):F0}; {menu.manager.rainWorld.screenSize.x:F0} ({(menu.manager.rainWorld.options.ScreenSize.x - 1366f) / 2f})";
-                if (focusedElement != null) { testLabel.text += $" EleX:{focusedElement.pos.x:F0}, ElSX:{focusedElement.ScreenPos.x:F0}, ElMX:{focusedElement.MousePos.x:F0}"; }
             }
 
             public override void Update()
