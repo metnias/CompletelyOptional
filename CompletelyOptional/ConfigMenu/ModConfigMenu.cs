@@ -113,7 +113,6 @@ namespace CompletelyOptional
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);
-            cfgContainer.GrafUpdate(timeStacker);
 
             alertLabel.label.alpha = Custom.SCurve(Mathf.Clamp01(Mathf.Lerp(lastAlertLabelFade, alertLabelFade, timeStacker)), 0.3f);
             if (lastAlertLabelFade > 0f)
@@ -186,8 +185,6 @@ namespace CompletelyOptional
             { //clamp offset
                 this.scene.camPos = new Vector2(this.scene.camPos.x * 0.7f, this.scene.camPos.y * 0.7f);
             }
-
-            cfgContainer.Update();
 
             /*
             if (fadein && this.scene != null && (int)this.scene.sceneID < 12 && (int)this.scene.sceneID > 6)

@@ -633,17 +633,14 @@ namespace CompletelyOptional
                 if (!allowFocusMove) { this.scrollDelay = 0; } // Focus changed by OI.Update
                 else if (!holdElement)
                 {
-                    if (menu.input.jmp && !menu.lastInput.jmp) // Hold Element
+                    if (menu.input.jmp && !menu.lastInput.jmp && !(focusedElement as ICanBeFocused).GreyedOut) // Hold Element
                     { holdElement = true; }
                     else // Switch Focus
                     {
-                        if (this.scrollInitDelay == 0)
-                        {
-                            if (menu.input.y != 0 && menu.lastInput.y != menu.input.y)
-                            { this.FocusNewElementInDirection(new IntVector2(0, menu.input.y)); }
-                            else if (menu.input.x != 0 && menu.lastInput.x != menu.input.x)
-                            { this.FocusNewElementInDirection(new IntVector2(menu.input.x, 0)); }
-                        }
+                        if (menu.input.y != 0 && menu.lastInput.y != menu.input.y)
+                        { this.FocusNewElementInDirection(new IntVector2(0, menu.input.y)); }
+                        else if (menu.input.x != 0 && menu.lastInput.x != menu.input.x)
+                        { this.FocusNewElementInDirection(new IntVector2(menu.input.x, 0)); }
                         if (menu.input.y != 0 && menu.lastInput.y == menu.input.y && menu.input.x == 0)
                         { this.scrollInitDelay++; }
                         else if (menu.input.x != 0 && menu.lastInput.x == menu.input.y && menu.input.y == 0)
