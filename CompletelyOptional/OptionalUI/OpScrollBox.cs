@@ -426,7 +426,7 @@ namespace OptionalUI
             }
         }
 
-        bool ICanBeFocused.CurrentlyFocusableMouse => true;
+        bool ICanBeFocused.CurrentlyFocusableMouse => false;
 
         bool ICanBeFocused.CurrentlyFocusableNonMouse => true;
 
@@ -565,23 +565,41 @@ namespace OptionalUI
                         {
                             if (!lastFocusedElement.isInactive && !(lastFocusedElement as ICanBeFocused).GreyedOut)
                             {
-                                // Check if this is in view
-
-                                // Use LastFocusedElement
-                                this._held = false;
-                                ConfigContainer.holdElement = false;
-                                ConfigContainer.instance.FocusNewElement(lastFocusedElement);
-                                goto skipNewFocus;
+                                bool CenterInView; // Check if this is in view
+                                if (horizontal) { CenterInView = lastFocusedElement.CenterPos().x > scrollOffset && lastFocusedElement.CenterPos().x < scrollOffset + size.x; }
+                                else { CenterInView = lastFocusedElement.CenterPos().y > scrollOffset && lastFocusedElement.CenterPos().y < scrollOffset + size.y; }
+                                if (CenterInView)
+                                { // Use LastFocusedElement
+                                    this._held = false;
+                                    ConfigContainer.holdElement = false;
+                                    ConfigContainer.instance.FocusNewElement(lastFocusedElement);
+                                    ScrollToChild(lastFocusedElement);
+                                    goto skipNewFocus;
+                                }
                             }
                         }
                         // Find New Focus
+                        float candPos = float.MaxValue;
+                        UIelement cand = null;
                         foreach (UIelement child in this.children)
                         {
                             if (!child.isInactive && child is ICanBeFocused candidate && !candidate.GreyedOut)
                             {
+                                float thisPos = Mathf.Abs(horizontal ? child.CenterPos().x - scrollOffset - size.x / 2f : child.CenterPos().y - scrollOffset + size.y / 2f);
+                                if (candPos > thisPos) { candPos = thisPos; cand = child; }
                             }
                         }
-                        // if no candidate is found, just play dull sound
+                        if (cand != null)
+                        {
+                            this._held = false;
+                            ConfigContainer.holdElement = false;
+                            ConfigContainer.instance.FocusNewElement(cand);
+                            ScrollToChild(cand);
+                        }
+                        else
+                        { // if no candidate is found, just play dull sound
+                            PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard);
+                        }
                     }
                     else if (!ScrollLocked)
                     {

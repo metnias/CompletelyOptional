@@ -115,6 +115,16 @@ namespace OptionalUI
             this.rect.colorFill = this.colorFill;
         }
 
+        public override void NonMouseHold()
+        {
+            base.NonMouseHold();
+            if (canHold)
+            {
+                PlaySound(soundClick);
+                this.Signal();
+            }
+        }
+
         public override void Update()
         {
             base.Update();
@@ -156,29 +166,21 @@ namespace OptionalUI
             }
             else
             {
-                if (this.Focused())
+                if (this.held)
                 {
                     if (CtlrInput.jmp)
                     {
-                        this.held = true; heldCounter++;
-                        if (canHold && !LastCtlrInput.jmp)
+                        heldCounter++;
+                    }
+                    else
+                    {
+                        this.held = false;
+                        if (!canHold)
                         {
                             PlaySound(soundClick);
                             this.Signal();
                         }
-                    }
-                    else
-                    {
-                        if (this.held)
-                        {
-                            this.held = false;
-                            if (!canHold)
-                            {
-                                PlaySound(soundClick);
-                                this.Signal();
-                            }
-                            heldCounter = 0;
-                        }
+                        heldCounter = 0;
                     }
                 }
             }

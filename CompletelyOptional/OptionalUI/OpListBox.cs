@@ -201,5 +201,12 @@ namespace OptionalUI
                 return res;
             }
         }
+
+        internal override Vector2 CenterPos()
+        {
+            Vector2 p = base.CenterPos();
+            if (downward) { p += new Vector2(0f, this.rectList.size.y); }
+            return p;
+        }
     }
 }

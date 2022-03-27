@@ -429,8 +429,6 @@ namespace CompletelyOptional
                 PlaySound((focusedElement as ICanBeFocused).GreyedOut
                     ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                 // Always play Gamepad sound even in Mouse mode, as this is called by either Gamepad or Modder
-                string dbg = $"Focus shift to {focusedElement.GetType()} from {lastFocusedElement.GetType()}";
-                cfgMenu.ShowAlert(dbg); //ComOptPlugin.LogInfo(dbg); //test
             }
         }
 

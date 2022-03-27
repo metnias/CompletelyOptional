@@ -484,7 +484,7 @@ namespace OptionalUI
             this.tab = newTab;
         }
 
-        internal Vector2 CenterPos()
+        internal virtual Vector2 CenterPos()
         {
             Vector2 p;
             if (this.isRectangular) { p = this.ScreenPos + this.size / 2f; }
