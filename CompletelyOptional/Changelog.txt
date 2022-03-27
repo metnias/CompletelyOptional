@@ -6,7 +6,6 @@ v Use only BepInEx.Configuration for saving configs
 o Clean up OptionInterface so only things the modders need are there
  o UIelements now support Controller and Keyboard control
   o Jump/Throw to focus/unfocus, joystick in 4 direction from center of element to other element
-  o FlatLight, and insects colours
  v Removed usages of MenuObject in UIelements
   v This allows more controlled sorting
 v Added Undo function

@@ -429,6 +429,8 @@ namespace CompletelyOptional
                 PlaySound((focusedElement as ICanBeFocused).GreyedOut
                     ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                 // Always play Gamepad sound even in Mouse mode, as this is called by either Gamepad or Modder
+                string dbg = $"Focus shift to {focusedElement.GetType()} from {lastFocusedElement.GetType()}";
+                cfgMenu.ShowAlert(dbg); //ComOptPlugin.LogInfo(dbg); //test
             }
         }
 
@@ -623,6 +625,11 @@ namespace CompletelyOptional
             }
             else
             { // Controller/Keyboard Mode
+                if (focusedElement == null)
+                {
+                    if (lastFocusedElement != null) { focusedElement = lastFocusedElement; }
+                    else { focusedElement = menuTab.backButton; }
+                }
                 if (!allowFocusMove) { this.scrollDelay = 0; } // Focus changed by OI.Update
                 else if (!holdElement)
                 {
@@ -630,10 +637,13 @@ namespace CompletelyOptional
                     { holdElement = true; }
                     else // Switch Focus
                     {
-                        if (menu.input.y != 0 && menu.lastInput.y != menu.input.y)
-                        { this.FocusNewElementInDirection(new IntVector2(0, menu.input.y)); }
-                        else if (menu.input.x != 0 && menu.lastInput.x != menu.input.x)
-                        { this.FocusNewElementInDirection(new IntVector2(menu.input.x, 0)); }
+                        if (this.scrollInitDelay == 0)
+                        {
+                            if (menu.input.y != 0 && menu.lastInput.y != menu.input.y)
+                            { this.FocusNewElementInDirection(new IntVector2(0, menu.input.y)); }
+                            else if (menu.input.x != 0 && menu.lastInput.x != menu.input.x)
+                            { this.FocusNewElementInDirection(new IntVector2(menu.input.x, 0)); }
+                        }
                         if (menu.input.y != 0 && menu.lastInput.y == menu.input.y && menu.input.x == 0)
                         { this.scrollInitDelay++; }
                         else if (menu.input.x != 0 && menu.lastInput.x == menu.input.y && menu.input.y == 0)
@@ -657,7 +667,7 @@ namespace CompletelyOptional
                 }
                 else
                 {
-                    if (menu.input.thrw && !menu.lastInput.thrw && focusedElement != null) // Move Upward
+                    if (menu.input.thrw && !menu.lastInput.thrw) // Move Upward
                     {
                         UIelement curFocusedElement = focusedElement;
                         if (focusedElement.inScrollBox) // Move to ScrollBox
@@ -719,6 +729,7 @@ namespace CompletelyOptional
                 for (int i = 0; i < this.sprites.Length; i++)
                 {
                     this.sprites[i].element = Futile.atlasManager.GetElementWithName("stickLeft" + (!holdElement ? "A" : "B"));
+                    this.sprites[i].alpha = 1.00f - Mathf.Lerp(lastFade, fade, timeStacker);
                 }
                 this.sprites[0].x = Mathf.Lerp(lastPos.x, pos.x, timeStacker) + 0.01f;
                 this.sprites[0].y = Mathf.Lerp(lastPos.y, pos.y, timeStacker) + 0.01f;
@@ -730,9 +741,17 @@ namespace CompletelyOptional
                 this.sprites[3].y = Mathf.Lerp(lastPos.y, pos.y, timeStacker) + 0.01f;
             }
 
+            private float fade = 1f, lastFade = 1f;
+
             public override void Update()
             {
                 base.Update();
+
+                lastFade = fade;
+                if (cfg.menu.manager.menuesMouseMode)
+                { fade = Custom.LerpAndTick(fade, 1f, 0.2f, 0.1f / UIelement.frameMulti); }
+                else
+                { fade = Custom.LerpAndTick(fade, 0f, 0.6f, 0.1f / UIelement.frameMulti); }
                 if (this.focusRect.HasValue)
                 {
                     Rect rect = this.focusRect.Value;

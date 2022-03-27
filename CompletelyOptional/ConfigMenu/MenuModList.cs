@@ -309,6 +309,7 @@ namespace CompletelyOptional
             {
                 this.lastFade = this.fade;
                 this.fade = Mathf.Clamp01(Mathf.Max(list.floatScrollPos - index + 1, index - list.floatScrollPos - MenuModList.scrollVisible));
+                if (ConfigContainer.focusedElement == this && fade >= 1f) { list.ScrollToShow(this.index); }
                 if (fade >= 1f) { return; }
 
                 this.pos = new Vector2(list.pos.x, MyPos);
