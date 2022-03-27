@@ -323,6 +323,33 @@ namespace OptionalUI
                 scrollOffset = targetScrollOffset;
         }
 
+        public static void ScrollToChild(UIelement child)
+        {
+            if (!child.inScrollBox) { return; }
+            OpScrollBox box = child.scrollBox;
+            float gap = 10f;
+            if (box.horizontal)
+            { // lower left
+                float target = child.pos.x;
+                if (target < box.scrollOffset) { box.targetScrollOffset = target - gap; }
+                else
+                {
+                    target += child is ICanBeFocused fChild ? fChild.FocusRect.width : child.size.x;
+                    if (target > box.scrollOffset + box.size.x) { box.targetScrollOffset = target + gap; }
+                }
+            }
+            else
+            { // higher top
+                float target = child.pos.y;
+                if (target < box.scrollOffset) { box.targetScrollOffset = target - gap; }
+                else
+                {
+                    target += child is ICanBeFocused fChild ? fChild.FocusRect.height : child.size.y;
+                    if (target > box.scrollOffset + box.size.x) { box.targetScrollOffset = target + gap; }
+                }
+            }
+        }
+
         /// <summary>
         /// UIelements that are forbidden to for <see cref="AddItems(UIelement[])"/>.
         /// </summary>
@@ -387,9 +414,9 @@ namespace OptionalUI
 
         public BumpBehaviour bumpBehav { get; private set; }
 
-        public bool GreyedOut => false;
+        bool ICanBeFocused.GreyedOut => false;
 
-        public Rect FocusRect
+        Rect ICanBeFocused.FocusRect
         {
             get
             {
@@ -399,9 +426,9 @@ namespace OptionalUI
             }
         }
 
-        public bool CurrentlyFocusableMouse => true;
+        bool ICanBeFocused.CurrentlyFocusableMouse => true;
 
-        public bool CurrentlyFocusableNonMouse => true;
+        bool ICanBeFocused.CurrentlyFocusableNonMouse => true;
 
         private readonly BumpBehaviour bumpSlidebar;
         private bool scrollMouseOver;
@@ -430,6 +457,15 @@ namespace OptionalUI
                 if (!isTab) { return base.MouseOver; }
                 return this.MousePos.x > -15f && this.MousePos.x < 615f && this.MousePos.y > -15f && this.MousePos.y < 615f;
             }
+        }
+
+        private bool _held = false;
+
+        void ICanBeFocused.NonMouseHold()
+        {
+            ConfigContainer.instance.FocusNewElement(this);
+            ConfigContainer.holdElement = true;
+            _held = true;
         }
 
         public override void Update()
@@ -521,10 +557,33 @@ namespace OptionalUI
             }
             else
             {
-                if (this.Focused())
+                if (_held)
                 {
-                    // Focused > (jmp) > !ScrollLocked ? holdElement : focus <- lastFocusedElement
-                    if (!ScrollLocked)
+                    if (CtlrInput.jmp && !LastCtlrInput.jmp)
+                    { // Focused > (jmp) > !ScrollLocked ? holdElement : focus <- lastFocusedElement
+                        if (lastFocusedElement != null)
+                        {
+                            if (!lastFocusedElement.isInactive && !(lastFocusedElement as ICanBeFocused).GreyedOut)
+                            {
+                                // Check if this is in view
+
+                                // Use LastFocusedElement
+                                this._held = false;
+                                ConfigContainer.holdElement = false;
+                                ConfigContainer.instance.FocusNewElement(lastFocusedElement);
+                                goto skipNewFocus;
+                            }
+                        }
+                        // Find New Focus
+                        foreach (UIelement child in this.children)
+                        {
+                            if (!child.isInactive && child is ICanBeFocused candidate && !candidate.GreyedOut)
+                            {
+                            }
+                        }
+                        // if no candidate is found, just play dull sound
+                    }
+                    else if (!ScrollLocked)
                     {
                         if ((horizontal && CtlrInput.x != 0) || (!horizontal && CtlrInput.y != 0))
                         {
@@ -544,10 +603,11 @@ namespace OptionalUI
                         }
                     }
                 }
-                else if (ConfigContainer.focusedElement.inScrollBox && ConfigContainer.focusedElement.scrollBox == this) // Child Focused
-                { // Auto Scroll To Element
+                else // if (ConfigContainer.focusedElement?.inScrollBox == true && ConfigContainer.focusedElement.scrollBox == this) // Child Focused
+                {
                 }
             }
+        skipNewFocus:
 
             scrollOffset = Mathf.SmoothDamp(scrollOffset, targetScrollOffset, ref _scrollVel, 0.15f * frameMulti);
             // Snap the scrollbox to its target when it is within 0.5 of a pixel

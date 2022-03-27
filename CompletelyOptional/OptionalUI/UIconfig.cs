@@ -177,6 +177,11 @@ namespace OptionalUI
             }
         }
 
+        public virtual void NonMouseHold()
+        {
+            held = true;
+        }
+
         /// <summary>
         /// Access to <see cref="UIconfig.value"/> without calling <see cref="OnChange"/>
         /// </summary>

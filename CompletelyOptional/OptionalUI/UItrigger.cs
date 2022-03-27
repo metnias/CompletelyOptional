@@ -19,7 +19,6 @@ namespace OptionalUI
         public UItrigger(Vector2 pos, Vector2 size, string signal) : base(pos, size)
         {
             this.signal = signal;
-            this._held = false;
             this.bumpBehav = new BumpBehaviour(this);
         }
 
@@ -32,7 +31,6 @@ namespace OptionalUI
         public UItrigger(Vector2 pos, float rad, string signal) : base(pos, rad)
         {
             this.signal = signal;
-            this._held = false;
             this.bumpBehav = new BumpBehaviour(this);
         }
 
@@ -92,6 +90,11 @@ namespace OptionalUI
             }
         }
 
+        public virtual void NonMouseHold()
+        {
+            held = true;
+        }
+
         /// <summary>
         /// Calls <see cref="OptionInterface.Signal(UItrigger, string)"/>
         /// </summary>
@@ -123,7 +126,7 @@ namespace OptionalUI
 
         #region Internal
 
-        private bool _held;
+        private bool _held = false;
 
         #endregion Internal
     }

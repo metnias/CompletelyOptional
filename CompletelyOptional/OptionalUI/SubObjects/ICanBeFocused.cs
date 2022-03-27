@@ -29,6 +29,11 @@ namespace OptionalUI
         /// Whether this can be focused with Gamepad/Keyboard
         /// </summary>
         bool CurrentlyFocusableNonMouse { get; }
+
+        /// <summary>
+        /// Called by ConfigContainer when this is <see cref="ICanBeFocusedExt.Focused"/> and the user pressed the Jump button.
+        /// </summary>
+        void NonMouseHold();
     }
 
     public static class ICanBeFocusedExt

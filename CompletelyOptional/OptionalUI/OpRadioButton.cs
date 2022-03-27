@@ -79,6 +79,13 @@ namespace OptionalUI
             }
         }
 
+        void ICanBeFocused.NonMouseHold()
+        {
+            menu.cfgContainer.FocusNewElement(this);
+            ConfigContainer.holdElement = true;
+            this.click = true;
+        }
+
         /// <summary>
         /// Mimics <see cref="Menu.ButtonBehavior"/> of vanilla Rain World UIs
         /// </summary>
@@ -132,31 +139,49 @@ namespace OptionalUI
             if (greyedOut || isInactive) { return; }
             this.rect.Update();
 
-            if (this.MouseOver)
+            if (MenuMouseMode)
             {
-                if (Input.GetMouseButton(0))
+                if (this.MouseOver)
                 {
-                    this.click = true;
-                    this.group.held = true;
-                    this.bumpBehav.held = true;
-                }
-                else
-                {
-                    if (this.click)
+                    if (Input.GetMouseButton(0))
                     {
-                        this.group.held = false;
-                        this.bumpBehav.held = false;
-                        this.click = false;
-                        PlaySound(!this.GetValueBool() ? SoundID.MENU_MultipleChoice_Clicked : SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
-                        this.value = "true";
+                        this.click = true;
+                        this.group.held = true;
+                        this.bumpBehav.held = true;
+                    }
+                    else
+                    {
+                        if (this.click)
+                        {
+                            this.group.held = false;
+                            this.bumpBehav.held = false;
+                            this.click = false;
+                            PlaySound(!this.GetValueBool() ? SoundID.MENU_MultipleChoice_Clicked : SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
+                            this.SetValueBool(true);
+                        }
                     }
                 }
+                else if (!Input.GetMouseButton(0))
+                {
+                    this.group.held = false;
+                    this.bumpBehav.held = false;
+                    this.click = false;
+                }
             }
-            else if (!Input.GetMouseButton(0))
+            else
             {
-                this.group.held = false;
-                this.bumpBehav.held = false;
-                this.click = false;
+                if (this.click)
+                {
+                    if (CtlrInput.jmp) { this.bumpBehav.held = true; }
+                    else
+                    {
+                        this.bumpBehav.held = false;
+                        ConfigContainer.holdElement = false;
+                        this.click = false;
+                        PlaySound(!this.GetValueBool() ? SoundID.MENU_MultipleChoice_Clicked : SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
+                        this.SetValueBool(true);
+                    }
+                }
             }
         }
 

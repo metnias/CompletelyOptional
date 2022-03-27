@@ -183,14 +183,10 @@ namespace CompletelyOptional
 
             if (this.scene != null && (int)this.scene.sceneID < 12 && (int)this.scene.sceneID > 6)
             { //clamp offset
-                this.scene.camPos = new Vector2(this.scene.camPos.x * 0.7f, this.scene.camPos.y * 0.7f);
+                this.scene.camPos *= 0.7f;
             }
 
             /*
-            if (fadein && this.scene != null && (int)this.scene.sceneID < 12 && (int)this.scene.sceneID > 6)
-            { //clamp offset
-                this.scene.camPos = new Vector2(this.scene.camPos.x * 0.7f, this.scene.camPos.y * 0.7f);
-            }
 
             if (this.fadeSprite != null)
             {

@@ -634,7 +634,10 @@ namespace CompletelyOptional
                 else if (!holdElement)
                 {
                     if (menu.input.jmp && !menu.lastInput.jmp && !(focusedElement as ICanBeFocused).GreyedOut) // Hold Element
-                    { holdElement = true; }
+                    {
+                        (focusedElement as ICanBeFocused).NonMouseHold();
+                        if (focusedElement.inScrollBox) { OpScrollBox.ScrollToChild(focusedElement); }
+                    }
                     else // Switch Focus
                     {
                         if (menu.input.y != 0 && menu.lastInput.y != menu.input.y)
