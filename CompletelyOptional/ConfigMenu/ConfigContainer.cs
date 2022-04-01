@@ -628,7 +628,7 @@ namespace CompletelyOptional
                     if (lastFocusedElement != null) { focusedElement = lastFocusedElement; }
                     else { focusedElement = menuTab.backButton; }
                 }
-                if (!allowFocusMove) { this.scrollDelay = 0; } // Focus changed by OI.Update
+                if (!allowFocusMove) { this.scrollInitDelay = 0; } // Focus changed by OI.Update
                 else if (!holdElement)
                 {
                     if (menu.input.jmp && !menu.lastInput.jmp && !(focusedElement as ICanBeFocused).GreyedOut) // Hold Element

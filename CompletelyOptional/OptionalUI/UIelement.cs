@@ -489,7 +489,7 @@ namespace OptionalUI
             Vector2 p;
             if (this.isRectangular) { p = this.ScreenPos + this.size / 2f; }
             else { p = this.ScreenPos + ((this.rad / 2f) * Vector2.one); }
-            if (this.tab != null) { p += this.myContainer.GetPosition(); }
+            if (this.tab != null) { p += this.tab.container.GetPosition(); }
             return p;
         }
 

@@ -324,14 +324,14 @@ namespace CompletelyOptional
                 }
                 else if (this.Focused())
                 {
-                    if (this.isTop && this.CtlrInput.y < 0)
+                    if (this.isTop && this.CtlrInput.y > 0)
                     {
                         if (this.CtlrInput.y != this.LastCtlrInput.y)
                         { ctrl.Signal(ctrl.scrollButtons[0], -1); }
                         else if (ConfigContainer.instance.scrollDelay >= ModConfigMenu.DASdelay)
                         { ctrl.Signal(ctrl.scrollButtons[0], -2); }
                     }
-                    if (this.isBottom && this.CtlrInput.y > 0)
+                    if (this.isBottom && this.CtlrInput.y < 0)
                     {
                         if (this.CtlrInput.y != this.LastCtlrInput.y)
                         { ctrl.Signal(ctrl.scrollButtons[0], 1); }

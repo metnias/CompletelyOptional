@@ -171,6 +171,8 @@ namespace CompletelyOptional
             sb.AddItems(rs, new OpLabel(100f, 130f, "Songs") { bumpBehav = rs.bumpBehav });
 
             Tabs[7].AddItems(new OpHoldButton(new Vector2(100f, 100f), "BREAK", "BREAK"));
+            Tabs[7].AddItems(new OpSimpleButton(new Vector2(400f, 100f), new Vector2(80f, 30f), "PRESS", "PRESS"));
+            Tabs[7].AddItems(new OpSimpleButton(new Vector2(400f, 160f), new Vector2(80f, 30f), "HOLD", "HOLD") { canHold = true });
         }
 
         private OpHoldButton hold;
@@ -180,6 +182,8 @@ namespace CompletelyOptional
         {
             base.Signal(trigger, signal);
             if (signal == "BREAK") { throw new System.Exception("TEST BREAK"); }
+            if (signal == "PRESS") { ConfigConnector.ShowAlert(signal); }
+            if (signal == "HOLD") { ConfigConnector.ShowAlert(signal); }
         }
 
         public override void Update()
