@@ -237,7 +237,7 @@ namespace OptionalUI
             }
             else
             {
-                held = CtlrInput.jmp;
+                held = held && CtlrInput.jmp;
             }
             bumpBehav.sizeBump = !held ? 0f : 1f;
             if (held)

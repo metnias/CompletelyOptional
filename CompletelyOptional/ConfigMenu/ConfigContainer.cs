@@ -426,6 +426,7 @@ namespace CompletelyOptional
             {
                 lastFocusedElement = focusedElement;
                 focusedElement = element;
+                if (focusedElement.mute) { return; }
                 PlaySound((focusedElement as ICanBeFocused).GreyedOut
                     ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                 // Always play Gamepad sound even in Mouse mode, as this is called by either Gamepad or Modder
