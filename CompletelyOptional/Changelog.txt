@@ -1,5 +1,5 @@
 ﻿###2.0 CompletelyOptional Update#!#20220330#!#
-To Do: ModConfigMenu: Fix MenuModList's ScrollButton; Write InternalOI_Stats; Fix reactiveness of OpTextBox.TypingAccept; Fix OpColorPicker to only change value in setter, not getter
+To Do: ModConfigMenu: Fix MenuModList & ConfigTabController's ScrollButton; Fix ScrollToChild; Write InternalOI_Stats; Fix reactiveness of OpTextBox.TypingAccept; Fix OpColorPicker to only change value in setter, not getter
 v Rewrote ConfigMachine to BepInEx Plugin, removed support for Partiality Mods
 v Use only BepInEx.Configuration for saving configs
  v So OI won't get even called until MOD CONFIG screen is loaded (As BepInEx will load the settings instead)
