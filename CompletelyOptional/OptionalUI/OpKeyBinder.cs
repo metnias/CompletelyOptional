@@ -240,7 +240,7 @@ namespace OptionalUI
             this.rect.GrafUpdate(timeStacker);
 
             Color myColor = this.bumpBehav.GetColor(string.IsNullOrEmpty(this._desError) ? this.colorEdge : Color.red);
-            if (this.MouseOver)
+            if (this.Focused() || this.MouseOver)
             {
                 ModConfigMenu.instance.ShowDescription(this.GetDescription());
                 myColor = Color.Lerp(myColor, Color.white, this.bumpBehav.Sin());

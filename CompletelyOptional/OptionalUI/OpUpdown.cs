@@ -94,7 +94,8 @@ namespace OptionalUI
                 mouseOverArrow = false;
                 bumpUp.greyedOut = this.greyedOut; bumpDown.greyedOut = this.greyedOut;
                 bumpUp.Focused = false; bumpDown.Focused = false;
-                if (this.MousePos.x > this.size.x - 25f && this.MousePos.x < this.size.x - 5f)
+                if (!MenuMouseMode && this.Focused()) { bumpDown.Focused = true; bumpUp.Focused = true; }
+                else if (this.MousePos.x > this.size.x - 25f && this.MousePos.x < this.size.x - 5f)
                 {
                     if (this.MousePos.y > 5f)
                     {
