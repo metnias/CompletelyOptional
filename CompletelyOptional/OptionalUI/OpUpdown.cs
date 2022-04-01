@@ -87,19 +87,19 @@ namespace OptionalUI
                 mouseOverArrow = false;
                 bumpUp.held = false; bumpDown.held = false;
                 bumpUp.greyedOut = true; bumpDown.greyedOut = true;
-                bumpUp.MouseOver = false; bumpDown.MouseOver = false;
+                bumpUp.Focused = false; bumpDown.Focused = false;
             }
             else
             {
                 mouseOverArrow = false;
                 bumpUp.greyedOut = this.greyedOut; bumpDown.greyedOut = this.greyedOut;
-                bumpUp.MouseOver = false; bumpDown.MouseOver = false;
+                bumpUp.Focused = false; bumpDown.Focused = false;
                 if (this.MousePos.x > this.size.x - 25f && this.MousePos.x < this.size.x - 5f)
                 {
                     if (this.MousePos.y > 5f)
                     {
-                        if (this.MousePos.y < 15f) { bumpDown.MouseOver = true; mouseOverArrow = true; }
-                        else if (this.MousePos.y < 25f) { bumpUp.MouseOver = true; mouseOverArrow = true; }
+                        if (this.MousePos.y < 15f) { bumpDown.Focused = true; mouseOverArrow = true; }
+                        else if (this.MousePos.y < 25f) { bumpUp.Focused = true; mouseOverArrow = true; }
                     }
                 }
             }
@@ -166,7 +166,7 @@ namespace OptionalUI
                 if (mouseOverArrow && Input.GetMouseButton(0))
                 {
                     mouseDown = true; this.held = true;
-                    if (bumpUp.MouseOver) { bumpUp.held = true; bumpUp.flash = 2f; }
+                    if (bumpUp.Focused) { bumpUp.held = true; bumpUp.flash = 2f; }
                     else { bumpDown.held = true; bumpDown.flash = 2f; }
                     arrowCounter = FrameMultiply(24);
                     bumpCount = 0;

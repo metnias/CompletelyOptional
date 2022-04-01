@@ -52,13 +52,21 @@ namespace OptionalUI
 
         private bool? _greyedOut, _held;
 
-        public bool MouseOver
+        public bool Focused
         {
-            get { if (!_mouseOver.HasValue) { return this.owner.MouseOver; } return _mouseOver.Value; }
-            set { _mouseOver = value; }
+            get
+            {
+                if (!_focused.HasValue)
+                {
+                    if (this.owner is ICanBeFocused) { return (this.owner as ICanBeFocused).Focused() || this.owner.MouseOver; }
+                    return this.owner.MouseOver;
+                }
+                return _focused.Value;
+            }
+            set { _focused = value; }
         }
 
-        private bool? _mouseOver = null;
+        private bool? _focused = null;
 
         /// <summary>
         /// Grab Reactive Color with BumpBehav
@@ -80,7 +88,7 @@ namespace OptionalUI
         {
             float dtMulti = 1f / UIelement.frameMulti;
             this.flash = Custom.LerpAndTick(this.flash, 0f, 0.03f, 0.16667f * dtMulti);
-            if (MouseOver)
+            if (Focused)
             {
                 this.sizeBump = Custom.LerpAndTick(this.sizeBump, 1f, 0.1f, 0.1f * dtMulti);
                 this.sin += 1f * dtMulti;

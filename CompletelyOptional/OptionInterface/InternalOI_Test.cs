@@ -173,6 +173,10 @@ namespace CompletelyOptional
             Tabs[7].AddItems(new OpHoldButton(new Vector2(100f, 100f), "BREAK", "BREAK"));
             Tabs[7].AddItems(new OpSimpleButton(new Vector2(400f, 100f), new Vector2(80f, 30f), "PRESS", "PRESS"));
             Tabs[7].AddItems(new OpSimpleButton(new Vector2(400f, 160f), new Vector2(80f, 30f), "HOLD", "HOLD") { canHold = true });
+            Tabs[7].AddItems(new OpCheckBox(null, 400f, 300f, false));
+            OpRadioButtonGroup rbg = new OpRadioButtonGroup(null);
+            Tabs[7].AddItems(rbg);
+            rbg.SetButtons(new OpRadioButton[] { new OpRadioButton(100f, 300f), new OpRadioButton(150f, 300f), new OpRadioButton(200f, 300f) });
         }
 
         private OpHoldButton hold;
@@ -182,8 +186,6 @@ namespace CompletelyOptional
         {
             base.Signal(trigger, signal);
             if (signal == "BREAK") { throw new System.Exception("TEST BREAK"); }
-            if (signal == "PRESS") { ConfigConnector.ShowAlert(signal); }
-            if (signal == "HOLD") { ConfigConnector.ShowAlert(signal); }
         }
 
         public override void Update()

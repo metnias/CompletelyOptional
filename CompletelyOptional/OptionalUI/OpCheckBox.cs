@@ -79,7 +79,7 @@ namespace OptionalUI
             }
 
             Color ce = this.bumpBehav.GetColor(this.colorEdge);
-            if (this.MouseOver)
+            if (this.MouseOver || this.Focused())
             {
                 this.symbolHalfVisible = Custom.LerpAndTick(this.symbolHalfVisible, 1f, 0.07f, 0.0166666675f / frameMulti);
                 this.symbolSprite.color = Color.Lerp(MenuColorEffect.MidToDark(ce), ce, this.bumpBehav.Sin(10f));
@@ -131,11 +131,15 @@ namespace OptionalUI
             }
             else
             {
-                if (this.Focused() && this.held)
+                if (this.held)
                 {
-                    this.held = false;
-                    this.SetValueBool(!this.GetValueBool());
-                    PlaySound(!this.GetValueBool() ? SoundID.MENU_Checkbox_Check : SoundID.MENU_Checkbox_Uncheck);
+                    menu.ShowAlert($"HELD! jmp {CtlrInput.jmp}");
+                    if (!CtlrInput.jmp)
+                    {
+                        this.held = false;
+                        this.SetValueBool(!this.GetValueBool());
+                        PlaySound(!this.GetValueBool() ? SoundID.MENU_Checkbox_Check : SoundID.MENU_Checkbox_Uncheck);
+                    }
                 }
             }
         }

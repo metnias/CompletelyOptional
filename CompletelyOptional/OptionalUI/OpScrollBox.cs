@@ -683,7 +683,7 @@ namespace OptionalUI
             }
             if (rectSlidebar != null)
             {
-                this.bumpSlidebar.MouseOver = this.scrollMouseOver;
+                this.bumpSlidebar.Focused = this.scrollMouseOver;
                 this.bumpSlidebar.greyedOut = this.ScrollLocked;
                 this.bumpSlidebar.Update();
 

@@ -175,7 +175,15 @@ namespace CompletelyOptional
                     string name = (UnityEngine.Random.value < 0.15f ? "The " + LoremIpsum.Generate(1, 1, 1).Split(' ')[0]
                         : LoremIpsum.Generate(1, 1, 1).Split(' ')[0])
                         + (UnityEngine.Random.value < 0.3f ? " Mod" : "");
-                    listItf.Add(new InternalOI_Blank(new RainWorldMod(name + i)));
+                    string ver = UnityEngine.Random.value < 0.7f ? "0" : "1" + ".";
+                    if (UnityEngine.Random.value < 0.7f)
+                    {
+                        ver += Mathf.FloorToInt(UnityEngine.Random.value * 10f) + ".";
+                        ver += Mathf.FloorToInt(UnityEngine.Random.value * 10f) + ".";
+                        ver += Mathf.FloorToInt(UnityEngine.Random.value * 10f);
+                    }
+                    else { ver = RainWorldMod.authorNull; }
+                    listItf.Add(new InternalOI_Blank(new RainWorldMod(name + i) { version = ver }));
                     listItf[listItf.Count - 1].Initialize();
                 }
             }

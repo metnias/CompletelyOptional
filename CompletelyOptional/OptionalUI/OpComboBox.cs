@@ -114,8 +114,8 @@ namespace OptionalUI
             this.myContainer.AddChild(this.searchCursor);
             this.searchCursor.isVisible = false;
 
-            this.bumpList = new BumpBehaviour(this) { held = false, MouseOver = false };
-            this.bumpScroll = new BumpBehaviour(this) { held = false, MouseOver = false };
+            this.bumpList = new BumpBehaviour(this) { held = false, Focused = false };
+            this.bumpScroll = new BumpBehaviour(this) { held = false, Focused = false };
 
             GrafUpdate(0f);
         }
@@ -326,13 +326,13 @@ namespace OptionalUI
             // this.searchMode = false; //temp
             if (dTimer > 0) { dTimer--; }
             if (IsListBox) { return; }
-            this.bumpBehav.MouseOver = base.MouseOver && !this.MouseOverList();
+            this.bumpBehav.Focused = base.MouseOver && !this.MouseOverList();
             if (this.held)
             {
                 if (greyedOut) { goto close; }
-                this.bumpList.MouseOver = this.MouseOverList();
-                this.bumpScroll.MouseOver = this.MousePos.x >= this.rectScroll.pos.x - this.pos.x && this.MousePos.x <= this.rectScroll.pos.x + this.rectScroll.size.x - this.pos.x;
-                this.bumpScroll.MouseOver = this.bumpScroll.MouseOver && this.MousePos.y >= this.rectScroll.pos.y - this.pos.y && this.MousePos.y <= this.rectScroll.pos.y + this.rectScroll.size.y - this.pos.y;
+                this.bumpList.Focused = this.MouseOverList();
+                this.bumpScroll.Focused = this.MousePos.x >= this.rectScroll.pos.x - this.pos.x && this.MousePos.x <= this.rectScroll.pos.x + this.rectScroll.size.x - this.pos.x;
+                this.bumpScroll.Focused = this.bumpScroll.Focused && this.MousePos.y >= this.rectScroll.pos.y - this.pos.y && this.MousePos.y <= this.rectScroll.pos.y + this.rectScroll.size.y - this.pos.y;
                 if (this.searchMode && !this.bumpScroll.held)
                 {
                     SearchModeUpdate();
@@ -365,7 +365,7 @@ namespace OptionalUI
                     { // Click behaviour
                         if (!mouseDown)
                         {
-                            if (this.bumpScroll.MouseOver && listSize > this.lblList.Length)
+                            if (this.bumpScroll.Focused && listSize > this.lblList.Length)
                             {
                                 scrollHeldPos = this.MousePos.y - this.rectScroll.pos.y + this.pos.y;
                                 this.bumpScroll.held = true; PlaySound(SoundID.MENU_First_Scroll_Tick);

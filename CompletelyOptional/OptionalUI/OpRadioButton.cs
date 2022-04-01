@@ -108,7 +108,7 @@ namespace OptionalUI
 
             Color ce = this.bumpBehav.GetColor(this.colorEdge);
             this.symbolSprite.color = ce;
-            if (this.MouseOver)
+            if (this.MouseOver || this.Focused())
             {
                 this.symbolHalfVisible = Custom.LerpAndTick(this.symbolHalfVisible, 1f, 0.07f, 0.0166666675f / frameMulti);
                 if (!this.GetValueBool()) { this.symbolSprite.color = Color.Lerp(MenuColorEffect.MidToDark(ce), ce, this.bumpBehav.Sin(10f)); }

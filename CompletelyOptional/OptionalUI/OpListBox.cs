@@ -56,11 +56,11 @@ namespace OptionalUI
 
             if (greyedOut) { return; }
 
-            this.bumpList.MouseOver = this.MouseOverList();
+            this.bumpList.Focused = this.MouseOverList();
             bool xOver = this.MousePos.x >= this.rectScroll.pos.x - this.pos.x && this.MousePos.x <= this.rectScroll.pos.x + this.rectScroll.size.x - this.pos.x;
-            this.bumpScroll.MouseOver = xOver && this.MousePos.y >= this.rectScroll.pos.y - this.pos.y && this.MousePos.y <= this.rectScroll.pos.y + this.rectScroll.size.y - this.pos.y;
+            this.bumpScroll.Focused = xOver && this.MousePos.y >= this.rectScroll.pos.y - this.pos.y && this.MousePos.y <= this.rectScroll.pos.y + this.rectScroll.size.y - this.pos.y;
             xOver = this.MousePos.x >= 0f && this.MousePos.x <= this.size.x;
-            this.bumpBehav.MouseOver = !downward ? base.MouseOver && !this.MouseOverList() : xOver && this.MousePos.y >= this.rectList.size.y && this.MousePos.y <= this.rectList.size.y + this.size.y;
+            this.bumpBehav.Focused = !downward ? base.MouseOver && !this.MouseOverList() : xOver && this.MousePos.y >= this.rectList.size.y && this.MousePos.y <= this.rectList.size.y + this.size.y;
 
             if (this.searchMode && !this.bumpScroll.held)
             {
@@ -95,7 +95,7 @@ namespace OptionalUI
                 { // Click behaviour
                     if (!mouseDown)
                     {
-                        if (this.bumpScroll.MouseOver && listSize > this.lblList.Length)
+                        if (this.bumpScroll.Focused && listSize > this.lblList.Length)
                         {
                             scrollHeldPos = this.MousePos.y - this.rectScroll.pos.y + this.pos.y;
                             this.bumpScroll.held = true; PlaySound(SoundID.MENU_First_Scroll_Tick);
