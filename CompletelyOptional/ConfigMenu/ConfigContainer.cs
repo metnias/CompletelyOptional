@@ -591,6 +591,7 @@ namespace CompletelyOptional
 
             UIelement focusedElementBeforeUpdate = focusedElement;
             allowFocusMove = true;
+            bool lastHoldElement = holdElement;
 
             #region UIelement.Update
 
@@ -727,7 +728,7 @@ namespace CompletelyOptional
                             }
                         }
                     }
-                    else if (menu.input.jmp && !menu.lastInput.jmp && !(focusedElement as ICanBeFocused).GreyedOut) // Hold Element
+                    else if (!lastHoldElement && menu.input.jmp && !menu.lastInput.jmp && !(focusedElement as ICanBeFocused).GreyedOut) // Hold Element
                     {
                         (focusedElement as ICanBeFocused).NonMouseHold();
                         if (focusedElement.inScrollBox) { OpScrollBox.ScrollToChild(focusedElement); }

@@ -356,10 +356,18 @@ namespace OptionalUI
             {
                 if (this.held)
                 {
+                    if (CtlrInput.jmp && !LastCtlrInput.jmp)
+                    {
+                        this.held = false;
+                        lastVal = this.GetValueInt();
+                        PlaySound(SoundID.MENU_Checkbox_Check);
+                        return;
+                    }
                     if (CtlrInput.thrw && !LastCtlrInput.thrw)
                     {
                         this.held = false;
-                        PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
+                        this.SetValueInt(lastVal);
+                        PlaySound(SoundID.MENU_Checkbox_Uncheck);
                         return;
                     }
                     int newVal = this.GetValueInt();
@@ -370,14 +378,14 @@ namespace OptionalUI
                         {
                             newVal = Custom.IntClamp(newVal + CtlrInput.y, min, max); tick = true;
                         }
-                        if (CtlrInput.y != 0 && LastCtlrInput.y == CtlrInput.y && CtlrInput.x == 0)
+                        if (CtlrInput.y != 0 && LastCtlrInput.y == CtlrInput.y)
                         { this.scrollInitDelay++; }
                         else
                         { this.scrollInitDelay = 0; }
-                        if (this.scrollInitDelay > ModConfigMenu.DASinit)
+                        if (this.scrollInitDelay > ModConfigMenu.DASinit / 2)
                         {
                             this.scrollDelay++;
-                            if (this.scrollDelay > ModConfigMenu.DASdelay)
+                            if (this.scrollDelay > ModConfigMenu.DASdelay / 2)
                             {
                                 this.scrollDelay = 0;
                                 if (CtlrInput.y != 0 && LastCtlrInput.y == CtlrInput.y)
@@ -390,14 +398,14 @@ namespace OptionalUI
                     {
                         if (CtlrInput.x != 0 && LastCtlrInput.x != CtlrInput.x)
                         { newVal = Custom.IntClamp(newVal + CtlrInput.x, min, max); tick = true; }
-                        if (CtlrInput.x != 0 && LastCtlrInput.x == CtlrInput.y && CtlrInput.y == 0)
+                        if (CtlrInput.x != 0 && LastCtlrInput.x == CtlrInput.x)
                         { this.scrollInitDelay++; }
                         else
                         { this.scrollInitDelay = 0; }
-                        if (this.scrollInitDelay > ModConfigMenu.DASinit)
+                        if (this.scrollInitDelay > ModConfigMenu.DASinit / 2)
                         {
                             this.scrollDelay++;
-                            if (this.scrollDelay > ModConfigMenu.DASdelay)
+                            if (this.scrollDelay > ModConfigMenu.DASdelay / 2)
                             {
                                 this.scrollDelay = 0;
                                 if (CtlrInput.x != 0 && LastCtlrInput.x == CtlrInput.x)
@@ -413,9 +421,11 @@ namespace OptionalUI
                         else { PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard); }
                     }
                 }
+                else { lastVal = this.GetValueInt(); }
             }
         }
 
+        private int lastVal;
         private float scrollInitDelay, scrollDelay;
 
         public override void OnChange()

@@ -109,7 +109,7 @@ namespace OptionalUI
             }
 
             this.rect.colorFill = this.colorFill;
-            this.greyFade = Custom.LerpAndTick(this.greyFade, (!ConfigContainer.holdElement || this.held) ? 0f : 1f, 0.05f, 0.025f / frameMulti);
+            this.greyFade = Custom.LerpAndTick(this.greyFade, this.held ? 0f : 1f, 0.05f, 0.025f / frameMulti);
 
             this.rect.fillAlpha = this.bumpBehav.FillAlpha;
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
@@ -132,36 +132,86 @@ namespace OptionalUI
             this.rect.Update();
             if (_min != min || _max != max) { OnChange(); }
 
-            if (this.held)
+            if (MenuMouseMode)
             {
-                if (Input.GetMouseButton(0))
-                { this.SetValueInt(Custom.IntClamp(this.savValue + Mathf.FloorToInt((Input.mousePosition.y - this.savMouse) / 10f), this.min, this.max)); }
-                else
-                { this.held = false; }
-            }
-            else if (!this.held && this.menu.manager.menuesMouseMode && this.MouseOver)
-            {
-                if (Input.GetMouseButton(0))
+                if (this.held)
                 {
-                    this.held = true;
-                    this.savMouse = Input.mousePosition.y;
-                    this.savValue = this.GetValueInt();
-                    PlaySound(SoundID.MENU_First_Scroll_Tick);
+                    if (Input.GetMouseButton(0))
+                    { this.SetValueInt(Custom.IntClamp(this.savValue + Mathf.FloorToInt((Input.mousePosition.y - this.savMouse) / 10f), this.min, this.max)); }
+                    else
+                    { this.held = false; }
                 }
-                else if (this.menu.mouseScrollWheelMovement != 0)
+                else if (!this.held && this.menu.manager.menuesMouseMode && this.MouseOver)
                 {
-                    int num = this.GetValueInt() - (int)Mathf.Sign(this.menu.mouseScrollWheelMovement);
-                    num = Custom.IntClamp(num, this.min, this.max);
-                    if (num != this.GetValueInt())
+                    if (Input.GetMouseButton(0))
                     {
-                        this.bumpBehav.flash = 1f;
-                        PlaySound(SoundID.MENU_Scroll_Tick);
-                        this.bumpBehav.sizeBump = Mathf.Min(2.5f, this.bumpBehav.sizeBump + 1f);
-                        this.SetValueInt(num);
+                        this.held = true;
+                        this.savMouse = Input.mousePosition.y;
+                        this.savValue = this.GetValueInt();
+                        PlaySound(SoundID.MENU_First_Scroll_Tick);
+                    }
+                    else if (this.menu.mouseScrollWheelMovement != 0)
+                    {
+                        int num = this.GetValueInt() - (int)Mathf.Sign(this.menu.mouseScrollWheelMovement);
+                        num = Custom.IntClamp(num, this.min, this.max);
+                        if (num != this.GetValueInt())
+                        {
+                            this.bumpBehav.flash = 1f;
+                            PlaySound(SoundID.MENU_Scroll_Tick);
+                            this.bumpBehav.sizeBump = Mathf.Min(2.5f, this.bumpBehav.sizeBump + 1f);
+                            this.SetValueInt(num);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (this.held)
+                {
+                    if (CtlrInput.jmp && !LastCtlrInput.jmp)
+                    {
+                        this.held = false;
+                        lastVal = this.GetValueInt();
+                        PlaySound(SoundID.MENU_Checkbox_Check);
+                        return;
+                    }
+                    if (CtlrInput.thrw && !LastCtlrInput.thrw)
+                    {
+                        this.held = false;
+                        this.SetValueInt(lastVal);
+                        PlaySound(SoundID.MENU_Checkbox_Uncheck);
+                        return;
+                    }
+
+                    int newVal = this.GetValueInt(); bool tick = false;
+                    if (CtlrInput.y != 0 && LastCtlrInput.y != CtlrInput.y)
+                    { newVal = Custom.IntClamp(newVal + CtlrInput.y, min, max); tick = true; }
+                    if (CtlrInput.y != 0 && LastCtlrInput.y == CtlrInput.y)
+                    { this.scrollInitDelay++; }
+                    else
+                    { this.scrollInitDelay = 0; }
+                    if (this.scrollInitDelay > ModConfigMenu.DASinit / 2)
+                    {
+                        this.scrollDelay++;
+                        if (this.scrollDelay > ModConfigMenu.DASdelay / 2)
+                        {
+                            this.scrollDelay = 0;
+                            if (CtlrInput.y != 0 && LastCtlrInput.y == CtlrInput.y)
+                            { newVal = Custom.IntClamp(newVal + CtlrInput.y, min, max); tick = true; }
+                        }
+                    }
+                    else { this.scrollDelay = 0; }
+                    if (tick)
+                    {
+                        if (newVal != this.GetValueInt())
+                        { PlaySound(scrollInitDelay > 1 ? SoundID.MENU_Scroll_Tick : SoundID.MENU_First_Scroll_Tick); this.SetValueInt(newVal); }
+                        else { PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard); }
                     }
                 }
             }
         }
+
+        private int scrollInitDelay = 0, scrollDelay = 0, lastVal;
 
         public override void OnChange()
         {
