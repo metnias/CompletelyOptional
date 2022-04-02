@@ -356,17 +356,21 @@ namespace OptionalUI
             {
                 if (this.Focused())
                 {
+                    if (CtlrInput.thrw && !LastCtlrInput.thrw)
+                    {
+                        this.held = false;
+                        PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
+                        return;
+                    }
+                    int newVal = this.GetValueInt();
+                    bool tick = false;
                     if (vertical)
                     {
-                        if (menu.input.y != 0 && menu.lastInput.y != menu.input.y)
+                        if (CtlrInput.y != 0 && LastCtlrInput.y != CtlrInput.y)
                         {
-                            int newVal = Custom.IntClamp(this.GetValueInt() + menu.input.y, min, max);
-                            if (newVal != this.GetValueInt()) { PlaySound(SoundID.MENU_First_Scroll_Tick); this.SetValueInt(newVal); }
-                            else { PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard); }
+                            newVal = Custom.IntClamp(newVal + CtlrInput.y, min, max); tick = true;
                         }
-                        if (menu.input.y != 0 && menu.lastInput.y == menu.input.y && menu.input.x == 0)
-                        { this.scrollInitDelay++; }
-                        else if (menu.input.x != 0 && menu.lastInput.x == menu.input.y && menu.input.y == 0)
+                        if (CtlrInput.y != 0 && LastCtlrInput.y == CtlrInput.y && CtlrInput.x == 0)
                         { this.scrollInitDelay++; }
                         else
                         { this.scrollInitDelay = 0; }
@@ -376,19 +380,17 @@ namespace OptionalUI
                             if (this.scrollDelay > ModConfigMenu.DASdelay)
                             {
                                 this.scrollDelay = 0;
-                                if (menu.input.y != 0 && menu.lastInput.y == menu.input.y)
-                                { this.SetValueInt(this.GetValueInt() + menu.input.y); }
+                                if (CtlrInput.y != 0 && LastCtlrInput.y == CtlrInput.y)
+                                { newVal = Custom.IntClamp(newVal + CtlrInput.y, min, max); tick = true; }
                             }
                         }
                         else { this.scrollDelay = 0; }
                     }
                     else
                     {
-                        if (menu.input.x != 0 && menu.lastInput.x != menu.input.x)
-                        { this.SetValueInt(this.GetValueInt() + menu.input.x); }
-                        if (menu.input.y != 0 && menu.lastInput.y == menu.input.y && menu.input.x == 0)
-                        { this.scrollInitDelay++; }
-                        else if (menu.input.x != 0 && menu.lastInput.x == menu.input.y && menu.input.y == 0)
+                        if (CtlrInput.x != 0 && LastCtlrInput.x != CtlrInput.x)
+                        { newVal = Custom.IntClamp(newVal + CtlrInput.x, min, max); tick = true; }
+                        if (CtlrInput.x != 0 && LastCtlrInput.x == CtlrInput.y && CtlrInput.y == 0)
                         { this.scrollInitDelay++; }
                         else
                         { this.scrollInitDelay = 0; }
@@ -398,11 +400,17 @@ namespace OptionalUI
                             if (this.scrollDelay > ModConfigMenu.DASdelay)
                             {
                                 this.scrollDelay = 0;
-                                if (menu.input.x != 0 && menu.lastInput.x == menu.input.x)
-                                { this.SetValueInt(this.GetValueInt() + menu.input.x); }
+                                if (CtlrInput.x != 0 && LastCtlrInput.x == CtlrInput.x)
+                                { newVal = Custom.IntClamp(newVal + CtlrInput.x, min, max); tick = true; }
                             }
                         }
                         else { this.scrollDelay = 0; }
+                    }
+                    if (tick)
+                    {
+                        if (newVal != this.GetValueInt())
+                        { PlaySound(scrollInitDelay > 1 ? SoundID.MENU_Scroll_Tick : SoundID.MENU_First_Scroll_Tick); this.SetValueInt(newVal); }
+                        else { PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard); }
                     }
                 }
             }

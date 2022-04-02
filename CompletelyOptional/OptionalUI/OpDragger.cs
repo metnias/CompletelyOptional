@@ -15,14 +15,15 @@ namespace OptionalUI
         /// Dragger to adjust int value in a cramped space. The fixedSize is 24x24.
         /// </summary>
         /// <param name="pos">BottomLeft</param>
-        /// <param name="defaultInt">default value</param>
-        public OpDragger(ConfigEntry<int> config, Vector2 pos, int defaultInt = 0) : base(config, pos, new Vector2(24f, 24f), defaultInt.ToString())
+        /// <param name="cosmeticInt">default value for <see cref="UIconfig.cosmetic"/></param>
+        public OpDragger(ConfigEntry<int> config, Vector2 pos, int cosmeticInt = 0) : base(config, pos, new Vector2(24f, 24f), cosmeticInt.ToString())
         {
             this.fixedSize = new Vector2(24f, 24f);
 
             this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true);
-            this.label = FLabelCreate(defaultInt.ToString());
+            this.label = FLabelCreate(!cosmetic ? config.DefaultValue.ToString() : cosmeticInt.ToString());
             FLabelPlaceAtCenter(this.label, 0f, 2f, 24f, 20f);
+            this.myContainer.AddChild(this.label);
 
             this.min = 0; this._min = 0; this.max = 99; this._max = 99;
             this.description = InternalTranslator.Translate("Hold your mouse button and Drag up/down to adjust value");
@@ -35,8 +36,8 @@ namespace OptionalUI
         /// </summary>
         /// <param name="posX">Left position.</param>
         /// <param name="posY">Bottom position.</param>
-        /// <param name="defaultInt">default value</param>
-        public OpDragger(ConfigEntry<int> config, float posX, float posY, int defaultInt = 0) : this(config, new Vector2(posX, posY), defaultInt)
+        /// <param name="cosmeticInt">default value</param>
+        public OpDragger(ConfigEntry<int> config, float posX, float posY, int cosmeticInt = 0) : this(config, new Vector2(posX, posY), cosmeticInt)
         { }
 
         /// <summary>

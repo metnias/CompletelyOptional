@@ -52,10 +52,18 @@ namespace OptionalUI
             }
         }
 
+        public override bool CurrentlyFocusableMouse => false;
+        public override bool CurrentlyFocusableNonMouse => false;
+
         public override void Update()
         {
             base.Update();
-            if (this.held) { foreach (OpRadioButton b in this.buttons) { b.Update(); } }
+            if (this.held)
+            {
+                bool realHeld = false;
+                foreach (OpRadioButton b in this.buttons) { b.Update(); realHeld = realHeld || b.click; }
+                if (!realHeld) { this.held = false; }
+            }
         }
 
         /// <summary>

@@ -241,7 +241,7 @@ namespace OptionalUI
             tab.AddItems(this); this.isTab = true;
 
             this._labelNotify = FLabelCreate(string.Concat(">>> ", InternalTranslator.Translate(hasSlideBar ? "Use Scroll Wheel or Scrollbar to see more" : "Use Scroll Wheel to see more"), " <<<"));
-            FLabelPlaceAtCenter(this._labelNotify, 200f, 0f, 200f, 20f);
+            FLabelPlaceAtCenter(this._labelNotify, 200f, horizontal ? 10f : 0f, 200f, 20f);
             this.myContainer.AddChild(this._labelNotify);
         }
 
@@ -308,7 +308,7 @@ namespace OptionalUI
         {
             targetScrollOffset = horizontal ? 0f : MaxScroll;
             if (immediate)
-                scrollOffset = targetScrollOffset;
+            { scrollOffset = targetScrollOffset; }
         }
 
         /// <summary>
@@ -320,17 +320,22 @@ namespace OptionalUI
         {
             targetScrollOffset = horizontal ? MaxScroll : 0f;
             if (immediate)
-                scrollOffset = targetScrollOffset;
+            { scrollOffset = targetScrollOffset; }
         }
 
+        /// <summary>
+        /// Scroll to focus <see cref="UIelement"/> that's inside of <see cref="OpScrollBox"/>.
+        /// </summary>
+        /// <param name="child"></param>
         public static void ScrollToChild(UIelement child)
         {
             if (!child.inScrollBox) { return; }
             OpScrollBox box = child.scrollBox;
-            float gap = 10f;
+            const float gap = 10f;
+            float target;
             if (box.horizontal)
             { // lower left
-                float target = child.pos.x;
+                target = child.GetPos().x;
                 if (target < box.scrollOffset) { box.targetScrollOffset = target - gap; }
                 else
                 {
@@ -340,7 +345,7 @@ namespace OptionalUI
             }
             else
             { // higher top
-                float target = child.pos.y;
+                target = child.GetPos().y;
                 if (target < box.scrollOffset) { box.targetScrollOffset = target - gap; }
                 else
                 {
@@ -348,6 +353,8 @@ namespace OptionalUI
                     if (target > box.scrollOffset + box.size.x) { box.targetScrollOffset = target + gap; }
                 }
             }
+            box.targetScrollOffset = Mathf.Clamp(target, 0f, box.MaxScroll);
+            ModConfigMenu.instance.ShowAlert($"Target: {target}; {child.GetPos().x}, {child.GetPos().y}");
         }
 
         /// <summary>
@@ -421,6 +428,7 @@ namespace OptionalUI
             get
             {
                 Rect res = new Rect(this.ScreenPos.x, this.ScreenPos.y, this.size.x, this.size.y);
+                if (this.isTab) { res.x += 10f; res.y += horizontal ? 0f : 10f; res.width -= horizontal ? 20f : 10f; res.height -= horizontal ? 10f : 20f; }
                 if (tab != null) { res.x += tab.container.x; res.y += tab.container.y; }
                 return res;
             }
@@ -559,11 +567,17 @@ namespace OptionalUI
             {
                 if (_held)
                 {
-                    if (CtlrInput.jmp && !LastCtlrInput.jmp)
+                    if (CtlrInput.thrw && !LastCtlrInput.thrw)
+                    { // Unhold
+                        this._held = false;
+                        ConfigContainer.holdElement = false;
+                        ConfigContainer.instance.allowFocusMove = false;
+                    }
+                    else if (CtlrInput.jmp && !LastCtlrInput.jmp)
                     { // Focused > (jmp) > !ScrollLocked ? holdElement : focus <- lastFocusedElement
                         if (lastFocusedElement != null)
                         {
-                            if (!lastFocusedElement.isInactive && !(lastFocusedElement as ICanBeFocused).GreyedOut)
+                            if (!lastFocusedElement.isInactive && (lastFocusedElement as ICanBeFocused).CurrentlyFocusableNonMouse)
                             {
                                 bool CenterInView; // Check if this is in view
                                 if (horizontal) { CenterInView = lastFocusedElement.CenterPos().x > scrollOffset && lastFocusedElement.CenterPos().x < scrollOffset + size.x; }
@@ -583,7 +597,7 @@ namespace OptionalUI
                         UIelement cand = null;
                         foreach (UIelement child in this.children)
                         {
-                            if (!child.isInactive && child is ICanBeFocused candidate && !candidate.GreyedOut)
+                            if (!child.isInactive && child is ICanBeFocused candidate && candidate.CurrentlyFocusableNonMouse)
                             {
                                 float thisPos = Mathf.Abs(horizontal ? child.CenterPos().x - scrollOffset - size.x / 2f : child.CenterPos().y - scrollOffset + size.y / 2f);
                                 if (candPos > thisPos) { candPos = thisPos; cand = child; }
@@ -606,7 +620,7 @@ namespace OptionalUI
                         if ((horizontal && CtlrInput.x != 0) || (!horizontal && CtlrInput.y != 0))
                         {
                             // Add input delay here
-                            if (horizontal) { targetScrollOffset += 40f * Mathf.Sign(CtlrInput.x); }
+                            if (horizontal) { targetScrollOffset -= 40f * Mathf.Sign(CtlrInput.x); }
                             else { targetScrollOffset -= 40f * Mathf.Sign(CtlrInput.y); }
                             if (targetScrollOffset != scrollOffset)
                             {

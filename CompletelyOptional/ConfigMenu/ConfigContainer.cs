@@ -696,7 +696,38 @@ namespace CompletelyOptional
                 if (!allowFocusMove) { this.scrollInitDelay = 0; } // Focus changed by OI.Update
                 else if (!holdElement)
                 {
-                    if (menu.input.jmp && !menu.lastInput.jmp && !(focusedElement as ICanBeFocused).GreyedOut) // Hold Element
+                    if (menu.input.thrw && !menu.lastInput.thrw) // Move Focus Upward
+                    {
+                        UIelement curFocusedElement = focusedElement;
+                        if (focusedElement.inScrollBox) // Move to ScrollBox
+                        {
+                            focusedElement.scrollBox.lastFocusedElement = focusedElement;
+                            focusedElement = focusedElement.scrollBox;
+                        }
+                        else if (!(focusedElement.tab is MenuTab)) // Move to TabController
+                        {
+                            if (activeInterface.Tabs.Length > 1) { focusedElement = menuTab.tabCtrler.GetCurrentTabButton(); }
+                            else { focusedElement = menuTab.modList.GetCurrentModButton(); }
+                        }
+                        else if (focusedElement is ConfigTabController.TabSelectButton) // Move to Mod List
+                        {
+                            focusedElement = menuTab.modList.GetCurrentModButton();
+                        }
+                        else // Move to Save/Back button
+                        {
+                            focusedElement = OptItfChanged[activeItfIndex] ? menuTab.saveButton : menuTab.backButton;
+                        }
+                        if (curFocusedElement != focusedElement)
+                        {
+                            lastFocusedElement = curFocusedElement;
+                            if (!focusedElement.mute)
+                            {
+                                PlaySound((focusedElement as ICanBeFocused).GreyedOut
+                                    ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
+                            }
+                        }
+                    }
+                    else if (menu.input.jmp && !menu.lastInput.jmp && !(focusedElement as ICanBeFocused).GreyedOut) // Hold Element
                     {
                         (focusedElement as ICanBeFocused).NonMouseHold();
                         if (focusedElement.inScrollBox) { OpScrollBox.ScrollToChild(focusedElement); }
@@ -726,39 +757,6 @@ namespace CompletelyOptional
                             }
                         }
                         else { this.scrollDelay = 0; }
-                    }
-                }
-                else
-                {
-                    if (menu.input.thrw && !menu.lastInput.thrw) // Move Upward
-                    {
-                        UIelement curFocusedElement = focusedElement;
-                        if (focusedElement.inScrollBox) // Move to ScrollBox
-                        {
-                            focusedElement.scrollBox.lastFocusedElement = focusedElement;
-                            focusedElement = focusedElement.scrollBox;
-                        }
-                        else if (!(focusedElement.tab is MenuTab)) // Move to TabController
-                        {
-                            if (activeInterface.Tabs.Length > 1) { focusedElement = menuTab.tabCtrler.GetCurrentTabButton(); }
-                            else { focusedElement = menuTab.modList.GetCurrentModButton(); }
-                        }
-                        else if (focusedElement is ConfigTabController.TabSelectButton) // Move to Mod List
-                        {
-                            focusedElement = menuTab.modList.GetCurrentModButton();
-                        }
-                        else // Move to Save/Back button
-                        {
-                            focusedElement = OptItfChanged[activeItfIndex] ? menuTab.saveButton : menuTab.backButton;
-                        }
-                        bool moved;
-                        if (curFocusedElement != focusedElement) { lastFocusedElement = curFocusedElement; moved = true; }
-                        else { moved = false; }
-                        if (moved && !focusedElement.mute)
-                        {
-                            PlaySound((focusedElement as ICanBeFocused).GreyedOut
-                                ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
-                        }
                     }
                 }
             }

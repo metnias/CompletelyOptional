@@ -170,15 +170,15 @@ namespace CompletelyOptional
             rs = new OpResourceSelector(null, new Vector2(100f, 100f), 200f, OpResourceSelector.SpecialEnum.Songs);
             sb.AddItems(rs, new OpLabel(100f, 130f, "Songs") { bumpBehav = rs.bumpBehav });
 
-            Tabs[7].AddItems(new OpHoldButton(new Vector2(100f, 100f), "BREAK", "BREAK"));
-            Tabs[7].AddItems(new OpSimpleButton(new Vector2(400f, 100f), new Vector2(80f, 30f), "PRESS", "PRESS"));
-            Tabs[7].AddItems(new OpSimpleButton(new Vector2(400f, 160f), new Vector2(80f, 30f), "HOLD", "HOLD") { canHold = true });
-            Tabs[7].AddItems(new OpCheckBox(null, 400f, 300f, false));
+            sb = new OpScrollBox(Tabs[7], 1000f, true);
+            sb.AddItems(new OpHoldButton(new Vector2(100f, 100f), "BREAK", "BREAK"));
+            sb.AddItems(new OpSimpleButton(new Vector2(400f, 100f), new Vector2(80f, 30f), "PRESS", "PRESS"));
+            sb.AddItems(new OpSimpleButton(new Vector2(400f, 160f), new Vector2(80f, 30f), "HOLD", "HOLD") { canHold = true });
+            sb.AddItems(new OpCheckBox(null, 400f, 300f, false));
             OpRadioButtonGroup rbg = new OpRadioButtonGroup(null);
-            Tabs[7].AddItems(rbg);
+            sb.AddItems(rbg);
             rbg.SetButtons(new OpRadioButton[] { new OpRadioButton(100f, 300f), new OpRadioButton(150f, 300f), new OpRadioButton(200f, 300f) });
-
-            Tabs[8].AddItems(new OpCheckBox(null, 400f, 300f, true));
+            sb.AddItems(new OpDragger(null, 600f, 50f) { min = 0, max = 99 });
         }
 
         private OpHoldButton hold;

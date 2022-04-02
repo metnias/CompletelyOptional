@@ -44,7 +44,7 @@ namespace OptionalUI
         //Use Circle from food.
         private readonly FSprite symbolSprite;
 
-        private bool click;
+        internal bool click;
         private readonly DyeableRect rect;
 
         /// <summary>
