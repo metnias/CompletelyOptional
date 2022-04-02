@@ -177,6 +177,8 @@ namespace CompletelyOptional
             OpRadioButtonGroup rbg = new OpRadioButtonGroup(null);
             Tabs[7].AddItems(rbg);
             rbg.SetButtons(new OpRadioButton[] { new OpRadioButton(100f, 300f), new OpRadioButton(150f, 300f), new OpRadioButton(200f, 300f) });
+
+            Tabs[8].AddItems(new OpCheckBox(null, 400f, 300f, true));
         }
 
         private OpHoldButton hold;

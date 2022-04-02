@@ -175,7 +175,7 @@ namespace CompletelyOptional
                     string name = (UnityEngine.Random.value < 0.15f ? "The " + LoremIpsum.Generate(1, 1, 1).Split(' ')[0]
                         : LoremIpsum.Generate(1, 1, 1).Split(' ')[0])
                         + (UnityEngine.Random.value < 0.3f ? " Mod" : "");
-                    string ver = UnityEngine.Random.value < 0.7f ? "0" : "1" + ".";
+                    string ver = (UnityEngine.Random.value < 0.7f ? "0" : "1") + ".";
                     if (UnityEngine.Random.value < 0.7f)
                     {
                         ver += Mathf.FloorToInt(UnityEngine.Random.value * 10f) + ".";
@@ -438,6 +438,7 @@ namespace CompletelyOptional
                 PlaySound((focusedElement as ICanBeFocused).GreyedOut
                     ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                 // Always play Gamepad sound even in Mouse mode, as this is called by either Gamepad or Modder
+                if (element.inScrollBox) { OpScrollBox.ScrollToChild(element); }
             }
         }
 
@@ -491,6 +492,61 @@ namespace CompletelyOptional
                     {
                         result = candidates[i];
                         likelihood = cndLikelihood;
+                    }
+                }
+            }
+            if (result == focusedElement || (result.tab is MenuTab && focusedElement.tab is MenuTab))
+            { // Exception Matchmaking
+                if (result.tab is MenuTab)
+                {
+                    bool left;
+                    if (result is MenuTab.MenuButton || result is MenuTab.MenuHoldButton)
+                    { if (direction.y < 0 && direction.x == 0) { left = false; goto jumpToActiveTab; } }
+                    else if (focusedElement is ConfigTabController.TabSelectButton
+                        || focusedElement is MenuModList.IAmPartOfModList && !(result is ConfigTabController.TabSelectButton))
+                    { if (direction.x > 0 && direction.y == 0) { left = true; goto jumpToActiveTab; } }
+                    return result;
+                jumpToActiveTab:
+                    likelihood = float.MaxValue;
+                    for (int i = 0; i < candidates.Count; i++)
+                    {
+                        if (!(candidates[i].tab is MenuTab)
+                            && candidates[i] is ICanBeFocused
+                            && (candidates[i] as ICanBeFocused).CurrentlyFocusableNonMouse
+                            && (candidates[i] as ICanBeFocused) != focusedElement)
+                        {
+                            Vector2 cndCenter = candidates[i].CenterPos();
+                            float cndLikelihood = left ? cndCenter.x : cndCenter.y; // Far Left or Far Bottom
+                            if (cndLikelihood < likelihood)
+                            {
+                                result = candidates[i];
+                                likelihood = cndLikelihood;
+                            }
+                        }
+                    }
+                }
+            }
+            else if (result.tab is MenuTab && !(focusedElement.tab is MenuTab))
+            { // Postpone escaping
+                for (int i = 0; i < candidates.Count; i++)
+                {
+                    if (!(candidates[i].tab is MenuTab)
+                        && candidates[i] is ICanBeFocused
+                        && (candidates[i] as ICanBeFocused).CurrentlyFocusableNonMouse
+                        && (candidates[i] as ICanBeFocused) != focusedElement)
+                    {
+                        Vector2 cndCenter = candidates[i].CenterPos();
+                        float cndLikelihood;
+                        if (direction.x == 0)
+                        { cndLikelihood = direction.y > 0 ? cndCenter.y - curCenter.y : curCenter.y - cndCenter.y; }
+                        else
+                        { cndLikelihood = direction.x > 0 ? cndCenter.x - curCenter.x : curCenter.x - cndCenter.x; }
+
+                        if (cndLikelihood > 1f && cndLikelihood < likelihood)
+                        {
+                            result = candidates[i];
+                            likelihood = cndLikelihood;
+                        }
                     }
                 }
             }

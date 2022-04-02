@@ -221,13 +221,7 @@ namespace OptionalUI
         {
             base.Update();
             this.bumpBehav.Update();
-            if (MenuMouseMode)
-            { if (held && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(); } }
-            else
-            {
-                if (held) { held = false; }
-                if (this.Focused() && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(); }
-            }
+            if (this.held && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(); }
         }
 
         protected internal virtual bool CopyFromClipboard(string value)

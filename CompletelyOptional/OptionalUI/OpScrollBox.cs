@@ -606,12 +606,14 @@ namespace OptionalUI
                         if ((horizontal && CtlrInput.x != 0) || (!horizontal && CtlrInput.y != 0))
                         {
                             // Add input delay here
-                            if (horizontal) { targetScrollOffset -= 40f * Mathf.Sign(CtlrInput.x); }
-                            else { targetScrollOffset += 40f * Mathf.Sign(CtlrInput.y); }
+                            if (horizontal) { targetScrollOffset += 40f * Mathf.Sign(CtlrInput.x); }
+                            else { targetScrollOffset -= 40f * Mathf.Sign(CtlrInput.y); }
                             if (targetScrollOffset != scrollOffset)
                             {
                                 hasMoved = true; this.hasScrolled = true;
-                                PlaySound(SoundID.MENU_Scroll_Tick);
+                                if (_scrollSoundTick % ModConfigMenu.DASdelay == 0)
+                                { PlaySound(_scrollSoundTick == 0 ? SoundID.MENU_First_Scroll_Tick : SoundID.MENU_Scroll_Tick); }
+                                _scrollSoundTick++;
                                 if (this.bumpSlidebar != null)
                                 {
                                     this.bumpSlidebar.flash = Mathf.Min(1f, this.bumpSlidebar.flash + 0.2f);
@@ -619,6 +621,7 @@ namespace OptionalUI
                                 }
                             }
                         }
+                        else { _scrollSoundTick = 0; }
                     }
                 }
                 else // if (ConfigContainer.focusedElement?.inScrollBox == true && ConfigContainer.focusedElement.scrollBox == this) // Child Focused
@@ -729,6 +732,7 @@ namespace OptionalUI
         }
 
         private float _notifySin;
+        private int _scrollSoundTick = 0;
 
         protected internal override void Deactivate()
         {

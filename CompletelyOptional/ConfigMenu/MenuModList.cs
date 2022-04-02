@@ -562,7 +562,7 @@ namespace CompletelyOptional
             }
         }
 
-        private interface IAmPartOfModList
+        internal interface IAmPartOfModList
         { }
     }
 }

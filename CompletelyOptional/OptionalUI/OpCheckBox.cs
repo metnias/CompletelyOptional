@@ -133,7 +133,6 @@ namespace OptionalUI
             {
                 if (this.held)
                 {
-                    menu.ShowAlert($"HELD! jmp {CtlrInput.jmp}");
                     if (!CtlrInput.jmp)
                     {
                         this.held = false;

@@ -324,6 +324,13 @@ namespace OptionalUI
             return "Joystick" + (newBind != BindController.AnyController ? b.ToString() : "") + btn;
         }
 
+        public override void NonMouseHold()
+        {
+            base.NonMouseHold();
+            PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);
+            this.label.text = "?";
+        }
+
         public override void Update()
         {
             base.Update();
@@ -348,9 +355,10 @@ namespace OptionalUI
                     else if (Input.GetKey("4")) { flag = true; newBind = BindController.Controller4; }
                     if (!flag) { return; }
                     if (this.bind == newBind)
-                    { menu.PlaySound(SoundID.MENU_Error_Ping); this.held = false; return; }
+                    { PlaySound(SoundID.MENU_Error_Ping); this.held = false; return; }
                     this.SetController(newBind);
                     this.held = false;
+                    ConfigContainer.instance.allowFocusMove = false;
                     return;
                 }
                 if (!this.lastAnyKeyDown && this.anyKeyDown)
@@ -369,7 +377,7 @@ namespace OptionalUI
                             {
                                 if (!this.MouseOver)
                                 {
-                                    menu.PlaySound(SoundID.MENU_Error_Ping);
+                                    PlaySound(SoundID.MENU_Error_Ping);
                                     this.held = false;
                                 }
                                 return;
@@ -396,7 +404,7 @@ namespace OptionalUI
             else if (!this.held && this.MouseOver && Input.GetMouseButton(0))
             {
                 this.held = true;
-                menu.PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);
+                PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);
                 this.label.text = "?";
             }
         }
