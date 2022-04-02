@@ -74,7 +74,6 @@ namespace OptionalUI
             {
                 Rect res = new Rect(this.ScreenPos.x, this.ScreenPos.y, this.size.x, this.size.y);
                 if (tab != null) { res.x += tab.container.x; res.y += tab.container.y; }
-                if (inScrollBox) { TrimFocusRectToScrollBox(ref res); }
                 return res;
             }
         }

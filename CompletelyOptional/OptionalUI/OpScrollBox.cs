@@ -307,8 +307,7 @@ namespace OptionalUI
         public void ScrollToTop(bool immediate = true)
         {
             targetScrollOffset = horizontal ? 0f : MaxScroll;
-            if (immediate)
-            { scrollOffset = targetScrollOffset; }
+            if (immediate) { scrollOffset = targetScrollOffset; }
         }
 
         /// <summary>
@@ -319,8 +318,7 @@ namespace OptionalUI
         public void ScrollToBottom(bool immediate = true)
         {
             targetScrollOffset = horizontal ? MaxScroll : 0f;
-            if (immediate)
-            { scrollOffset = targetScrollOffset; }
+            if (immediate) { scrollOffset = targetScrollOffset; }
         }
 
         /// <summary>
@@ -335,26 +333,27 @@ namespace OptionalUI
             float target;
             if (box.horizontal)
             { // lower left
-                target = child.GetPos().x;
-                if (target < box.scrollOffset) { box.targetScrollOffset = target - gap; }
+                target = child is ICanBeFocused fChild0 ? box.camPos.x - fChild0.FocusRect.x + child.tab.container.x : -child.GetPos().x;
+                if (target > box.scrollOffset) { box.targetScrollOffset = target + gap; } // leftward
                 else
                 {
-                    target += child is ICanBeFocused fChild ? fChild.FocusRect.width : child.size.x;
-                    if (target > box.scrollOffset + box.size.x) { box.targetScrollOffset = target + gap; }
+                    target -= child is ICanBeFocused fChild ? fChild.FocusRect.width : child.size.x;
+                    if (target < box.scrollOffset - box.size.x) { box.targetScrollOffset = target - gap + box.size.x; } // rightward
                 }
             }
             else
             { // higher top
-                target = child.GetPos().y;
-                if (target < box.scrollOffset) { box.targetScrollOffset = target - gap; }
+                target = child is ICanBeFocused fChild0 ? box.camPos.y - fChild0.FocusRect.y + child.tab.container.y : -child.GetPos().y;
+                if (target > box.scrollOffset) { box.targetScrollOffset = target + gap; } // downward
                 else
                 {
-                    target += child is ICanBeFocused fChild ? fChild.FocusRect.height : child.size.y;
-                    if (target > box.scrollOffset + box.size.x) { box.targetScrollOffset = target + gap; }
+                    target -= child is ICanBeFocused fChild ? fChild.FocusRect.height : child.size.y;
+                    if (target < box.scrollOffset - box.size.y) { box.targetScrollOffset = target - gap + box.size.y; } // upward
                 }
             }
-            box.targetScrollOffset = Mathf.Clamp(target, 0f, box.MaxScroll);
-            ModConfigMenu.instance.ShowAlert($"Target: {target}; {child.GetPos().x}, {child.GetPos().y}");
+            box.targetScrollOffset = Mathf.Clamp(box.targetScrollOffset, box.MaxScroll, 0f);
+            if (box.scrollOffset != box.targetScrollOffset) { box.hasScrolled = true; box.MarkDirty(0.5f); }
+            ModConfigMenu.instance.ShowAlert($"Target: {box.targetScrollOffset:F0}/{box.MaxScroll:F0}({target:F0}/{box.contentSize:F0}); {child.GetPos().x:F0}, {child.GetPos().y:F0}");
         }
 
         /// <summary>
@@ -654,8 +653,8 @@ namespace OptionalUI
             }
 
             // Don't allow overscroll
-            targetScrollOffset = Mathf.Clamp(targetScrollOffset, -Mathf.Max(contentSize - ScrollSize, 0f), 0f);
-            scrollOffset = Mathf.Clamp(scrollOffset, -Mathf.Max(contentSize - ScrollSize, 0f), 0f);
+            targetScrollOffset = Mathf.Clamp(targetScrollOffset, MaxScroll, 0f);
+            scrollOffset = Mathf.Clamp(scrollOffset, MaxScroll, 0f);
             MoveCam();
 
             if (hasMoved || _firstUpdate)

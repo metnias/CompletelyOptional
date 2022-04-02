@@ -816,9 +816,22 @@ namespace CompletelyOptional
                 if (this.focusRect.HasValue)
                 {
                     Rect rect = this.focusRect.Value;
+                    if (focusedElement.inScrollBox) { TrimFocusRectToScrollBox(focusedElement.scrollBox, ref rect); }
                     this.pos = Vector2.Lerp(this.pos, new Vector2(rect.x, rect.y), 0.6f / UIelement.frameMulti);
                     this.size = Vector2.Lerp(this.size, new Vector2(rect.width, rect.height), 0.6f / UIelement.frameMulti);
                 }
+            }
+
+            private void TrimFocusRectToScrollBox(OpScrollBox scrollBox, ref Rect res)
+            {
+                Vector2 offset = scrollBox.camPos - (scrollBox.horizontal ? Vector2.right : Vector2.up) * scrollBox.scrollOffset - scrollBox.pos;
+                res.x -= offset.x; res.y -= offset.y;
+                // Clamp
+                Rect scrollRect = ((ICanBeFocused)scrollBox).FocusRect;
+                res.width = Mathf.Max(Mathf.Min(res.width, scrollRect.width, scrollRect.x + scrollRect.width - res.x, res.x + res.width - scrollRect.x), 0f);
+                res.height = Mathf.Max(Mathf.Min(res.height, scrollRect.height, scrollRect.y + scrollRect.height - res.y, res.y + res.height - scrollRect.y), 0f);
+                res.x = Mathf.Clamp(res.x, scrollRect.x, scrollRect.x + scrollRect.width);
+                res.y = Mathf.Clamp(res.y, scrollRect.y, scrollRect.y + scrollRect.height);
             }
         }
 

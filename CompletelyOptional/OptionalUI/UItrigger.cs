@@ -66,7 +66,6 @@ namespace OptionalUI
                 Rect res = isRectangular ? new Rect(this.ScreenPos.x, this.ScreenPos.y, this.size.x, this.size.y)
                     : new Rect(this.ScreenPos.x, this.ScreenPos.y, this.rad * 2f, this.rad * 2f);
                 if (tab != null) { res.x += tab.container.x; res.y += tab.container.y; }
-                if (inScrollBox) { TrimFocusRectToScrollBox(ref res); }
                 return res;
             }
         }

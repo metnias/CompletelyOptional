@@ -354,7 +354,7 @@ namespace OptionalUI
             }
             else
             {
-                if (this.Focused())
+                if (this.held)
                 {
                     if (CtlrInput.thrw && !LastCtlrInput.thrw)
                     {
