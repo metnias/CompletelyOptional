@@ -580,6 +580,7 @@ namespace CompletelyOptional
         /// </summary>
         public override void Update()
         {
+            bool lastMenuMouseMode = menu.manager.menuesMouseMode;
             base.Update();
             _soundFill = _soundFill > 0 ? _soundFill - 1 : 0;
             if (menu.ForceNoMouseMode || halt) { focusedElement = null; return; } // == FreezeMenuFunctions
@@ -588,6 +589,45 @@ namespace CompletelyOptional
             if (ctrlKey) { forceMouseMode = true; }
             if (forceMouseMode.HasValue) { menu.manager.menuesMouseMode = forceMouseMode.Value; }
             forceMouseMode = null;
+            if (lastMenuMouseMode != menu.manager.menuesMouseMode) { MouseModeChange(); }
+
+            void MouseModeChange()
+            { // MouseMode changed
+                if (menu.manager.menuesMouseMode)
+                {
+                    if (holdElement)
+                    {
+                        (focusedElement as ICanBeFocused).SetHeld(false);
+                        holdElement = false;
+                    }
+                }
+                else
+                {
+                    if (focusedElement == null)
+                    {
+                        UIelement result = lastFocusedElement;
+                        Vector2 curCenter = menu.mousePosition - this.pos;
+                        List<UIelement> candidates = this.focusables;
+                        float likelihood = float.MaxValue;
+                        for (int i = 0; i < candidates.Count; i++)
+                        {
+                            if (candidates[i] is ICanBeFocused
+                                && (candidates[i] as ICanBeFocused).CurrentlyFocusableNonMouse)
+                            {
+                                Vector2 cndCenter = candidates[i].CenterPos();
+                                float dist = Vector2.Distance(curCenter, cndCenter);
+                                float cndLikelihood = 1f + dist;
+                                if (cndLikelihood < likelihood)
+                                {
+                                    result = candidates[i];
+                                    likelihood = cndLikelihood;
+                                }
+                            }
+                        }
+                        focusedElement = result;
+                    }
+                }
+            }
 
             UIelement focusedElementBeforeUpdate = focusedElement;
             allowFocusMove = true;
@@ -624,6 +664,7 @@ namespace CompletelyOptional
             #endregion UIelement.Update
 
             if (forceMouseMode.HasValue) { menu.manager.menuesMouseMode = forceMouseMode.Value; }
+            if (lastMenuMouseMode != menu.manager.menuesMouseMode) { MouseModeChange(); }
 
             #region FocusManage
 
@@ -730,7 +771,7 @@ namespace CompletelyOptional
                     }
                     else if (!lastHoldElement && menu.input.jmp && !menu.lastInput.jmp && !(focusedElement as ICanBeFocused).GreyedOut) // Hold Element
                     {
-                        (focusedElement as ICanBeFocused).NonMouseHold();
+                        (focusedElement as ICanBeFocused).SetHeld(true);
                         if (focusedElement.inScrollBox) { OpScrollBox.ScrollToChild(focusedElement); }
                     }
                     else // Switch Focus

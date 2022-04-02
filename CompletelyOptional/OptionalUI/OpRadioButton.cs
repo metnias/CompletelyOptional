@@ -78,11 +78,11 @@ namespace OptionalUI
             }
         }
 
-        void ICanBeFocused.NonMouseHold()
+        void ICanBeFocused.SetHeld(bool newHeld)
         {
-            menu.cfgContainer.FocusNewElement(this);
-            ConfigContainer.holdElement = true;
-            this.click = true;
+            if (newHeld) { menu.cfgContainer.FocusNewElement(this); }
+            ConfigContainer.holdElement = newHeld;
+            this.click = newHeld;
         }
 
         /// <summary>

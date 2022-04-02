@@ -34,7 +34,7 @@ namespace OptionalUI
         /// Called by ConfigContainer when this is <see cref="ICanBeFocusedExt.Focused"/> and the user pressed the Jump button.
         /// <para>This is called after all of <see cref="UIelement.Update"/>s happened.</para>
         /// </summary>
-        void NonMouseHold();
+        void SetHeld(bool newHeld);
     }
 
     public static class ICanBeFocusedExt

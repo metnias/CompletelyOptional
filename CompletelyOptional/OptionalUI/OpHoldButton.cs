@@ -115,6 +115,16 @@ namespace OptionalUI
             else { label.text = progress.ToString("N" + Custom.IntClamp(progressDeci, 0, 4).ToString()) + "%"; }
         }
 
+        public override Rect FocusRect
+        {
+            get
+            {
+                Rect res = base.FocusRect;
+                if (!isRectangular) { res.x -= 10f; res.y -= 10f; res.width += 20f; res.height += 20f; }
+                return res;
+            }
+        }
+
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);

@@ -468,11 +468,11 @@ namespace OptionalUI
 
         private bool _held = false;
 
-        void ICanBeFocused.NonMouseHold()
+        void ICanBeFocused.SetHeld(bool newHeld)
         {
-            ConfigContainer.instance.FocusNewElement(this);
-            ConfigContainer.holdElement = true;
-            _held = true;
+            if (newHeld) { ConfigContainer.instance.FocusNewElement(this); }
+            ConfigContainer.holdElement = newHeld;
+            _held = newHeld;
         }
 
         public override void Update()

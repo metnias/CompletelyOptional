@@ -324,11 +324,14 @@ namespace OptionalUI
             return "Joystick" + (newBind != BindController.AnyController ? b.ToString() : "") + btn;
         }
 
-        public override void NonMouseHold()
+        public override void SetHeld(bool newHeld)
         {
-            base.NonMouseHold();
-            PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);
-            this.label.text = "?";
+            base.SetHeld(newHeld);
+            if (newHeld)
+            {
+                PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);
+                this.label.text = "?";
+            }
         }
 
         public override void Update()
