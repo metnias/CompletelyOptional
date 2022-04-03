@@ -120,7 +120,7 @@ namespace OptionalUI
             get
             {
                 Rect res = base.FocusRect;
-                if (!isRectangular) { res.x -= 10f; res.y -= 10f; res.width += 20f; res.height += 20f; }
+                if (!isRectangular) { res.x -= 15f; res.y -= 15f; res.width += 30f; res.height += 30f; }
                 return res;
             }
         }

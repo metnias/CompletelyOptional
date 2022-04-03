@@ -325,7 +325,7 @@ namespace OptionalUI
         /// Scroll to focus <see cref="UIelement"/> that's inside of <see cref="OpScrollBox"/>.
         /// </summary>
         /// <param name="child"></param>
-        public static void ScrollToChild(UIelement child)
+        public static void ScrollToChild(UIelement child, bool silent = false)
         {
             if (!child.inScrollBox) { return; }
             OpScrollBox box = child.scrollBox;
@@ -352,8 +352,8 @@ namespace OptionalUI
                 }
             }
             box.targetScrollOffset = Mathf.Clamp(box.targetScrollOffset, box.MaxScroll, 0f);
-            if (box.scrollOffset != box.targetScrollOffset) { box.hasScrolled = true; box.MarkDirty(0.5f); }
-            ModConfigMenu.instance.ShowAlert($"Target: {box.targetScrollOffset:F0}/{box.MaxScroll:F0}({target:F0}/{box.contentSize:F0}); {child.GetPos().x:F0}, {child.GetPos().y:F0}");
+            if (box.scrollOffset != box.targetScrollOffset)
+            { box.hasScrolled = true; box.MarkDirty(0.5f); if (!silent) { box.PlaySound(SoundID.MENU_First_Scroll_Tick); } }
         }
 
         /// <summary>

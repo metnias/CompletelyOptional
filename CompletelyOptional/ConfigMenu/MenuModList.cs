@@ -193,14 +193,13 @@ namespace CompletelyOptional
                 this.index = index + 1; // starts from 1; index 0 is for StatOI
                 this.list.menuTab.AddItems(this);
                 this._pos = new Vector2(list.pos.x, MyPos);
-                this.mute = true;
 
                 // Get Type
                 if (itf is InternalOI)
                 {
                     if ((itf as InternalOI).reason == InternalOI.Reason.Error) { type = ItfType.Error; CreateIcon(IconContext.Error); }
                     else if ((itf as InternalOI).reason == InternalOI.Reason.TestOI) { type = ItfType.Inconfigurable; }
-                    else { type = ItfType.Blank; }
+                    else { type = ItfType.Blank; this.mute = true; }
                 }
                 else { type = itf.Configurable() ? ItfType.Configurable : ItfType.Inconfigurable; }
                 greyedOut = type == ItfType.Blank;
@@ -305,6 +304,8 @@ namespace CompletelyOptional
                 { this.icon.color = this.label.color; this.icon.alpha = this.label.alpha; }
             }
 
+            private static int scrollCounter = 0; private bool lastFocused = false;
+
             public override void Update()
             {
                 this.lastFade = this.fade;
@@ -315,20 +316,69 @@ namespace CompletelyOptional
                 this.pos = new Vector2(list.pos.x, MyPos);
                 base.Update();
 
-                if (this.Focused())
+                if (MenuMouseMode)
                 {
-                    if (MenuMouseMode)
+                    if (this.Focused())
                     {
                         if (Input.GetMouseButtonDown(1)) // Starred
                         { list.Star(index); }
+                        else if (menu.mouseScrollWheelMovement != 0 && !list.roleButtons[1].isInactive)
+                        {
+                            list.Signal(list.roleButtons[menu.mouseScrollWheelMovement < 0 ? 1 : 2], System.Math.Sign(menu.mouseScrollWheelMovement) * 3);
+                            list.PlaySound(SoundID.MENU_Scroll_Tick);
+                        }
                     }
-                    else
+                }
+                else
+                {
+                    if (this.Focused())
                     {
-                        if (menu.input.mp && !menu.lastInput.mp) // Starred
+                        if (CtlrInput.mp && !LastCtlrInput.mp) // Starred
                         { list.Star(index); }
-                        // pressing right: jump to its alphabet button
-                        // pressing left: jump to slider if it's available
+
+                        if (CtlrInput.y != 0)
+                        {
+                            if (CtlrInput.y != LastCtlrInput.y) { scrollCounter = 0; }
+                            else { scrollCounter++; }
+                        }
+
+                        if (list.roleButtons[1].isInactive) { return; }
+
+                        if (this.index == list.scrollPos + 1 && !list.roleButtons[1].greyedOut)
+                        {
+                            if (CtlrInput.y > 0)
+                            {
+                                ConfigContainer.instance.allowFocusMove = false;
+                                if (scrollCounter == 0) { ScrollSignal(true, true); }
+                                else if (scrollCounter > ModConfigMenu.DASinit && scrollCounter % (ModConfigMenu.DASdelay / 2) == 1)
+                                { ScrollSignal(true, false); }
+                            }
+                        }
+                        else if (this.index == list.scrollPos + scrollVisible && !list.roleButtons[2].greyedOut)
+                        {
+                            if (CtlrInput.y < 0)
+                            {
+                                ConfigContainer.instance.allowFocusMove = false;
+                                if (scrollCounter == 0) { ScrollSignal(false, true); }
+                                else if (scrollCounter > ModConfigMenu.DASinit && scrollCounter % (ModConfigMenu.DASdelay / 2) == 1)
+                                { ScrollSignal(false, false); }
+                            }
+                        }
                     }
+                    lastFocused = this.Focused();
+                    // pressing right: jump to its alphabet button
+                    // pressing left: jump to slider if it's available
+                }
+
+                void ScrollSignal(bool up, bool first)
+                {
+                    if (!lastFocused) { return; }
+                    list.Signal(list.roleButtons[up ? 1 : 2], up ? -1 : 1);
+                    list.PlaySound(first ? SoundID.MENU_First_Scroll_Tick : SoundID.MENU_Scroll_Tick);
+                    ModButton nextFocus = list.modButtons[Custom.IntClamp(index + (up ? -2 : 0), 0, list.modButtons.Length - 1)];
+                    bool prevMute = nextFocus.mute; nextFocus.mute = true;
+                    ConfigContainer.instance.FocusNewElement(nextFocus);
+                    nextFocus.mute = prevMute;
                 }
             }
 
@@ -413,9 +463,19 @@ namespace CompletelyOptional
                 base.OnChange();
             }
 
+            public override bool CurrentlyFocusableNonMouse
+            {
+                get
+                {
+                    if (role == Role.Stat) { return true; }
+                    return false;
+                }
+            }
+
             public override void Update()
             {
                 base.Update();
+                this.mute = !MenuMouseMode;
                 switch (role)
                 {
                     case Role.Stat:

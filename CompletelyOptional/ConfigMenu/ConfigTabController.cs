@@ -295,7 +295,9 @@ namespace CompletelyOptional
                 for (int j = 0; j < 8; j++) { this.rectH.sprites[j].alpha = active ? 1f : highlight; }
             }
 
-            private bool scrolled = false;
+            private bool scrolled = false, lastFocused = false;
+
+            private static int scrollCounter = 0;
 
             public override void Update()
             {
@@ -322,22 +324,44 @@ namespace CompletelyOptional
                         else { scrolled = false; }
                     }
                 }
-                else if (this.Focused())
+                else
                 {
-                    if (this.isTop && this.CtlrInput.y > 0)
+                    if (this.Focused())
                     {
-                        if (this.CtlrInput.y != this.LastCtlrInput.y)
-                        { ctrl.Signal(ctrl.scrollButtons[0], -1); }
-                        else if (ConfigContainer.instance.scrollDelay >= ModConfigMenu.DASdelay)
-                        { ctrl.Signal(ctrl.scrollButtons[0], -2); }
+                        if (this.CtlrInput.y != 0)
+                        {
+                            if (this.CtlrInput.y != this.LastCtlrInput.y)
+                            { scrollCounter = 0; }
+                            else { scrollCounter++; }
+                        }
+
+                        if (lastFocused)
+                        {
+                            if (this.isTop && this.CtlrInput.y > 0)
+                            {
+                                if (this.Focused()) { ConfigContainer.instance.allowFocusMove = false; }
+                                if (scrollCounter == 0)
+                                { ctrl.Signal(ctrl.scrollButtons[0], -1); }
+                                else
+                                {
+                                    if (scrollCounter > ModConfigMenu.DASinit && scrollCounter % ModConfigMenu.DASdelay == 1)
+                                    { ctrl.Signal(ctrl.scrollButtons[0], -2); }
+                                }
+                            }
+                            if (this.isBottom && this.CtlrInput.y < 0)
+                            {
+                                if (this.Focused()) { ConfigContainer.instance.allowFocusMove = false; }
+                                if (scrollCounter == 0)
+                                { ctrl.Signal(ctrl.scrollButtons[0], 1); }
+                                else
+                                {
+                                    if (scrollCounter > ModConfigMenu.DASinit && scrollCounter % ModConfigMenu.DASdelay == 1)
+                                    { ctrl.Signal(ctrl.scrollButtons[0], 2); }
+                                }
+                            }
+                        }
                     }
-                    if (this.isBottom && this.CtlrInput.y < 0)
-                    {
-                        if (this.CtlrInput.y != this.LastCtlrInput.y)
-                        { ctrl.Signal(ctrl.scrollButtons[0], 1); }
-                        else if (ConfigContainer.instance.scrollDelay >= ModConfigMenu.DASdelay)
-                        { ctrl.Signal(ctrl.scrollButtons[0], 2); }
-                    }
+                    lastFocused = this.Focused();
                 }
             }
 

@@ -323,9 +323,14 @@ namespace OptionalUI
             this.rect.Update();
             this.rectList?.Update(); this.rectScroll?.Update();
 
-            // this.searchMode = false; //temp
             if (dTimer > 0) { dTimer--; }
             if (IsListBox) { return; }
+            if (MenuMouseMode) { MouseModeUpdate(); }
+            else { NonMouseModeUpdate(); }
+        }
+
+        protected virtual void MouseModeUpdate()
+        {
             this.bumpBehav.Focused = base.MouseOver && !this.MouseOverList();
             if (this.held)
             {
@@ -486,6 +491,10 @@ namespace OptionalUI
             {
                 if (!Input.GetMouseButton(0)) { mouseDown = false; }
             }
+        }
+
+        protected virtual void NonMouseModeUpdate()
+        {
         }
 
         public override void OnChange()

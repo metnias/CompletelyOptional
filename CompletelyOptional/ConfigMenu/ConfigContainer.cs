@@ -381,40 +381,37 @@ namespace CompletelyOptional
 
         #region FocusHandler
 
-        private List<UIelement> focusables
+        private List<UIelement> GetFocusables()
         {
-            get
+            List<UIelement> list = new List<UIelement>();
+            foreach (UIelement item in menuTab.focusables)
+            { if (!item.isInactive) { list.Add(item); } }
+            if (activeTab != null)
             {
-                List<UIelement> list = new List<UIelement>();
-                foreach (UIelement item in menuTab.focusables)
+                foreach (UIelement item in activeTab.focusables)
                 { if (!item.isInactive) { list.Add(item); } }
-                if (activeTab != null)
-                {
-                    foreach (UIelement item in activeTab.focusables)
-                    { if (!item.isInactive) { list.Add(item); } }
-                }
+            }
 
-                List<UIelement> res = new List<UIelement>();
-                if (menu.manager.menuesMouseMode)
-                {
+            List<UIelement> res = new List<UIelement>();
+            if (menu.manager.menuesMouseMode)
+            {
+                foreach (UIelement item in list)
+                { if (!(item is OpScrollBox) && (item as ICanBeFocused).CurrentlyFocusableMouse) { res.Add(item); } }
+            }
+            else
+            {
+                if (focusedElement == null || !focusedElement.inScrollBox)
+                {// Candidates are items that aren't in scrollBox
                     foreach (UIelement item in list)
-                    { if (!(item is OpScrollBox)) { res.Add(item); } }
+                    { if (!item.inScrollBox && (item as ICanBeFocused).CurrentlyFocusableNonMouse) { res.Add(item); } }
                 }
                 else
                 {
-                    if (focusedElement == null || !focusedElement.inScrollBox)
-                    {// Candidates are items that aren't in scrollBox
-                        foreach (UIelement item in list)
-                        { if (!item.inScrollBox) { res.Add(item); } }
-                    }
-                    else
-                    {
-                        foreach (UIelement item in list)
-                        { if (item.inScrollBox && item.scrollBox == focusedElement.scrollBox) { res.Add(item); } }
-                    }
+                    foreach (UIelement item in list)
+                    { if (item.inScrollBox && item.scrollBox == focusedElement.scrollBox && (item as ICanBeFocused).CurrentlyFocusableNonMouse) { res.Add(item); } }
                 }
-                return res;
             }
+            return res;
         }
 
         public static UIelement focusedElement { get; private set; }
@@ -434,11 +431,11 @@ namespace CompletelyOptional
             {
                 lastFocusedElement = focusedElement;
                 focusedElement = element;
+                if (element.inScrollBox) { OpScrollBox.ScrollToChild(element); }
                 if (focusedElement.mute) { return; }
                 PlaySound((focusedElement as ICanBeFocused).GreyedOut
                     ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                 // Always play Gamepad sound even in Mouse mode, as this is called by either Gamepad or Modder
-                if (element.inScrollBox) { OpScrollBox.ScrollToChild(element); }
             }
         }
 
@@ -461,12 +458,11 @@ namespace CompletelyOptional
             if (!(focusedElement is ICanBeFocused)) { return lastFocusedElement; }
             UIelement result = lastFocusedElement;
             Vector2 curCenter = focusedElement.CenterPos();
-            List<UIelement> candidates = this.focusables;
+            List<UIelement> candidates = GetFocusables();
             float likelihood = float.MaxValue;
             for (int i = 0; i < candidates.Count; i++)
             {
                 if (candidates[i] is ICanBeFocused
-                    && (candidates[i] as ICanBeFocused).CurrentlyFocusableNonMouse
                     && (candidates[i] as ICanBeFocused) != focusedElement)
                 {
                     Vector2 cndCenter = candidates[i].CenterPos();
@@ -495,33 +491,41 @@ namespace CompletelyOptional
                     }
                 }
             }
-            if (result == focusedElement || (result.tab is MenuTab && focusedElement.tab is MenuTab))
-            { // Exception Matchmaking
-                if (result.tab is MenuTab)
+            if (result.tab is MenuTab && (result == focusedElement || focusedElement.tab is MenuTab))
+            { // Exception Matchmaking; jump into tab
+                bool fromLeft;
+                if (result is MenuTab.MenuButton || result is MenuTab.MenuHoldButton)
                 {
-                    bool left;
-                    if (result is MenuTab.MenuButton || result is MenuTab.MenuHoldButton)
-                    { if (direction.y < 0 && direction.x == 0) { left = false; goto jumpToActiveTab; } }
-                    else if (focusedElement is ConfigTabController.TabSelectButton
-                        || focusedElement is MenuModList.IAmPartOfModList && !(result is ConfigTabController.TabSelectButton))
-                    { if (direction.x > 0 && direction.y == 0) { left = true; goto jumpToActiveTab; } }
-                    return result;
-                jumpToActiveTab:
-                    likelihood = float.MaxValue;
-                    for (int i = 0; i < candidates.Count; i++)
+                    if (direction.x == 0)
                     {
-                        if (!(candidates[i].tab is MenuTab)
-                            && candidates[i] is ICanBeFocused
-                            && (candidates[i] as ICanBeFocused).CurrentlyFocusableNonMouse
-                            && (candidates[i] as ICanBeFocused) != focusedElement)
+                        if (direction.y < 0) { fromLeft = false; goto jumpToActiveTab; }  // Move up into tab
+                        else { return focusedElement; } // Ignore Down input
+                    }
+                    return result;
+                }
+                if (result.GetType() == focusedElement.GetType() &&
+                    (focusedElement is ConfigTabController.TabSelectButton || focusedElement is MenuModList.IAmPartOfModList))
+                {
+                    if (direction.y == 0)
+                    {
+                        if (direction.x > 0) { fromLeft = true; goto jumpToActiveTab; } // Move right into tab
+                        else { return focusedElement; } // Ignore Left input
+                    }
+                }
+                return result;
+            jumpToActiveTab:
+                likelihood = float.MaxValue;
+                for (int i = 0; i < candidates.Count; i++)
+                {
+                    if (!(candidates[i].tab is MenuTab)
+                        && (candidates[i] as ICanBeFocused) != focusedElement)
+                    {
+                        Vector2 cndCenter = candidates[i].CenterPos();
+                        float cndLikelihood = fromLeft ? cndCenter.x : cndCenter.y; // Far Left or Far Bottom
+                        if (cndLikelihood < likelihood)
                         {
-                            Vector2 cndCenter = candidates[i].CenterPos();
-                            float cndLikelihood = left ? cndCenter.x : cndCenter.y; // Far Left or Far Bottom
-                            if (cndLikelihood < likelihood)
-                            {
-                                result = candidates[i];
-                                likelihood = cndLikelihood;
-                            }
+                            result = candidates[i];
+                            likelihood = cndLikelihood;
                         }
                     }
                 }
@@ -531,8 +535,6 @@ namespace CompletelyOptional
                 for (int i = 0; i < candidates.Count; i++)
                 {
                     if (!(candidates[i].tab is MenuTab)
-                        && candidates[i] is ICanBeFocused
-                        && (candidates[i] as ICanBeFocused).CurrentlyFocusableNonMouse
                         && (candidates[i] as ICanBeFocused) != focusedElement)
                     {
                         Vector2 cndCenter = candidates[i].CenterPos();
@@ -594,7 +596,7 @@ namespace CompletelyOptional
             void MouseModeChange()
             { // MouseMode changed
                 if (menu.manager.menuesMouseMode)
-                {
+                { // NonMouse > Mouse
                     if (holdElement)
                     {
                         (focusedElement as ICanBeFocused).SetHeld(false);
@@ -602,26 +604,23 @@ namespace CompletelyOptional
                     }
                 }
                 else
-                {
+                { // Mouse > NonMouse
                     if (focusedElement == null)
                     {
                         UIelement result = lastFocusedElement;
                         Vector2 curCenter = menu.mousePosition - this.pos;
-                        List<UIelement> candidates = this.focusables;
+                        List<UIelement> candidates = GetFocusables();
                         float likelihood = float.MaxValue;
                         for (int i = 0; i < candidates.Count; i++)
                         {
-                            if (candidates[i] is ICanBeFocused
-                                && (candidates[i] as ICanBeFocused).CurrentlyFocusableNonMouse)
+                            if (candidates[i].inScrollBox) { continue; }
+                            Vector2 cndCenter = (candidates[i] as ICanBeFocused).FocusRect.center;
+                            float dist = Vector2.Distance(curCenter, cndCenter);
+                            float cndLikelihood = 1f + dist;
+                            if (cndLikelihood < likelihood)
                             {
-                                Vector2 cndCenter = candidates[i].CenterPos();
-                                float dist = Vector2.Distance(curCenter, cndCenter);
-                                float cndLikelihood = 1f + dist;
-                                if (cndLikelihood < likelihood)
-                                {
-                                    result = candidates[i];
-                                    likelihood = cndLikelihood;
-                                }
+                                result = candidates[i];
+                                likelihood = cndLikelihood;
                             }
                         }
                         focusedElement = result;
@@ -676,7 +675,7 @@ namespace CompletelyOptional
                 {
                     UIelement lastFocus = focusedElement;
                     focusedElement = null;
-                    List<UIelement> list = this.focusables;
+                    List<UIelement> list = GetFocusables();
                     for (int j = 0; j < list.Count; j++)
                     {
                         if ((list[j] as ICanBeFocused).CurrentlyFocusableMouse && list[j].MouseOver)
@@ -788,7 +787,7 @@ namespace CompletelyOptional
                         { this.scrollInitDelay = 0; }
                         if (this.scrollInitDelay > ModConfigMenu.DASinit)
                         {
-                            this.scrollDelay++;
+                            this.scrollDelay += focusedElement is MenuModList.IAmPartOfModList ? 2 : 1;
                             if (this.scrollDelay > ModConfigMenu.DASdelay)
                             {
                                 this.scrollDelay = 0;
