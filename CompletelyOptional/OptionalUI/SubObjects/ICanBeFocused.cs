@@ -31,10 +31,10 @@ namespace OptionalUI
         bool CurrentlyFocusableNonMouse { get; }
 
         /// <summary>
-        /// Called by ConfigContainer when this is <see cref="ICanBeFocusedExt.Focused"/> and the user pressed the Jump button.
+        /// Called by ConfigContainer when either this is <see cref="ICanBeFocusedExt.Focused"/> and the user pressed the Jump button, or changed MenuMouseMode.
         /// <para>This is called after all of <see cref="UIelement.Update"/>s happened.</para>
         /// </summary>
-        void SetHeld(bool newHeld);
+        void NonMouseSetHeld(bool newHeld);
     }
 
     public static class ICanBeFocusedExt

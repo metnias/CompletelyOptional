@@ -324,9 +324,9 @@ namespace OptionalUI
             return "Joystick" + (newBind != BindController.AnyController ? b.ToString() : "") + btn;
         }
 
-        public override void SetHeld(bool newHeld)
+        public override void NonMouseSetHeld(bool newHeld)
         {
-            base.SetHeld(newHeld);
+            base.NonMouseSetHeld(newHeld);
             if (newHeld)
             {
                 PlaySound(SoundID.MENU_Button_Standard_Button_Pressed);

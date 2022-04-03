@@ -599,7 +599,7 @@ namespace CompletelyOptional
                 { // NonMouse > Mouse
                     if (holdElement)
                     {
-                        (focusedElement as ICanBeFocused).SetHeld(false);
+                        (focusedElement as ICanBeFocused).NonMouseSetHeld(false);
                         holdElement = false;
                     }
                 }
@@ -770,7 +770,7 @@ namespace CompletelyOptional
                     }
                     else if (!lastHoldElement && menu.input.jmp && !menu.lastInput.jmp && !(focusedElement as ICanBeFocused).GreyedOut) // Hold Element
                     {
-                        (focusedElement as ICanBeFocused).SetHeld(true);
+                        (focusedElement as ICanBeFocused).NonMouseSetHeld(true);
                         if (focusedElement.inScrollBox) { OpScrollBox.ScrollToChild(focusedElement); }
                     }
                     else // Switch Focus

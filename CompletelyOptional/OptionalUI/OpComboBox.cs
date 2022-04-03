@@ -493,6 +493,14 @@ namespace OptionalUI
             }
         }
 
+        public override void NonMouseSetHeld(bool newHeld)
+        {
+            base.NonMouseSetHeld(newHeld);
+            if (IsListBox) { return; }
+            OpenList();
+            PlaySound(SoundID.MENU_Checkbox_Check);
+        }
+
         protected virtual void NonMouseModeUpdate()
         {
         }

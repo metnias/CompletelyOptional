@@ -115,9 +115,9 @@ namespace OptionalUI
             this.rect.colorFill = this.colorFill;
         }
 
-        public override void SetHeld(bool newHeld)
+        public override void NonMouseSetHeld(bool newHeld)
         {
-            base.SetHeld(newHeld);
+            base.NonMouseSetHeld(newHeld);
             if (newHeld && canHold)
             {
                 PlaySound(soundClick);

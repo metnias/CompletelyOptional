@@ -468,7 +468,7 @@ namespace OptionalUI
 
         private bool _held = false;
 
-        void ICanBeFocused.SetHeld(bool newHeld)
+        void ICanBeFocused.NonMouseSetHeld(bool newHeld)
         {
             if (newHeld) { ConfigContainer.instance.FocusNewElement(this); }
             ConfigContainer.holdElement = newHeld;

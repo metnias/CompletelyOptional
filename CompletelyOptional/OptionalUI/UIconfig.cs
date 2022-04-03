@@ -177,7 +177,7 @@ namespace OptionalUI
             }
         }
 
-        public virtual void SetHeld(bool newHeld)
+        public virtual void NonMouseSetHeld(bool newHeld)
         {
             held = newHeld;
         }
