@@ -135,12 +135,12 @@ namespace OptionalUI
         public readonly SpecialEnum listType;
 
         /// <summary>
-        /// The List of Rain World Resource that doesn't have enumType. See also <seealso cref="OpResourceSelector(Vector2, float, string, SpecialEnum, string)"/>
+        /// The List of Rain World Resource that doesn't have enumType. See also <seealso cref="OpResourceSelector(ConfigEntry{string}, Vector2, float, SpecialEnum, string)"/>
         /// </summary>
         public enum SpecialEnum : byte
         {
             /// <summary>
-            /// Do NOT use this. This is for <see cref="OpResourceSelector(Vector2, float, string, Type, string)"/>.
+            /// Do NOT use this. This is for <see cref="OpResourceSelector(ConfigEntry{string}, Vector2, float, Type, string)"/>.
             /// </summary>
             Enum = 0,
 
