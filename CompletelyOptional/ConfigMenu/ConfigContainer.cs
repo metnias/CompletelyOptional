@@ -597,11 +597,6 @@ namespace CompletelyOptional
             { // MouseMode changed
                 if (menu.manager.menuesMouseMode)
                 { // NonMouse > Mouse
-                    if (holdElement)
-                    {
-                        (focusedElement as ICanBeFocused).NonMouseSetHeld(false);
-                        holdElement = false;
-                    }
                 }
                 else
                 { // Mouse > NonMouse
@@ -625,6 +620,11 @@ namespace CompletelyOptional
                         }
                         focusedElement = result;
                     }
+                }
+                if (holdElement)
+                {
+                    (focusedElement as ICanBeFocused).NonMouseSetHeld(false);
+                    holdElement = false;
                 }
             }
 
@@ -735,7 +735,7 @@ namespace CompletelyOptional
                     else { focusedElement = menuTab.backButton; }
                 }
                 if (!allowFocusMove) { this.scrollInitDelay = 0; } // Focus changed by OI.Update
-                else if (!holdElement)
+                else if (!holdElement && !lastHoldElement)
                 {
                     if (menu.input.thrw && !menu.lastInput.thrw) // Move Focus Upward
                     {
@@ -768,7 +768,7 @@ namespace CompletelyOptional
                             }
                         }
                     }
-                    else if (!lastHoldElement && menu.input.jmp && !menu.lastInput.jmp && !(focusedElement as ICanBeFocused).GreyedOut) // Hold Element
+                    else if (menu.input.jmp && !menu.lastInput.jmp && !(focusedElement as ICanBeFocused).GreyedOut) // Hold Element
                     {
                         (focusedElement as ICanBeFocused).NonMouseSetHeld(true);
                         if (focusedElement.inScrollBox) { OpScrollBox.ScrollToChild(focusedElement); }

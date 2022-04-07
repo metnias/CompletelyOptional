@@ -97,13 +97,13 @@ namespace OptionalUI
             this.myContainer.AddChild(this.lblText);
             if (IsListBox)
             {
-                neverOpened = false;
+                _neverOpened = false;
                 this.rectList = new DyeableRect(this.myContainer, Vector2.zero, this.size);
                 this.rectScroll = new DyeableRect(this.myContainer, Vector2.zero, this.size);
             }
             else
             {
-                neverOpened = true;
+                _neverOpened = true;
                 this.sprArrow = new FSprite("Big_Menu_Arrow", true)
                 { scale = 0.5f, rotation = 180f, anchorX = 0.5f, anchorY = 0.5f };
                 this.myContainer.AddChild(this.sprArrow);
@@ -128,7 +128,7 @@ namespace OptionalUI
         /// </summary>
         public ListItem[] GetItemList() => itemList;
 
-        private bool neverOpened;
+        private bool _neverOpened;
         protected DyeableRect rect, rectList, rectScroll;
         protected FLabel lblText;
         protected FLabel[] lblList;
@@ -310,7 +310,7 @@ namespace OptionalUI
                 }
             }
 
-            if (inputDelay == 0 && this.searchIdle < this.searchDelay)
+            if (inputDelay == 0 && this.searchIdle < FrameMultiply(this.searchDelay))
             {
                 this.searchIdle++;
                 if (this.searchIdle == this.searchDelay) { RefreshSearchList(); }
@@ -320,10 +320,11 @@ namespace OptionalUI
         public override void Update()
         {
             base.Update();
+            if (dTimer > 0) { dTimer--; }
+            if (isInactive) { return; }
             this.rect.Update();
             this.rectList?.Update(); this.rectScroll?.Update();
 
-            if (dTimer > 0) { dTimer--; }
             if (IsListBox) { return; }
             if (MenuMouseMode) { MouseModeUpdate(); }
             else { NonMouseModeUpdate(); }
@@ -458,7 +459,6 @@ namespace OptionalUI
                 this.CloseList();
                 return;
             }
-            if (isInactive) { return; }
             if (base.MouseOver)
             {
                 if (Input.GetMouseButton(0)) { mouseDown = true; }
@@ -493,16 +493,97 @@ namespace OptionalUI
             }
         }
 
+        protected int scrollDelay = 0;
+
+        protected virtual void NonMouseModeUpdate()
+        {
+            this.bumpBehav.Focused = this.Focused() && !this.held;
+            if (this.held)
+            { // Up/Down: Choose option, Jmp: Select, Thrw: Leave
+                this.bumpList.Focused = true;
+                if (greyedOut) { goto close; }
+                if (CtlrInput.thrw && !LastCtlrInput.thrw) { goto close; }
+                int listSize = this.searchMode ? this.searchList.Count : this.itemList.Length;
+                // UpDown
+                if (CtlrInput.y != 0)
+                {
+                    if (LastCtlrInput.y != CtlrInput.y)
+                    {
+                        scrollDelay = 0;
+                        ScrollTick(true);
+                    }
+                    else { scrollDelay++; }
+                    if (scrollDelay > ModConfigMenu.DASinit && scrollDelay % (ModConfigMenu.DASdelay / 2) == 1)
+                    { ScrollTick(false); }
+
+                    void ScrollTick(bool first)
+                    {
+                        bool scrolled = true;
+                        listHover -= Math.Sign(CtlrInput.y);
+                        if (listHover < 0)
+                        {
+                            if (listTop > 0)
+                            {
+                                listTop--; listHover = 0;
+                                this.bumpScroll.flash = Mathf.Min(1f, this.bumpScroll.flash + 0.2f);
+                                this.bumpScroll.sizeBump = Mathf.Min(2.5f, this.bumpScroll.sizeBump + 0.3f);
+                            }
+                            else { scrolled = false; listHover = 0; }
+                        }
+                        if (listHover >= lblList.Length)
+                        {
+                            if (listTop < listSize - lblList.Length)
+                            {
+                                listTop++; listHover--;
+                                this.bumpScroll.flash = Mathf.Min(1f, this.bumpScroll.flash + 0.2f);
+                                this.bumpScroll.sizeBump = Mathf.Min(2.5f, this.bumpScroll.sizeBump + 0.3f);
+                            }
+                            else { scrolled = false; listHover--; }
+                        }
+                        if (scrolled) { PlaySound(first ? SoundID.MENU_First_Scroll_Tick : SoundID.MENU_Scroll_Tick); }
+                    }
+                }
+
+                // Jmp
+                if (CtlrInput.jmp && !LastCtlrInput.jmp)
+                {
+                    string newVal = this.value;
+                    if (this.searchMode)
+                    {
+                        if (listTop + listHover < this.searchList.Count)
+                        { newVal = this.searchList[listTop + listHover].name; }
+                        // this.searchMode = false;
+                    }
+                    else if (listTop + listHover < this.itemList.Length)
+                    { // Select one from here
+                        newVal = this.itemList[listTop + listHover].name;
+                    }
+                    if (newVal != this.value) { this.value = newVal; PlaySound(SoundID.MENU_Checkbox_Check); goto close; }
+                }
+                this.bumpList.Update();
+                this.bumpScroll.Update();
+                return;
+            close:
+                held = false;
+                this.CloseList();
+                return;
+            }
+        }
+
         public override void NonMouseSetHeld(bool newHeld)
         {
             base.NonMouseSetHeld(newHeld);
             if (IsListBox) { return; }
-            OpenList();
-            PlaySound(SoundID.MENU_Checkbox_Check);
-        }
-
-        protected virtual void NonMouseModeUpdate()
-        {
+            if (newHeld)
+            {
+                OpenList();
+                listHover = Custom.IntClamp(GetIndex() - listTop, 0, lblList.Length - 1);
+                PlaySound(SoundID.MENU_Checkbox_Check);
+            }
+            else
+            {
+                CloseList();
+            }
         }
 
         public override void OnChange()
@@ -551,11 +632,11 @@ namespace OptionalUI
                 }
                 // downward = false; //upward test
                 // Initialize Rects
-                if (neverOpened)
+                if (_neverOpened)
                 {
                     this.rectList = new DyeableRect(this.myContainer, Vector2.zero, this.size);
                     this.rectScroll = new DyeableRect(this.myContainer, Vector2.zero, this.size);
-                    neverOpened = false;
+                    _neverOpened = false;
                 }
                 this.sprArrow.rotation = downward ? 180f : 0f;
             }
@@ -596,7 +677,7 @@ namespace OptionalUI
             this.searchMode = false;
             this.searchCursor.isVisible = false;
             this.fixedSize = null;
-            if (!neverOpened) { this.rectList.Hide(); this.rectScroll.Hide(); }
+            if (!_neverOpened) { this.rectList.Hide(); this.rectScroll.Hide(); }
             for (int i = 0; i < this.lblList.Length; i++)
             { this.lblList[i].isVisible = false; this.lblList[i].RemoveFromContainer(); }
             this.lblList = new FLabel[0];
