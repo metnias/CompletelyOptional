@@ -41,6 +41,12 @@ namespace OptionalUI
         /// <param name="posY">Bottom of the Button</param>
         public OpRadioButton(float posX, float posY) : this(new Vector2(posX, posY)) { }
 
+        protected internal override string DisplayDescription()
+        {
+            if (!string.IsNullOrEmpty(description)) { return description; }
+            return OptionalText.GetText(MenuMouseMode ? OptionalText.ID.OpRadioButton_MouseTuto : OptionalText.ID.OpRadioButton_NonMouseTuto);
+        }
+
         //Use Circle from food.
         private readonly FSprite symbolSprite;
 

@@ -25,6 +25,16 @@ namespace CompletelyOptional
             engText[(int)ID.OpDragger_MouseTuto] = "Hold Mouse Button and Drag up/down to adjust value";
             engText[(int)ID.OpDragger_NonMouseGrabTuto] = "Press JUMP to grab";
             engText[(int)ID.OpDragger_NonMouseGrabTuto] = "Use Joystick to adjust, Press JUMP to set";
+            engText[(int)ID.OpKeyBinder_ErrorConflictOtherModDefault] = "Conflicting Default Button with <ModID>";
+            engText[(int)ID.OpKeyBinder_ErrorConflictVanilla] = "Conflicting Button with Vanilla Control Options";
+            engText[(int)ID.OpKeyBinder_ErrorConflictOtherMod] = "Conflicting Button with <AnotherModID>";
+            engText[(int)ID.OpKeyBinder_ErrorConflictCurrMod] = "[<ConflictButton>] Button is already in use";
+            engText[(int)ID.OpKeyBinder_MouseBindTuto] = "Click and Press any Button to bind (ESC to unbind)";
+            engText[(int)ID.OpKeyBinder_MouseJoystickBindTuto] = "Click and Press any Button to bind (ESC to unbind, Ctrl + No to set controller number)";
+            engText[(int)ID.OpKeyBinder_NonMouseBindTuto] = "Press JUMP and Press any Button to bind (SELECT to unbind)";
+            engText[(int)ID.OpKeyBinder_NonMouseJoystickBindTuto] = "Press JUMP and Press any Button to bind (SELECT to unbind, Ctrl + No to set controller number)";
+            engText[(int)ID.OpRadioButton_MouseTuto] = "Click to choose this option";
+            engText[(int)ID.OpRadioButton_NonMouseTuto] = "Press JUMP to choose this option";
 
             engText[(int)ID.OpHoldButton_MouseTuto] = "Hold Mouse Button to trigger";
             engText[(int)ID.OpHoldButton_NonMouseTuto] = "Hold JUMP Button to trigger";
@@ -45,6 +55,16 @@ namespace CompletelyOptional
             OpDragger_MouseTuto,
             OpDragger_NonMouseGrabTuto,
             OpDragger_NonMouseUseTuto,
+            OpKeyBinder_ErrorConflictOtherModDefault,
+            OpKeyBinder_ErrorConflictVanilla,
+            OpKeyBinder_ErrorConflictOtherMod,
+            OpKeyBinder_ErrorConflictCurrMod,
+            OpKeyBinder_MouseBindTuto,
+            OpKeyBinder_MouseJoystickBindTuto,
+            OpKeyBinder_NonMouseBindTuto,
+            OpKeyBinder_NonMouseJoystickBindTuto,
+            OpRadioButton_MouseTuto,
+            OpRadioButton_NonMouseTuto,
 
             OpHoldButton_MouseTuto,
             OpHoldButton_NonMouseTuto,

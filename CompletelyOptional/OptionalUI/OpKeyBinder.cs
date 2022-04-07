@@ -55,7 +55,7 @@ namespace OptionalUI
                             "Conflicting Control: ", item.Key, " & ", controlKey, " (duplicate defalutKey: ", item.Value, ")"
                             ));
 
-                            this._desError = string.Concat("Conflicting defaultKey with Mod ", anotherMod);
+                            this._desError = OptionalText.GetText(OptionalText.ID.OpKeyBinder_ErrorConflictOtherModDefault).Replace("<ModID>", anotherMod);
                             break;
                         }
                         throw new ElementFormatException(this, "You are using duplicated defaultKey for OpKeyBinders!", key);
@@ -84,9 +84,10 @@ namespace OptionalUI
         protected internal override string DisplayDescription()
         {
             if (!string.IsNullOrEmpty(_desError)) { return _desError; }
-            /// WIP
-            if (IsJoystick(this.value)) { return InternalTranslator.Translate("Click this and Press any button to bind (Ctrl + No to set controller number)"); }
-            else { return InternalTranslator.Translate("Click this and Press any key/button to bind (Esc to unbind)"); }
+            if (!string.IsNullOrEmpty(description)) { return description; }
+            if (MenuMouseMode)
+            { return OptionalText.GetText(!IsJoystick(value) ? OptionalText.ID.OpKeyBinder_MouseBindTuto : OptionalText.ID.OpKeyBinder_MouseJoystickBindTuto); }
+            return OptionalText.GetText(!IsJoystick(value) ? OptionalText.ID.OpKeyBinder_NonMouseBindTuto : OptionalText.ID.OpKeyBinder_NonMouseJoystickBindTuto);
         }
 
         /// <summary>
@@ -279,12 +280,12 @@ namespace OptionalUI
                                 if (anotherMod != this.modID)
                                 {
                                     if (anotherMod == "Vanilla")
-                                    { this._desError = InternalTranslator.Translate("Conflicting button with Vanilla Options"); }
+                                    { this._desError = OptionalText.GetText(OptionalText.ID.OpKeyBinder_ErrorConflictVanilla); }
                                     else
-                                    { this._desError = InternalTranslator.Translate("Conflicting button with Mod named <AnotherModID>").Replace("<AnotherModID>", anotherMod); }
+                                    { this._desError = OptionalText.GetText(OptionalText.ID.OpKeyBinder_ErrorConflictOtherMod).Replace("<AnotherModID>", anotherMod); }
                                 }
                                 else
-                                { this._desError = InternalTranslator.Translate("<ConflictButton> button is already in use").Replace("<ConflictButton>", value); }
+                                { this._desError = OptionalText.GetText(OptionalText.ID.OpKeyBinder_ErrorConflictCurrMod).Replace("<ConflictButton>", value); }
                                 break;
                             }
                         }
@@ -358,7 +359,7 @@ namespace OptionalUI
                 }
                 if (!this.lastAnyKeyDown && this.anyKeyDown)
                 {
-                    if (Input.GetKey(KeyCode.Escape))
+                    if (Input.GetKey(KeyCode.Escape) || Input.GetKey(KeyCode.JoystickButton6))
                     {
                         this.value = none; this.held = false; return;
                     }
