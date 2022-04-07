@@ -53,12 +53,14 @@ namespace OptionalUI
         public override void Update()
         {
             base.Update();
+        }
 
+        protected override void MouseModeUpdate()
+        {
             if (greyedOut) { return; }
-
             this.bumpList.Focused = this.MouseOverList();
-            bool xOver = this.MousePos.x >= this.rectScroll.pos.x - this.pos.x && this.MousePos.x <= this.rectScroll.pos.x + this.rectScroll.size.x - this.pos.x;
-            this.bumpScroll.Focused = xOver && this.MousePos.y >= this.rectScroll.pos.y - this.pos.y && this.MousePos.y <= this.rectScroll.pos.y + this.rectScroll.size.y - this.pos.y;
+            bool xOver = this.MousePos.x >= this.rectScroll.pos.x && this.MousePos.x <= this.rectScroll.pos.x + this.rectScroll.size.x;
+            this.bumpScroll.Focused = xOver && this.MousePos.y >= this.rectScroll.pos.y && this.MousePos.y <= this.rectScroll.pos.y + this.rectScroll.size.y;
             xOver = this.MousePos.x >= 0f && this.MousePos.x <= this.size.x;
             this.bumpBehav.Focused = !downward ? base.MouseOver && !this.MouseOverList() : xOver && this.MousePos.y >= this.rectList.size.y && this.MousePos.y <= this.rectList.size.y + this.size.y;
 
@@ -153,7 +155,8 @@ namespace OptionalUI
                             { // Select one from here
                                 newVal = this.itemList[listTop + listHover].name;
                             }
-                            if (newVal != this.value) { this.value = newVal; PlaySound(SoundID.MENU_Checkbox_Check); goto exit; }
+                            if (newVal != this.value) { this.value = newVal; PlaySound(SoundID.MENU_MultipleChoice_Clicked); goto exit; }
+                            else { PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked); }
                         }
                     }
                     if (listHover >= 0)
@@ -182,6 +185,11 @@ namespace OptionalUI
             this.searchMode = false;
             this.searchCursor.isVisible = false;
             this.bumpScroll.held = false;
+        }
+
+        protected override void NonMouseModeUpdate()
+        {
+            base.NonMouseModeUpdate();
         }
 
         /// <summary>

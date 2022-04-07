@@ -11,7 +11,7 @@ namespace OptionalUI
         public GlowGradient(FContainer container, Vector2 centerPos, float radH, float radV, float alpha = 0.5f)
         {
             this.container = container;
-            this.centerPos = centerPos;
+            this._centerPos = centerPos;
             this._radH = radH; this._radV = radV; this._alpha = alpha;
 
             this.sprite = new FSprite("Futile_White", true)
@@ -22,7 +22,9 @@ namespace OptionalUI
                 color = this.color,
                 alpha = this.alpha,
                 anchorX = 0.5f,
-                anchorY = 0.5f
+                anchorY = 1f,
+                x = this.centerPos.x,
+                y = this.centerPos.y
             };
             this.container.AddChild(this.sprite);
         }
@@ -64,6 +66,23 @@ namespace OptionalUI
 
         public Color color
         { get => _color; set { if (_color == value) { return; } _color = value; OnChange(); } }
+
+        /// <summary>
+        /// Hide this from the view
+        /// </summary>
+        public void Hide()
+        { if (!isHidden) { isHidden = true; this.sprite.isVisible = false; } }
+
+        /// <summary>
+        /// Show this from the view
+        /// </summary>
+        public void Show()
+        { if (isHidden) { isHidden = false; this.sprite.isVisible = true; } }
+
+        /// <summary>
+        /// Whether this is hidden or not. Use <see cref="Hide"/> and <see cref="Show"/> to manipulate.
+        /// </summary>
+        public bool isHidden { get; private set; } = false;
 
         private float _radH, _radV, _alpha;
         private Vector2 _centerPos;
