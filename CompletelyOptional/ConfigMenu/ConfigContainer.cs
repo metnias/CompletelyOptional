@@ -802,6 +802,12 @@ namespace CompletelyOptional
                 }
             }
 
+            if (focusedElement != null)
+            {
+                string desc = focusedElement.DisplayDescription();
+                if (!string.IsNullOrEmpty(desc)) { cfgMenu.ShowDescription(desc); }
+            }
+
             #endregion FocusManage
         }
 

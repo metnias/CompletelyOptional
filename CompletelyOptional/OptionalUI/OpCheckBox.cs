@@ -25,7 +25,6 @@ namespace OptionalUI
             this.symbolSprite = new FSprite("Menu_Symbol_CheckBox", true)
             { anchorX = 0.5f, anchorY = 0.5f, x = 12f, y = 12f };
             this.myContainer.AddChild(this.symbolSprite);
-            this.description = InternalTranslator.Translate("Click to Check/Uncheck");
         }
 
         /// <summary>
@@ -37,6 +36,12 @@ namespace OptionalUI
         /// <param name="defaultBool">default bool</param>
         public OpCheckBox(ConfigEntry<bool> config, float posX, float posY, bool defaultBool = false) : this(config, new Vector2(posX, posY), defaultBool)
         { }
+
+        protected internal override string DisplayDescription()
+        {
+            if (!string.IsNullOrEmpty(description)) { return description; }
+            return OptionalText.GetText(MenuMouseMode ? OptionalText.ID.OpCheckBox_MouseTuto : OptionalText.ID.OpCheckBox_NonMouseTuto);
+        }
 
         /// <summary>
         /// <see cref="DyeableRect"/> for the boundary.

@@ -242,9 +242,6 @@ namespace OptionalUI
         /// </summary>
         public virtual void Update()
         {
-            bool showDesc = !string.IsNullOrEmpty(this.description) && !isInactive
-                 && (this.MouseOver || (this is ICanBeFocused && (this as ICanBeFocused).Focused()));
-            if (showDesc) { menu.ShowDescription(this.description); }
         }
 
         /// <summary>
@@ -400,6 +397,8 @@ namespace OptionalUI
         /// User's <see cref="Player.InputPackage"/> in the last frame for Controller/Keyboard support
         /// </summary>
         public Player.InputPackage LastCtlrInput => menu.lastInput;
+
+        protected internal virtual string DisplayDescription() => description;
 
         #region FLabel
 

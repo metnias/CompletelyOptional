@@ -57,6 +57,7 @@
     <Compile Include="ComOptPlugin.cs" />
     <None Include="Old_15\ConfigMenu.cs" />
     <Compile Include="ConfigMenu\ConfigTabController.cs" />
+    <Compile Include="ConfigMenu\OptionalText.cs" />
     <Compile Include="EnumExt_ComOpt.cs" />
     <Compile Include="OptionalUI\SubObjects\GlowGradient.cs" />
     <Compile Include="OptionInterface\ConfigConnector.cs" />
@@ -70,7 +71,7 @@
     <Compile Include="OptionalUI\SubObjects\EnumHelper.cs" />
     <Compile Include="OptionInterface\GeneratedOI.cs" />
     <Compile Include="OptionInterface\InternalOI_Test.cs" />
-    <Compile Include="InternalTranslator.cs" />
+    <Compile Include="ConfigMenu\InternalTranslator.cs" />
     <Compile Include="Crypto.cs" />
     <Compile Include="OptionalUI\OpContainer.cs" />
     <Compile Include="OptionalUI\OpHoldButton.cs" />

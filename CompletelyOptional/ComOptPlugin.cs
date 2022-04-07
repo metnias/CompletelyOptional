@@ -66,6 +66,7 @@ namespace CompletelyOptional
                 ));
             if (!directory.Exists) { directory.Create(); directory.Refresh(); }
 
+            OptionalText.Initialize();
             OptionsMenuPatch.SubPatch();
             On.ProcessManager.ctor += ProcessManagerCtor;
             // ProgressData.SubPatch(); moved to post-initialization of OIs, makes no sense to hook before the OIs are even instantiated.
