@@ -225,7 +225,7 @@ namespace OptionalUI
                 if (listHover >= 0 && (MouseOverList() || (!MenuMouseMode && held)))
                 {
                     glowFocus.Show();
-                    glowFocus.pos = this.lblList[Math.Min(listHover, lblList.Length - 1)].GetPosition();
+                    glowFocus.pos = this.lblList[Math.Min(listHover, lblList.Length - 1)].GetPosition() - new Vector2(0f, glowFocus.radV);
                     glowFocus.color = Color.Lerp(this.rect.colorEdge, Color.white, 0.6f);
                     glowFocus.alpha = Mathf.Lerp(0.2f, 0.6f, bumpList.Sin(10f));
                 }

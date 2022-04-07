@@ -193,6 +193,7 @@ namespace CompletelyOptional
                 this.index = index + 1; // starts from 1; index 0 is for StatOI
                 this.list.menuTab.AddItems(this);
                 this._pos = new Vector2(list.pos.x, MyPos);
+                glow = new GlowGradient(myContainer, Vector2.zero, this.size);
 
                 // Get Type
                 if (itf is InternalOI)
@@ -231,6 +232,7 @@ namespace CompletelyOptional
             public readonly ItfType type;
 
             private FSprite icon;
+            private GlowGradient glow;
 
             /// <summary>
             /// Star: Multiplayer_Star x 0.8
@@ -296,12 +298,15 @@ namespace CompletelyOptional
                     return;
                 }
                 base.GrafUpdate(timeStacker);
+                this.rectH.Hide();
                 if (greyedOut) { this.label.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.DarkGrey); }
                 this.label.alpha = Mathf.Pow(1f - Mathf.Lerp(lastFade, fade, timeStacker), 2f);
                 if (this.labelVer != null)
                 { this.labelVer.alpha = this.label.alpha; this.labelVer.color = this.label.color; }
                 if (this.icon != null)
                 { this.icon.color = this.label.color; this.icon.alpha = this.label.alpha; }
+                glow.color = label.color;
+                glow.alpha = greyedOut ? 0.0f : rectH.sprites[0].alpha * label.alpha * 0.6f; // Use highlight
             }
 
             private static int scrollCounter = 0; private bool lastFocused = false;

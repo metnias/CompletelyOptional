@@ -22,14 +22,14 @@ namespace OptionalUI
                 color = this.color,
                 alpha = this.alpha,
                 anchorX = 0.5f,
-                anchorY = 1f,
+                anchorY = 0.5f,
                 x = this.centerPos.x,
                 y = this.centerPos.y
             };
             this.container.AddChild(this.sprite);
         }
 
-        public GlowGradient(FContainer container, Vector2 pos, Vector2 size, float alpha = 0.5f) : this(container, pos - size / 2f, size.x / 2f, size.y / 2f, alpha)
+        public GlowGradient(FContainer container, Vector2 pos, Vector2 size, float alpha = 0.5f) : this(container, pos + size / 2f, size.x / 2f, size.y / 2f, alpha)
         { }
 
         public void OnChange()
@@ -53,7 +53,7 @@ namespace OptionalUI
         { get => _radV; set { if (_radV == value) { return; } _radV = value; OnChange(); } }
 
         public Vector2 size
-        { get => new Vector2(_radH, _radV) * 2f; set { _radH = size.x / 2f; _radV = size.y / 2f; OnChange(); } }
+        { get => new Vector2(_radH, _radV) * 2f; set { _radH = value.x / 2f; _radV = value.y / 2f; OnChange(); } }
 
         public float alpha
         { get => _alpha; set { if (_alpha == value) { return; } _alpha = value; OnChange(); } }
@@ -61,8 +61,11 @@ namespace OptionalUI
         public Vector2 centerPos
         { get => _centerPos; set { if (_centerPos == value) { return; } _centerPos = value; OnChange(); } }
 
+        /// <summary>
+        /// This sets <see cref="centerPos"/> indirectly using <see cref="radH"/> and <see cref="radV"/>. So set <see cref="size"/> or rads before for desired result.
+        /// </summary>
         public Vector2 pos
-        { get => _centerPos - new Vector2(_radH, _radV); set { _centerPos = value + new Vector2(_radH, _radV); OnChange(); } }
+        { get => _centerPos - new Vector2(_radH, _radV); set { centerPos = value + new Vector2(_radH, _radV); } }
 
         public Color color
         { get => _color; set { if (_color == value) { return; } _color = value; OnChange(); } }
