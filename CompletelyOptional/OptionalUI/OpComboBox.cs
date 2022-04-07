@@ -24,7 +24,6 @@ namespace OptionalUI
         {
             this._size = new Vector2(Mathf.Max(30f, size.x), 24f);
             this.fixedSize = new Vector2(-1f, 24f);
-            this.description = InternalTranslator.Translate("Click to open the list, Double Click to search");
             if (IsResourceSelector) { return; }
             if (list is null || list.Count < 1) { throw new ElementFormatException(this, "The list must contain at least one ListItem", this.key); }
             list.Sort(ListItem.Comparer);
@@ -52,7 +51,6 @@ namespace OptionalUI
         {
             this._size = new Vector2(Mathf.Max(30f, size.x), 24f);
             this.fixedSize = new Vector2(-1f, 24f);
-            this.description = InternalTranslator.Translate("Click to open the list, Double Click to search");
             if (IsResourceSelector) { return; }
             if (list is null || list.Count < 1) { throw new ElementFormatException(this, "The list must contain at least one ListItem", this.key); }
             list.Sort(ListItem.Comparer);
@@ -60,6 +58,53 @@ namespace OptionalUI
             this.ResetIndex();
             this.Initialize(defaultValue);
             // throw new NotImplementedException("OpComboBox will come to you, Soon(tm)! If you're seeing this error as an user, download the latest ConfigMachine.");
+        }
+
+        protected internal override string DisplayDescription()
+        {
+            if (MenuMouseMode)
+            {
+                if (!held)
+                {
+                    if (!string.IsNullOrEmpty(description)) { return description; }
+                    return OptionalText.GetText(OptionalText.ID.OpComboBox_MouseOpenTuto);
+                }
+                else
+                {
+                    if (listHover >= 0)
+                    {
+                        string descItem = "";
+                        if (this.searchMode)
+                        {
+                            if (listTop + listHover < this.searchList.Count)
+                            { descItem = this.searchList[listTop + listHover].desc; }
+                        }
+                        else if (listTop + listHover < this.itemList.Length) { descItem = this.itemList[listTop + listHover].desc; }
+                        if (!string.IsNullOrEmpty(descItem)) { return descItem; }
+                    }
+                    if (!string.IsNullOrEmpty(description)) { return description; }
+                    if (searchMode) { return OptionalText.GetText(OptionalText.ID.OpComboBox_MouseSearchTuto); }
+                    return OptionalText.GetText(OptionalText.ID.OpComboBox_MouseUseTuto);
+                }
+            }
+            if (!held)
+            {
+                if (!string.IsNullOrEmpty(description)) { return description; }
+                return OptionalText.GetText(OptionalText.ID.OpComboBox_NonMouseOpenTuto);
+            }
+            if (listHover >= 0)
+            {
+                string descItem = "";
+                if (this.searchMode)
+                {
+                    if (listTop + listHover < this.searchList.Count)
+                    { descItem = this.searchList[listTop + listHover].desc; }
+                }
+                else if (listTop + listHover < this.itemList.Length) { descItem = this.itemList[listTop + listHover].desc; }
+                if (!string.IsNullOrEmpty(descItem)) { return descItem; }
+            }
+            if (!string.IsNullOrEmpty(description)) { return description; }
+            return OptionalText.GetText(OptionalText.ID.OpComboBox_NonMouseUseTuto);
         }
 
         private static List<ListItem> ArrayToList(string[] array)
@@ -445,17 +490,6 @@ namespace OptionalUI
                                 if (newVal != this.value) { this.value = newVal; PlaySound(SoundID.MENU_MultipleChoice_Clicked); goto close; }
                                 else { PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked); }
                             }
-                        }
-                        if (listHover >= 0)
-                        {
-                            string d = "";
-                            if (this.searchMode)
-                            {
-                                if (listTop + listHover < this.searchList.Count)
-                                { d = this.searchList[listTop + listHover].desc; }
-                            }
-                            else if (listTop + listHover < this.itemList.Length) { d = this.itemList[listTop + listHover].desc; }
-                            if (!string.IsNullOrEmpty(d)) { ModConfigMenu.instance.ShowDescription(d); }
                         }
                     }
                 }

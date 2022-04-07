@@ -67,7 +67,6 @@ namespace OptionalUI
             {
                 BoundKey.Add(this.controlKey, defaultKey);
             }
-            this._description = "";
 
             this.rect = new DyeableRect(myContainer, Vector2.zero, this.size, true);
             this.rect.fillAlpha = 0.3f;
@@ -80,6 +79,14 @@ namespace OptionalUI
             this.myContainer.AddChild(sprite);
 
             this.OnChange();
+        }
+
+        protected internal override string DisplayDescription()
+        {
+            if (!string.IsNullOrEmpty(_desError)) { return _desError; }
+            /// WIP
+            if (IsJoystick(this.value)) { return InternalTranslator.Translate("Click this and Press any button to bind (Ctrl + No to set controller number)"); }
+            else { return InternalTranslator.Translate("Click this and Press any key/button to bind (Esc to unbind)"); }
         }
 
         /// <summary>
@@ -242,7 +249,6 @@ namespace OptionalUI
             Color myColor = this.bumpBehav.GetColor(string.IsNullOrEmpty(this._desError) ? this.colorEdge : Color.red);
             if (this.Focused() || this.MouseOver)
             {
-                ModConfigMenu.instance.ShowDescription(this.GetDescription());
                 myColor = Color.Lerp(myColor, Color.white, this.bumpBehav.Sin());
             }
 
@@ -251,20 +257,6 @@ namespace OptionalUI
 
         private bool anyKeyDown; private bool lastAnyKeyDown;
 
-        public string GetDescription()
-        {
-            if (!string.IsNullOrEmpty(_desError))
-            { return _desError; }
-            if (!string.IsNullOrEmpty(_description))
-            { return _description; }
-            if (IsJoystick(this.value)) { return InternalTranslator.Translate("Click this and Press any button to bind (Ctrl + No to set controller number)"); }
-            else { return InternalTranslator.Translate("Click this and Press any key/button to bind (Esc to unbind)"); }
-        }
-
-        public void SetDescription(string value)
-        { _description = value; }
-
-        private string _description;
         private string _desError;
 
         public override string value

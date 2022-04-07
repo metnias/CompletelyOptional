@@ -246,14 +246,17 @@ namespace CompletelyOptional
             private bool isTop => this.buttonIndex == 0;
             private bool isBottom => this.buttonIndex == ConfigTabController.tabButtonLimit - 1;
 
+            protected internal override string DisplayDescription()
+            {
+                if (string.IsNullOrEmpty(this.name))
+                { return OptionalText.GetText(OptionalText.ID.ConfigTabController_TabSelectButton_UnnamedTab).Replace("<TabIndex>", buttonIndex.ToString()); }
+                else
+                { return OptionalText.GetText(OptionalText.ID.ConfigTabController_TabSelectButton_NamedTab).Replace("<TabName>", this.name); }
+            }
+
             public override void Reset()
             {
                 base.Reset();
-
-                if (string.IsNullOrEmpty(this.name))
-                { this.description = InternalTranslator.Translate("Switch to Tab No <TabIndex>").Replace("<TabIndex>", buttonIndex.ToString()); }
-                else
-                { this.description = InternalTranslator.Translate("Switch to Tab <TabName>").Replace("<TabName>", this.name); }
 
                 height = Mathf.Min(120f, 600f / Custom.IntClamp(ctrl._tabCount, 1, tabButtonLimit));
                 this._pos = ctrl.pos + new Vector2(0f, height * (-buttonIndex - 1) + 603f);

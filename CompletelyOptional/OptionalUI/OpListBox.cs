@@ -45,6 +45,40 @@ namespace OptionalUI
             if (!(this is OpResourceList)) { this.OpenList(); }
         }
 
+        protected internal override string DisplayDescription()
+        {
+            if (MenuMouseMode)
+            {
+                if (listHover >= 0)
+                {
+                    string descItem = "";
+                    if (this.searchMode)
+                    {
+                        if (listTop + listHover < this.searchList.Count)
+                        { descItem = this.searchList[listTop + listHover].desc; }
+                    }
+                    else if (listTop + listHover < this.itemList.Length) { descItem = this.itemList[listTop + listHover].desc; }
+                    if (!string.IsNullOrEmpty(descItem)) { return descItem; }
+                }
+                if (!string.IsNullOrEmpty(description)) { return description; }
+                if (searchMode) { return OptionalText.GetText(OptionalText.ID.OpComboBox_MouseSearchTuto); }
+                return OptionalText.GetText(OptionalText.ID.OpComboBox_MouseUseTuto);
+            }
+            if (held && listHover >= 0)
+            {
+                string descItem = "";
+                if (this.searchMode)
+                {
+                    if (listTop + listHover < this.searchList.Count)
+                    { descItem = this.searchList[listTop + listHover].desc; }
+                }
+                else if (listTop + listHover < this.itemList.Length) { descItem = this.itemList[listTop + listHover].desc; }
+                if (!string.IsNullOrEmpty(descItem)) { return descItem; }
+            }
+            if (!string.IsNullOrEmpty(description)) { return description; }
+            return OptionalText.GetText(OptionalText.ID.OpComboBox_NonMouseUseTuto);
+        }
+
         public override void GrafUpdate(float dt)
         {
             base.GrafUpdate(dt);

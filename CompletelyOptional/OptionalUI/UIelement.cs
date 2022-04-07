@@ -398,6 +398,9 @@ namespace OptionalUI
         /// </summary>
         public Player.InputPackage LastCtlrInput => menu.lastInput;
 
+        /// <summary>
+        /// Actual text to display at the bottom of the Mod Config Menu Screen. See also <seealso cref="description"/>.
+        /// </summary>
         protected internal virtual string DisplayDescription() => description;
 
         #region FLabel

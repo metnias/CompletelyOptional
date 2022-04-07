@@ -1,4 +1,5 @@
-﻿using RWCustom;
+﻿using CompletelyOptional;
+using RWCustom;
 using UnityEngine;
 
 namespace OptionalUI
@@ -67,6 +68,12 @@ namespace OptionalUI
             FLabelPlaceAtCenter(label, Vector2.zero, this.size);
             this.myContainer.AddChild(this.fillSprite);
             this.myContainer.AddChild(this.label);
+        }
+
+        protected internal override string DisplayDescription()
+        {
+            if (!string.IsNullOrEmpty(description)) { return description; }
+            return OptionalText.GetText(MenuMouseMode ? OptionalText.ID.OpHoldButton_MouseTuto : OptionalText.ID.OpHoldButton_NonMouseTuto);
         }
 
         private readonly FLabel label;

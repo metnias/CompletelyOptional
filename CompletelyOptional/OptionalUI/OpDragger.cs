@@ -40,6 +40,13 @@ namespace OptionalUI
         public OpDragger(ConfigEntry<int> config, float posX, float posY, int cosmeticInt = 0) : this(config, new Vector2(posX, posY), cosmeticInt)
         { }
 
+        protected internal override string DisplayDescription()
+        {
+            if (!string.IsNullOrEmpty(description)) { return description; }
+            if (MenuMouseMode) { return OptionalText.GetText(OptionalText.ID.OpDragger_MouseTuto); }
+            return OptionalText.GetText(!held ? OptionalText.ID.OpDragger_NonMouseGrabTuto : OptionalText.ID.OpDragger_NonMouseUseTuto);
+        }
+
         /// <summary>
         /// Minimum value. default = 0
         /// </summary>
