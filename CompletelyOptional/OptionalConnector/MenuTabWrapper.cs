@@ -6,19 +6,30 @@ using Menu;
 using UnityEngine;
 using OptionalUI;
 
+// Todo: Add FocusCandidate for this too...
+// ...or just use UIelementWrapper
+
 namespace CompletelyOptional
 {
     /// <summary>
-    /// Allows using <see cref="UIelement"/>s in vanilla <see cref="Menu.Menu"/>
+    /// Allows using <see cref="UIelement"/>s in vanilla <see cref="Menu.Menu"/> with <see cref="UIelementWrapper"/>s.
     /// </summary>
-    public class MenuTabWrapper : RectangularMenuObject
+    public class MenuTabWrapper : PositionedMenuObject
     {
-        public MenuTabWrapper(Menu.Menu menu, MenuObject owner, Vector2 pos, Vector2 size) : base(menu, owner, pos, size)
+        public MenuTabWrapper(Menu.Menu menu, MenuObject owner) : base(menu, owner, Vector2.zero)
         {
+            myContainer = new FContainer();
+            owner.Container.AddChild(myContainer);
+            glowContainer = new FContainer();
+            myContainer.AddChild(glowContainer);
+            wrappers = new Dictionary<UIelement, UIelementWrapper>();
+
             tab = new WrappedMenuTab(this);
         }
 
-        public readonly WrappedMenuTab tab;
+        internal readonly FContainer glowContainer;
+
+        internal readonly WrappedMenuTab tab;
 
         public override void GrafUpdate(float timeStacker)
         {
@@ -32,13 +43,15 @@ namespace CompletelyOptional
             tab.Update();
         }
 
+        internal Dictionary<UIelement, UIelementWrapper> wrappers;
+
         /// <summary>
         /// As <see cref="UItrigger"/> is not <see cref="MenuObject"/>, this <see cref="MenuTabWrapper"/> will be sent instead.
         /// So use message to differenciate signals.
         /// </summary>
-        public override void Singal(MenuObject sender, string message)
+        internal void Signal(UItrigger trigger, string signal)
         {
-            base.Singal(this, message);
+            wrappers[trigger].Singal(null, signal);
         }
     }
 }

@@ -1,26 +1,23 @@
 ﻿using OptionalUI;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace CompletelyOptional
 {
     /// <summary>
-    /// MenuTab for MenuTabWrapper, which sends Signal to vanilla Singal
+    /// <see cref="MenuTab"/> for MenuTabWrapper, which sends <see cref="UItrigger.Signal"/> to vanilla <see cref="UIelementWrapper.Singal"/>
     /// </summary>
     public class WrappedMenuTab : MenuTab
     {
         internal WrappedMenuTab(MenuTabWrapper wrapper)
         {
             this.wrapper = wrapper;
+            this.wrapper.Container.AddChild(this.container);
         }
 
         public readonly MenuTabWrapper wrapper;
 
         protected internal override void Signal(UItrigger trigger, string signal)
         {
-            wrapper.Singal(null, signal);
+            wrapper.Signal(trigger, signal);
         }
     }
 }

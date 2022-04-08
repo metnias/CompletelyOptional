@@ -15,7 +15,7 @@ namespace OptionalUI
             this.name = name;
             this.container = new FContainer()
             { x = _offset.x, y = _offset.y, isVisible = false };
-            ConfigContainer.instance.Container.AddChild(this.container);
+            if (!(this is MenuTab)) { ConfigContainer.instance.Container.AddChild(this.container); }
             this.isInactive = true;
             this.items = new List<UIelement>();
             this.focusables = new List<UIelement>();

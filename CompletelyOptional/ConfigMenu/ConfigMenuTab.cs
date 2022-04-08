@@ -11,6 +11,7 @@ namespace CompletelyOptional
         internal ConfigMenuTab() : base()
         {
             // 171 offset from left
+            ConfigContainer.instance.Container.AddChild(this.container);
             this.container.MoveToBack();
             backButton = new OpSimpleButton(new Vector2(490f, 50f), new Vector2(120f, 30f), backSignal, OptionalText.GetText(OptionalText.ID.ConfigMenuTab_BackButton_Label))
             { description = OptionalText.GetText(OptionalText.ID.ConfigMenuTab_BackButton_Desc) };
