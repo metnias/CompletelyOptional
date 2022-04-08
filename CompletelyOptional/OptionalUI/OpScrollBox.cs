@@ -240,10 +240,18 @@ namespace OptionalUI
         {
             tab.AddItems(this); this.isTab = true;
 
-            this._labelNotify = FLabelCreate(string.Concat(">>> ", InternalTranslator.Translate(hasSlideBar ? "Use Scroll Wheel or Scrollbar to see more" : "Use Scroll Wheel to see more"), " <<<"));
+            this._labelNotify = FLabelCreate($">>> {TutorialText()} <<<");
             FLabelPlaceAtCenter(this._labelNotify, 200f, horizontal ? 10f : 0f, 200f, 20f);
             this.myContainer.AddChild(this._labelNotify);
         }
+
+        protected internal override string DisplayDescription()
+        {
+            if (!string.IsNullOrEmpty(description)) { return description; }
+            return TutorialText();
+        }
+
+        protected string TutorialText() => OptionalText.GetText(!MenuMouseMode ? OptionalText.ID.OpScrollBox_NonMouseTuto : (rectSlidebar != null ? OptionalText.ID.OpScrollBox_MouseTutoSlidebar : OptionalText.ID.OpScrollBox_MouseTuto));
 
         private readonly bool isTab; private bool hasScrolled;
         private FLabel _labelNotify;
@@ -728,6 +736,7 @@ namespace OptionalUI
                 if (this.ScrollLocked) { this._labelNotify.alpha = 0f; }
                 else
                 {
+                    this._labelNotify.text = $">>> {TutorialText()} <<<";
                     this._labelNotify.color = Color.Lerp(Color.white, this.bumpSlidebar.GetColor(this.colorEdge), 0.5f);
                     if (!this.hasScrolled) { this._labelNotify.alpha = 0.5f + 0.5f * sin; }
                     else

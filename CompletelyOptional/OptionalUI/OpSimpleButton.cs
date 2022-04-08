@@ -26,6 +26,13 @@ namespace OptionalUI
             }
         }
 
+        protected internal override string DisplayDescription()
+        {
+            if (!string.IsNullOrEmpty(description)) { return description; }
+            if (MenuMouseMode) { return OptionalText.GetText(canHold ? OptionalText.ID.OpSimpleButton_MouseTutoHold : OptionalText.ID.OpSimpleButton_MouseTuto); }
+            return OptionalText.GetText(canHold ? OptionalText.ID.OpSimpleButton_NonMouseTutoHold : OptionalText.ID.OpSimpleButton_NonMouseTuto);
+        }
+
         /// <summary>
         /// Whether this triggers <see cref="UItrigger.Signal"/> when it's kept pressed or not. See also <seealso cref="soundHold"/>.
         /// </summary>

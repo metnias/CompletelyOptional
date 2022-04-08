@@ -86,7 +86,11 @@ namespace OptionalUI
             if (!string.IsNullOrEmpty(_desError)) { return _desError; }
             if (!string.IsNullOrEmpty(description)) { return description; }
             if (MenuMouseMode)
-            { return OptionalText.GetText(!IsJoystick(value) ? OptionalText.ID.OpKeyBinder_MouseBindTuto : OptionalText.ID.OpKeyBinder_MouseJoystickBindTuto); }
+            {
+                if (!held) return OptionalText.GetText(OptionalText.ID.OpKeyBinder_MouseSelectTuto);
+                return OptionalText.GetText(!IsJoystick(value) ? OptionalText.ID.OpKeyBinder_MouseBindTuto : OptionalText.ID.OpKeyBinder_MouseJoystickBindTuto);
+            }
+            if (!held) return OptionalText.GetText(OptionalText.ID.OpKeyBinder_NonMouseSelectTuto);
             return OptionalText.GetText(!IsJoystick(value) ? OptionalText.ID.OpKeyBinder_NonMouseBindTuto : OptionalText.ID.OpKeyBinder_NonMouseJoystickBindTuto);
         }
 

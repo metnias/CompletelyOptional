@@ -24,8 +24,6 @@ namespace OptionalUI
         public OpSlider(ConfigEntry<int> config, Vector2 pos, IntVector2 range, float multi = 1.0f, bool vertical = false, int cosmeticValue = 0) : base(config, pos, new Vector2(), cosmeticValue)
         {
             this.vertical = vertical;
-            this.description = InternalTranslator.Translate(this.vertical ?
-                "Hold your mouse button and Drag up/down to adjust value" : "Hold your mouse button and Drag left/right to adjust value");
             this.min = range.x; this.max = range.y;
             int span = this.span;
             this.mousewheelTick = span > 5 ? Math.Max(Mathf.CeilToInt(span / 12f), 4) : 1;
@@ -49,8 +47,6 @@ namespace OptionalUI
         public OpSlider(ConfigEntry<int> config, Vector2 pos, IntVector2 range, int length, bool vertical = false, int cosmeticValue = 0) : base(config, pos, new Vector2(), cosmeticValue)
         {
             this.vertical = vertical;
-            this.description = InternalTranslator.Translate(this.vertical ?
-                "Hold your mouse button and Drag up/down to adjust value" : "Hold your mouse button and Drag left/right to adjust value");
             this.min = range.x; this.max = range.y;
             int span = this.span;
             this.mousewheelTick = span > 5 ? Math.Max(Mathf.CeilToInt(span / 12f), 4) : 1;
@@ -69,8 +65,6 @@ namespace OptionalUI
         internal OpSlider(ConfigEntry<uint> config, Vector2 pos, int length, bool vertical = false) : base(config, pos, new Vector2())
         {
             this.vertical = vertical;
-            this.description = InternalTranslator.Translate(this.vertical ?
-                "Hold your mouse button and Drag up/down to adjust value" : "Hold your mouse button and Drag left/right to adjust value");
             this.min = 0; this.max = 100;
             int span = this.span;
             this.mousewheelTick = span > 5 ? Math.Max(Mathf.CeilToInt(span / 12f), 4) : 1;
@@ -89,8 +83,6 @@ namespace OptionalUI
         internal OpSlider(ConfigEntry<byte> config, Vector2 pos, IntVector2 range, int length, bool vertical = false) : base(config, pos, new Vector2())
         {
             this.vertical = vertical;
-            this.description = InternalTranslator.Translate(this.vertical ?
-                "Hold your mouse button and Drag up/down to adjust value" : "Hold your mouse button and Drag left/right to adjust value");
             this.min = range.x; this.max = range.y;
             int span = this.span;
             this.mousewheelTick = span > 5 ? Math.Max(Mathf.CeilToInt(span / 12f), 4) : 1;
@@ -101,6 +93,13 @@ namespace OptionalUI
             this.defaultValue = this.value;
 
             Initialize();
+        }
+
+        protected internal override string DisplayDescription()
+        {
+            if (!string.IsNullOrEmpty(description)) { return description; }
+            if (MenuMouseMode) { return OptionalText.GetText(vertical ? OptionalText.ID.OpSlider_MouseTutoVrtc : OptionalText.ID.OpSlider_MouseTutoHrzt); }
+            return OptionalText.GetText(held ? OptionalText.ID.OpSlider_NonMouseAdjustTuto : OptionalText.ID.OpSlider_NonMouseGrabTuto);
         }
 
         private bool tickSlider => this is OpSliderTick;

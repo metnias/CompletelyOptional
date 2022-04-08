@@ -73,6 +73,7 @@ namespace OptionalUI
         protected internal override string DisplayDescription()
         {
             if (!string.IsNullOrEmpty(description)) { return description; }
+            if (isProgress) { return ""; }
             return OptionalText.GetText(MenuMouseMode ? OptionalText.ID.OpHoldButton_MouseTuto : OptionalText.ID.OpHoldButton_NonMouseTuto);
         }
 

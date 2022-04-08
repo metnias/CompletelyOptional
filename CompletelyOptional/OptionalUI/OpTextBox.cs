@@ -65,6 +65,13 @@ namespace OptionalUI
             OnChange();
         }
 
+        protected internal override string DisplayDescription()
+        {
+            if (!string.IsNullOrEmpty(description)) { return description; }
+            if (MenuMouseMode) { return OptionalText.GetText(held ? OptionalText.ID.OpTextBox_MouseTutoType : OptionalText.ID.OpTextBox_MouseTutoGrab); }
+            return OptionalText.GetText(OptionalText.ID.OpTextBox_NonMouseTuto);
+        }
+
         /// <summary>
         /// Whether this is <see cref="OpUpdown"/> or not
         /// </summary>
