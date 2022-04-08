@@ -4,18 +4,19 @@ using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpHoldButton : UItrigger, ICanBeFocused
+    public class OpHoldButton : UIfocusable
     {
         /// <summary>
         /// Circular Hold Button which can also be used as ProgressButton.
         /// <para><see cref="UIelement.fixedRad"/> is 55f (110f in diameter)</para>
         /// </summary>
         /// <param name="pos">BottomLeft <see cref="UIelement.pos"/>; <see cref="UIelement.fixedRad"/> is 55f (110f in diameter)</param>
-        /// <param name="signal"><see cref="UItrigger.signal"/></param>
+        /// <param name="signal"><see cref="UIfocusable.signal"/></param>
         /// <param name="fillTime">How long do you need to hold to call Signal (set to 0f for instant)</param>
         /// <param name="displayText">Text to be displayed (overriden when it's ProgressButton mode)</param>
-        public OpHoldButton(Vector2 pos, string signal, string displayText, float fillTime = 80f) : base(pos, 55f, signal)
+        public OpHoldButton(Vector2 pos, string signal, string displayText, float fillTime = 80f) : base(pos, 55f)
         {
+            this.signal = signal;
             this.fillTime = Mathf.Max(0f, fillTime);
             fixedRad = 55f;
             _text = displayText;
@@ -42,11 +43,12 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">BottomLeft <see cref="UIelement.pos"/>; <see cref="UIelement.fixedRad"/> is 55f (110f in diameter)</param>
         /// <param name="size">The size of this button. Minimum size is 24x24</param>
-        /// <param name="signal"><see cref="UItrigger.signal"/></param>
+        /// <param name="signal"><see cref="UIfocusable.signal"/></param>
         /// <param name="fillTime">How long do you need to hold to call Signal (set to 0f for instant)</param>
         /// <param name="displayText">Text to be displayed (overriden when it's ProgressButton mode)</param>
-        public OpHoldButton(Vector2 pos, Vector2 size, string signal, string displayText, float fillTime = 80f) : base(pos, size, signal)
+        public OpHoldButton(Vector2 pos, Vector2 size, string signal, string displayText, float fillTime = 80f) : base(pos, size)
         {
+            this.signal = signal;
             this.fillTime = Mathf.Max(0f, fillTime);
             this._size = new Vector2(Mathf.Max(24f, size.x), Mathf.Max(24f, size.y));
             _text = displayText;
@@ -123,7 +125,7 @@ namespace OptionalUI
             else { label.text = progress.ToString("N" + Custom.IntClamp(progressDeci, 0, 4).ToString()) + "%"; }
         }
 
-        public override Rect FocusRect
+        protected internal override Rect FocusRect
         {
             get
             {

@@ -432,8 +432,8 @@ namespace CompletelyOptional
                 list.Signal(this, index);
             }
 
-            public override bool CurrentlyFocusableMouse => this.fade < 0.5f;
-            public override bool CurrentlyFocusableNonMouse => this.fade < 0.5f;
+            protected internal override bool CurrentlyFocusableMouse => this.fade < 0.5f;
+            protected internal override bool CurrentlyFocusableNonMouse => this.fade < 0.5f;
 
             protected internal override bool MouseOver => base.MouseOver;
         }
@@ -494,7 +494,7 @@ namespace CompletelyOptional
                 base.OnChange();
             }
 
-            public override bool CurrentlyFocusableNonMouse
+            protected internal override bool CurrentlyFocusableNonMouse
             {
                 get
                 {
@@ -559,9 +559,9 @@ namespace CompletelyOptional
             public readonly int index;
             public readonly char represent;
 
-            public override bool CurrentlyFocusableMouse => !greyedOut && slideOut;
+            protected internal override bool CurrentlyFocusableMouse => !greyedOut && slideOut;
 
-            public override bool CurrentlyFocusableNonMouse => !greyedOut && slideOut;
+            protected internal override bool CurrentlyFocusableNonMouse => !greyedOut && slideOut;
 
             private bool slideOut => list.GetMyAbcSlide(index, 0f) >= 30f;
             private readonly bool unused;
@@ -622,8 +622,8 @@ namespace CompletelyOptional
             private readonly MenuModList list;
             private readonly FSprite subtleCircle;
 
-            public override bool CurrentlyFocusableMouse => base.CurrentlyFocusableMouse;
-            public override bool CurrentlyFocusableNonMouse => false;
+            protected internal override bool CurrentlyFocusableMouse => base.CurrentlyFocusableMouse;
+            protected internal override bool CurrentlyFocusableNonMouse => false;
 
             protected internal override bool MouseOver => Custom.DistLess(new Vector2(15f, this.subtleCircle.y), this.MousePos, subSize / 2f);
 

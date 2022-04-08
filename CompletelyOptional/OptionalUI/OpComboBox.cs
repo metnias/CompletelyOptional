@@ -619,7 +619,7 @@ namespace OptionalUI
             }
         }
 
-        public override void NonMouseSetHeld(bool newHeld)
+        protected internal override void NonMouseSetHeld(bool newHeld)
         {
             base.NonMouseSetHeld(newHeld);
             if (newHeld)

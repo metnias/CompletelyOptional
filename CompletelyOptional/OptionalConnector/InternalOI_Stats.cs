@@ -51,7 +51,7 @@ namespace CompletelyOptional
             // Reset starred mods
         }
 
-        public override void Signal(UItrigger trigger, string signal)
+        public override void Signal(UIfocusable trigger, string signal)
         {
             base.Signal(trigger, signal);
         }

@@ -230,7 +230,7 @@ namespace OptionalUI
         /// <param name="height">pixel height, which is usually <see cref="UIelement.size"/>.y</param>
         public static int GetLineCountFromHeight(float height) => Math.Max(1, Mathf.FloorToInt((height - 34f) / 20f));
 
-        public override Rect FocusRect
+        protected internal override Rect FocusRect
         {
             get
             {

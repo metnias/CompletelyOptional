@@ -61,12 +61,12 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Method that's called from <see cref="UItrigger"/>s.
+        /// Method that's called from <see cref="UIfocusable"/>s.
         /// Override this and write your own events.
         /// </summary>
-        /// <param name="trigger"><see cref="UItrigger"/> instance.</param>
-        /// <param name="signal"><see cref="UItrigger.signal"/> value.</param>
-        public virtual void Signal(UItrigger trigger, string signal)
+        /// <param name="trigger"><see cref="UIfocusable"/> instance.</param>
+        /// <param name="signal"><see cref="UIfocusable.signal"/> value.</param>
+        public virtual void Signal(UIfocusable trigger, string signal)
         {
         }
 

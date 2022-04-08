@@ -139,7 +139,7 @@ namespace OptionalUI
         public Color color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
 
         /// <summary>
-        /// Set this to <see cref="UIconfig.bumpBehav"/> or <see cref="UItrigger.bumpBehav"/> to make its colour reactive.
+        /// Set this to <see cref="UIfocusable.bumpBehav"/> to make its colour reactive.
         /// <para>Example:
         /// <c>OpCheckBox chk = new OpCheckBox(posChk, "_");
         /// Tabs[0].AddItems(chk, new OpLabel(posLbl, sizLbl, "Text") { bumpBehav = chk.bumpBehav });</c>

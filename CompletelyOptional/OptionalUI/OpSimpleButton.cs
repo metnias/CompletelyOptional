@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpSimpleButton : UItrigger
+    public class OpSimpleButton : UIfocusable
     {
         /// <summary>
         /// Simple Rectangular Botton
@@ -12,8 +12,9 @@ namespace OptionalUI
         /// <param name="size">Minimum size is 24x24</param>
         /// <param name="signal">Keyword that gets sent to Signal</param>
         /// <param name="text">Text you want to have inside the button</param>
-        public OpSimpleButton(Vector2 pos, Vector2 size, string signal, string text = "") : base(pos, size, signal)
+        public OpSimpleButton(Vector2 pos, Vector2 size, string signal, string text = "") : base(pos, size)
         {
+            this.signal = signal;
             this._size = new Vector2(Mathf.Max(24f, size.x), Mathf.Max(24f, size.y));
 
             this.rect = new DyeableRect(this.myContainer, Vector2.zero, this.size, true);
@@ -34,7 +35,7 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Whether this triggers <see cref="UItrigger.Signal"/> when it's kept pressed or not. See also <seealso cref="soundHold"/>.
+        /// Whether this triggers <see cref="UIfocusable.Signal"/> when it's kept pressed or not. See also <seealso cref="soundHold"/>.
         /// </summary>
         public bool canHold = false;
 
@@ -49,7 +50,7 @@ namespace OptionalUI
         public SoundID soundClick = SoundID.MENU_Button_Standard_Button_Pressed;
 
         /// <summary>
-        /// A sound to play when this is held for long to trigger <see cref="UItrigger.Signal"/>. See also <seealso cref="canHold"/>, <seealso cref="soundClick"/>.
+        /// A sound to play when this is held for long to trigger <see cref="UIfocusable.Signal"/>. See also <seealso cref="canHold"/>, <seealso cref="soundClick"/>.
         /// </summary>
         public SoundID soundHold = SoundID.MENU_Scroll_Tick;
 
@@ -122,7 +123,7 @@ namespace OptionalUI
             this.rect.colorFill = this.colorFill;
         }
 
-        public override void NonMouseSetHeld(bool newHeld)
+        protected internal override void NonMouseSetHeld(bool newHeld)
         {
             base.NonMouseSetHeld(newHeld);
             if (newHeld && canHold)

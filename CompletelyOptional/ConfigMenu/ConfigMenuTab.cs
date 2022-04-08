@@ -34,7 +34,7 @@ namespace CompletelyOptional
 
         internal const string backSignal = "CANCEL", saveSignal = "APPLY", resetSignal = "RESET";
 
-        protected internal override void Signal(UItrigger trigger, string signal)
+        protected internal override void Signal(UIfocusable trigger, string signal)
         {
             switch (signal)
             {

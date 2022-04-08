@@ -164,7 +164,7 @@ namespace CompletelyOptional
             }
         }
 
-        private void Signal(UItrigger trigger, int index = -1)
+        private void Signal(UIfocusable trigger, int index = -1)
         {
             if (trigger is TabSelectButton)
             {
@@ -403,7 +403,7 @@ namespace CompletelyOptional
                 this._size = new Vector2(30f, 20f);
             }
 
-            public override bool CurrentlyFocusableNonMouse => false;
+            protected internal override bool CurrentlyFocusableNonMouse => false;
 
             public override void GrafUpdate(float timeStacker)
             {

@@ -468,7 +468,7 @@ namespace OptionalUI
             {
                 this.scrollBox.lastFocusedElement = null;
                 foreach (UIelement item in this.scrollBox.children)
-                { if (item != this && item is ICanBeFocused) { this.scrollBox.lastFocusedElement = item; break; } }
+                { if (item != this && item is UIfocusable) { this.scrollBox.lastFocusedElement = item as UIfocusable; break; } }
             }
             this._pos -= this.scrollBox.childOffset;
             this.inScrollBox = false;

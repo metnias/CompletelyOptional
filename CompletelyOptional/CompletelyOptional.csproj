@@ -104,7 +104,7 @@
     <Compile Include="OptionalUI\OpSimpleImageButton.cs" />
     <None Include="OptionalUI\OpSpriteEditor.cs" />
     <Compile Include="OptionalUI\SubObjects\LoremIpsum.cs" />
-    <Compile Include="OptionalUI\UItrigger.cs" />
+    <Compile Include="OptionalUI\UIfocusable.cs" />
     <Compile Include="OptionalConnector\OptionInterface.cs" />
     <Compile Include="RainWorldMod.cs" />
     <Compile Include="OptionalConnector\InternalOI.cs" />
@@ -132,7 +132,7 @@
     <None Include="OptionalUI\OpSlugcat.cs" />
     <Compile Include="OptionalUI\OpTab.cs" />
     <Compile Include="OptionalUI\OpTextBox.cs" />
-    <Compile Include="OptionalUI\SubObjects\ICanBeFocused.cs" />
+    <None Include="OptionalUI\SubObjects\ICanBeFocused.cs" />
     <Compile Include="OptionalUI\UIconfig.cs" />
     <None Include="OptionalUI\UIcreature.cs" />
     <Compile Include="OptionalUI\UIelement.cs" />

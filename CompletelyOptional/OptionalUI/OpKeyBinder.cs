@@ -321,7 +321,7 @@ namespace OptionalUI
             return "Joystick" + (newBind != BindController.AnyController ? b.ToString() : "") + btn;
         }
 
-        public override void NonMouseSetHeld(bool newHeld)
+        protected internal override void NonMouseSetHeld(bool newHeld)
         {
             base.NonMouseSetHeld(newHeld);
             if (newHeld)

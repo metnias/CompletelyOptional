@@ -381,59 +381,57 @@ namespace CompletelyOptional
 
         #region FocusHandler
 
-        private List<UIelement> GetFocusables()
+        private List<UIfocusable> GetFocusables()
         {
-            List<UIelement> list = new List<UIelement>();
-            foreach (UIelement item in menuTab.focusables)
+            List<UIfocusable> list = new List<UIfocusable>();
+            foreach (UIfocusable item in menuTab.focusables)
             { if (!item.isInactive) { list.Add(item); } }
             if (activeTab != null)
             {
-                foreach (UIelement item in activeTab.focusables)
+                foreach (UIfocusable item in activeTab.focusables)
                 { if (!item.isInactive) { list.Add(item); } }
             }
 
-            List<UIelement> res = new List<UIelement>();
+            List<UIfocusable> res = new List<UIfocusable>();
             if (menu.manager.menuesMouseMode)
             {
-                foreach (UIelement item in list)
-                { if (!(item is OpScrollBox) && (item as ICanBeFocused).CurrentlyFocusableMouse) { res.Add(item); } }
+                foreach (UIfocusable item in list)
+                { if (!(item is OpScrollBox) && item.CurrentlyFocusableMouse) { res.Add(item); } }
             }
             else
             {
                 if (focusedElement == null || !focusedElement.inScrollBox)
                 {// Candidates are items that aren't in scrollBox
-                    foreach (UIelement item in list)
-                    { if (!item.inScrollBox && (item as ICanBeFocused).CurrentlyFocusableNonMouse) { res.Add(item); } }
+                    foreach (UIfocusable item in list)
+                    { if (!item.inScrollBox && item.CurrentlyFocusableNonMouse) { res.Add(item); } }
                 }
                 else
                 {
-                    foreach (UIelement item in list)
-                    { if (item.inScrollBox && item.scrollBox == focusedElement.scrollBox && (item as ICanBeFocused).CurrentlyFocusableNonMouse) { res.Add(item); } }
+                    foreach (UIfocusable item in list)
+                    { if (item.inScrollBox && item.scrollBox == focusedElement.scrollBox && item.CurrentlyFocusableNonMouse) { res.Add(item); } }
                 }
             }
             return res;
         }
 
-        public static UIelement focusedElement { get; private set; }
-        private static UIelement lastFocusedElement;
+        public static UIfocusable focusedElement { get; private set; }
+        private static UIfocusable lastFocusedElement;
         internal static bool holdElement;
 
         /// <summary>
         /// Change <see cref="focusedElement"/>
         /// </summary>
-        /// <param name="element"><see cref="ICanBeFocused"/> for new focus</param>
-        internal void FocusNewElement(UIelement element)
+        /// <param name="element"><see cref="UIfocusable"/> for new focus</param>
+        internal void FocusNewElement(UIfocusable element)
         {
             if (element == null) { return; }
-            if (!(element is ICanBeFocused))
-            { ComOptPlugin.LogWarning($"{element.GetType()} is not ICanBeFocused. FocusNewElement ignored."); return; }
             if (element != focusedElement)
             {
                 lastFocusedElement = focusedElement;
                 focusedElement = element;
                 if (element.inScrollBox) { OpScrollBox.ScrollToChild(element); }
                 if (focusedElement.mute) { return; }
-                PlaySound((focusedElement as ICanBeFocused).GreyedOut
+                PlaySound(focusedElement.greyedOut
                     ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                 // Always play Gamepad sound even in Mouse mode, as this is called by either Gamepad or Modder
             }
@@ -445,25 +443,23 @@ namespace CompletelyOptional
         /// <param name="direction">+x is Rightside, +y is Upside</param>
         internal void FocusNewElementInDirection(IntVector2 direction)
         {
-            UIelement element = FocusCandidate(direction);
+            UIfocusable element = FocusCandidate(direction);
             FocusNewElement(element);
         }
 
-        private UIelement FocusCandidate(IntVector2 direction)
+        private UIfocusable FocusCandidate(IntVector2 direction)
         {
             if (focusedElement == null)
             { // current mod button
                 return menuTab.modList.GetCurrentModButton();
             }
-            if (!(focusedElement is ICanBeFocused)) { return lastFocusedElement; }
-            UIelement result = lastFocusedElement;
+            UIfocusable result = lastFocusedElement;
             Vector2 curCenter = focusedElement.CenterPos();
-            List<UIelement> candidates = GetFocusables();
+            List<UIfocusable> candidates = GetFocusables();
             float likelihood = float.MaxValue;
             for (int i = 0; i < candidates.Count; i++)
             {
-                if (candidates[i] is ICanBeFocused
-                    && (candidates[i] as ICanBeFocused) != focusedElement)
+                if (candidates[i] != focusedElement)
                 {
                     Vector2 cndCenter = candidates[i].CenterPos();
                     // if (direction.y == 0 || cndCenter.y < curCenter.y != direction.y < 0)
@@ -517,8 +513,7 @@ namespace CompletelyOptional
                 likelihood = float.MaxValue;
                 for (int i = 0; i < candidates.Count; i++)
                 {
-                    if (!(candidates[i].tab is ConfigMenuTab)
-                        && (candidates[i] as ICanBeFocused) != focusedElement)
+                    if (!(candidates[i].tab is ConfigMenuTab) && candidates[i] != focusedElement)
                     {
                         Vector2 cndCenter = candidates[i].CenterPos();
                         float cndLikelihood = fromLeft ? cndCenter.x : cndCenter.y; // Far Left or Far Bottom
@@ -534,8 +529,7 @@ namespace CompletelyOptional
             { // Postpone escaping
                 for (int i = 0; i < candidates.Count; i++)
                 {
-                    if (!(candidates[i].tab is ConfigMenuTab)
-                        && (candidates[i] as ICanBeFocused) != focusedElement)
+                    if (!(candidates[i].tab is ConfigMenuTab) && candidates[i] != focusedElement)
                     {
                         Vector2 cndCenter = candidates[i].CenterPos();
                         float cndLikelihood;
@@ -602,14 +596,14 @@ namespace CompletelyOptional
                 { // Mouse > NonMouse
                     if (focusedElement == null)
                     {
-                        UIelement result = lastFocusedElement;
+                        UIfocusable result = lastFocusedElement;
                         Vector2 curCenter = menu.mousePosition - this.pos;
-                        List<UIelement> candidates = GetFocusables();
+                        List<UIfocusable> candidates = GetFocusables();
                         float likelihood = float.MaxValue;
                         for (int i = 0; i < candidates.Count; i++)
                         {
                             if (candidates[i].inScrollBox) { continue; }
-                            Vector2 cndCenter = (candidates[i] as ICanBeFocused).FocusRect.center;
+                            Vector2 cndCenter = candidates[i].FocusRect.center;
                             float dist = Vector2.Distance(curCenter, cndCenter);
                             float cndLikelihood = 1f + dist;
                             if (cndLikelihood < likelihood)
@@ -623,12 +617,12 @@ namespace CompletelyOptional
                 }
                 if (holdElement)
                 {
-                    (focusedElement as ICanBeFocused).NonMouseSetHeld(false);
+                    focusedElement.NonMouseSetHeld(false);
                     holdElement = false;
                 }
             }
 
-            UIelement focusedElementBeforeUpdate = focusedElement;
+            UIfocusable focusedElementBeforeUpdate = focusedElement;
             allowFocusMove = true;
             bool lastHoldElement = holdElement;
 
@@ -643,7 +637,7 @@ namespace CompletelyOptional
                     {
                         try
                         {
-                            if (!(focusedElement as ICanBeFocused).GreyedOut) { focusedElement.Update(); }
+                            if (!focusedElement.greyedOut) { focusedElement.Update(); }
                             else { holdElement = false; }
                         }
                         catch (Exception ex) { InterfaceUpdateError(true, ex); return; }
@@ -673,17 +667,17 @@ namespace CompletelyOptional
             { // Mouse Mode
                 if (!holdElement)
                 {
-                    UIelement lastFocus = focusedElement;
+                    UIfocusable lastFocus = focusedElement;
                     focusedElement = null;
-                    List<UIelement> list = GetFocusables();
+                    List<UIfocusable> list = GetFocusables();
                     for (int j = 0; j < list.Count; j++)
                     {
-                        if ((list[j] as ICanBeFocused).CurrentlyFocusableMouse && list[j].MouseOver)
+                        if (list[j].CurrentlyFocusableMouse && list[j].MouseOver)
                         {
                             focusedElement = list[j];
                             if (focusedElement != lastFocus && !focusedElement.mute)
                             {
-                                PlaySound((focusedElement as ICanBeFocused).GreyedOut
+                                PlaySound(focusedElement.greyedOut
                                     ? SoundID.MENU_Greyed_Out_Button_Select_Mouse : SoundID.MENU_Button_Select_Mouse);
                             }
                             break;
@@ -739,7 +733,7 @@ namespace CompletelyOptional
                 {
                     if (menu.input.thrw && !menu.lastInput.thrw) // Move Focus Upward
                     {
-                        UIelement curFocusedElement = focusedElement;
+                        UIfocusable curFocusedElement = focusedElement;
                         if (focusedElement.inScrollBox) // Move to ScrollBox
                         {
                             focusedElement.scrollBox.lastFocusedElement = focusedElement;
@@ -763,14 +757,14 @@ namespace CompletelyOptional
                             lastFocusedElement = curFocusedElement;
                             if (!focusedElement.mute)
                             {
-                                PlaySound((focusedElement as ICanBeFocused).GreyedOut
+                                PlaySound(focusedElement.greyedOut
                                     ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                             }
                         }
                     }
-                    else if (menu.input.jmp && !menu.lastInput.jmp && !(focusedElement as ICanBeFocused).GreyedOut) // Hold Element
+                    else if (menu.input.jmp && !menu.lastInput.jmp && !focusedElement.greyedOut) // Hold Element
                     {
-                        (focusedElement as ICanBeFocused).NonMouseSetHeld(true);
+                        focusedElement.NonMouseSetHeld(true);
                         if (focusedElement.inScrollBox) { OpScrollBox.ScrollToChild(focusedElement); }
                     }
                     else // Switch Focus
@@ -828,7 +822,7 @@ namespace CompletelyOptional
             public readonly ConfigContainer cfg;
             private FSprite[] sprites; // BtmL, TopL, TopR, BtmR
 
-            public Rect? focusRect => (focusedElement as ICanBeFocused)?.FocusRect;
+            public Rect? focusRect => focusedElement?.FocusRect;
 
             public override void GrafUpdate(float timeStacker)
             {
@@ -874,7 +868,7 @@ namespace CompletelyOptional
                 Vector2 offset = scrollBox.camPos - (scrollBox.horizontal ? Vector2.right : Vector2.up) * scrollBox.scrollOffset - scrollBox.pos;
                 res.x -= offset.x; res.y -= offset.y;
                 // Clamp
-                Rect scrollRect = ((ICanBeFocused)scrollBox).FocusRect;
+                Rect scrollRect = scrollBox.FocusRect;
                 res.width = Mathf.Max(Mathf.Min(res.width, scrollRect.width, scrollRect.x + scrollRect.width - res.x, res.x + res.width - scrollRect.x), 0f);
                 res.height = Mathf.Max(Mathf.Min(res.height, scrollRect.height, scrollRect.y + scrollRect.height - res.y, res.y + res.height - scrollRect.y), 0f);
                 res.x = Mathf.Clamp(res.x, scrollRect.x, scrollRect.x + scrollRect.width);

@@ -52,8 +52,8 @@ namespace OptionalUI
             }
         }
 
-        public override bool CurrentlyFocusableMouse => false;
-        public override bool CurrentlyFocusableNonMouse => false;
+        protected internal override bool CurrentlyFocusableMouse => false;
+        protected internal override bool CurrentlyFocusableNonMouse => false;
 
         public override void Update()
         {
@@ -68,7 +68,7 @@ namespace OptionalUI
 
         /// <summary>
         /// Whether this RadioButtonGroup is greyedOut or not
-        /// Changing this overrides original <see cref="OpRadioButton.greyedOut"/>.
+        /// Changing this overrides original <see cref="OpRadioButton"/>'s <see cref="UIfocusable.greyedOut"/>.
         /// </summary>
         public new bool greyedOut
         {

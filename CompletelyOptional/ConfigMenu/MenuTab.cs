@@ -16,7 +16,7 @@ namespace CompletelyOptional
 
         protected internal FContainer myContainer => container;
 
-        protected internal override void Signal(UItrigger trigger, string signal)
+        protected internal override void Signal(UIfocusable trigger, string signal)
         {
         }
     }

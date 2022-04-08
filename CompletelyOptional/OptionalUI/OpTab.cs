@@ -18,7 +18,7 @@ namespace OptionalUI
             if (!(this is MenuTab)) { ConfigContainer.instance.Container.AddChild(this.container); }
             this.isInactive = true;
             this.items = new List<UIelement>();
-            this.focusables = new List<UIelement>();
+            this.focusables = new List<UIfocusable>();
             this.colorButton = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             this.colorCanvas = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
         }
@@ -53,7 +53,7 @@ namespace OptionalUI
         #region ItemManager
 
         public List<UIelement> items { get; internal set; }
-        public List<UIelement> focusables { get; internal set; }
+        public List<UIfocusable> focusables { get; internal set; }
 
         private void _AddItem(UIelement element)
         {
@@ -61,8 +61,8 @@ namespace OptionalUI
             if (element.tab != null && element.tab != this) { RemoveItemsFromTab(element); }
             this.items.Add(element);
             this.container.AddChild(element.myContainer);
-            if (element is ICanBeFocused)
-            { this.focusables.Add(element); }
+            if (element is UIfocusable)
+            { this.focusables.Add(element as UIfocusable); }
             element.SetTab(this);
         }
 
@@ -91,7 +91,7 @@ namespace OptionalUI
             while (this.items.Contains(item))
             { this.items.Remove(item); }
             this.container.RemoveChild(item.myContainer);
-            while (this.focusables.Contains(item)) { this.focusables.Remove(item); }
+            while (item is UIfocusable && this.focusables.Contains(item as UIfocusable)) { this.focusables.Remove(item as UIfocusable); }
             item.SetTab(null);
             if (ConfigContainer.focusedElement == item)
             { ConfigContainer.instance.FocusNewElementInDirection(new RWCustom.IntVector2(-1, 0)); }
@@ -130,20 +130,6 @@ namespace OptionalUI
         public static void RemoveItemsFromTab(params UIelement[] items)
         {
             foreach (UIelement item in items) { item.tab._RemoveItem(item); }
-        }
-
-        /// <summary>
-        /// Set <see cref="UIconfig.greyedOut"/> and <see cref="UItrigger.greyedOut"/> in bulk.
-        /// This will ignore if the item is neither of those
-        /// </summary>
-        /// <param name="greyedOut">New greyedOut value</param>
-        public static void SetGreyedOutItems(bool greyedOut, params UIelement[] items)
-        {
-            foreach (UIelement item in items)
-            {
-                if (item is UIconfig) { (item as UIconfig).greyedOut = greyedOut; }
-                else if (item is UItrigger) { (item as UItrigger).greyedOut = greyedOut; }
-            }
         }
 
         #endregion ItemManager
@@ -194,7 +180,7 @@ namespace OptionalUI
             this.container.RemoveFromContainer();
         }
 
-        protected internal virtual void Signal(UItrigger trigger, string signal)
+        protected internal virtual void Signal(UIfocusable trigger, string signal)
         {
             this.owner.Signal(trigger, signal);
         }

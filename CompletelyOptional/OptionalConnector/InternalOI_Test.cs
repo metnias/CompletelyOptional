@@ -184,7 +184,7 @@ namespace CompletelyOptional
         private OpHoldButton hold;
         // private float perc = 0f;
 
-        public override void Signal(UItrigger trigger, string signal)
+        public override void Signal(UIfocusable trigger, string signal)
         {
             base.Signal(trigger, signal);
             if (signal == "BREAK") { throw new System.Exception("TEST BREAK"); }

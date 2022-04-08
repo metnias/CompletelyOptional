@@ -32,7 +32,7 @@ namespace OptionalUI
             get
             {
                 if (_greyedOut.HasValue) { return _greyedOut.Value; }
-                if (owner is ICanBeFocused fc) { return fc.GreyedOut; }
+                if (owner is UIfocusable fc) { return fc.greyedOut; }
                 return false;
             }
             set { _greyedOut = value; }
@@ -43,8 +43,7 @@ namespace OptionalUI
             get
             {
                 if (_held.HasValue) { return _held.Value; }
-                if (owner is UIconfig c) { return c.held; }
-                if (owner is UItrigger t) { return t.held; }
+                if (owner is UIfocusable c) { return c.held; }
                 return false;
             }
             set { _held = value; }
@@ -58,7 +57,7 @@ namespace OptionalUI
             {
                 if (!_focused.HasValue)
                 {
-                    if (this.owner is ICanBeFocused) { return (this.owner as ICanBeFocused).Focused() || this.owner.MouseOver; }
+                    if (this.owner is UIfocusable) { return this.owner.MenuMouseMode ? this.owner.MouseOver : (this.owner as UIfocusable).Focused(); }
                     return this.owner.MouseOver;
                 }
                 return _focused.Value;
@@ -81,7 +80,7 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// This will be called automatically with <see cref="UIconfig.Update"/> or <see cref="UItrigger.Update"/>.
+        /// This will be called automatically with <see cref="UIfocusable.Update"/>.
         /// <para>If you added this manually in your custom UIelement, add this in your <see cref="UIelement.Update"/></para>
         /// </summary>
         public void Update()

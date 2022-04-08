@@ -9,7 +9,7 @@ namespace OptionalUI
     /// <para>Saving and loading will be handled automatically when this is added to the <see cref="OpTab"/>.</para>
     /// </summary>
     /// <remarks>Adding '_' before key (or leaving it empty) makes this <see cref="cosmetic"/>, preventing it to be saved.</remarks>
-    public abstract class UIconfig : UIelement, ICanBeFocused
+    public abstract class UIconfig : UIfocusable
     {
         // Codes for Modders who only uses provided elements
 
@@ -29,7 +29,6 @@ namespace OptionalUI
             if (!this.cosmetic) { this.defaultValue = GetStringValue(config.DefaultValue); }
             else { this.defaultValue = GetStringValue(cosmeticValue); }
             this._value = this.defaultValue;
-            this.bumpBehav = new BumpBehaviour(this);
         }
 
         internal string GetStringValue(object obj)
@@ -79,7 +78,6 @@ namespace OptionalUI
             if (!this.cosmetic) { this.defaultValue = GetStringValue(config.DefaultValue); }
             else { this.defaultValue = GetStringValue(cosmeticValue); }
             this._value = this.defaultValue;
-            this.bumpBehav = new BumpBehaviour(this);
         }
 
         /// <summary>
@@ -106,19 +104,9 @@ namespace OptionalUI
         public readonly bool cosmetic;
 
         /// <summary>
-        /// Mimics <see cref="Menu.ButtonBehavior"/> of vanilla Rain World UIs
-        /// </summary>
-        public BumpBehaviour bumpBehav { get; private set; }
-
-        /// <summary>
         /// Unique key for this <see cref="UIconfig"/>.
         /// </summary>
         public string key => cosmetic ? this.GetType().Name : cfgEntry.Definition.Key;
-
-        /// <summary>
-        /// If this is true, this <see cref="UIconfig"/> will be greyed out and can't be interacted.
-        /// </summary>
-        public bool greyedOut = false;
 
         /// <summary>
         /// If you want to change <see cref="value"/> directly without running <see cref="OnChange"/> and added to undo History.
@@ -159,68 +147,13 @@ namespace OptionalUI
         #region Deep
 
         /// <summary>
-        /// Whether this is held or not.
-        /// If this is true, other <see cref="UIelement"/> will be frozen.
-        /// </summary>
-        protected internal bool held
-        {
-            get { return _held; }
-            set
-            {
-                if (_held != value)
-                {
-                    _held = value;
-                    if (value) { menu.cfgContainer.FocusNewElement(this); }
-                    else if (!this.Focused()) { return; }
-                    ConfigContainer.holdElement = value;
-                }
-            }
-        }
-
-        public virtual void NonMouseSetHeld(bool newHeld)
-        {
-            held = newHeld;
-        }
-
-        /// <summary>
         /// Access to <see cref="UIconfig.value"/> without calling <see cref="OnChange"/>
         /// </summary>
         protected string _value;
 
-        #region ICanBeFocused
-
-        public virtual bool CurrentlyFocusableMouse => !this.greyedOut;
-
-        public virtual bool CurrentlyFocusableNonMouse => true;
-
-        public virtual bool GreyedOut => greyedOut;
-
-        public virtual Rect FocusRect
-        {
-            get
-            {
-                Rect res = isRectangular ? new Rect(this.ScreenPos.x, this.ScreenPos.y, this.size.x, this.size.y)
-                    : new Rect(this.ScreenPos.x, this.ScreenPos.y, this.rad * 2f, this.rad * 2f);
-                if (tab != null) { res.x += tab.container.x; res.y += tab.container.y; }
-                return res;
-            }
-        }
-
-        #endregion ICanBeFocused
-
         public override void OnChange()
         {
             base.OnChange();
-        }
-
-        /// <summary>
-        /// Update method that happens every frame.
-        /// </summary>
-        public override void Update()
-        {
-            base.Update();
-            this.bumpBehav.Update();
-            if (this.held && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(); }
         }
 
         protected internal virtual bool CopyFromClipboard(string value)
@@ -242,13 +175,5 @@ namespace OptionalUI
         }
 
         #endregion Deep
-
-        // Codes just for ConfigMachine
-
-        #region Internal
-
-        private bool _held = false;
-
-        #endregion Internal
     }
 }
