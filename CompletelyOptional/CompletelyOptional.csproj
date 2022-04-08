@@ -57,6 +57,7 @@
     <Compile Include="ComOptPlugin.cs" />
     <None Include="Old_15\ConfigMenu.cs" />
     <Compile Include="ConfigMenu\ConfigTabController.cs" />
+    <Compile Include="ConfigMenu\MenuTab.cs" />
     <Compile Include="ConfigMenu\OptionalText.cs" />
     <Compile Include="EnumExt_ComOpt.cs" />
     <Compile Include="OptionalUI\SubObjects\GlowGradient.cs" />
@@ -93,7 +94,7 @@
     <Compile Include="OptionalConnector\MachineConnector.cs" />
     <Compile Include="OptionalConnector\OptionInterface_DataAPI.cs" />
     <Compile Include="OptionalConnector\OptionInterface_Translator.cs" />
-    <Compile Include="OptionalConnector\UIelementWrapper.cs" />
+    <Compile Include="OptionalConnector\MenuTabWrapper.cs" />
     <Compile Include="UniClipboard.cs" />
     <None Include="Old_15\OpColorPicker_bak.cs" />
     <Compile Include="OptionalUI\OpSimpleButton.cs" />
@@ -109,7 +110,7 @@
     </None>
     <None Include="Old_15\SoundTest\MaxMusicPlayer.cs" />
     <None Include="Old_15\SoundTest\MaxSwarmer.cs" />
-    <Compile Include="ConfigMenu\MenuTab.cs" />
+    <Compile Include="ConfigMenu\ConfigMenuTab.cs" />
     <Compile Include="OptionalUI\SubObjects\DyeableRect.cs" />
     <Compile Include="OptionalUI\OpCheckBox.cs" />
     <Compile Include="OptionalUI\OpColorPicker.cs" />

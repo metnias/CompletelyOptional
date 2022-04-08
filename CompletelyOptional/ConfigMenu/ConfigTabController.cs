@@ -9,7 +9,7 @@ namespace CompletelyOptional
     /// </summary>
     internal class ConfigTabController : UIelement
     {
-        public ConfigTabController(MenuTab tab) : base(new Vector2(520f, 120f), new Vector2(40f, 600f))
+        public ConfigTabController(ConfigMenuTab tab) : base(new Vector2(520f, 120f), new Vector2(40f, 600f))
         {
             tab.AddItems(this);
             tabButtons = new TabSelectButton[tabButtonLimit];
@@ -31,7 +31,7 @@ namespace CompletelyOptional
 
         private readonly DyeableRect rectCanvas, rectPpty;
 
-        internal MenuTab menuTab => this.tab as MenuTab;
+        internal ConfigMenuTab menuTab => this.tab as ConfigMenuTab;
 
         internal TabSelectButton[] tabButtons;
         internal TabScrollButton[] scrollButtons;

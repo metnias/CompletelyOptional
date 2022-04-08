@@ -265,12 +265,12 @@ namespace CompletelyOptional
             base.Singal(sender, message);
             switch (message)
             {
-                case MenuTab.backSignal:
+                case ConfigMenuTab.backSignal:
                     PlaySound(SoundID.MENU_Switch_Page_Out);
                     this.manager.RequestMainProcessSwitch(ProcessManager.ProcessID.OptionsMenu);
                     break;
 
-                case MenuTab.saveSignal:
+                case ConfigMenuTab.saveSignal:
                     if (ConfigContainer.OptItfChanged[ConfigContainer.activeItfIndex]) { ConfigContainer.activeInterface.SaveConfig(); }
                     else if (ConfigContainer.OptItfChanged.Any(x => x))
                     {
@@ -278,7 +278,7 @@ namespace CompletelyOptional
                     PlaySound(SoundID.MENU_Continue_From_Sleep_Death_Screen);
                     break;
 
-                case MenuTab.resetSignal:
+                case ConfigMenuTab.resetSignal:
                     ConfigContainer.ResetCurrentConfig();
                     PlaySound(SoundID.MENU_Continue_Game);
                     break;

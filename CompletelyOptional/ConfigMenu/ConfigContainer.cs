@@ -30,7 +30,7 @@ namespace CompletelyOptional
             if (!cfgMenu.isReload) { LoadItfs(); }
             else { ReloadItfs(false); }
 
-            menuTab = new MenuTab();
+            menuTab = new ConfigMenuTab();
             lastFocusedElement = menuTab.backButton;
             focusedElement = menuTab.backButton;
 
@@ -53,7 +53,7 @@ namespace CompletelyOptional
         public static ConfigContainer instance;
 
         private ModConfigMenu cfgMenu => this.menu as ModConfigMenu;
-        internal static MenuTab menuTab;
+        internal static ConfigMenuTab menuTab;
         internal static OpTab activeTab;
 
         /// <summary>
@@ -491,10 +491,10 @@ namespace CompletelyOptional
                     }
                 }
             }
-            if (result.tab is MenuTab && (result == focusedElement || focusedElement.tab is MenuTab))
+            if (result.tab is ConfigMenuTab && (result == focusedElement || focusedElement.tab is ConfigMenuTab))
             { // Exception Matchmaking; jump into tab
                 bool fromLeft;
-                if (result is MenuTab.MenuButton || result is MenuTab.MenuHoldButton)
+                if (result == menuTab.backButton || result == menuTab.saveButton || result == menuTab.resetButton)
                 {
                     if (direction.x == 0)
                     {
@@ -517,7 +517,7 @@ namespace CompletelyOptional
                 likelihood = float.MaxValue;
                 for (int i = 0; i < candidates.Count; i++)
                 {
-                    if (!(candidates[i].tab is MenuTab)
+                    if (!(candidates[i].tab is ConfigMenuTab)
                         && (candidates[i] as ICanBeFocused) != focusedElement)
                     {
                         Vector2 cndCenter = candidates[i].CenterPos();
@@ -530,11 +530,11 @@ namespace CompletelyOptional
                     }
                 }
             }
-            else if (result.tab is MenuTab && !(focusedElement.tab is MenuTab))
+            else if (result.tab is ConfigMenuTab && !(focusedElement.tab is ConfigMenuTab))
             { // Postpone escaping
                 for (int i = 0; i < candidates.Count; i++)
                 {
-                    if (!(candidates[i].tab is MenuTab)
+                    if (!(candidates[i].tab is ConfigMenuTab)
                         && (candidates[i] as ICanBeFocused) != focusedElement)
                     {
                         Vector2 cndCenter = candidates[i].CenterPos();
@@ -639,7 +639,7 @@ namespace CompletelyOptional
                 if (focusedElement == null) { holdElement = false; }
                 else
                 {
-                    if (!(focusedElement.tab is MenuTab))
+                    if (!(focusedElement.tab is ConfigMenuTab))
                     {
                         try
                         {
@@ -745,7 +745,7 @@ namespace CompletelyOptional
                             focusedElement.scrollBox.lastFocusedElement = focusedElement;
                             focusedElement = focusedElement.scrollBox;
                         }
-                        else if (!(focusedElement.tab is MenuTab)) // Move to TabController
+                        else if (!(focusedElement.tab is ConfigMenuTab)) // Move to TabController
                         {
                             if (activeInterface.Tabs.Length > 1) { focusedElement = menuTab.tabCtrler.GetCurrentTabButton(); }
                             else { focusedElement = menuTab.modList.GetCurrentModButton(); }

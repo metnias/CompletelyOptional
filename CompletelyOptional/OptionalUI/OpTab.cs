@@ -166,7 +166,8 @@ namespace OptionalUI
         /// </summary>
         internal void Update()
         {
-            foreach (UIelement item in this.items.ToArray()) { if (!item.isInactive) { item.Update(); } }
+            foreach (UIelement item in this.items.ToArray())
+            { if (!item.isInactive) { item.Update(); } }
         }
 
         internal void Deactivate()
@@ -191,6 +192,11 @@ namespace OptionalUI
             { item.Unload(); }
             this.container.RemoveAllChildren();
             this.container.RemoveFromContainer();
+        }
+
+        protected internal virtual void Signal(UItrigger trigger, string signal)
+        {
+            this.owner.Signal(trigger, signal);
         }
 
         #endregion Internal

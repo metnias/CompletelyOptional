@@ -8,7 +8,7 @@ namespace CompletelyOptional
     internal class MenuModList : UIelement
     {
         // use Arena's LevelSelector way of doing
-        public MenuModList(MenuTab tab) : base(new Vector2(208f, 60f), new Vector2(250f, 650f))
+        public MenuModList(ConfigMenuTab tab) : base(new Vector2(208f, 60f), new Vector2(250f, 650f))
         {
             // position of 26th button, size of mod list
             // actual pos: 193 35; size: 280 700
@@ -54,7 +54,7 @@ namespace CompletelyOptional
             }
         }
 
-        private MenuTab menuTab => this.tab as MenuTab;
+        private ConfigMenuTab menuTab => this.tab as ConfigMenuTab;
         private ConfigContainer cfgContainer => menu.cfgContainer;
 
         private float abcSlide = -60f, lastAbcSlide = -60f; // -60f (hidden) ~ 40f (slided out)

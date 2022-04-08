@@ -57,6 +57,10 @@ namespace CompletelyOptional
 
             engText[(int)ID.ConfigTabController_TabSelectButton_UnnamedTab] = "Switch to Tab No <TabIndex>";
             engText[(int)ID.ConfigTabController_TabSelectButton_NamedTab] = "Switch to Tab <TabName>";
+
+            engText[(int)ID.ConfigMenuTab_Back] = "BACK";
+            engText[(int)ID.ConfigMenuTab_Apply] = "APPLY";
+            engText[(int)ID.ConfigMenuTab_Reset] = "RESET CONFIG";
         }
 
         public enum ID : int
@@ -102,7 +106,11 @@ namespace CompletelyOptional
             OpHoldButton_NonMouseTuto,
 
             ConfigTabController_TabSelectButton_UnnamedTab,
-            ConfigTabController_TabSelectButton_NamedTab
+            ConfigTabController_TabSelectButton_NamedTab,
+
+            ConfigMenuTab_Back,
+            ConfigMenuTab_Apply,
+            ConfigMenuTab_Reset
         }
 
         public static string[] engText;

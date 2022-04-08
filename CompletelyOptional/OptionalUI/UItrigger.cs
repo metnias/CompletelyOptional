@@ -100,7 +100,8 @@ namespace OptionalUI
         public virtual void Signal()
         {
             ConfigContainer.instance.allowFocusMove = false;
-            this.tab.owner.Signal(this, this.signal);
+            if (this.tab != null)
+            { this.tab.Signal(this, this.signal); }
         }
 
         public override void GrafUpdate(float timeStacker)
