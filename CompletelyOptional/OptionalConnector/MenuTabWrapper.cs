@@ -15,9 +15,30 @@ namespace CompletelyOptional
     {
         public MenuTabWrapper(Menu.Menu menu, MenuObject owner, Vector2 pos, Vector2 size) : base(menu, owner, pos, size)
         {
-            tab = new MenuTab();
+            tab = new WrappedMenuTab(this);
         }
 
-        public readonly MenuTab tab;
+        public readonly WrappedMenuTab tab;
+
+        public override void GrafUpdate(float timeStacker)
+        {
+            base.GrafUpdate(timeStacker);
+            tab.GrafUpdate(timeStacker);
+        }
+
+        public override void Update()
+        {
+            base.Update();
+            tab.Update();
+        }
+
+        /// <summary>
+        /// As <see cref="UItrigger"/> is not <see cref="MenuObject"/>, this <see cref="MenuTabWrapper"/> will be sent instead.
+        /// So use message to differenciate signals.
+        /// </summary>
+        public override void Singal(MenuObject sender, string message)
+        {
+            base.Singal(this, message);
+        }
     }
 }
