@@ -205,6 +205,29 @@ namespace CompletelyOptional
                 else { type = itf.Configurable() ? ItfType.Configurable : ItfType.Inconfigurable; }
                 greyedOut = type == ItfType.Blank;
 
+                switch (type)
+                {
+                    case ItfType.Configurable:
+                        if (itf.rwMod.author != RainWorldMod.authorNull)
+                        { description = OptionalText.GetText(OptionalText.ID.MenuModList_ModButton_Configure).Replace("<ModID>", itf.rwMod.ModID).Replace("<ModAuthor>", itf.rwMod.author); }
+                        else { description = OptionalText.GetText(OptionalText.ID.MenuModList_ModButton_ConfigureAnonymous).Replace("<ModID>", itf.rwMod.ModID); }
+                        break;
+
+                    case ItfType.Error:
+                    case ItfType.Inconfigurable:
+                        if (itf.rwMod.author != RainWorldMod.authorNull)
+                        { description = OptionalText.GetText(OptionalText.ID.MenuModList_ModButton_Display).Replace("<ModID>", itf.rwMod.ModID).Replace("<ModAuthor>", itf.rwMod.author); }
+                        else { description = OptionalText.GetText(OptionalText.ID.MenuModList_ModButton_DisplayAnonymous).Replace("<ModID>", itf.rwMod.ModID); }
+                        break;
+
+                    default:
+                    case ItfType.Blank:
+                        if (itf.rwMod.author != RainWorldMod.authorNull)
+                        { description = OptionalText.GetText(OptionalText.ID.MenuModList_ModButton_Blank).Replace("<ModID>", itf.rwMod.ModID).Replace("<ModAuthor>", itf.rwMod.author); }
+                        else { description = OptionalText.GetText(OptionalText.ID.MenuModList_ModButton_Blankest).Replace("<ModID>", itf.rwMod.ModID); }
+                        break;
+                }
+
                 this.text = itf.rwMod.ModID;
                 if (itf.rwMod.version != RainWorldMod.authorNull)
                 {
@@ -427,13 +450,16 @@ namespace CompletelyOptional
                 {
                     case Role.Stat:
                         this._pos = new Vector2(466f, 700f); // x462f : centered
-                        this.soundClick = SoundID.MENU_Switch_Arena_Gametype; this.greyedOut = true; break;
+                        this.soundClick = SoundID.MENU_Switch_Arena_Gametype; this.greyedOut = true;
+                        description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_Stat); break;
                     case Role.ScrollUp:
                         this._pos = new Vector2(321f, 720f);
-                        this.soundClick = SoundID.MENU_First_Scroll_Tick; this.canHold = true; break;
+                        this.soundClick = SoundID.MENU_First_Scroll_Tick; this.canHold = true;
+                        description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_ScrollUp); break;
                     case Role.ScrollDown:
                         this._pos = new Vector2(321f, 26f); this.sprite.rotation = 180f;
-                        this.soundClick = SoundID.MENU_First_Scroll_Tick; this.canHold = true; break;
+                        this.soundClick = SoundID.MENU_First_Scroll_Tick; this.canHold = true;
+                        description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_ScrollDw); break;
                 }
                 OnChange();
             }
@@ -520,6 +546,11 @@ namespace CompletelyOptional
                 OnChange();
             }
 
+            protected internal override string DisplayDescription()
+            {
+                return OptionalText.GetText(MenuMouseMode ? OptionalText.ID.MenuModList_AlphabetButton_MouseDesc : OptionalText.ID.MenuModList_AlphabetButton_NonMouseDesc).Replace("<Letter>", represent.ToString());
+            }
+
             private readonly MenuModList list;
 
             public readonly int index;
@@ -578,6 +609,8 @@ namespace CompletelyOptional
                 { anchorX = 0.5f, anchorY = 0.5f };
                 this.myContainer.AddChild(this.subtleCircle);
                 this.list.menuTab.AddItems(this);
+
+                description = OptionalText.GetText(OptionalText.ID.MenuModList_ListSlider_Desc);
             }
 
             private const float subSize = 10f;

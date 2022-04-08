@@ -21,7 +21,6 @@ namespace OptionalUI
         /// <exception cref="ElementFormatException">Thrown when list has no <see cref="ListItem"/>.</exception>
         public OpListBox(ConfigEntry<string> config, Vector2 pos, float width, List<ListItem> list, int lineCount = 5, bool downward = true, string cosmeticName = "") : base(config, pos, width, list, cosmeticName)
         {
-            this.description = InternalTranslator.Translate("Scroll the list, Double Click to search");
             this.listHeight = lineCount;
             this.downward = downward;
             if (!(this is OpResourceList)) { this.OpenList(); }
@@ -39,7 +38,6 @@ namespace OptionalUI
         /// <exception cref="ElementFormatException">Thrown when list has no <see cref="ListItem"/>.</exception>
         public OpListBox(ConfigEntry<string> config, Vector2 pos, float width, string[] array, int lineCount = 5, bool downward = true, string cosmeticName = "") : base(config, pos, width, array, cosmeticName)
         {
-            this.description = InternalTranslator.Translate("Scroll the list, Double Click to search");
             this.listHeight = lineCount;
             this.downward = downward;
             if (!(this is OpResourceList)) { this.OpenList(); }

@@ -27,8 +27,8 @@ namespace CompletelyOptional
             orig(menu, manager);
 
             InternalTranslator.GetCurrentLanguage();
-            string t = InternalTranslator.Translate("MOD CONFIG");
-            enterConfig = new SimpleButton(menu, menu.pages[0], t, "MOD CONFIG", new Vector2(340f, 50f), new Vector2(Mathf.Max(110f, t.Length * 9f + 15f), 30f));
+            string t = OptionalText.GetText(OptionalText.ID.OptionsMenu_ConfigButton_Label);
+            enterConfig = new SimpleButton(menu, menu.pages[0], t, "MOD CONFIG", new Vector2(340f, 50f), new Vector2(Mathf.Max(110f, OptionalUI.LabelTest.GetWidth(t) + 15f), 30f));
             menu.pages[0].subObjects.Add(enterConfig);
             menu.backButton.nextSelectable[2] = enterConfig;
             enterConfig.nextSelectable[1] = menu.soundSlider;
@@ -44,7 +44,7 @@ namespace CompletelyOptional
         {
             //Code
             if (menu.selectedObject == enterConfig)
-            { return InternalTranslator.Translate("Configure Settings for Rain World Mods"); }
+            { return OptionalText.GetText(OptionalText.ID.OptionsMenu_ConfigButton_Desc); }
             return orig(menu);
         }
 

@@ -58,9 +58,26 @@ namespace CompletelyOptional
             engText[(int)ID.ConfigTabController_TabSelectButton_UnnamedTab] = "Switch to Tab No <TabIndex>";
             engText[(int)ID.ConfigTabController_TabSelectButton_NamedTab] = "Switch to Tab <TabName>";
 
-            engText[(int)ID.ConfigMenuTab_Back] = "BACK";
-            engText[(int)ID.ConfigMenuTab_Apply] = "APPLY";
-            engText[(int)ID.ConfigMenuTab_Reset] = "RESET CONFIG";
+            engText[(int)ID.OptionsMenu_ConfigButton_Label] = "MOD CONFIG";
+            engText[(int)ID.OptionsMenu_ConfigButton_Desc] = "Configure Settings for Rain World Mods";
+            engText[(int)ID.ConfigMenuTab_BackButton_Label] = "BACK";
+            engText[(int)ID.ConfigMenuTab_BackButton_Desc] = "Return to Options Menu";
+            engText[(int)ID.ConfigMenuTab_SaveButton_Label] = "APPLY";
+            engText[(int)ID.ConfigMenuTab_SaveButton_Desc] = "Save current Mod's configurations";
+            engText[(int)ID.ConfigMenuTab_ResetButton_Label] = "RESET CONFIG";
+            engText[(int)ID.ConfigMenuTab_ResetButton_Desc] = "Reset current Mod's configurations";
+            engText[(int)ID.MenuModList_ModButton_Configure] = "Configure <ModID> by <ModAuthor>";
+            engText[(int)ID.MenuModList_ModButton_ConfigureAnonymous] = "Configure <ModID>";
+            engText[(int)ID.MenuModList_ModButton_Display] = "Display <ModID> by <ModAuthor>";
+            engText[(int)ID.MenuModList_ModButton_DisplayAnonymous] = "Display <ModID>";
+            engText[(int)ID.MenuModList_ModButton_Blank] = "<ModID> by <ModAuthor>";
+            engText[(int)ID.MenuModList_ModButton_Blankest] = "<ModID>";
+            engText[(int)ID.MenuModList_ListButton_Stat] = "Display Mods Statistics";
+            engText[(int)ID.MenuModList_ListButton_ScrollUp] = "Press or Hold Mouse Button to scroll the Mod List up";
+            engText[(int)ID.MenuModList_ListButton_ScrollDw] = "Press or Hold Mouse Button to scroll the Mod List down";
+            engText[(int)ID.MenuModList_AlphabetButton_MouseDesc] = "Click to jump to Mods start with the alphabet <Letter>";
+            engText[(int)ID.MenuModList_AlphabetButton_NonMouseDesc] = "Press JUMP to jump to Mods start with the alphabet <Letter>";
+            engText[(int)ID.MenuModList_ListSlider_Desc] = "Hold your Mouse Button on the circle and Drag up/down to scroll the Mod List";
         }
 
         public enum ID : int
@@ -108,9 +125,26 @@ namespace CompletelyOptional
             ConfigTabController_TabSelectButton_UnnamedTab,
             ConfigTabController_TabSelectButton_NamedTab,
 
-            ConfigMenuTab_Back,
-            ConfigMenuTab_Apply,
-            ConfigMenuTab_Reset
+            OptionsMenu_ConfigButton_Label,
+            OptionsMenu_ConfigButton_Desc,
+            ConfigMenuTab_BackButton_Label,
+            ConfigMenuTab_BackButton_Desc,
+            ConfigMenuTab_SaveButton_Label,
+            ConfigMenuTab_SaveButton_Desc,
+            ConfigMenuTab_ResetButton_Label,
+            ConfigMenuTab_ResetButton_Desc,
+            MenuModList_ModButton_Configure,
+            MenuModList_ModButton_ConfigureAnonymous,
+            MenuModList_ModButton_Display,
+            MenuModList_ModButton_DisplayAnonymous,
+            MenuModList_ModButton_Blank,
+            MenuModList_ModButton_Blankest,
+            MenuModList_ListButton_Stat,
+            MenuModList_ListButton_ScrollUp,
+            MenuModList_ListButton_ScrollDw,
+            MenuModList_AlphabetButton_MouseDesc,
+            MenuModList_AlphabetButton_NonMouseDesc,
+            MenuModList_ListSlider_Desc
         }
 
         public static string[] engText;

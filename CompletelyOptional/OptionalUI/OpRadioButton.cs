@@ -29,8 +29,6 @@ namespace OptionalUI
             this.bumpBehav = new BumpBehaviour(this);
 
             this.click = false;
-
-            this.description = InternalTranslator.Translate("Click to choose this option");
         }
 
         /// <summary>
