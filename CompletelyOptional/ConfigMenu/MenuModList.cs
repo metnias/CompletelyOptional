@@ -255,7 +255,7 @@ namespace CompletelyOptional
             public readonly ItfType type;
 
             private FSprite icon;
-            private GlowGradient glow;
+            private readonly GlowGradient glow;
 
             /// <summary>
             /// Star: Multiplayer_Star x 0.8
@@ -541,10 +541,13 @@ namespace CompletelyOptional
                 this.list.menuTab.AddItems(this);
                 this._pos = new Vector2(450f, 150f + (25 - index) * 20f); // x: 480f
                 this.soundClick = SoundID.MENU_First_Scroll_Tick;
+                glow = new GlowGradient(myContainer, -0.5f * size, 2f * size);
 
                 this.unused = ConfigContainer.OptItfABC[index] < 0;
                 OnChange();
             }
+
+            private readonly GlowGradient glow;
 
             protected internal override string DisplayDescription()
             {
@@ -576,11 +579,12 @@ namespace CompletelyOptional
             {
                 float mySlide = list.GetMyAbcSlide(index, timeStacker);
                 this._pos.x = 450f + mySlide;
-                if (slideOut) { this.rectH.Show(); }
-                else { this.rectH.Hide(); }
                 base.GrafUpdate(timeStacker);
+                this.rectH.Hide();
                 mySlide = Mathf.Clamp01(mySlide / 30f);
                 this.label.alpha = Mathf.Pow(mySlide, 2f);
+                glow.color = label.color;
+                glow.alpha = greyedOut || !slideOut ? 0.0f : rectH.sprites[0].alpha * label.alpha * 0.6f; // Use highlight
             }
 
             public override void Update()

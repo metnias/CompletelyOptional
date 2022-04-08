@@ -19,7 +19,6 @@ namespace OptionalUI
         public OpTextBox(ConfigEntryBase config, Vector2 pos, float sizeX, object cosmeticValue = null) : base(config, pos, new Vector2(30f, 24f), cosmeticValue)
         {
             this._size = new Vector2(Mathf.Max(IsUpdown ? 40f : 30f, sizeX), IsUpdown ? 30f : 24f);
-            this.description = InternalTranslator.Translate("Click and Type text");
 
             string valType = !cosmetic ? config.SettingType.Name.ToLower() : (cosmeticValue != null ? cosmeticValue.GetType().Name.ToLower() : "string");
             switch (valType)

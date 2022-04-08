@@ -26,7 +26,6 @@ namespace OptionalUI
             this.myContainer.AddChild(this.label);
 
             this.min = 0; this._min = 0; this.max = 99; this._max = 99;
-            this.description = InternalTranslator.Translate("Hold your mouse button and Drag up/down to adjust value");
 
             this.useCT = false;
         }

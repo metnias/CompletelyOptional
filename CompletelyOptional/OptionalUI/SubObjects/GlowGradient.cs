@@ -8,6 +8,14 @@ namespace OptionalUI
     /// </summary>
     public class GlowGradient
     {
+        /// <summary>
+        /// Gradient glow effect used in various way. In default this is black.
+        /// </summary>
+        /// <param name="container"><see cref="FContainer"/> this will be added. It will call <see cref="FContainer.AddChild"/> on its own</param>
+        /// <param name="centerPos">Center Position</param>
+        /// <param name="radH">Horizontal Radius</param>
+        /// <param name="radV">Vertical Radius</param>
+        /// <param name="alpha">alpha</param>
         public GlowGradient(FContainer container, Vector2 centerPos, float radH, float radV, float alpha = 0.5f)
         {
             this.container = container;
@@ -29,6 +37,13 @@ namespace OptionalUI
             this.container.AddChild(this.sprite);
         }
 
+        /// <summary>
+        /// Gradient glow effect used in various way. In default this is black.
+        /// </summary>
+        /// <param name="container"><see cref="FContainer"/> this will be added. It will call <see cref="FContainer.AddChild"/> on its own.</param>
+        /// <param name="pos">BottomLeft Position</param>
+        /// <param name="size">Size</param>
+        /// <param name="alpha">alpha</param>
         public GlowGradient(FContainer container, Vector2 pos, Vector2 size, float alpha = 0.5f) : this(container, pos + size / 2f, size.x / 2f, size.y / 2f, alpha)
         { }
 
