@@ -60,17 +60,17 @@
     <Compile Include="ConfigMenu\OptionalText.cs" />
     <Compile Include="EnumExt_ComOpt.cs" />
     <Compile Include="OptionalUI\SubObjects\GlowGradient.cs" />
-    <Compile Include="OptionInterface\ConfigConnector.cs" />
-    <Compile Include="OptionInterface\InternalOI_Blank.cs" />
-    <Compile Include="OptionInterface\InternalOI_Error.cs" />
-    <Compile Include="OptionInterface\InternalOI_NoMod.cs" />
-    <Compile Include="OptionInterface\InternalOI_Stats.cs" />
+    <Compile Include="OptionalConnector\ConfigConnector.cs" />
+    <Compile Include="OptionalConnector\InternalOI_Blank.cs" />
+    <Compile Include="OptionalConnector\InternalOI_Error.cs" />
+    <Compile Include="OptionalConnector\InternalOI_NoMod.cs" />
+    <Compile Include="OptionalConnector\InternalOI_Stats.cs" />
     <Compile Include="ConfigMenu\ConfigContainer.cs" />
     <Compile Include="ConfigMenu\MenuModList.cs" />
     <Compile Include="ConfigMenu\ModConfigMenu.cs" />
     <Compile Include="OptionalUI\SubObjects\EnumHelper.cs" />
-    <Compile Include="OptionInterface\GeneratedOI.cs" />
-    <Compile Include="OptionInterface\InternalOI_Test.cs" />
+    <Compile Include="OptionalConnector\GeneratedOI.cs" />
+    <Compile Include="OptionalConnector\InternalOI_Test.cs" />
     <Compile Include="ConfigMenu\InternalTranslator.cs" />
     <Compile Include="Crypto.cs" />
     <Compile Include="OptionalUI\OpContainer.cs" />
@@ -90,9 +90,10 @@
     <Compile Include="OptionalUI\SubObjects\FTexture.cs" />
     <Compile Include="OptionalUI\SubObjects\MenuColorEffect.cs" />
     <Compile Include="OptionalUI\SubObjects\Playlist.cs" />
-    <Compile Include="OptionInterface\MachineConnector.cs" />
-    <Compile Include="OptionInterface\OptionInterface_DataAPI.cs" />
-    <Compile Include="OptionInterface\OptionInterface_Translator.cs" />
+    <Compile Include="OptionalConnector\MachineConnector.cs" />
+    <Compile Include="OptionalConnector\OptionInterface_DataAPI.cs" />
+    <Compile Include="OptionalConnector\OptionInterface_Translator.cs" />
+    <Compile Include="OptionalConnector\UIelementWrapper.cs" />
     <Compile Include="UniClipboard.cs" />
     <None Include="Old_15\OpColorPicker_bak.cs" />
     <Compile Include="OptionalUI\OpSimpleButton.cs" />
@@ -100,9 +101,9 @@
     <None Include="OptionalUI\OpSpriteEditor.cs" />
     <Compile Include="OptionalUI\SubObjects\LoremIpsum.cs" />
     <Compile Include="OptionalUI\UItrigger.cs" />
-    <Compile Include="OptionInterface\OptionInterface.cs" />
+    <Compile Include="OptionalConnector\OptionInterface.cs" />
     <Compile Include="RainWorldMod.cs" />
-    <Compile Include="OptionInterface\InternalOI.cs" />
+    <Compile Include="OptionalConnector\InternalOI.cs" />
     <None Include="..\.editorconfig">
       <Link>.editorconfig</Link>
     </None>
