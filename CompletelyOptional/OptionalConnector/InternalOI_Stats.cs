@@ -50,10 +50,5 @@ namespace CompletelyOptional
             // turn off CM music
             // Reset starred mods
         }
-
-        public override void Signal(UItrigger trigger, string signal)
-        {
-            base.Signal(trigger, signal);
-        }
     }
 }

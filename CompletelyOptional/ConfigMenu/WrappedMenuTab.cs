@@ -3,7 +3,7 @@
 namespace CompletelyOptional
 {
     /// <summary>
-    /// <see cref="MenuTab"/> for MenuTabWrapper, which sends <see cref="UItrigger.Signal"/> to vanilla <see cref="UIelementWrapper.Singal"/>
+    /// <see cref="MenuTab"/> for MenuTabWrapper
     /// </summary>
     public class WrappedMenuTab : MenuTab
     {
@@ -14,10 +14,5 @@ namespace CompletelyOptional
         }
 
         public readonly MenuTabWrapper wrapper;
-
-        protected internal override void Signal(UItrigger trigger, string signal)
-        {
-            wrapper.Signal(trigger, signal);
-        }
     }
 }

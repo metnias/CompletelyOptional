@@ -22,7 +22,7 @@ namespace CompletelyOptional
             // author version license: 908 30, 245 86
             rectPpty = new DyeableRect(this.myContainer, new Vector2(908f, 30f) - this._pos, new Vector2(245f, 83f), true) { hiddenSide = DyeableRect.HiddenSide.Top };
 
-            OnChange();
+            Change();
         }
 
         // Todo: load saved tab no
@@ -49,14 +49,14 @@ namespace CompletelyOptional
                 }
                 PlaySound(SoundID.MENU_MultipleChoice_Clicked);
                 ConfigContainer.ChangeActiveTab(value);
-                OnChange();
+                Change();
             }
         }
 
         public override void Reset()
         {
             base.Reset();
-            OnChange();
+            Change();
             Update();
             GrafUpdate(0f);
         }
@@ -88,7 +88,7 @@ namespace CompletelyOptional
             base.Update();
             rectCanvas.Update(); rectPpty.Update();
 
-            if (TabCount != _tabCount) { OnChange(); }
+            if (TabCount != _tabCount) { Change(); }
 
             lastScrollBump = scrollBump;
             scrollBump = Custom.LerpAndTick(scrollBump, 0f, 0.1f, 0.1f / frameMulti);
@@ -115,9 +115,9 @@ namespace CompletelyOptional
 
         internal int topIndex;
 
-        public override void OnChange()
+        protected internal override void Change()
         { //Selected Tab/Tab number has changed
-            base.OnChange();
+            base.Change();
             if (_tabCount != TabCount)
             {
                 _tabCount = TabCount;
@@ -164,7 +164,7 @@ namespace CompletelyOptional
             }
         }
 
-        private void Signal(UItrigger trigger, int index = -1)
+        private void Signal(UIfocusable trigger, int index = -1)
         {
             if (trigger is TabSelectButton)
             {
@@ -208,7 +208,7 @@ namespace CompletelyOptional
 
         internal class TabSelectButton : OpSimpleButton
         {
-            internal TabSelectButton(int index, ConfigTabController ctrler) : base(Vector2.one, Vector2.one, "", "")
+            internal TabSelectButton(int index, ConfigTabController ctrler) : base(Vector2.one, Vector2.one, "")
             {
                 this.buttonIndex = index;
                 this.ctrl = ctrler;
@@ -222,6 +222,7 @@ namespace CompletelyOptional
                 this.myContainer.AddChild(this.label);
 
                 this.ctrl.menuTab.AddItems(this);
+                OnClick += new OnSignalHandler(Signal);
             }
 
             internal float darken;
@@ -270,7 +271,7 @@ namespace CompletelyOptional
                     { curName = LabelTest.TrimText(curName, height - 16f, true); }
                     this.label.text = curName;
                 }
-                this.OnChange();
+                this.Change();
                 this.label.alignment = FLabelAlignment.Left;
                 this.GrafUpdate(0f);
             }
@@ -368,16 +369,15 @@ namespace CompletelyOptional
                 }
             }
 
-            public override void Signal()
+            private void Signal(UIfocusable self)
             {
-                ConfigContainer.instance.allowFocusMove = false;
                 ctrl.Signal(this, this.tabIndex);
             }
         }
 
         internal class TabScrollButton : OpSimpleImageButton
         {
-            public TabScrollButton(bool up, ConfigTabController ctrl) : base(Vector2.one, Vector2.one, "", "Big_Menu_Arrow")
+            public TabScrollButton(bool up, ConfigTabController ctrl) : base(Vector2.one, Vector2.one, "Big_Menu_Arrow")
             {
                 this._size = new Vector2(30f, 20f);
                 this.up = up;
@@ -389,21 +389,23 @@ namespace CompletelyOptional
                 this.sprite.scale = 0.5f;
                 this.sprite.x = 15f;
                 this.mute = true;
-                this.canHold = true;
                 this.rect.Hide(); this.rectH.Hide();
                 this.ctrl.menuTab.AddItems(this);
+
+                OnPressInit += new OnSignalHandler(SignalPressInit);
+                OnPressHold += new OnSignalHandler(SignalPressHold);
             }
 
             internal readonly bool up;
             private readonly ConfigTabController ctrl;
 
-            public override void OnChange()
+            protected internal override void Change()
             {
-                base.OnChange();
+                base.Change();
                 this._size = new Vector2(30f, 20f);
             }
 
-            public override bool CurrentlyFocusableNonMouse => false;
+            protected internal override bool CurrentlyFocusableNonMouse => false;
 
             public override void GrafUpdate(float timeStacker)
             {
@@ -421,10 +423,14 @@ namespace CompletelyOptional
                 base.Update();
             }
 
-            public override void Signal()
+            private void SignalPressInit(UIfocusable self)
             {
-                ConfigContainer.instance.allowFocusMove = false;
-                ctrl.Signal(this, (up ? -1 : 1) * (heldCounter > ModConfigMenu.DASinit ? 2 : 1));
+                ctrl.Signal(this, (up ? -1 : 1));
+            }
+
+            private void SignalPressHold(UIfocusable self)
+            {
+                ctrl.Signal(this, (up ? -2 : 2));
             }
         }
     }

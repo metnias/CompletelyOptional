@@ -93,11 +93,6 @@ namespace CompletelyOptional
         // PickUp: Focus/Select, Throw: Unfocus/Leave, Select: Control View
         // Display Unsaved change in button colour
 
-        public override void OnChange()
-        {
-            base.OnChange();
-        }
-
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);
@@ -238,7 +233,8 @@ namespace CompletelyOptional
                 }
 
                 this.list.menuTab.AddItems(this);
-                OnChange();
+                Change();
+                OnClick += new OnSignalHandler(Signal);
             }
 
             private float MyPos => list.pos.y + 650f - (index - list.floatScrollPos) * height;
@@ -300,10 +296,10 @@ namespace CompletelyOptional
                 Configurable
             }
 
-            public override void OnChange()
+            protected internal override void Change()
             {
                 UpdateColor();
-                base.OnChange();
+                base.Change();
                 this.label.alignment = FLabelAlignment.Left;
                 this.label.x = 10f;
                 if (this.labelVer != null) { this.labelVer.x = this.size.x; }
@@ -427,20 +423,20 @@ namespace CompletelyOptional
             private static Color cError = new Color(0.8f, 0.1f, 0.2f);
             private static Color cChange = new Color(0.8f, 0.8f, 0.2f);
 
-            public override void Signal()
+            public void Signal(UIfocusable self)
             {
                 list.Signal(this, index);
             }
 
-            public override bool CurrentlyFocusableMouse => this.fade < 0.5f;
-            public override bool CurrentlyFocusableNonMouse => this.fade < 0.5f;
+            protected internal override bool CurrentlyFocusableMouse => this.fade < 0.5f;
+            protected internal override bool CurrentlyFocusableNonMouse => this.fade < 0.5f;
 
             protected internal override bool MouseOver => base.MouseOver;
         }
 
         internal class ListButton : OpSimpleImageButton, IAmPartOfModList
         {
-            public ListButton(MenuModList list, Role role) : base(Vector2.zero, new Vector2(24f, 24f), "", RoleSprite(role))
+            public ListButton(MenuModList list, Role role) : base(Vector2.zero, new Vector2(24f, 24f), RoleSprite(role))
             {
                 this.role = role;
                 this.list = list;
@@ -451,17 +447,20 @@ namespace CompletelyOptional
                     case Role.Stat:
                         this._pos = new Vector2(466f, 700f); // x462f : centered
                         this.soundClick = SoundID.MENU_Switch_Arena_Gametype; this.greyedOut = true;
+                        OnClick += new OnSignalHandler(Signal);
                         description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_Stat); break;
                     case Role.ScrollUp:
                         this._pos = new Vector2(321f, 720f);
-                        this.soundClick = SoundID.MENU_First_Scroll_Tick; this.canHold = true;
+                        this.soundClick = SoundID.MENU_First_Scroll_Tick;
+                        OnPressInit += new OnSignalHandler(Signal); OnPressHold += new OnSignalHandler(Signal);
                         description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_ScrollUp); break;
                     case Role.ScrollDown:
                         this._pos = new Vector2(321f, 26f); this.sprite.rotation = 180f;
-                        this.soundClick = SoundID.MENU_First_Scroll_Tick; this.canHold = true;
+                        this.soundClick = SoundID.MENU_First_Scroll_Tick;
+                        OnPressInit += new OnSignalHandler(Signal); OnPressHold += new OnSignalHandler(Signal);
                         description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_ScrollDw); break;
                 }
-                OnChange();
+                Change();
             }
 
             public enum Role : int
@@ -489,12 +488,7 @@ namespace CompletelyOptional
                 return "pixel";
             }
 
-            public override void OnChange()
-            {
-                base.OnChange();
-            }
-
-            public override bool CurrentlyFocusableNonMouse
+            protected internal override bool CurrentlyFocusableNonMouse
             {
                 get
                 {
@@ -523,16 +517,15 @@ namespace CompletelyOptional
                 }
             }
 
-            public override void Signal()
+            public void Signal(UIfocusable self)
             {
-                ConfigContainer.instance.allowFocusMove = false;
                 list.Signal(this, (int)role);
             }
         }
 
         internal class AlphabetButton : OpSimpleButton, IAmPartOfModList
         {
-            public AlphabetButton(MenuModList list, int index) : base(Vector2.zero, new Vector2(24f, 24f), "", "")
+            public AlphabetButton(MenuModList list, int index) : base(Vector2.zero, new Vector2(24f, 24f), "")
             {
                 this.list = list;
                 this.index = index;
@@ -544,7 +537,8 @@ namespace CompletelyOptional
                 glow = new GlowGradient(myContainer, -0.5f * size, 2f * size);
 
                 this.unused = ConfigContainer.OptItfABC[index] < 0;
-                OnChange();
+                Change();
+                OnClick += new OnSignalHandler(Signal);
             }
 
             private readonly GlowGradient glow;
@@ -559,16 +553,16 @@ namespace CompletelyOptional
             public readonly int index;
             public readonly char represent;
 
-            public override bool CurrentlyFocusableMouse => !greyedOut && slideOut;
+            protected internal override bool CurrentlyFocusableMouse => !greyedOut && slideOut;
 
-            public override bool CurrentlyFocusableNonMouse => !greyedOut && slideOut;
+            protected internal override bool CurrentlyFocusableNonMouse => !greyedOut && slideOut;
 
             private bool slideOut => list.GetMyAbcSlide(index, 0f) >= 30f;
             private readonly bool unused;
 
-            public override void OnChange()
+            protected internal override void Change()
             {
-                base.OnChange();
+                base.Change();
                 this._size = new Vector2(18f, 18f);
                 this.rectH.pos = new Vector2(-3f, -3f);
                 FLabelPlaceAtCenter(this.label, -3f, -3f, 24f, 24f);
@@ -594,9 +588,8 @@ namespace CompletelyOptional
                 base.Update();
             }
 
-            public override void Signal()
+            public void Signal(UIfocusable self)
             {
-                ConfigContainer.instance.allowFocusMove = false;
                 list.Signal(this, (int)index);
             }
         }
@@ -622,8 +615,8 @@ namespace CompletelyOptional
             private readonly MenuModList list;
             private readonly FSprite subtleCircle;
 
-            public override bool CurrentlyFocusableMouse => base.CurrentlyFocusableMouse;
-            public override bool CurrentlyFocusableNonMouse => false;
+            protected internal override bool CurrentlyFocusableMouse => base.CurrentlyFocusableMouse;
+            protected internal override bool CurrentlyFocusableNonMouse => false;
 
             protected internal override bool MouseOver => Custom.DistLess(new Vector2(15f, this.subtleCircle.y), this.MousePos, subSize / 2f);
 
@@ -657,11 +650,6 @@ namespace CompletelyOptional
             }
 
             public float floatPos;
-
-            public override void OnChange()
-            {
-                base.OnChange();
-            }
         }
 
         internal interface IAmPartOfModList

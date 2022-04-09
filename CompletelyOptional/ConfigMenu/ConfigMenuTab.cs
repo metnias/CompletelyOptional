@@ -13,13 +13,16 @@ namespace CompletelyOptional
             // 171 offset from left
             ConfigContainer.instance.Container.AddChild(this.container);
             this.container.MoveToBack();
-            backButton = new OpSimpleButton(new Vector2(490f, 50f), new Vector2(120f, 30f), backSignal, OptionalText.GetText(OptionalText.ID.ConfigMenuTab_BackButton_Label))
-            { description = OptionalText.GetText(OptionalText.ID.ConfigMenuTab_BackButton_Desc) };
-            saveButton = new OpSimpleButton(new Vector2(630f, 50f), new Vector2(120f, 30f), saveSignal, OptionalText.GetText(OptionalText.ID.ConfigMenuTab_SaveButton_Label))
+            backButton = new OpSimpleButton(new Vector2(490f, 50f), new Vector2(120f, 30f), OptionalText.GetText(OptionalText.ID.ConfigMenuTab_BackButton_Label))
+            { description = OptionalText.GetText(OptionalText.ID.ConfigMenuTab_BackButton_Desc), soundClick = SoundID.None };
+            saveButton = new OpSimpleButton(new Vector2(630f, 50f), new Vector2(120f, 30f), OptionalText.GetText(OptionalText.ID.ConfigMenuTab_SaveButton_Label))
             { description = OptionalText.GetText(OptionalText.ID.ConfigMenuTab_SaveButton_Desc) };
-            resetButton = new OpHoldButton(new Vector2(770f, 50f), new Vector2(120f, 30f), resetSignal, OptionalText.GetText(OptionalText.ID.ConfigMenuTab_ResetButton_Label))
+            resetButton = new OpHoldButton(new Vector2(770f, 50f), new Vector2(120f, 30f), OptionalText.GetText(OptionalText.ID.ConfigMenuTab_ResetButton_Label))
             { description = OptionalText.GetText(OptionalText.ID.ConfigMenuTab_ResetButton_Desc) };
             this.AddItems(backButton, saveButton, resetButton);
+            backButton.OnClick += new OnSignalHandler(SignalBack);
+            saveButton.OnClick += new OnSignalHandler(SignalSave);
+            resetButton.OnPressDone += new OnSignalHandler(SignalReset);
             modList = new MenuModList(this);
             tabCtrler = new ConfigTabController(this);
         }
@@ -34,16 +37,10 @@ namespace CompletelyOptional
 
         internal const string backSignal = "CANCEL", saveSignal = "APPLY", resetSignal = "RESET";
 
-        protected internal override void Signal(UItrigger trigger, string signal)
-        {
-            switch (signal)
-            {
-                case backSignal:
-                case saveSignal:
-                case resetSignal:
-                    ModConfigMenu.instance.Singal(null, signal);
-                    break;
-            }
-        }
+        private void SignalBack(UIfocusable trigger) => ModConfigMenu.instance.Singal(null, backSignal);
+
+        private void SignalSave(UIfocusable trigger) => ModConfigMenu.instance.Singal(null, saveSignal);
+
+        private void SignalReset(UIfocusable trigger) => ModConfigMenu.instance.Singal(null, resetSignal);
     }
 }

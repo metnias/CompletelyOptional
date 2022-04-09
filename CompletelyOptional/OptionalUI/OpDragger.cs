@@ -136,7 +136,7 @@ namespace OptionalUI
             base.Update();
             if (greyedOut) { return; }
             this.rect.Update();
-            if (_min != min || _max != max) { OnChange(); }
+            if (_min != min || _max != max) { Change(); }
 
             if (MenuMouseMode)
             {
@@ -219,10 +219,9 @@ namespace OptionalUI
 
         private int scrollInitDelay = 0, scrollDelay = 0, lastVal;
 
-        public override void OnChange()
+        protected internal override void Change()
         {
-            this._size = new Vector2(24f, 24f);
-            base.OnChange();
+            base.Change();
             if (MouseOver || held)
             {
                 PlaySound(SoundID.MENU_Scroll_Tick);

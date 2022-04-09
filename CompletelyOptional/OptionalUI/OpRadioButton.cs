@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpRadioButton : UIelement, ICanBeFocused, IValueBool
+    public class OpRadioButton : UIfocusable, IValueBool
     {
         /// <summary>
         /// This returns value in "true" of "false", although this is NOT a <see cref="UIconfig"/> thus this value won't be saved.
@@ -26,7 +26,6 @@ namespace OptionalUI
             //this.group = group;
             this.index = -1;
             this.greyedOut = false;
-            this.bumpBehav = new BumpBehaviour(this);
 
             this.click = false;
         }
@@ -52,11 +51,6 @@ namespace OptionalUI
         private readonly DyeableRect rect;
 
         /// <summary>
-        /// Whether this button is greyedOut or not
-        /// </summary>
-        public bool greyedOut;
-
-        /// <summary>
         /// Symbol and Edge Colour of DyeableRect. Default is MediumGrey.
         /// </summary>
         public Color colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
@@ -66,33 +60,12 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
-        bool ICanBeFocused.GreyedOut => greyedOut;
-
-        bool ICanBeFocused.CurrentlyFocusableMouse { get { return !this.greyedOut && !this.isInactive; } }
-
-        bool ICanBeFocused.CurrentlyFocusableNonMouse { get { return !this.greyedOut && !this.isInactive; } }
-
-        Rect ICanBeFocused.FocusRect
-        {
-            get
-            {
-                Rect res = new Rect(this.ScreenPos.x, this.ScreenPos.y, this.size.x, this.size.y);
-                if (tab != null) { res.x += tab.container.x; res.y += tab.container.y; }
-                return res;
-            }
-        }
-
-        void ICanBeFocused.NonMouseSetHeld(bool newHeld)
+        protected internal override void NonMouseSetHeld(bool newHeld)
         {
             if (newHeld) { menu.cfgContainer.FocusNewElement(this); }
             ConfigContainer.holdElement = newHeld;
             this.click = newHeld;
         }
-
-        /// <summary>
-        /// Mimics <see cref="Menu.ButtonBehavior"/> of vanilla Rain World UIs
-        /// </summary>
-        public BumpBehaviour bumpBehav { get; private set; }
 
         public override void GrafUpdate(float timeStacker)
         {
@@ -191,6 +164,12 @@ namespace OptionalUI
         private float symbolHalfVisible;
 
         /// <summary>
+        /// An event similar to <see cref="UIconfig.OnValueChange"/>.
+        /// <para>This is called whenever this button's <see cref="value"/> has changed, just before its <see cref="OpRadioButtonGroup"/>'s value is changed.</para>
+        /// </summary>
+        public event OnSignalHandler OnValueChange;
+
+        /// <summary>
         /// OpRadioButtonGroup this button is belong to.
         /// This will be automatically set when you SetButtons for Group.
         /// </summary>
@@ -204,8 +183,9 @@ namespace OptionalUI
         public string _value;
 
         /// <summary>
-        /// OpRadioButton is not UIconfig, so this value will not be saved.
-        /// (OpRadioButtonGroup is the one gets saved instead)
+        /// <see cref="OpRadioButton"/> is not <see cref="UIconfig"/>, so this value will not be saved.
+        /// <para><see cref="OpRadioButtonGroup"/> is the real <see cref="UIconfig"/> which gets saved instead.</para>
+        /// Changing this also calls own <see cref="OnValueChange"/>.
         /// </summary>
         public virtual string value
         {
@@ -218,8 +198,9 @@ namespace OptionalUI
                 if (this._value != value)
                 {
                     this._value = value;
+                    OnValueChange?.Invoke(this);
                     group.Switch(index);
-                    OnChange();
+                    Change();
                 }
             }
         }

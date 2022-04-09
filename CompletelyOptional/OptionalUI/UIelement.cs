@@ -108,13 +108,13 @@ namespace OptionalUI
                 if (_pos != value + scrollBox.childOffset)
                 {
                     _pos = value + scrollBox.childOffset + OpTab._offset;
-                    OnChange();
+                    Change();
                 }
             }
             else if (_pos != value)
             {
                 _pos = value;
-                OnChange();
+                Change();
             }
         }
 
@@ -129,7 +129,7 @@ namespace OptionalUI
         public float y { get => GetPos().y; set => SetPos(new Vector2(GetPos().x, value)); }
 
         /// <summary>
-        /// Size of this element. Changing this will call <see cref="OnChange"/> automatically.
+        /// Size of this element. Changing this will call <see cref="Change"/> automatically.
         /// </summary>
         /// <exception cref="InvalidGetPropertyException">Thrown when <see cref="isRectangular"/> is false</exception>
         public Vector2 size
@@ -152,12 +152,12 @@ namespace OptionalUI
                 {
                     _size = new Vector2(Mathf.Max(value.x, 0f), Mathf.Max(value.y, 0f));
                 }
-                OnChange();
+                Change();
             }
         }
 
         /// <summary>
-        /// Radius of the element. Changing this will call <see cref="OnChange"/> automatically.
+        /// Radius of the element. Changing this will call <see cref="Change"/> automatically.
         /// </summary>
         /// <exception cref="InvalidGetPropertyException">Thrown when <see cref="isRectangular"/> is true</exception>
         public float rad
@@ -170,11 +170,11 @@ namespace OptionalUI
             set
             {
                 if (isRectangular) { throw new InvalidActionException(this, "This Rectangular item tried to set rad which is Invalid!"); }
-                if (fixedRad != null) { _rad = fixedRad.Value; OnChange(); }
+                if (fixedRad != null) { _rad = fixedRad.Value; Change(); }
                 else if (_rad != value)
                 {
                     _rad = Mathf.Max(value, 0f);
-                    OnChange();
+                    Change();
                 }
             }
         }
@@ -230,12 +230,18 @@ namespace OptionalUI
         #region Deep
 
         /// <summary>
-        /// Called whenever this UIelement needs graphical change.
-        /// RePosition and ReSize subObjects.
+        /// Called whenever this UIelement needs a major graphical change.
+        /// Resize sprites.
         /// </summary>
-        public virtual void OnChange()
+        protected internal virtual void Change()
         {
+            OnChange?.Invoke();
         }
+
+        /// <summary>
+        /// An event which is called whever <see cref="Change"/> is called
+        /// </summary>
+        public event OnChangeHandler OnChange;
 
         /// <summary>
         /// Update method that happens every frame.
@@ -279,7 +285,7 @@ namespace OptionalUI
             get
             { return _pos; }
             set
-            { if (_pos != value) { _pos = value; OnChange(); } }
+            { if (_pos != value) { _pos = value; Change(); } }
         }
 
         /// <summary>
@@ -457,7 +463,7 @@ namespace OptionalUI
             this.inScrollBox = true;
             this.scrollBox = scrollBox;
             this._pos += this.scrollBox.childOffset;
-            this.OnChange();
+            this.Change();
             return true;
         }
 
@@ -468,12 +474,12 @@ namespace OptionalUI
             {
                 this.scrollBox.lastFocusedElement = null;
                 foreach (UIelement item in this.scrollBox.children)
-                { if (item != this && item is ICanBeFocused) { this.scrollBox.lastFocusedElement = item; break; } }
+                { if (item != this && item is UIfocusable) { this.scrollBox.lastFocusedElement = item as UIfocusable; break; } }
             }
             this._pos -= this.scrollBox.childOffset;
             this.inScrollBox = false;
             this.scrollBox = null;
-            this.OnChange();
+            this.Change();
         }
 
         /// <summary>

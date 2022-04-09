@@ -4,17 +4,16 @@ using UnityEngine;
 
 namespace OptionalUI
 {
-    public class OpSimpleImageButton : OpSimpleButton, ICanBeFocused
+    public class OpSimpleImageButton : OpSimpleButton
     {
         /// <summary>
         /// SimpleButton that uses <see cref="FAtlasElement"/> instead of text
         /// </summary>
         /// <param name="pos">BottomLeft Position</param>
         /// <param name="size">Minimum size is 24x24</param>
-        /// <param name="signal">Keyword that gets sent to Signal</param>
         /// <param name="fAtlasElement">the name of FAtlasElement</param>
         /// <exception cref="ElementFormatException">Thrown when <paramref name="fAtlasElement"/> is Invalid</exception>
-        public OpSimpleImageButton(Vector2 pos, Vector2 size, string signal, string fAtlasElement) : base(pos, size, signal, "")
+        public OpSimpleImageButton(Vector2 pos, Vector2 size, string fAtlasElement) : base(pos, size, "")
         {
             FAtlasElement element;
             try
@@ -36,14 +35,13 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">BottomLeft Position</param>
         /// <param name="size">Minimum size is 24x24</param>
-        /// <param name="signal">Keyword that gets sent to Signal</param>
         /// <param name="image"><see cref="Texture2D"/> to display</param>
         /// <exception cref="ElementFormatException">Thrown when <paramref name="image"/> is null</exception>
-        public OpSimpleImageButton(Vector2 pos, Vector2 size, string signal, Texture2D image) : base(pos, size, signal, "")
+        public OpSimpleImageButton(Vector2 pos, Vector2 size, Texture2D image) : base(pos, size, "")
         {
             if (image == null) { throw new ElementFormatException(this, "There is no Texture2D for OpSimpleImageButton"); }
 
-            this.sprite = new FTexture(image, "sib" + signal);
+            this.sprite = new FTexture(image, "sib" + image.GetHashCode());
             this.sprite.SetAnchor(0.5f, 0.5f);
             this.myContainer.AddChild(this.sprite);
             this.sprite.SetPosition(this.size.x / 2f, this.size.y / 2f);
@@ -59,9 +57,9 @@ namespace OptionalUI
 
         private readonly bool isTexture;
 
-        public override void OnChange()
+        protected internal override void Change()
         {
-            base.OnChange();
+            base.Change();
             this.sprite.SetPosition(this.size.x / 2f, this.size.y / 2f);
         }
 
@@ -78,7 +76,7 @@ namespace OptionalUI
         /// <exception cref="InvalidActionException">Thrown when you called this with <see cref="FAtlasElement"/> version of the button</exception>
         public void ChangeImage(Texture2D newImage)
         {
-            if (!isTexture) { throw new InvalidActionException(this, "You must construct this with Texture2D to use this function", signal); }
+            if (!isTexture) { throw new InvalidActionException(this, "You must construct this with Texture2D to use this function"); }
             if (newImage == null) { ComOptPlugin.LogError("CompletelyOptional: newImage is null in OpSimpleImageButton.ChangeImage!"); return; }
 
             this._size = new Vector2(newImage.width, newImage.height);

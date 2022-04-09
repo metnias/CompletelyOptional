@@ -15,9 +15,5 @@ namespace CompletelyOptional
         }
 
         protected internal FContainer myContainer => container;
-
-        protected internal override void Signal(UItrigger trigger, string signal)
-        {
-        }
     }
 }

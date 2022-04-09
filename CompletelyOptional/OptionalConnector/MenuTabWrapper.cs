@@ -46,10 +46,10 @@ namespace CompletelyOptional
         internal Dictionary<UIelement, UIelementWrapper> wrappers;
 
         /// <summary>
-        /// As <see cref="UItrigger"/> is not <see cref="MenuObject"/>, this <see cref="MenuTabWrapper"/> will be sent instead.
+        /// As <see cref="UIfocusable"/> is not <see cref="MenuObject"/>, this <see cref="MenuTabWrapper"/> will be sent instead.
         /// So use message to differenciate signals.
         /// </summary>
-        internal void Signal(UItrigger trigger, string signal)
+        internal void Signal(UIfocusable trigger, string signal)
         {
             wrappers[trigger].Singal(null, signal);
         }

@@ -427,9 +427,9 @@ namespace OptionalUI
         private int lastVal;
         private float scrollInitDelay, scrollDelay;
 
-        public override void OnChange()
+        protected internal override void Change()
         {
-            base.OnChange();
+            base.Change();
 
             if (MouseOver || held)
             {

@@ -619,7 +619,7 @@ namespace OptionalUI
             }
         }
 
-        public override void NonMouseSetHeld(bool newHeld)
+        protected internal override void NonMouseSetHeld(bool newHeld)
         {
             base.NonMouseSetHeld(newHeld);
             if (newHeld)
@@ -633,9 +633,9 @@ namespace OptionalUI
             }
         }
 
-        public override void OnChange()
+        protected internal override void Change()
         {
-            base.OnChange();
+            base.Change();
             this._size.x = Mathf.Max(30f, this._size.x);
 
             this.rect.size = this.size;
@@ -663,12 +663,23 @@ namespace OptionalUI
 
         protected GlowGradient glowFocus;
 
+        /// <summary>
+        /// Called when <see cref="OpenList"/> is called. This won't be called when this is <see cref="OpListBox"/>.
+        /// </summary>
+        public event OnSignalHandler OnListOpen;
+
+        /// <summary>
+        /// Called when <see cref="CloseList"/> is called. <see cref="CloseList"/> never gets called with <see cref="OpListBox"/>.
+        /// </summary>
+        public event OnSignalHandler OnListClose;
+
         protected void OpenList()
         {
             // Check available space
             float listHeight = 20f * Mathf.Clamp(this.itemList.Length, 1, _listHeight) + 10f;
             if (!IsListBox)
             {
+                OnListOpen?.Invoke(this);
                 if (listHeight < this.GetPos().y) { downward = true; }
                 else if (100f < this.GetPos().y) { downward = true; listHeight = 100f; }
                 else
@@ -727,6 +738,7 @@ namespace OptionalUI
 
         private void CloseList()
         {
+            OnListClose?.Invoke(this);
             this.searchMode = false;
             this.searchCursor.isVisible = false;
             this.fixedSize = null;
@@ -766,7 +778,7 @@ namespace OptionalUI
             if (sort) { temp.Sort(ListItem.Comparer); }
             this.itemList = temp.ToArray();
             this.ResetIndex();
-            this.OnChange();
+            this.Change();
         }
 
         /// <summary>
@@ -794,7 +806,7 @@ namespace OptionalUI
             }
             this.itemList = temp.ToArray();
             this.ResetIndex();
-            this.OnChange();
+            this.Change();
         }
 
         protected internal override string CopyToClipboard()

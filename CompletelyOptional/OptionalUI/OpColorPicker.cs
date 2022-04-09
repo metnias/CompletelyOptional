@@ -245,7 +245,7 @@ namespace OptionalUI
                 this.rect.colorEdge = ctxt;
 
                 RecalculateTexture();
-                OnChange();
+                Change();
             }
         }
 
@@ -448,7 +448,7 @@ namespace OptionalUI
             }
 
             ctor = true;
-            OnChange();
+            Change();
         }
 
         protected bool MouseOverHex()
@@ -590,7 +590,7 @@ namespace OptionalUI
                                             Mathf.RoundToInt(b * 255f / 100f).ToString("X2"));
                                     }
                                 }
-                                OnChange();
+                                Change();
                             }
                             else { mouseDown = false; this.held = false; }
 
@@ -620,7 +620,7 @@ namespace OptionalUI
                                             PlaySound(SoundID.MENU_Scroll_Tick);
                                         }
                                     }
-                                    OnChange();
+                                    Change();
                                 }
                                 else { mouseDown = false; this.held = false; }
                             }
@@ -648,7 +648,7 @@ namespace OptionalUI
                                             PlaySound(SoundID.MENU_Scroll_Tick);
                                         }
                                     }
-                                    OnChange();
+                                    Change();
                                 }
                                 else { mouseDown = false; this.held = false; }
                             }
@@ -678,7 +678,7 @@ namespace OptionalUI
                                         }
                                         this._value = this.PaletteHex[_i];
                                         mod = 2;
-                                        OnChange();
+                                        Change();
                                     }
                                     else { this.mouseDown = false; this.held = false; }
                                 }
@@ -842,17 +842,17 @@ namespace OptionalUI
                 l = Mathf.FloorToInt(_hsl.l * 100f);
 
                 // if (mod == 2) { mod = 0; }
-                OnChange();
+                Change();
                 if (greyedOut) { GreyOut(); }
             }
         }
 
         //private float LastCol { get => lastCol; set => lastCol = value; }
 
-        public override void OnChange()
+        protected internal override void Change()
         {
             this._size = new Vector2(150f, 150f);
-            base.OnChange();
+            base.Change();
             if (!ctor) { return; }
 
             RecalculateTexture();

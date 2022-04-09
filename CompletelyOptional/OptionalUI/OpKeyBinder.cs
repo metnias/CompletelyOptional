@@ -78,7 +78,7 @@ namespace OptionalUI
             this.sprite = new FSprite("GamepadIcon", true) { anchorX = 0f, anchorY = 0.5f, scale = 0.333f };
             this.myContainer.AddChild(sprite);
 
-            this.OnChange();
+            this.Change();
         }
 
         protected internal override string DisplayDescription()
@@ -306,7 +306,7 @@ namespace OptionalUI
                     }
                     else
                     { menu.PlaySound(SoundID.MENU_Error_Ping); }
-                    OnChange();
+                    Change();
                 }
             }
         }
@@ -321,7 +321,7 @@ namespace OptionalUI
             return "Joystick" + (newBind != BindController.AnyController ? b.ToString() : "") + btn;
         }
 
-        public override void NonMouseSetHeld(bool newHeld)
+        protected internal override void NonMouseSetHeld(bool newHeld)
         {
             base.NonMouseSetHeld(newHeld);
             if (newHeld)
@@ -358,7 +358,7 @@ namespace OptionalUI
                     { PlaySound(SoundID.MENU_Error_Ping); this.held = false; return; }
                     this.SetController(newBind);
                     this.held = false;
-                    ConfigContainer.instance.allowFocusMove = false;
+                    FocusMoveDisallow(this);
                     return;
                 }
                 if (!this.lastAnyKeyDown && this.anyKeyDown)
@@ -409,10 +409,10 @@ namespace OptionalUI
             }
         }
 
-        public override void OnChange()
+        protected internal override void Change()
         {
             this._size = new Vector2(Mathf.Max(30f, this.size.x), Mathf.Max(30f, this.size.y));
-            base.OnChange();
+            base.Change();
 
             this.sprite.isVisible = IsJoystick(this.value);
             if (IsJoystick(this.value))

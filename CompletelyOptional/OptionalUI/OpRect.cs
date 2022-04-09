@@ -86,9 +86,9 @@ namespace OptionalUI
             this.bumpBehav?.Update();
         }
 
-        public override void OnChange()
+        protected internal override void Change()
         {
-            base.OnChange();
+            base.Change();
             this.rect.size = this.size;
         }
     }

@@ -79,7 +79,7 @@ namespace CompletelyOptional
             Tabs[0].AddItems(scb);
             scb.AddItems(new OpLabelLong(new Vector2(20f, 20f), new Vector2(120f, 200f)),
                 new OpSlider(null, new Vector2(160f, 30f), new IntVector2(-20, 20), length: 180, true, 10));
-            hold = new OpHoldButton(new Vector2(440f, 200f), new Vector2(120f, 24f), "_", "Hold");
+            hold = new OpHoldButton(new Vector2(440f, 200f), new Vector2(120f, 24f), "Hold");
             Tabs[0].AddItems(hold);
 
             OpCheckBox chk = new OpCheckBox(null, new Vector2(100f, 420f), true);
@@ -171,9 +171,11 @@ namespace CompletelyOptional
             sb.AddItems(rs, new OpLabel(100f, 130f, "Songs") { bumpBehav = rs.bumpBehav });
 
             sb = new OpScrollBox(Tabs[7], 1000f, true);
-            sb.AddItems(new OpHoldButton(new Vector2(100f, 100f), "BREAK", "BREAK"));
-            sb.AddItems(new OpSimpleButton(new Vector2(400f, 100f), new Vector2(80f, 30f), "PRESS", "PRESS"));
-            sb.AddItems(new OpSimpleButton(new Vector2(400f, 160f), new Vector2(80f, 30f), "HOLD", "HOLD") { canHold = true });
+            OpHoldButton btnBreak = new OpHoldButton(new Vector2(100f, 100f), "BREAK");
+            btnBreak.OnPressDone += new OnSignalHandler(SignalBreak);
+            sb.AddItems(btnBreak);
+            sb.AddItems(new OpSimpleButton(new Vector2(400f, 100f), new Vector2(80f, 30f), "PRESS"));
+            sb.AddItems(new OpSimpleButton(new Vector2(400f, 160f), new Vector2(80f, 30f), "HOLD"));
             sb.AddItems(new OpCheckBox(null, 400f, 300f, false));
             OpRadioButtonGroup rbg = new OpRadioButtonGroup(null);
             sb.AddItems(rbg);
@@ -184,11 +186,7 @@ namespace CompletelyOptional
         private OpHoldButton hold;
         // private float perc = 0f;
 
-        public override void Signal(UItrigger trigger, string signal)
-        {
-            base.Signal(trigger, signal);
-            if (signal == "BREAK") { throw new System.Exception("TEST BREAK"); }
-        }
+        private void SignalBreak(UIfocusable trigger) => throw new System.Exception("TEST BREAK");
 
         public override void Update()
         {

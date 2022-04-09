@@ -75,8 +75,8 @@ namespace CompletelyOptional
 
         public static void MuteMenu(bool mute) => ConfigContainer.mute = mute;
 
-        public static void FocusNewElement(UIelement element)
-        { if (!InConfigMenu) { return; } ConfigContainer.instance.FocusNewElement(element); }
+        public static void FocusNewElement(UIfocusable focusable)
+        { if (!InConfigMenu) { return; } ConfigContainer.instance.FocusNewElement(focusable); }
 
         public static void FocusNewElementInDirection(IntVector2 direction)
         { if (!InConfigMenu) { return; } ConfigContainer.instance.FocusNewElementInDirection(direction); }

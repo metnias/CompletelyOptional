@@ -18,7 +18,7 @@ namespace OptionalUI
     /// The contents will still be redrawn on scroll or when <see cref="MarkDirty()"/> is called.</para>
     /// <para>Adding instances of <see cref="OpScrollBox"/> as children will not function correctly.</para>
     /// </remarks>
-    public class OpScrollBox : UIelement, ICanBeFocused
+    public class OpScrollBox : UIfocusable
     {
         private static readonly List<Camera> _cameras = new List<Camera>();
 
@@ -177,8 +177,6 @@ namespace OptionalUI
             this.isTab = false; this.hasScrolled = false;
             this.doesBackBump = true;
 
-            this.bumpBehav = new BumpBehaviour(this);
-
             // Create a camera for this scrollbox
             GameObject camObj = new GameObject("OpScrollBox Camera " + _camIndex);
             _cam = camObj.AddComponent<Camera>();
@@ -222,7 +220,7 @@ namespace OptionalUI
             }
 
             this.ScrollToTop(true);
-            OnChange();
+            Change();
             this.GrafUpdate(0f);
         }
 
@@ -341,21 +339,21 @@ namespace OptionalUI
             float target;
             if (box.horizontal)
             { // lower left
-                target = child is ICanBeFocused fChild0 ? box.camPos.x - fChild0.FocusRect.x + child.tab.container.x : -child.GetPos().x;
+                target = child is UIfocusable fChild0 ? box.camPos.x - fChild0.FocusRect.x + child.tab.container.x : -child.GetPos().x;
                 if (target > box.scrollOffset) { box.targetScrollOffset = target + gap; } // leftward
                 else
                 {
-                    target -= child is ICanBeFocused fChild ? fChild.FocusRect.width : child.size.x;
+                    target -= child is UIfocusable fChild ? fChild.FocusRect.width : child.size.x;
                     if (target < box.scrollOffset - box.size.x) { box.targetScrollOffset = target - gap + box.size.x; } // rightward
                 }
             }
             else
             { // higher top
-                target = child is ICanBeFocused fChild0 ? box.camPos.y - fChild0.FocusRect.y + child.tab.container.y : -child.GetPos().y;
+                target = child is UIfocusable fChild0 ? box.camPos.y - fChild0.FocusRect.y + child.tab.container.y : -child.GetPos().y;
                 if (target > box.scrollOffset) { box.targetScrollOffset = target + gap; } // downward
                 else
                 {
-                    target -= child is ICanBeFocused fChild ? fChild.FocusRect.height : child.size.y;
+                    target -= child is UIfocusable fChild ? fChild.FocusRect.height : child.size.y;
                     if (target < box.scrollOffset - box.size.y) { box.targetScrollOffset = target - gap + box.size.y; } // upward
                 }
             }
@@ -392,12 +390,12 @@ namespace OptionalUI
                 {
                     this.tab.AddItems(item);
                     children.Add(item);
-                    if (lastFocusedElement == null && item is ICanBeFocused) { lastFocusedElement = item; }
+                    if (lastFocusedElement == null && item is UIfocusable) { lastFocusedElement = item as UIfocusable; }
                 }
             }
         }
 
-        protected internal UIelement lastFocusedElement = null;
+        protected internal UIfocusable lastFocusedElement = null;
 
         /// <summary>
         /// Remove UIelements from OpScrollbox they're in
@@ -426,11 +424,7 @@ namespace OptionalUI
         private bool _lastMouseOver = false, _lastMouseDown = false;
         private float _lastScrollOffset = 1f;
 
-        public BumpBehaviour bumpBehav { get; private set; }
-
-        bool ICanBeFocused.GreyedOut => false;
-
-        Rect ICanBeFocused.FocusRect
+        protected internal override Rect FocusRect
         {
             get
             {
@@ -441,9 +435,9 @@ namespace OptionalUI
             }
         }
 
-        bool ICanBeFocused.CurrentlyFocusableMouse => false;
+        protected internal override bool CurrentlyFocusableMouse => false;
 
-        bool ICanBeFocused.CurrentlyFocusableNonMouse => true;
+        protected internal override bool CurrentlyFocusableNonMouse => true;
 
         private readonly BumpBehaviour bumpSlidebar;
         private bool scrollMouseOver;
@@ -453,15 +447,15 @@ namespace OptionalUI
             foreach (UIelement e in this.children)
             {
                 if (e.isInactive) { continue; }
-                if (e is ICanBeFocused && (e as ICanBeFocused).CurrentlyFocusableMouse && e.MouseOver) { return true; }
+                if (e is UIfocusable && (e as UIfocusable).CurrentlyFocusableMouse && e.MouseOver) { return true; }
             }
             return false;
         }
 
-        public override void OnChange()
+        protected internal override void Change()
         {
             this._size.x = Mathf.Min(this._size.x, 800f); this._size.y = Mathf.Min(this._size.y, 800f);
-            base.OnChange();
+            base.Change();
             UpdateCam();
         }
 
@@ -476,7 +470,7 @@ namespace OptionalUI
 
         private bool _held = false;
 
-        void ICanBeFocused.NonMouseSetHeld(bool newHeld)
+        protected internal override void NonMouseSetHeld(bool newHeld)
         {
             if (newHeld) { ConfigContainer.instance.FocusNewElement(this); }
             ConfigContainer.holdElement = newHeld;
@@ -578,13 +572,13 @@ namespace OptionalUI
                     { // Unhold
                         this._held = false;
                         ConfigContainer.holdElement = false;
-                        ConfigContainer.instance.allowFocusMove = false;
+                        FocusMoveDisallow(this);
                     }
                     else if (CtlrInput.jmp && !LastCtlrInput.jmp)
                     { // Focused > (jmp) > !ScrollLocked ? holdElement : focus <- lastFocusedElement
                         if (lastFocusedElement != null)
                         {
-                            if (!lastFocusedElement.isInactive && (lastFocusedElement as ICanBeFocused).CurrentlyFocusableNonMouse)
+                            if (!lastFocusedElement.isInactive && lastFocusedElement.CurrentlyFocusableNonMouse)
                             {
                                 bool CenterInView; // Check if this is in view
                                 if (horizontal) { CenterInView = lastFocusedElement.CenterPos().x > scrollOffset && lastFocusedElement.CenterPos().x < scrollOffset + size.x; }
@@ -601,13 +595,13 @@ namespace OptionalUI
                         }
                         // Find New Focus
                         float candPos = float.MaxValue;
-                        UIelement cand = null;
+                        UIfocusable cand = null;
                         foreach (UIelement child in this.children)
                         {
-                            if (!child.isInactive && child is ICanBeFocused candidate && candidate.CurrentlyFocusableNonMouse)
+                            if (!child.isInactive && child is UIfocusable candidate && candidate.CurrentlyFocusableNonMouse)
                             {
                                 float thisPos = Mathf.Abs(horizontal ? child.CenterPos().x - scrollOffset - size.x / 2f : child.CenterPos().y - scrollOffset + size.y / 2f);
-                                if (candPos > thisPos) { candPos = thisPos; cand = child; }
+                                if (candPos > thisPos) { candPos = thisPos; cand = candidate; }
                             }
                         }
                         if (cand != null)
@@ -668,7 +662,7 @@ namespace OptionalUI
             if (hasMoved || _firstUpdate)
             {
                 _firstUpdate = false;
-                this.OnChange();
+                this.Change();
             }
 
             base.Update();

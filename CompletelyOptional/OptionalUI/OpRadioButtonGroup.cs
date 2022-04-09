@@ -48,12 +48,12 @@ namespace OptionalUI
                 this.buttons[i].index = i;
                 if (i == this.GetValueInt()) { this.buttons[i]._value = "true"; }
                 else { this.buttons[i]._value = "false"; }
-                this.buttons[i].OnChange();
+                this.buttons[i].Change();
             }
         }
 
-        public override bool CurrentlyFocusableMouse => false;
-        public override bool CurrentlyFocusableNonMouse => false;
+        protected internal override bool CurrentlyFocusableMouse => false;
+        protected internal override bool CurrentlyFocusableNonMouse => false;
 
         public override void Update()
         {
@@ -68,7 +68,7 @@ namespace OptionalUI
 
         /// <summary>
         /// Whether this RadioButtonGroup is greyedOut or not
-        /// Changing this overrides original <see cref="OpRadioButton.greyedOut"/>.
+        /// Changing this overrides original <see cref="OpRadioButton"/>'s <see cref="UIfocusable.greyedOut"/>.
         /// </summary>
         public new bool greyedOut
         {
@@ -125,12 +125,12 @@ namespace OptionalUI
             for (int i = 0; i < this.buttons.Length; i++)
             {
                 this.buttons[i]._value = "false";
-                this.buttons[i].OnChange();
+                this.buttons[i].Change();
             }
             this.buttons[index]._value = "true";
-            this.buttons[index].OnChange();
+            this.buttons[index].Change();
             base.value = index.ToString();
-            this.OnChange();
+            this.Change();
         }
 
         protected internal override void Deactivate()
