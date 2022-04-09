@@ -180,11 +180,6 @@ namespace OptionalUI
             this.container.RemoveFromContainer();
         }
 
-        protected internal virtual void Signal(UIfocusable trigger, string signal)
-        {
-            this.owner.Signal(trigger, signal);
-        }
-
         #endregion Internal
     }
 }

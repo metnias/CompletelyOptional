@@ -20,7 +20,7 @@ namespace OptionalUI
 
             this.isTexture = true;
 
-            this.sprite = new FTexture(image, "img")
+            this.sprite = new FTexture(image, "img" + image.GetHashCode())
             { color = this._color };
             this.sprite.SetPosition(Vector2.zero);
             this.sprite.SetAnchor(this._anchor);

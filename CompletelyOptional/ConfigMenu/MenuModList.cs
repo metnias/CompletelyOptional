@@ -234,6 +234,7 @@ namespace CompletelyOptional
 
                 this.list.menuTab.AddItems(this);
                 Change();
+                OnClick += new OnSignalHandler(Signal);
             }
 
             private float MyPos => list.pos.y + 650f - (index - list.floatScrollPos) * height;
@@ -422,7 +423,7 @@ namespace CompletelyOptional
             private static Color cError = new Color(0.8f, 0.1f, 0.2f);
             private static Color cChange = new Color(0.8f, 0.8f, 0.2f);
 
-            public override void Signal()
+            public void Signal(UIfocusable self)
             {
                 list.Signal(this, index);
             }
@@ -435,7 +436,7 @@ namespace CompletelyOptional
 
         internal class ListButton : OpSimpleImageButton, IAmPartOfModList
         {
-            public ListButton(MenuModList list, Role role) : base(Vector2.zero, new Vector2(24f, 24f), "", RoleSprite(role))
+            public ListButton(MenuModList list, Role role) : base(Vector2.zero, new Vector2(24f, 24f), RoleSprite(role))
             {
                 this.role = role;
                 this.list = list;
@@ -446,14 +447,17 @@ namespace CompletelyOptional
                     case Role.Stat:
                         this._pos = new Vector2(466f, 700f); // x462f : centered
                         this.soundClick = SoundID.MENU_Switch_Arena_Gametype; this.greyedOut = true;
+                        OnClick += new OnSignalHandler(Signal);
                         description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_Stat); break;
                     case Role.ScrollUp:
                         this._pos = new Vector2(321f, 720f);
-                        this.soundClick = SoundID.MENU_First_Scroll_Tick; this.canHold = true;
+                        this.soundClick = SoundID.MENU_First_Scroll_Tick;
+                        OnPressInit += new OnSignalHandler(Signal); OnPressHold += new OnSignalHandler(Signal);
                         description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_ScrollUp); break;
                     case Role.ScrollDown:
                         this._pos = new Vector2(321f, 26f); this.sprite.rotation = 180f;
-                        this.soundClick = SoundID.MENU_First_Scroll_Tick; this.canHold = true;
+                        this.soundClick = SoundID.MENU_First_Scroll_Tick;
+                        OnPressInit += new OnSignalHandler(Signal); OnPressHold += new OnSignalHandler(Signal);
                         description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_ScrollDw); break;
                 }
                 Change();
@@ -513,16 +517,15 @@ namespace CompletelyOptional
                 }
             }
 
-            public override void Signal()
+            public void Signal(UIfocusable self)
             {
-                ConfigContainer.instance.allowFocusMove = false;
                 list.Signal(this, (int)role);
             }
         }
 
         internal class AlphabetButton : OpSimpleButton, IAmPartOfModList
         {
-            public AlphabetButton(MenuModList list, int index) : base(Vector2.zero, new Vector2(24f, 24f), "", "")
+            public AlphabetButton(MenuModList list, int index) : base(Vector2.zero, new Vector2(24f, 24f), "")
             {
                 this.list = list;
                 this.index = index;
@@ -535,6 +538,7 @@ namespace CompletelyOptional
 
                 this.unused = ConfigContainer.OptItfABC[index] < 0;
                 Change();
+                OnClick += new OnSignalHandler(Signal);
             }
 
             private readonly GlowGradient glow;
@@ -584,9 +588,8 @@ namespace CompletelyOptional
                 base.Update();
             }
 
-            public override void Signal()
+            public void Signal(UIfocusable self)
             {
-                ConfigContainer.instance.allowFocusMove = false;
                 list.Signal(this, (int)index);
             }
         }

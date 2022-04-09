@@ -572,7 +572,7 @@ namespace OptionalUI
                     { // Unhold
                         this._held = false;
                         ConfigContainer.holdElement = false;
-                        ConfigContainer.instance.allowFocusMove = false;
+                        FocusMoveDisallow(this);
                     }
                     else if (CtlrInput.jmp && !LastCtlrInput.jmp)
                     { // Focused > (jmp) > !ScrollLocked ? holdElement : focus <- lastFocusedElement

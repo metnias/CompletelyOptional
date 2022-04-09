@@ -164,6 +164,12 @@ namespace OptionalUI
         private float symbolHalfVisible;
 
         /// <summary>
+        /// An event similar to <see cref="UIconfig.OnValueChange"/>.
+        /// <para>This is called whenever this button's <see cref="value"/> has changed, just before its <see cref="OpRadioButtonGroup"/>'s value is changed.</para>
+        /// </summary>
+        public event OnSignalHandler OnValueChange;
+
+        /// <summary>
         /// OpRadioButtonGroup this button is belong to.
         /// This will be automatically set when you SetButtons for Group.
         /// </summary>
@@ -177,8 +183,9 @@ namespace OptionalUI
         public string _value;
 
         /// <summary>
-        /// OpRadioButton is not UIconfig, so this value will not be saved.
-        /// (OpRadioButtonGroup is the one gets saved instead)
+        /// <see cref="OpRadioButton"/> is not <see cref="UIconfig"/>, so this value will not be saved.
+        /// <para><see cref="OpRadioButtonGroup"/> is the real <see cref="UIconfig"/> which gets saved instead.</para>
+        /// Changing this also calls own <see cref="OnValueChange"/>.
         /// </summary>
         public virtual string value
         {
@@ -191,6 +198,7 @@ namespace OptionalUI
                 if (this._value != value)
                 {
                     this._value = value;
+                    OnValueChange?.Invoke(this);
                     group.Switch(index);
                     Change();
                 }

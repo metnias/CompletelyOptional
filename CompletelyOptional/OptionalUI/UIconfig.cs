@@ -118,7 +118,8 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Value in <see cref="string"/> form, which is how it is saved. Changing this will call <see cref="UIelement.Change"/> automatically.
+        /// Value in <see cref="string"/> form, which is how it is saved.
+        /// <para>Changing this will automatically call <see cref="ConfigContainer.NotifyConfigChange"/>, <see cref="OnValueChange"/>, then <see cref="UIelement.Change"/> in order.</para>
         /// When you're overriding this completely, make sure to call <see cref="ConfigContainer.NotifyConfigChange"/> in your override.
         /// See also <seealso cref="ForceValue"/>.
         /// </summary>
@@ -132,13 +133,19 @@ namespace OptionalUI
             {
                 if (_value != value)
                 {
-                    ConfigContainer.instance.allowFocusMove = false;
+                    FocusMoveDisallow();
                     menu.cfgContainer.NotifyConfigChange(this, _value, value);
+                    OnValueChange?.Invoke(this, value, _value);
                     _value = value;
                     Change();
                 }
             }
         }
+
+        /// <summary>
+        /// Event which happens whenever <see cref="value"/> is changed. This is called just before <see cref="UIelement.OnChange"/>.
+        /// </summary>
+        public event OnValueChangeHandler OnValueChange;
 
         #endregion Shallow
 

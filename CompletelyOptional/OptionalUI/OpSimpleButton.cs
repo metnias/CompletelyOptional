@@ -10,11 +10,12 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">BottomLeft Position</param>
         /// <param name="size">Minimum size is 24x24</param>
-        /// <param name="signal">Keyword that gets sent to Signal</param>
         /// <param name="text">Text you want to have inside the button</param>
-        public OpSimpleButton(Vector2 pos, Vector2 size, string signal, string text = "") : base(pos, size)
+        public OpSimpleButton(Vector2 pos, Vector2 size, string text = "") : base(pos, size)
         {
-            this.signal = signal;
+            this.OnPressInit += new OnSignalHandler(FocusMoveDisallow);
+            this.OnClick += new OnSignalHandler(FocusMoveDisallow);
+            this.OnPressHold += new OnSignalHandler(FocusMoveDisallow);
             this._size = new Vector2(Mathf.Max(24f, size.x), Mathf.Max(24f, size.y));
 
             this.rect = new DyeableRect(this.myContainer, Vector2.zero, this.size, true);
@@ -30,14 +31,8 @@ namespace OptionalUI
         protected internal override string DisplayDescription()
         {
             if (!string.IsNullOrEmpty(description)) { return description; }
-            if (MenuMouseMode) { return OptionalText.GetText(canHold ? OptionalText.ID.OpSimpleButton_MouseTutoHold : OptionalText.ID.OpSimpleButton_MouseTuto); }
-            return OptionalText.GetText(canHold ? OptionalText.ID.OpSimpleButton_NonMouseTutoHold : OptionalText.ID.OpSimpleButton_NonMouseTuto);
+            return OptionalText.GetText(MenuMouseMode ? OptionalText.ID.OpSimpleButton_MouseTuto : OptionalText.ID.OpSimpleButton_NonMouseTuto);
         }
-
-        /// <summary>
-        /// Whether this triggers <see cref="UIfocusable.Signal"/> when it's kept pressed or not. See also <seealso cref="soundHold"/>.
-        /// </summary>
-        public bool canHold = false;
 
         /// <summary>
         /// How long this is held.
@@ -45,14 +40,9 @@ namespace OptionalUI
         protected int heldCounter = 0;
 
         /// <summary>
-        /// A sound to play when this is held and released (<see cref="canHold"/> is false), or pressed initially (<see cref="canHold"/> is true). In default this is <see cref="SoundID.MENU_Button_Standard_Button_Pressed"/>.
+        /// A sound to play when this is held and released. In default this is <see cref="SoundID.MENU_Button_Standard_Button_Pressed"/>.
         /// </summary>
         public SoundID soundClick = SoundID.MENU_Button_Standard_Button_Pressed;
-
-        /// <summary>
-        /// A sound to play when this is held for long to trigger <see cref="UIfocusable.Signal"/>. See also <seealso cref="canHold"/>, <seealso cref="soundClick"/>.
-        /// </summary>
-        public SoundID soundHold = SoundID.MENU_Scroll_Tick;
 
         /// <summary>
         /// Text inside the button
@@ -126,11 +116,7 @@ namespace OptionalUI
         protected internal override void NonMouseSetHeld(bool newHeld)
         {
             base.NonMouseSetHeld(newHeld);
-            if (newHeld && canHold)
-            {
-                PlaySound(soundClick);
-                this.Signal();
-            }
+            if (newHeld) { OnPressInit?.Invoke(this); }
         }
 
         public override void Update()
@@ -145,11 +131,7 @@ namespace OptionalUI
                 {
                     if (Input.GetMouseButton(0))
                     {
-                        if (!this.held && canHold)
-                        {
-                            PlaySound(soundClick);
-                            this.Signal();
-                        }
+                        if (!this.held) { OnPressInit?.Invoke(this); }
                         this.held = true; heldCounter++;
                     }
                     else
@@ -157,11 +139,8 @@ namespace OptionalUI
                         if (this.held)
                         {
                             this.held = false;
-                            if (!canHold)
-                            {
-                                PlaySound(soundClick);
-                                this.Signal();
-                            }
+                            PlaySound(soundClick);
+                            OnClick?.Invoke(this);
                             heldCounter = 0;
                         }
                     }
@@ -177,27 +156,36 @@ namespace OptionalUI
                 if (this.held)
                 {
                     if (CtlrInput.jmp)
-                    {
-                        heldCounter++;
-                    }
+                    { heldCounter++; }
                     else
                     {
                         this.held = false;
-                        if (!canHold)
-                        {
-                            PlaySound(soundClick);
-                            this.Signal();
-                        }
+                        PlaySound(soundClick);
+                        OnClick?.Invoke(this);
                         heldCounter = 0;
                     }
                 }
             }
-            if (canHold && heldCounter > ModConfigMenu.DASinit && heldCounter % ModConfigMenu.DASdelay == 1)
+            if (heldCounter > ModConfigMenu.DASinit && heldCounter % ModConfigMenu.DASdelay == 1)
             {
-                PlaySound(soundHold);
-                this.Signal();
+                OnPressHold?.Invoke(this);
                 this.bumpBehav.sin = 0.5f;
             }
         }
+
+        /// <summary>
+        /// Event called when the user pressed and released the button.
+        /// </summary>
+        public event OnSignalHandler OnClick;
+
+        /// <summary>
+        /// Event called when the user began pressing the button.
+        /// </summary>
+        public event OnSignalHandler OnPressInit;
+
+        /// <summary>
+        /// Event periodically called when the user is holding the button down.
+        /// </summary>
+        public event OnSignalHandler OnPressHold;
     }
 }

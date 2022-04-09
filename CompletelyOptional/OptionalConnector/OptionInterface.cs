@@ -61,16 +61,6 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Method that's called from <see cref="UIfocusable"/>s.
-        /// Override this and write your own events.
-        /// </summary>
-        /// <param name="trigger"><see cref="UIfocusable"/> instance.</param>
-        /// <param name="signal"><see cref="UIfocusable.signal"/> value.</param>
-        public virtual void Signal(UIfocusable trigger, string signal)
-        {
-        }
-
-        /// <summary>
         /// Whether the mod is configurable or not.
         /// You can just replace this to <c>return true;</c> or <c>false</c> to save computing time.
         /// </summary>

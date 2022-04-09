@@ -208,7 +208,7 @@ namespace CompletelyOptional
 
         internal class TabSelectButton : OpSimpleButton
         {
-            internal TabSelectButton(int index, ConfigTabController ctrler) : base(Vector2.one, Vector2.one, "", "")
+            internal TabSelectButton(int index, ConfigTabController ctrler) : base(Vector2.one, Vector2.one, "")
             {
                 this.buttonIndex = index;
                 this.ctrl = ctrler;
@@ -222,6 +222,7 @@ namespace CompletelyOptional
                 this.myContainer.AddChild(this.label);
 
                 this.ctrl.menuTab.AddItems(this);
+                OnClick += new OnSignalHandler(Signal);
             }
 
             internal float darken;
@@ -368,16 +369,15 @@ namespace CompletelyOptional
                 }
             }
 
-            public override void Signal()
+            private void Signal(UIfocusable self)
             {
-                ConfigContainer.instance.allowFocusMove = false;
                 ctrl.Signal(this, this.tabIndex);
             }
         }
 
         internal class TabScrollButton : OpSimpleImageButton
         {
-            public TabScrollButton(bool up, ConfigTabController ctrl) : base(Vector2.one, Vector2.one, "", "Big_Menu_Arrow")
+            public TabScrollButton(bool up, ConfigTabController ctrl) : base(Vector2.one, Vector2.one, "Big_Menu_Arrow")
             {
                 this._size = new Vector2(30f, 20f);
                 this.up = up;
@@ -389,9 +389,11 @@ namespace CompletelyOptional
                 this.sprite.scale = 0.5f;
                 this.sprite.x = 15f;
                 this.mute = true;
-                this.canHold = true;
                 this.rect.Hide(); this.rectH.Hide();
                 this.ctrl.menuTab.AddItems(this);
+
+                OnPressInit += new OnSignalHandler(SignalPressInit);
+                OnPressHold += new OnSignalHandler(SignalPressHold);
             }
 
             internal readonly bool up;
@@ -421,10 +423,14 @@ namespace CompletelyOptional
                 base.Update();
             }
 
-            public override void Signal()
+            private void SignalPressInit(UIfocusable self)
             {
-                ConfigContainer.instance.allowFocusMove = false;
-                ctrl.Signal(this, (up ? -1 : 1) * (heldCounter > ModConfigMenu.DASinit ? 2 : 1));
+                ctrl.Signal(this, (up ? -1 : 1));
+            }
+
+            private void SignalPressHold(UIfocusable self)
+            {
+                ctrl.Signal(this, (up ? -2 : 2));
             }
         }
     }

@@ -11,12 +11,13 @@ namespace OptionalUI
         /// <para><see cref="UIelement.fixedRad"/> is 55f (110f in diameter)</para>
         /// </summary>
         /// <param name="pos">BottomLeft <see cref="UIelement.pos"/>; <see cref="UIelement.fixedRad"/> is 55f (110f in diameter)</param>
-        /// <param name="signal"><see cref="UIfocusable.signal"/></param>
         /// <param name="fillTime">How long do you need to hold to call Signal (set to 0f for instant)</param>
         /// <param name="displayText">Text to be displayed (overriden when it's ProgressButton mode)</param>
-        public OpHoldButton(Vector2 pos, string signal, string displayText, float fillTime = 80f) : base(pos, 55f)
+        public OpHoldButton(Vector2 pos, string displayText, float fillTime = 80f) : base(pos, 55f)
         {
-            this.signal = signal;
+            this.OnPressInit += new OnSignalHandler(FocusMoveDisallow);
+            this.OnClick += new OnSignalHandler(FocusMoveDisallow);
+            this.OnPressDone += new OnSignalHandler(FocusMoveDisallow);
             this.fillTime = Mathf.Max(0f, fillTime);
             fixedRad = 55f;
             _text = displayText;
@@ -43,12 +44,10 @@ namespace OptionalUI
         /// </summary>
         /// <param name="pos">BottomLeft <see cref="UIelement.pos"/>; <see cref="UIelement.fixedRad"/> is 55f (110f in diameter)</param>
         /// <param name="size">The size of this button. Minimum size is 24x24</param>
-        /// <param name="signal"><see cref="UIfocusable.signal"/></param>
         /// <param name="fillTime">How long do you need to hold to call Signal (set to 0f for instant)</param>
         /// <param name="displayText">Text to be displayed (overriden when it's ProgressButton mode)</param>
-        public OpHoldButton(Vector2 pos, Vector2 size, string signal, string displayText, float fillTime = 80f) : base(pos, size)
+        public OpHoldButton(Vector2 pos, Vector2 size, string displayText, float fillTime = 80f) : base(pos, size)
         {
-            this.signal = signal;
             this.fillTime = Mathf.Max(0f, fillTime);
             this._size = new Vector2(Mathf.Max(24f, size.x), Mathf.Max(24f, size.y));
             _text = displayText;
@@ -262,17 +261,19 @@ namespace OptionalUI
             bumpBehav.sizeBump = !held ? 0f : 1f;
             if (held)
             {
+                if (!lastHeld) { OnPressInit?.Invoke(this); }
                 bumpBehav.sin = pulse;
                 filled = Custom.LerpAndTick(filled, 1f, 0.007f, frameMulti / fillTime);
                 if (filled >= 1f && !hasSignalled)
                 {
-                    Signal();
+                    OnPressDone?.Invoke(this);
                     hasSignalled = true;
                     menu.PlaySound(SoundID.MENU_Security_Button_Init);
                 }
                 releaseCounter = 0;
                 return;
             }
+            else if (lastHeld) { OnClick?.Invoke(this); }
             // Release
             if (lastHeld && !hasSignalled)
             {
@@ -325,5 +326,20 @@ namespace OptionalUI
             base.Unload();
             if (soundLoop != null) { soundLoop.Destroy(); }
         }
+
+        /// <summary>
+        /// Event called when the user has began pressing the button
+        /// </summary>
+        public event OnSignalHandler OnPressInit;
+
+        /// <summary>
+        /// Event called when the button is pressed for the set amount(<see cref="fillTime"/>) of time.
+        /// </summary>
+        public event OnSignalHandler OnPressDone;
+
+        /// <summary>
+        /// Event called when the user has pressed and released the button, regardless of the pressed time.
+        /// </summary>
+        public event OnSignalHandler OnClick;
     }
 }

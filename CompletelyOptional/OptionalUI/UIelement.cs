@@ -223,8 +223,6 @@ namespace OptionalUI
         /// <param name="reference">Target</param>
         public void MoveBehindElement(UIelement reference) => this.myContainer.MoveBehindOtherNode(reference.myContainer);
 
-        public delegate void OnChangeHandler();
-
         #endregion Shallow
 
         // Codes for modders who makes custom UIelement

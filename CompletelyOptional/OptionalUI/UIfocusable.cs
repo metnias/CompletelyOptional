@@ -11,7 +11,7 @@ namespace OptionalUI
         #region Shallow
 
         /// <summary>
-        /// Special kind of Rectangular <see cref="UIelement"/> that can trigger <see cref="OptionInterface.Signal(UIfocusable, string)"/>
+        /// Special kind of Rectangular <see cref="UIelement"/> that can be <see cref="Focused"/>
         /// </summary>
         /// <param name="pos">BottomLeft Position</param>
         /// <param name="size">Size</param>
@@ -21,7 +21,7 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Special kind of Circular <see cref="UIelement"/> that can trigger <see cref="OptionInterface.Signal(UIfocusable, string)"/>
+        /// Special kind of Circular <see cref="UIelement"/> that can be <see cref="Focused"/>
         /// </summary>
         /// <param name="pos">BottomLeft Position</param>
         /// <param name="rad">Radius</param>
@@ -36,14 +36,14 @@ namespace OptionalUI
         public BumpBehaviour bumpBehav { get; private set; }
 
         /// <summary>
-        /// Non-exclusive key for UIsignal
-        /// </summary>
-        public string signal = "";
-
-        /// <summary>
         /// Whether this UItrigger is greyedOut or not
         /// </summary>
         public bool greyedOut = false;
+
+        /// <summary>
+        /// Event called when <see cref="held"/> is changed
+        /// </summary>
+        public event OnHeldHandler OnHeld;
 
         #endregion Shallow
 
@@ -78,6 +78,7 @@ namespace OptionalUI
                 if (_held != value)
                 {
                     _held = value;
+                    OnHeld?.Invoke(_held);
                     if (value) { menu.cfgContainer.FocusNewElement(this); }
                     else if (!this.Focused()) { return; }
                     ConfigContainer.holdElement = value;
@@ -88,16 +89,6 @@ namespace OptionalUI
         protected internal virtual void NonMouseSetHeld(bool newHeld)
         {
             held = newHeld;
-        }
-
-        /// <summary>
-        /// Calls <see cref="OptionInterface.Signal(UIfocusable, string)"/>
-        /// </summary>
-        public virtual void Signal()
-        {
-            ConfigContainer.instance.allowFocusMove = false;
-            if (this.tab != null)
-            { this.tab.Signal(this, this.signal); }
         }
 
         public override void GrafUpdate(float timeStacker)
@@ -117,6 +108,8 @@ namespace OptionalUI
             this.held = false;
             base.Deactivate();
         }
+
+        protected internal void FocusMoveDisallow(UIfocusable _ = null) => ConfigContainer.instance.allowFocusMove = false;
 
         #endregion Deep
 

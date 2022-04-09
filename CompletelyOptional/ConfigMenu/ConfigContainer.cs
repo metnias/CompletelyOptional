@@ -563,6 +563,9 @@ namespace CompletelyOptional
             catch (Exception ex) { InterfaceUpdateError(true, ex); return; }
         }
 
+        /// <summary>
+        /// Whether to allow moving focus for this frame
+        /// </summary>
         internal bool allowFocusMove;
 
         public static void ForceMenuMouseMode(bool? value) => instance.forceMouseMode = value;

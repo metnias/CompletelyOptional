@@ -63,6 +63,7 @@
     <Compile Include="EnumExt_ComOpt.cs" />
     <None Include="Old_15\OpColorPicker.cs" />
     <Compile Include="OptionalConnector\UIelementWrapper.cs" />
+    <Compile Include="OptionalUI\SubObjects\EventHandlers.cs" />
     <Compile Include="OptionalUI\SubObjects\GlowGradient.cs" />
     <Compile Include="OptionalConnector\ConfigConnector.cs" />
     <Compile Include="OptionalConnector\InternalOI_Blank.cs" />

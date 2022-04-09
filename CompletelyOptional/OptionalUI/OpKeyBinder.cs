@@ -358,7 +358,7 @@ namespace OptionalUI
                     { PlaySound(SoundID.MENU_Error_Ping); this.held = false; return; }
                     this.SetController(newBind);
                     this.held = false;
-                    ConfigContainer.instance.allowFocusMove = false;
+                    FocusMoveDisallow(this);
                     return;
                 }
                 if (!this.lastAnyKeyDown && this.anyKeyDown)
