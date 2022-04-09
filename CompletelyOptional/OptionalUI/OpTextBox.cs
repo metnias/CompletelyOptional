@@ -61,7 +61,7 @@ namespace OptionalUI
             cursor.SetPosition(LabelTest.GetWidth(value) + LabelTest.CharMean(false), this.size.y * 0.5f - 7f);
             this.myContainer.AddChild(this.cursor);
 
-            OnChange();
+            Change();
         }
 
         protected internal override string DisplayDescription()
@@ -202,7 +202,7 @@ namespace OptionalUI
                         {
                             this._value = this.value.Substring(0, this.value.Length - 1);
                             PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
-                            OnChange();
+                            Change();
                         }
                     }
                     else if ((c.Value == '\n') || (c.Value == '\r')) // enter/return
@@ -272,7 +272,7 @@ namespace OptionalUI
                     } */
                 }
                 this._keyboardOn = value;
-                OnChange();
+                Change();
             }
         }
 
@@ -434,14 +434,14 @@ namespace OptionalUI
                 }
                 ConfigContainer.instance.NotifyConfigChange(this, _lastValue, this._value);
 
-                OnChange();
+                Change();
             }
         }
 
-        public override void OnChange()
+        protected internal override void Change()
         {
             this._size = new Vector2(Mathf.Max(IsUpdown ? 40f : 30f, this._size.x), IsUpdown ? 30f : 24f);
-            base.OnChange();
+            base.Change();
 
             if (!this.password)
             {

@@ -22,7 +22,7 @@ namespace OptionalUI
             this.labels = new List<FLabel>();
             this.allowOverflow = true;
             lineHeight = LabelTest.LineHeight(false, isVFont);
-            OnChange();
+            Change();
         }
 
         /// <summary>
@@ -35,9 +35,9 @@ namespace OptionalUI
         /// </summary>
         public List<FLabel> labels;
 
-        public override void OnChange()
+        protected internal override void Change()
         {
-            base.OnChange();
+            base.Change();
             string[] lines = this._displayText.Replace(Environment.NewLine, "\n").Split(new char[] { '\n' });
             List<string> splits = new List<string>() { string.Empty };
             int num = 0, lblTxt = 0, lineMax = this.allowOverflow ? int.MaxValue : Mathf.FloorToInt(this.size.y / lineHeight);

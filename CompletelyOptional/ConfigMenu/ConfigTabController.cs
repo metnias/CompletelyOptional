@@ -22,7 +22,7 @@ namespace CompletelyOptional
             // author version license: 908 30, 245 86
             rectPpty = new DyeableRect(this.myContainer, new Vector2(908f, 30f) - this._pos, new Vector2(245f, 83f), true) { hiddenSide = DyeableRect.HiddenSide.Top };
 
-            OnChange();
+            Change();
         }
 
         // Todo: load saved tab no
@@ -49,14 +49,14 @@ namespace CompletelyOptional
                 }
                 PlaySound(SoundID.MENU_MultipleChoice_Clicked);
                 ConfigContainer.ChangeActiveTab(value);
-                OnChange();
+                Change();
             }
         }
 
         public override void Reset()
         {
             base.Reset();
-            OnChange();
+            Change();
             Update();
             GrafUpdate(0f);
         }
@@ -88,7 +88,7 @@ namespace CompletelyOptional
             base.Update();
             rectCanvas.Update(); rectPpty.Update();
 
-            if (TabCount != _tabCount) { OnChange(); }
+            if (TabCount != _tabCount) { Change(); }
 
             lastScrollBump = scrollBump;
             scrollBump = Custom.LerpAndTick(scrollBump, 0f, 0.1f, 0.1f / frameMulti);
@@ -115,9 +115,9 @@ namespace CompletelyOptional
 
         internal int topIndex;
 
-        public override void OnChange()
+        protected internal override void Change()
         { //Selected Tab/Tab number has changed
-            base.OnChange();
+            base.Change();
             if (_tabCount != TabCount)
             {
                 _tabCount = TabCount;
@@ -270,7 +270,7 @@ namespace CompletelyOptional
                     { curName = LabelTest.TrimText(curName, height - 16f, true); }
                     this.label.text = curName;
                 }
-                this.OnChange();
+                this.Change();
                 this.label.alignment = FLabelAlignment.Left;
                 this.GrafUpdate(0f);
             }
@@ -397,9 +397,9 @@ namespace CompletelyOptional
             internal readonly bool up;
             private readonly ConfigTabController ctrl;
 
-            public override void OnChange()
+            protected internal override void Change()
             {
-                base.OnChange();
+                base.Change();
                 this._size = new Vector2(30f, 20f);
             }
 

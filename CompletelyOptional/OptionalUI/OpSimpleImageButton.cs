@@ -59,9 +59,9 @@ namespace OptionalUI
 
         private readonly bool isTexture;
 
-        public override void OnChange()
+        protected internal override void Change()
         {
-            base.OnChange();
+            base.Change();
             this.sprite.SetPosition(this.size.x / 2f, this.size.y / 2f);
         }
 

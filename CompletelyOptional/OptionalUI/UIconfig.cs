@@ -109,7 +109,7 @@ namespace OptionalUI
         public string key => cosmetic ? this.GetType().Name : cfgEntry.Definition.Key;
 
         /// <summary>
-        /// If you want to change <see cref="value"/> directly without running <see cref="OnChange"/> and added to undo History.
+        /// If you want to change <see cref="value"/> directly without running <see cref="UIelement.Change"/> and added to undo History.
         /// This is not recommended unless you know what you are doing.
         /// </summary>
         public void ForceValue(string newValue)
@@ -118,7 +118,7 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Value in <see cref="string"/> form, which is how it is saved. Changing this will call <see cref="OnChange"/> automatically.
+        /// Value in <see cref="string"/> form, which is how it is saved. Changing this will call <see cref="UIelement.Change"/> automatically.
         /// When you're overriding this completely, make sure to call <see cref="ConfigContainer.NotifyConfigChange"/> in your override.
         /// See also <seealso cref="ForceValue"/>.
         /// </summary>
@@ -135,7 +135,7 @@ namespace OptionalUI
                     ConfigContainer.instance.allowFocusMove = false;
                     menu.cfgContainer.NotifyConfigChange(this, _value, value);
                     _value = value;
-                    OnChange();
+                    Change();
                 }
             }
         }
@@ -147,14 +147,9 @@ namespace OptionalUI
         #region Deep
 
         /// <summary>
-        /// Access to <see cref="UIconfig.value"/> without calling <see cref="OnChange"/>
+        /// Access to <see cref="UIconfig.value"/> without calling <see cref="UIelement.Change"/>
         /// </summary>
         protected string _value;
-
-        public override void OnChange()
-        {
-            base.OnChange();
-        }
 
         protected internal virtual bool CopyFromClipboard(string value)
         {

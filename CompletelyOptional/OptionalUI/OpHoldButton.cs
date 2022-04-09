@@ -96,7 +96,7 @@ namespace OptionalUI
         /// Text to be displayed
         /// </summary>
         public string text
-        { get { return _text; } set { if (_text != value) { _text = value; OnChange(); } } }
+        { get { return _text; } set { if (_text != value) { _text = value; Change(); } } }
 
         private string _text;
 
@@ -110,9 +110,9 @@ namespace OptionalUI
         /// </summary>
         public Color colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
-        public override void OnChange()
+        protected internal override void Change()
         {
-            base.OnChange();
+            base.Change();
             if (!isRectangular) { FLabelPlaceAtCenter(label, Vector2.zero, Vector2.one * rad * 2f); }
             else
             {
@@ -315,7 +315,7 @@ namespace OptionalUI
             if (percentage < 0f) { isProgress = false; progress = 0f; return; }
             isProgress = true;
             progress = Mathf.Clamp(percentage, 0f, 100f);
-            OnChange();
+            Change();
         }
 
         #endregion ProgressButton

@@ -93,11 +93,6 @@ namespace CompletelyOptional
         // PickUp: Focus/Select, Throw: Unfocus/Leave, Select: Control View
         // Display Unsaved change in button colour
 
-        public override void OnChange()
-        {
-            base.OnChange();
-        }
-
         public override void GrafUpdate(float timeStacker)
         {
             base.GrafUpdate(timeStacker);
@@ -238,7 +233,7 @@ namespace CompletelyOptional
                 }
 
                 this.list.menuTab.AddItems(this);
-                OnChange();
+                Change();
             }
 
             private float MyPos => list.pos.y + 650f - (index - list.floatScrollPos) * height;
@@ -300,10 +295,10 @@ namespace CompletelyOptional
                 Configurable
             }
 
-            public override void OnChange()
+            protected internal override void Change()
             {
                 UpdateColor();
-                base.OnChange();
+                base.Change();
                 this.label.alignment = FLabelAlignment.Left;
                 this.label.x = 10f;
                 if (this.labelVer != null) { this.labelVer.x = this.size.x; }
@@ -461,7 +456,7 @@ namespace CompletelyOptional
                         this.soundClick = SoundID.MENU_First_Scroll_Tick; this.canHold = true;
                         description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_ScrollDw); break;
                 }
-                OnChange();
+                Change();
             }
 
             public enum Role : int
@@ -487,11 +482,6 @@ namespace CompletelyOptional
                         return "Menu_Symbol_Arrow";
                 }
                 return "pixel";
-            }
-
-            public override void OnChange()
-            {
-                base.OnChange();
             }
 
             protected internal override bool CurrentlyFocusableNonMouse
@@ -544,7 +534,7 @@ namespace CompletelyOptional
                 glow = new GlowGradient(myContainer, -0.5f * size, 2f * size);
 
                 this.unused = ConfigContainer.OptItfABC[index] < 0;
-                OnChange();
+                Change();
             }
 
             private readonly GlowGradient glow;
@@ -566,9 +556,9 @@ namespace CompletelyOptional
             private bool slideOut => list.GetMyAbcSlide(index, 0f) >= 30f;
             private readonly bool unused;
 
-            public override void OnChange()
+            protected internal override void Change()
             {
-                base.OnChange();
+                base.Change();
                 this._size = new Vector2(18f, 18f);
                 this.rectH.pos = new Vector2(-3f, -3f);
                 FLabelPlaceAtCenter(this.label, -3f, -3f, 24f, 24f);
@@ -657,11 +647,6 @@ namespace CompletelyOptional
             }
 
             public float floatPos;
-
-            public override void OnChange()
-            {
-                base.OnChange();
-            }
         }
 
         internal interface IAmPartOfModList

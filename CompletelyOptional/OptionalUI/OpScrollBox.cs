@@ -220,7 +220,7 @@ namespace OptionalUI
             }
 
             this.ScrollToTop(true);
-            OnChange();
+            Change();
             this.GrafUpdate(0f);
         }
 
@@ -452,10 +452,10 @@ namespace OptionalUI
             return false;
         }
 
-        public override void OnChange()
+        protected internal override void Change()
         {
             this._size.x = Mathf.Min(this._size.x, 800f); this._size.y = Mathf.Min(this._size.y, 800f);
-            base.OnChange();
+            base.Change();
             UpdateCam();
         }
 
@@ -662,7 +662,7 @@ namespace OptionalUI
             if (hasMoved || _firstUpdate)
             {
                 _firstUpdate = false;
-                this.OnChange();
+                this.Change();
             }
 
             base.Update();

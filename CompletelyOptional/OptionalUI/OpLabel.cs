@@ -53,7 +53,7 @@ namespace OptionalUI
                     y = -10000f
                 };
                 this.myContainer.AddChild(this.label);
-                OnChange();
+                Change();
             }
         }
 
@@ -72,7 +72,7 @@ namespace OptionalUI
             this._size = new Vector2((this._bigText ? 10f : 7f) * text.Length + 10f, this._bigText ? 30f : 20f);
 
             this.label.text = this._text;
-            OnChange();
+            Change();
         }
 
         /// <summary>
@@ -99,13 +99,13 @@ namespace OptionalUI
 
         /// <summary>
         /// Vertical Alignment of the text inside the box defined with <see cref="UIelement.size"/>. Will not work correctly with overflowed text.
-        /// Changing this will call <see cref="OnChange"/> automatically.
+        /// Changing this will call <see cref="Change"/> automatically.
         /// See also <seealso cref="LabelVAlignment"/>.
         /// </summary>
         public LabelVAlignment verticalAlignment
         {
             get => _verticalAlignment;
-            set { if (_verticalAlignment != value) { _verticalAlignment = value; OnChange(); } }
+            set { if (_verticalAlignment != value) { _verticalAlignment = value; Change(); } }
         }
 
         private LabelVAlignment _verticalAlignment;
@@ -128,7 +128,7 @@ namespace OptionalUI
         public FLabelAlignment alignment
         {
             get => _alignment;
-            set { if (_alignment != value) { _alignment = value; OnChange(); } }
+            set { if (_alignment != value) { _alignment = value; Change(); } }
         }
 
         protected FLabelAlignment _alignment;
@@ -159,10 +159,10 @@ namespace OptionalUI
             else { this.label.color = this.bumpBehav.GetColor(this.color); }
         }
 
-        public override void OnChange()
+        protected internal override void Change()
         {
             this._size = new Vector2(Mathf.Max(this._size.x, 20f), Mathf.Max(this._size.y, 20f)); // Minimum size
-            base.OnChange();
+            base.Change();
             if (this.bumpBehav?.owner == this) { this.bumpBehav.Update(); }
 
             if (string.IsNullOrEmpty(this._text)) { this._displayText = ""; goto displaySkip; }
@@ -245,7 +245,7 @@ namespace OptionalUI
         public string text
         {
             get => _text;
-            set { if (_text != value) { _text = value; OnChange(); } }
+            set { if (_text != value) { _text = value; Change(); } }
         }
 
         protected string _text;

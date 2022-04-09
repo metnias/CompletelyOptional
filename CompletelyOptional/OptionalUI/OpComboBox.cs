@@ -633,9 +633,9 @@ namespace OptionalUI
             }
         }
 
-        public override void OnChange()
+        protected internal override void Change()
         {
-            base.OnChange();
+            base.Change();
             this._size.x = Mathf.Max(30f, this._size.x);
 
             this.rect.size = this.size;
@@ -766,7 +766,7 @@ namespace OptionalUI
             if (sort) { temp.Sort(ListItem.Comparer); }
             this.itemList = temp.ToArray();
             this.ResetIndex();
-            this.OnChange();
+            this.Change();
         }
 
         /// <summary>
@@ -794,7 +794,7 @@ namespace OptionalUI
             }
             this.itemList = temp.ToArray();
             this.ResetIndex();
-            this.OnChange();
+            this.Change();
         }
 
         protected internal override string CopyToClipboard()

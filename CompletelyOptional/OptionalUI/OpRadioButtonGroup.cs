@@ -48,7 +48,7 @@ namespace OptionalUI
                 this.buttons[i].index = i;
                 if (i == this.GetValueInt()) { this.buttons[i]._value = "true"; }
                 else { this.buttons[i]._value = "false"; }
-                this.buttons[i].OnChange();
+                this.buttons[i].Change();
             }
         }
 
@@ -125,12 +125,12 @@ namespace OptionalUI
             for (int i = 0; i < this.buttons.Length; i++)
             {
                 this.buttons[i]._value = "false";
-                this.buttons[i].OnChange();
+                this.buttons[i].Change();
             }
             this.buttons[index]._value = "true";
-            this.buttons[index].OnChange();
+            this.buttons[index].Change();
             base.value = index.ToString();
-            this.OnChange();
+            this.Change();
         }
 
         protected internal override void Deactivate()

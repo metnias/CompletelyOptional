@@ -49,7 +49,7 @@ namespace OptionalUI
             myContainer.AddChild(arrUp); myContainer.AddChild(arrDown);
 
             bumpUp = new BumpBehaviour(this); bumpDown = new BumpBehaviour(this);
-            OnChange();
+            Change();
         }
 
         protected internal override string DisplayDescription()
@@ -69,10 +69,10 @@ namespace OptionalUI
         private int arrowCounter = 0, bumpCount, bumpDeci;
         private Vector2 scrollHeldPos; private float scrollHeldTickPos;
 
-        public override void OnChange()
+        protected internal override void Change()
         {
             if (!KeyboardOn) { ClampValue(); }
-            base.OnChange();
+            base.Change();
             // rectUp.pos = this.pos + new Vector2(this.size.x - 40f, 3f);
             // rectDown.pos = this.pos + new Vector2(this.size.x - 20f, 3f);
         }

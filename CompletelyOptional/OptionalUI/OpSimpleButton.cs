@@ -64,7 +64,7 @@ namespace OptionalUI
             {
                 if (_text == value || IsImageButton) { return; }
                 _text = value;
-                this.label.text = LabelTest.TrimText(_text, this.size.x, true); OnChange();
+                this.label.text = LabelTest.TrimText(_text, this.size.x, true); Change();
             }
         }
 
@@ -85,10 +85,10 @@ namespace OptionalUI
 
         internal bool IsImageButton => this is OpSimpleImageButton;
 
-        public override void OnChange()
+        protected internal override void Change()
         {
             this._size = new Vector2(Mathf.Max(24f, this.size.x), Mathf.Max(24f, this.size.y)); // Min Size
-            base.OnChange();
+            base.Change();
             if (!IsImageButton) { FLabelPlaceAtCenter(this.label, Vector2.zero, this.size); }
             this.rect.size = this.size;
             this.rectH.size = this.size;

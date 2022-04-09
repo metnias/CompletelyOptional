@@ -935,7 +935,7 @@ namespace CompletelyOptional
                 ConfigHistory last = history.Pop();
                 string curValue = last.config.value;
                 last.config.ForceValue(last.origValue);
-                last.config.OnChange();
+                last.config.Change();
                 OptItfChanged[FindItfIndex(last.config)] = true;
                 // Alert
                 ModConfigMenu.instance.ShowAlert(

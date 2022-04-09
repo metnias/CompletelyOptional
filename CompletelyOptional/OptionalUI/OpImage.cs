@@ -123,7 +123,7 @@ namespace OptionalUI
                 if (_scale != value)
                 {
                     _scale = value;
-                    OnChange();
+                    Change();
                 }
             }
         }
@@ -149,7 +149,7 @@ namespace OptionalUI
                 if (_alpha != value)
                 {
                     _alpha = value;
-                    OnChange();
+                    Change();
                 }
             }
         }
@@ -168,16 +168,16 @@ namespace OptionalUI
                 if (!isTexture && _color != value)
                 {
                     _color = value;
-                    OnChange();
+                    Change();
                 }
             }
         }
 
         private Color _color = Color.white;
 
-        public override void OnChange()
+        protected internal override void Change()
         {
-            base.OnChange();
+            base.Change();
 
             sprite.alpha = _alpha;
             sprite.color = _color;

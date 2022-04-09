@@ -192,7 +192,7 @@ namespace OptionalUI
                 {
                     this._value = value;
                     group.Switch(index);
-                    OnChange();
+                    Change();
                 }
             }
         }
