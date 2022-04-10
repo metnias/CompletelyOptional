@@ -544,7 +544,7 @@ namespace OptionalUI
 
         protected virtual void NonMouseModeUpdate()
         {
-            this.bumpBehav.Focused = this.Focused() && !this.held;
+            this.bumpBehav.Focused = this.Focused && !this.held;
             if (this.held)
             { // Up/Down: Choose option, Jmp: Select, Thrw: Leave
                 this.bumpList.Focused = true;

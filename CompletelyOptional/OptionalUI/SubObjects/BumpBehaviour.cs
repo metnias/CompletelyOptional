@@ -57,7 +57,8 @@ namespace OptionalUI
             {
                 if (!_focused.HasValue)
                 {
-                    if (this.owner is UIfocusable) { return this.owner.MenuMouseMode ? this.owner.MouseOver : (this.owner as UIfocusable).Focused(); }
+                    if (this.owner is UIfocusable)
+                    { return this.owner.MenuMouseMode ? this.owner.MouseOver : (this.owner as UIfocusable).Focused; }
                     return this.owner.MouseOver;
                 }
                 return _focused.Value;

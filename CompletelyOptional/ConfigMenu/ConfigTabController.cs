@@ -337,7 +337,7 @@ namespace CompletelyOptional
                 }
                 else
                 {
-                    if (this.Focused())
+                    if (this.Focused)
                     {
                         if (this.CtlrInput.y != 0)
                         {
@@ -350,7 +350,7 @@ namespace CompletelyOptional
                         {
                             if (this.isTop && this.CtlrInput.y > 0)
                             {
-                                if (this.Focused()) { ConfigContainer.instance.allowFocusMove = false; }
+                                if (this.Focused) { ConfigContainer.instance.allowFocusMove = false; }
                                 if (scrollCounter == 0)
                                 { ctrl.Scroll(true, true); }
                                 else
@@ -361,7 +361,7 @@ namespace CompletelyOptional
                             }
                             if (this.isBottom && this.CtlrInput.y < 0)
                             {
-                                if (this.Focused()) { ConfigContainer.instance.allowFocusMove = false; }
+                                if (this.Focused) { ConfigContainer.instance.allowFocusMove = false; }
                                 if (scrollCounter == 0)
                                 { ctrl.Scroll(false, true); }
                                 else
@@ -372,7 +372,7 @@ namespace CompletelyOptional
                             }
                         }
                     }
-                    lastFocused = this.Focused();
+                    lastFocused = this.Focused;
                 }
             }
 

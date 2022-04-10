@@ -64,7 +64,7 @@ namespace OptionalUI
             }
         }
 
-        public bool Focused() => ConfigContainer.focusedElement == this;
+        public bool Focused => ConfigContainer.focusedElement == this;
 
         /// <summary>
         /// Whether this is held or not.
@@ -80,7 +80,7 @@ namespace OptionalUI
                     _held = value;
                     OnHeld?.Invoke(_held);
                     if (value) { menu.cfgContainer.FocusNewElement(this); }
-                    else if (!this.Focused()) { return; }
+                    else if (!this.Focused) { return; }
                     ConfigContainer.holdElement = value;
                 }
             }

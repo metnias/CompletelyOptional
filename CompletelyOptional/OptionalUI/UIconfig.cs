@@ -140,7 +140,7 @@ namespace OptionalUI
                     OnValueUpdate?.Invoke(this, value, _value);
                     _value = value;
                     Change();
-                    if (!Focused()) { OnValueChanged?.Invoke(this, _value, _lastValue); _lastValue = _value; }
+                    if (!Focused) { OnValueChanged?.Invoke(this, _value, _lastValue); _lastValue = _value; }
                 }
             }
         }
@@ -195,7 +195,7 @@ namespace OptionalUI
                 base.held = value;
                 if (!value)
                 {
-                    if (this.Focused())
+                    if (this.Focused)
                     {
                         if (_lastValue != _value) { OnValueChanged?.Invoke(this, _value, _lastValue); }
                     }

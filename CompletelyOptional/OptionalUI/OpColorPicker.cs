@@ -286,7 +286,7 @@ namespace OptionalUI
             lblR.color = grey; lblG.color = grey; lblB.color = grey;
             lblP.color = white;
 
-            if (this.Focused() || this.MouseOver)
+            if (this.Focused || this.MouseOver)
             {
                 if (this.MousePos.y > 135f)
                 { //mod settings

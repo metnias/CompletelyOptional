@@ -344,7 +344,7 @@ namespace CompletelyOptional
 
                 if (MenuMouseMode)
                 {
-                    if (this.Focused())
+                    if (this.Focused)
                     {
                         if (Input.GetMouseButtonDown(1)) // Starred
                         { list.Star(index); }
@@ -357,7 +357,7 @@ namespace CompletelyOptional
                 }
                 else
                 {
-                    if (this.Focused())
+                    if (this.Focused)
                     {
                         if (CtlrInput.mp && !LastCtlrInput.mp) // Starred
                         { list.Star(index); }
@@ -391,7 +391,7 @@ namespace CompletelyOptional
                             }
                         }
                     }
-                    lastFocused = this.Focused();
+                    lastFocused = this.Focused;
                     // pressing right: jump to its alphabet button
                     // pressing left: jump to slider if it's available
                 }

@@ -274,14 +274,14 @@ namespace OptionalUI
                 this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 this.label.color = this.bumpBehav.GetColor(this.colorEdge);
-                if (this.Focused() || this.MouseOver) { this.label.alpha = Mathf.Min(0.5f, this.label.alpha + 0.05f); }
+                if (this.Focused || this.MouseOver) { this.label.alpha = Mathf.Min(0.5f, this.label.alpha + 0.05f); }
                 else { this.label.alpha = Mathf.Max(0f, this.label.alpha - 0.1f); }
                 return;
             }
 
             if (!tickSlider)
             {
-                if (this.held || this.Focused() || this.MouseOver)
+                if (this.held || this.Focused || this.MouseOver)
                 { this.label.alpha = Mathf.Min(this.label.alpha + 0.1f, 1f); }
                 else { this.label.alpha = Mathf.Max(this.label.alpha - 0.15f, 0f); }
 

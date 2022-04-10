@@ -175,7 +175,7 @@ namespace OptionalUI
                 }
                 this.rectH.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 this.rectH.addSize = new Vector2(-2f, -2f) * this.bumpBehav.AddSize;
-                float highlight = (this.Focused() || this.MouseOver) && !this.held ? (0.5f + 0.5f * this.bumpBehav.Sin(10f)) * this.bumpBehav.AddSize : 0f;
+                float highlight = (this.Focused || this.MouseOver) && !this.held ? (0.5f + 0.5f * this.bumpBehav.Sin(10f)) * this.bumpBehav.AddSize : 0f;
                 for (int j = 0; j < 8; j++) { this.rectH.sprites[j].alpha = highlight; }
 
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
