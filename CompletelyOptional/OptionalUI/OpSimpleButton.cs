@@ -40,7 +40,10 @@ namespace OptionalUI
         protected int heldCounter = 0;
 
         /// <summary>
-        /// A sound to play when this is held and released. In default this is <see cref="SoundID.MENU_Button_Standard_Button_Pressed"/>.
+        /// A sound to play when this is held and released (with <see cref="OnClick"/>).
+        /// <para>In default this is <see cref="SoundID.MENU_Button_Standard_Button_Pressed"/>.</para>
+        /// If you're using <see cref="OnPressInit"/> and <see cref="OnPressHold"/>, set this to <see cref="SoundID.None"/>, then
+        /// call <see cref="UIelement.PlaySound(SoundID)"/> in your events by yourself.
         /// </summary>
         public SoundID soundClick = SoundID.MENU_Button_Standard_Button_Pressed;
 
@@ -117,6 +120,7 @@ namespace OptionalUI
         {
             base.NonMouseSetHeld(newHeld);
             if (newHeld) { OnPressInit?.Invoke(this); }
+            else { heldCounter = 0; }
         }
 
         public override void Update()
@@ -175,16 +179,21 @@ namespace OptionalUI
 
         /// <summary>
         /// Event called when the user pressed and released the button.
+        /// As this is called, <seealso cref="soundClick"/> is played.
+        /// <para>See also <seealso cref="OnPressInit"/> and <seealso cref="OnPressHold"/> for hold events.</para>
         /// </summary>
         public event OnSignalHandler OnClick;
 
         /// <summary>
         /// Event called when the user began pressing the button.
+        /// <para>See also <seealso cref="OnPressHold"/>.</para>
         /// </summary>
         public event OnSignalHandler OnPressInit;
 
         /// <summary>
-        /// Event periodically called when the user is holding the button down.
+        /// Event periodically called when the user is holding the button down for long enough.
+        /// Useful for creating scroll buttons for example.
+        /// <para>See also <seealso cref="OnPressInit"/>.</para>
         /// </summary>
         public event OnSignalHandler OnPressHold;
     }

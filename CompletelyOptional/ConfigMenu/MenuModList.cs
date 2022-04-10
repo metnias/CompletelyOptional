@@ -134,8 +134,7 @@ namespace CompletelyOptional
             if (element is ModButton)
             { // Switch Mod
                 if (index != ConfigContainer.activeItfIndex)
-                { PlaySound(SoundID.MENU_MultipleChoice_Clicked); ConfigContainer.ChangeActiveMod(index); }
-                else { PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked); }
+                { ConfigContainer.ChangeActiveMod(index); }
             }
             else if (element is AlphabetButton)
             { // Scroll to Alphabet
@@ -451,13 +450,13 @@ namespace CompletelyOptional
                         description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_Stat); break;
                     case Role.ScrollUp:
                         this._pos = new Vector2(321f, 720f);
-                        this.soundClick = SoundID.MENU_First_Scroll_Tick;
-                        OnPressInit += Signal; OnPressHold += Signal;
+                        this.soundClick = SoundID.None;
+                        OnPressInit += Signal; OnPressHold += SignalHold;
                         description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_ScrollUp); break;
                     case Role.ScrollDown:
                         this._pos = new Vector2(321f, 26f); this.sprite.rotation = 180f;
-                        this.soundClick = SoundID.MENU_First_Scroll_Tick;
-                        OnPressInit += Signal; OnPressHold += Signal;
+                        this.soundClick = SoundID.None;
+                        OnPressInit += Signal; OnPressHold += SignalHold;
                         description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_ScrollDw); break;
                 }
                 Change();
@@ -520,6 +519,13 @@ namespace CompletelyOptional
             public void Signal(UIfocusable self)
             {
                 list.Signal(this, (int)role);
+                if (role != Role.Stat) { PlaySound(SoundID.MENU_First_Scroll_Tick); }
+            }
+
+            public void SignalHold(UIfocusable self)
+            {
+                list.Signal(this, (int)role * 2);
+                PlaySound(SoundID.MENU_Scroll_Tick);
             }
         }
 

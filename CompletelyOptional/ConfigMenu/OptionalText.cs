@@ -24,7 +24,7 @@ namespace CompletelyOptional
             engText[(int)ID.OpComboBox_NonMouseUseTuto] = "Use Joystick to scroll, Press JUMP to select";
             engText[(int)ID.OpDragger_MouseTuto] = "Hold Mouse Button and Drag up/down to adjust value";
             engText[(int)ID.OpDragger_NonMouseGrabTuto] = "Press JUMP to interact";
-            engText[(int)ID.OpDragger_NonMouseGrabTuto] = "Use Joystick to adjust, Press JUMP to set";
+            engText[(int)ID.OpDragger_NonMouseUseTuto] = "Use Joystick to adjust, Press JUMP to set";
             engText[(int)ID.OpKeyBinder_ErrorConflictOtherModDefault] = "Conflicting Default Button with <ModID>";
             engText[(int)ID.OpKeyBinder_ErrorConflictVanilla] = "Conflicting Button with Vanilla Control Options";
             engText[(int)ID.OpKeyBinder_ErrorConflictOtherMod] = "Conflicting Button with <AnotherModID>";

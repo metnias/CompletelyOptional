@@ -974,7 +974,8 @@ namespace CompletelyOptional
         /// </summary>
         public static void PlaySound(SoundID soundID)
         {
-            if (_soundFilled || ModConfigMenu.instance.manager.rainWorld.options.soundEffectsVolume == 0f) { return; }
+            if (soundID == SoundID.None || _soundFilled ||
+                ModConfigMenu.instance.manager.rainWorld.options.soundEffectsVolume == 0f) { return; }
             _soundFill += GetSoundFill(soundID);
             ModConfigMenu.instance.PlaySound(soundID);
         }
@@ -984,17 +985,22 @@ namespace CompletelyOptional
         /// </summary>
         public static void PlaySound(SoundID soundID, float pan, float vol, float pitch)
         {
-            if (_soundFilled || ModConfigMenu.instance.manager.rainWorld.options.soundEffectsVolume == 0f) { return; }
+            if (soundID == SoundID.None || _soundFilled ||
+                ModConfigMenu.instance.manager.rainWorld.options.soundEffectsVolume == 0f) { return; }
             _soundFill += GetSoundFill(soundID);
             ModConfigMenu.instance.PlaySound(soundID, pan, vol, pitch);
         }
 
         private static int GetSoundFill(SoundID soundID)
         {
-            SoundLoader.SoundData soundData = ModConfigMenu.instance.manager.menuMic.GetSoundData(soundID, -1);
-            AudioClip clip = ModConfigMenu.instance.manager.menuMic.soundLoader.GetAudioClip(soundData.audioClip);
-            if (clip == null) { return 0; }
-            return Mathf.CeilToInt(Mathf.Sqrt(clip.length * 60.0f)) + 1;
+            try
+            {
+                SoundLoader.SoundData soundData = ModConfigMenu.instance.manager.menuMic.GetSoundData(soundID, -1);
+                AudioClip clip = ModConfigMenu.instance.manager.menuMic.soundLoader.GetAudioClip(soundData.audioClip);
+                if (clip == null) { return 0; }
+                return Mathf.CeilToInt(Mathf.Sqrt(clip.length * 60.0f)) + 1;
+            }
+            catch { return 0; }
         }
 
         /// <summary>

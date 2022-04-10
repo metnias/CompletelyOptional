@@ -86,7 +86,7 @@ namespace OptionalUI
 
         /// <summary>
         /// For grabbing LeftBottom Position of this element from LeftBottom of <see cref="OpTab"/> or <see cref="OpScrollBox"/>, without offset.
-        /// See also <seealso cref="x"/> and <seealso cref="y"/>.
+        /// See also <seealso cref="SetPos"/>, <seealso cref="x"/> and <seealso cref="y"/>.
         /// </summary>
         public Vector2 GetPos()
         {
@@ -98,7 +98,7 @@ namespace OptionalUI
 
         /// <summary>
         /// For setting LeftBottom Position of this element from LeftBottom of <see cref="OpTab"/> or <see cref="OpScrollBox"/>, without offset.
-        /// See also <seealso cref="x"/> and <seealso cref="y"/>.
+        /// See also <seealso cref="GetPos"/>, <seealso cref="x"/> and <seealso cref="y"/>.
         /// </summary>
         /// <param name="value"></param>
         public void SetPos(Vector2 value)
@@ -261,7 +261,7 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Restricted <see cref="Menu.Menu.PlaySound(SoundID)"/> to prevent sound glitch
+        /// Restricted <see cref="Menu.Menu.PlaySound(SoundID)"/> to prevent sound glitch.
         /// </summary>
         public void PlaySound(SoundID soundID)
         { if (!mute) { ConfigContainer.PlaySound(soundID); } }
@@ -278,7 +278,7 @@ namespace OptionalUI
 
         /// <summary>
         /// For setting LeftBottom Position of this element from LeftBottom of <see cref="OpTab"/> or <see cref="OpScrollBox"/>.
-        /// <para>For grabbing position without offset, use <see cref="GetPos"/>.</para>
+        /// <para>For accessing position without offset, use <see cref="GetPos"/> and <see cref="SetPos"/>.</para>
         /// </summary>
         protected internal Vector2 pos
         {

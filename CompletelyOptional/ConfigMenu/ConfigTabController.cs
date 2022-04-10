@@ -218,7 +218,7 @@ namespace CompletelyOptional
                 this.rectH.hiddenSide = DyeableRect.HiddenSide.Right;
                 this.label.alignment = FLabelAlignment.Left;
                 this.label.rotation = -90f;
-                this.mute = true;
+                this.soundClick = SoundID.None;
                 this.myContainer.AddChild(this.label);
 
                 this.ctrl.menuTab.AddItems(this);
