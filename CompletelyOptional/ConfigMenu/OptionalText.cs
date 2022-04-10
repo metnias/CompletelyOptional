@@ -19,63 +19,64 @@ namespace CompletelyOptional
             engText[(int)ID.OpCheckBox_NonMouseTuto] = "Press JUMP to toggle";
             engText[(int)ID.OpComboBox_MouseOpenTuto] = "Click to open the list";
             engText[(int)ID.OpComboBox_MouseUseTuto] = "Double click the main box to search";
-            engText[(int)ID.OpComboBox_MouseSearchTuto] = "Type keyword or initial with Keyboard to search";
+            engText[(int)ID.OpComboBox_MouseSearchTuto] = "Type keyword or initial with keyboard to search";
             engText[(int)ID.OpComboBox_NonMouseOpenTuto] = "Press JUMP to open the list";
-            engText[(int)ID.OpComboBox_NonMouseUseTuto] = "Use Joystick to scroll, Press JUMP to select";
-            engText[(int)ID.OpDragger_MouseTuto] = "Hold Mouse Button and Drag up/down to adjust value";
+            engText[(int)ID.OpComboBox_NonMouseUseTuto] = "Use joystick to scroll, Press JUMP to select";
+            engText[(int)ID.OpDragger_MouseTuto] = "Hold mouse button and drag up or down to adjust value";
             engText[(int)ID.OpDragger_NonMouseGrabTuto] = "Press JUMP to interact";
-            engText[(int)ID.OpDragger_NonMouseUseTuto] = "Use Joystick to adjust, Press JUMP to set";
-            engText[(int)ID.OpKeyBinder_ErrorConflictOtherModDefault] = "Conflicting Default Button with <ModID>";
-            engText[(int)ID.OpKeyBinder_ErrorConflictVanilla] = "Conflicting Button with Vanilla Control Options";
-            engText[(int)ID.OpKeyBinder_ErrorConflictOtherMod] = "Conflicting Button with <AnotherModID>";
-            engText[(int)ID.OpKeyBinder_ErrorConflictCurrMod] = "[<ConflictButton>] Button is already in use";
-            engText[(int)ID.OpKeyBinder_MouseSelectTuto] = "Click to change Button binding";
-            engText[(int)ID.OpKeyBinder_MouseBindTuto] = "Press a Button to bind (ESC to unbind)";
-            engText[(int)ID.OpKeyBinder_MouseJoystickBindTuto] = "Press a Button to bind (ESC to unbind, Ctrl + No to set controller number)";
+            engText[(int)ID.OpDragger_NonMouseUseTuto] = "Use joystick to adjust, press JUMP to set";
+            engText[(int)ID.OpKeyBinder_ErrorConflictOtherModDefault] = "Conflicting default button with <ModID>";
+            engText[(int)ID.OpKeyBinder_ErrorConflictVanilla] = "Conflicting button with vanilla control options";
+            engText[(int)ID.OpKeyBinder_ErrorConflictOtherMod] = "Conflicting button with <AnotherModID>";
+            engText[(int)ID.OpKeyBinder_ErrorConflictCurrMod] = "[<ConflictButton>] button is already in use";
+            engText[(int)ID.OpKeyBinder_MouseSelectTuto] = "Click to change button binding";
+            engText[(int)ID.OpKeyBinder_MouseBindTuto] = "Press a button to bind (ESC to unbind)";
+            engText[(int)ID.OpKeyBinder_MouseJoystickBindTuto] = "Press a button to bind (ESC to unbind, CTRL + no to set controller number)";
             engText[(int)ID.OpKeyBinder_NonMouseSelectTuto] = "Press JUMP to change Button binding";
-            engText[(int)ID.OpKeyBinder_NonMouseBindTuto] = "Press a Button to bind (SELECT to unbind)";
-            engText[(int)ID.OpKeyBinder_NonMouseJoystickBindTuto] = "Press a Button to bind (SELECT to unbind, Ctrl + No to set controller number)";
+            engText[(int)ID.OpKeyBinder_NonMouseBindTuto] = "Press a button to bind (SELECT to unbind)";
+            engText[(int)ID.OpKeyBinder_NonMouseJoystickBindTuto] = "Press a button to bind (SELECT to unbind, CTRL + No to set controller number)";
             engText[(int)ID.OpRadioButton_MouseTuto] = "Click to choose this option";
             engText[(int)ID.OpRadioButton_NonMouseTuto] = "Press JUMP to choose this option";
-            engText[(int)ID.OpSlider_MouseTutoHrzt] = "Hold your Mouse Button and Drag left/right to adjust value";
-            engText[(int)ID.OpSlider_MouseTutoVrtc] = "Hold your Mouse Button and Drag up/down to adjust value";
+            engText[(int)ID.OpSlider_MouseTutoHrzt] = "Hold your mouse button and drag left or right to adjust value";
+            engText[(int)ID.OpSlider_MouseTutoVrtc] = "Hold your mouse button and drag up or down to adjust value";
             engText[(int)ID.OpSlider_NonMouseGrabTuto] = "Press JUMP to interact";
-            engText[(int)ID.OpSlider_NonMouseAdjustTuto] = "Use Joystick to adjust, Press JUMP to apply";
+            engText[(int)ID.OpSlider_NonMouseAdjustTuto] = "Use joystick to adjust, press JUMP to apply";
             engText[(int)ID.OpTextBox_MouseTutoGrab] = "Click to begin typing";
-            engText[(int)ID.OpTextBox_MouseTutoType] = "Use Keyboard to type, Press Enter to apply";
-            engText[(int)ID.OpTextBox_NonMouseTuto] = "This cannot be interacted with a Joystick";
+            engText[(int)ID.OpTextBox_MouseTutoType] = "Use keyboard to type, press Enter to apply";
+            engText[(int)ID.OpTextBox_NonMouseTuto] = "This cannot be interacted with a joystick";
 
-            engText[(int)ID.OpScrollBox_MouseTuto] = "Use Scroll Wheel to see more";
-            engText[(int)ID.OpScrollBox_MouseTutoSlidebar] = "Use Scroll Wheel or Scrollbar to see more";
-            engText[(int)ID.OpScrollBox_NonMouseTuto] = "Press JUMP and use Joystick to see more";
-            engText[(int)ID.OpSimpleButton_MouseTuto] = "Click Mouse Button to trigger";
-            engText[(int)ID.OpSimpleButton_NonMouseTuto] = "Press JUMP Button to trigger";
-            engText[(int)ID.OpHoldButton_MouseTuto] = "Hold Mouse Button to trigger";
-            engText[(int)ID.OpHoldButton_NonMouseTuto] = "Hold JUMP Button to trigger";
-
-            engText[(int)ID.ConfigTabController_TabSelectButton_UnnamedTab] = "Switch to Tab No <TabIndex>";
-            engText[(int)ID.ConfigTabController_TabSelectButton_NamedTab] = "Switch to Tab <TabName>";
+            engText[(int)ID.OpScrollBox_MouseTuto] = "Use scroll wheel to see more";
+            engText[(int)ID.OpScrollBox_MouseTutoSlidebar] = "Use scroll wheel or scrollbar to see more";
+            engText[(int)ID.OpScrollBox_NonMouseTuto] = "Press JUMP and use joystick to see more";
+            engText[(int)ID.OpSimpleButton_MouseTuto] = "Click mouse button to trigger";
+            engText[(int)ID.OpSimpleButton_NonMouseTuto] = "Press JUMP button to trigger";
+            engText[(int)ID.OpHoldButton_MouseTuto] = "Hold mouse button to trigger";
+            engText[(int)ID.OpHoldButton_NonMouseTuto] = "Hold JUMP button to trigger";
 
             engText[(int)ID.OptionsMenu_ConfigButton_Label] = "MOD CONFIG";
-            engText[(int)ID.OptionsMenu_ConfigButton_Desc] = "Configure Settings for Rain World Mods";
+            engText[(int)ID.OptionsMenu_ConfigButton_Desc] = "Configure settings for installed mods";
             engText[(int)ID.ConfigMenuTab_BackButton_Label] = "BACK";
-            engText[(int)ID.ConfigMenuTab_BackButton_Desc] = "Return to Options Menu";
+            engText[(int)ID.ConfigMenuTab_BackButton_Desc] = "Return to options menu";
             engText[(int)ID.ConfigMenuTab_SaveButton_Label] = "APPLY";
-            engText[(int)ID.ConfigMenuTab_SaveButton_Desc] = "Save current Mod's configurations";
+            engText[(int)ID.ConfigMenuTab_SaveButton_Desc] = "Save current mod's configurations";
             engText[(int)ID.ConfigMenuTab_ResetButton_Label] = "RESET CONFIG";
-            engText[(int)ID.ConfigMenuTab_ResetButton_Desc] = "Reset current Mod's configurations";
+            engText[(int)ID.ConfigMenuTab_ResetButton_Desc] = "Reset current mod's configurations";
             engText[(int)ID.MenuModList_ModButton_Configure] = "Configure <ModID> by <ModAuthor>";
             engText[(int)ID.MenuModList_ModButton_ConfigureAnonymous] = "Configure <ModID>";
             engText[(int)ID.MenuModList_ModButton_Display] = "Display <ModID> by <ModAuthor>";
             engText[(int)ID.MenuModList_ModButton_DisplayAnonymous] = "Display <ModID>";
             engText[(int)ID.MenuModList_ModButton_Blank] = "<ModID> by <ModAuthor>";
             engText[(int)ID.MenuModList_ModButton_Blankest] = "<ModID>";
-            engText[(int)ID.MenuModList_ListButton_Stat] = "Display Mods Statistics";
-            engText[(int)ID.MenuModList_ListButton_ScrollUp] = "Press or Hold Mouse Button to scroll the Mod List up";
-            engText[(int)ID.MenuModList_ListButton_ScrollDw] = "Press or Hold Mouse Button to scroll the Mod List down";
-            engText[(int)ID.MenuModList_AlphabetButton_MouseDesc] = "Click to jump to Mods start with the alphabet <Letter>";
-            engText[(int)ID.MenuModList_AlphabetButton_NonMouseDesc] = "Press JUMP to jump to Mods start with the alphabet <Letter>";
-            engText[(int)ID.MenuModList_ListSlider_Desc] = "Hold your Mouse Button on the circle and Drag up/down to scroll the Mod List";
+            engText[(int)ID.MenuModList_ListButton_Stat] = "Display mods statistics";
+            engText[(int)ID.MenuModList_ListButton_ScrollUp] = "Press or hold mouse button to scroll the mod List up";
+            engText[(int)ID.MenuModList_ListButton_ScrollDw] = "Press or hold mouse button to scroll the mod List down";
+            engText[(int)ID.MenuModList_AlphabetButton_MouseDesc] = "Click to jump to mods start with the alphabet <Letter>";
+            engText[(int)ID.MenuModList_AlphabetButton_NonMouseDesc] = "Press JUMP to jump to mods start with the alphabet <Letter>";
+            engText[(int)ID.MenuModList_ListSlider_Desc] = "Hold your mouse button on the circle and drag up or down to scroll the mod list";
+            engText[(int)ID.ConfigTabController_TabSelectButton_UnnamedTab] = "Switch to tab no. <TabIndex>";
+            engText[(int)ID.ConfigTabController_TabSelectButton_NamedTab] = "Switch to tab <TabName>";
+            engText[(int)ID.ConfigTabController_TabScrollButton_Up] = "Press or hold mouse button to scroll the tab list up";
+            engText[(int)ID.ConfigTabController_TabScrollButton_Dw] = "Press or hold mouse button to scroll the tab list down";
         }
 
         public enum ID : int
@@ -118,9 +119,6 @@ namespace CompletelyOptional
             OpHoldButton_MouseTuto,
             OpHoldButton_NonMouseTuto,
 
-            ConfigTabController_TabSelectButton_UnnamedTab,
-            ConfigTabController_TabSelectButton_NamedTab,
-
             OptionsMenu_ConfigButton_Label,
             OptionsMenu_ConfigButton_Desc,
             ConfigMenuTab_BackButton_Label,
@@ -140,7 +138,11 @@ namespace CompletelyOptional
             MenuModList_ListButton_ScrollDw,
             MenuModList_AlphabetButton_MouseDesc,
             MenuModList_AlphabetButton_NonMouseDesc,
-            MenuModList_ListSlider_Desc
+            MenuModList_ListSlider_Desc,
+            ConfigTabController_TabSelectButton_UnnamedTab,
+            ConfigTabController_TabSelectButton_NamedTab,
+            ConfigTabController_TabScrollButton_Up,
+            ConfigTabController_TabScrollButton_Dw,
         }
 
         public static string[] engText;

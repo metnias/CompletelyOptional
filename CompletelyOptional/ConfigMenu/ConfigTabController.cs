@@ -98,12 +98,12 @@ namespace CompletelyOptional
         {
             if (focusedIndex < topIndex)
             {
-                //scrollBump = Mathf.Max(scrollBump - 2.5f * (topIndex - focusedIndex), -12f);
+                scrollBump = Mathf.Max(scrollBump - 2.5f * (topIndex - focusedIndex), -12f);
                 topIndex = focusedIndex;
             }
             else if (focusedIndex >= topIndex + tabButtonLimit)
             {
-                //scrollBump = Mathf.Min(scrollBump + 2.5f * (topIndex - focusedIndex), 12f);
+                scrollBump = Mathf.Min(scrollBump + 2.5f * (topIndex - focusedIndex), 12f);
                 topIndex = focusedIndex - tabButtonLimit + 1;
             }
         }
@@ -135,9 +135,6 @@ namespace CompletelyOptional
 
         private void Refresh()
         {
-            if (ConfigContainer.activeInterface != null)
-            {
-            }
             menuTab.resetButton.greyedOut = !ConfigContainer.activeInterface.Configurable();
             menuTab.saveButton.greyedOut = menuTab.resetButton.greyedOut;
 
@@ -164,6 +161,44 @@ namespace CompletelyOptional
             }
         }
 
+        private void Scroll(bool upward, bool first)
+        {
+            menu.ShowAlert($"{topIndex}, {upward}, {first}");
+            if (upward)
+            {
+                if (topIndex > 0)
+                { // Scroll Up
+                    topIndex--; Refresh();
+                    PlaySound(!first ? SoundID.MENU_Scroll_Tick : SoundID.MENU_First_Scroll_Tick);
+                    scrollBump = Mathf.Max(scrollBump - (!first ? 4f : 6f), -12f);
+                }
+                else
+                { // No more scroll
+                    if (topIndex != 0)
+                    { topIndex = 0; Refresh(); }
+                    PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Mouse);
+                    scrollBump = Mathf.Max(scrollBump - 3f, -12f);
+                }
+            }
+            else
+            {
+                if (topIndex < _tabCount - tabButtonLimit)
+                { // Scroll Down
+                    topIndex++; Refresh();
+                    PlaySound(!first ? SoundID.MENU_Scroll_Tick : SoundID.MENU_First_Scroll_Tick);
+                    scrollBump = Mathf.Min(scrollBump + (!first ? 4f : 6f), 12f);
+                }
+                else
+                { // No more scroll
+                    if (topIndex != _tabCount - tabButtonLimit)
+                    { topIndex = _tabCount - tabButtonLimit; Refresh(); }
+                    PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Mouse);
+                    scrollBump = Mathf.Min(scrollBump + 3f, 12f);
+                    return;
+                }
+            }
+        }
+
         private void Signal(UIfocusable trigger, int index = -1)
         {
             if (trigger is TabSelectButton)
@@ -174,35 +209,7 @@ namespace CompletelyOptional
             }
             if (trigger is TabScrollButton)
             {
-                if (index < 0)
-                {
-                    if (topIndex > 0)
-                    { // Scroll Up
-                        topIndex--; Refresh();
-                        PlaySound(index < -1 ? SoundID.MENU_Scroll_Tick : SoundID.MENU_First_Scroll_Tick);
-                        scrollBump = Mathf.Max(scrollBump - (index < -1 ? 4f : 6f), -12f);
-                    }
-                    else
-                    { // No more scroll
-                        PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Mouse);
-                        scrollBump = Mathf.Max(scrollBump - 3f, -12f);
-                    }
-                }
-                else
-                {
-                    if (topIndex < _tabCount - tabButtonLimit)
-                    { // Scroll Down
-                        topIndex++; Refresh();
-                        PlaySound(index < -1 ? SoundID.MENU_Scroll_Tick : SoundID.MENU_First_Scroll_Tick);
-                        scrollBump = Mathf.Min(scrollBump + (index > 1 ? 4f : 6f), 12f);
-                    }
-                    else
-                    { // No more scroll
-                        PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Mouse);
-                        scrollBump = Mathf.Min(scrollBump + 3f, 12f);
-                        return;
-                    }
-                }
+                Scroll(index < 0, System.Math.Abs(index) > 1);
             }
         }
 
@@ -321,7 +328,7 @@ namespace CompletelyOptional
                             {
                                 bool up = menu.mouseScrollWheelMovement < 0;
                                 TabScrollButton scroll = ctrl.scrollButtons[up ? 0 : 1];
-                                if (!scroll.isInactive) { ctrl.Signal(scroll, up ? -1 : 1); }
+                                if (!scroll.isInactive) { ctrl.Scroll(up, false); }
                                 scrolled = true;
                             }
                         }
@@ -345,22 +352,22 @@ namespace CompletelyOptional
                             {
                                 if (this.Focused()) { ConfigContainer.instance.allowFocusMove = false; }
                                 if (scrollCounter == 0)
-                                { ctrl.Signal(ctrl.scrollButtons[0], -1); }
+                                { ctrl.Scroll(true, true); }
                                 else
                                 {
                                     if (scrollCounter > ModConfigMenu.DASinit && scrollCounter % ModConfigMenu.DASdelay == 1)
-                                    { ctrl.Signal(ctrl.scrollButtons[0], -2); }
+                                    { ctrl.Scroll(true, false); }
                                 }
                             }
                             if (this.isBottom && this.CtlrInput.y < 0)
                             {
                                 if (this.Focused()) { ConfigContainer.instance.allowFocusMove = false; }
                                 if (scrollCounter == 0)
-                                { ctrl.Signal(ctrl.scrollButtons[0], 1); }
+                                { ctrl.Scroll(false, true); }
                                 else
                                 {
                                     if (scrollCounter > ModConfigMenu.DASinit && scrollCounter % ModConfigMenu.DASdelay == 1)
-                                    { ctrl.Signal(ctrl.scrollButtons[0], 2); }
+                                    { ctrl.Scroll(false, false); }
                                 }
                             }
                         }
@@ -388,7 +395,7 @@ namespace CompletelyOptional
                 this.sprite.rotation = up ? 0f : 180f;
                 this.sprite.scale = 0.5f;
                 this.sprite.x = 15f;
-                this.mute = true;
+                this.soundClick = SoundID.None;
                 this.rect.Hide(); this.rectH.Hide();
                 this.ctrl.menuTab.AddItems(this);
 
@@ -398,6 +405,11 @@ namespace CompletelyOptional
 
             internal readonly bool up;
             private readonly ConfigTabController ctrl;
+
+            protected internal override string DisplayDescription()
+            {
+                return OptionalText.GetText(up ? OptionalText.ID.ConfigTabController_TabScrollButton_Up : OptionalText.ID.MenuModList_ListButton_ScrollDw);
+            }
 
             protected internal override void Change()
             {
@@ -419,7 +431,7 @@ namespace CompletelyOptional
 
             public override void Update()
             {
-                this.greyedOut = up ? ctrl.topIndex == 0 : ctrl.topIndex >= ctrl._tabCount - ConfigTabController.tabButtonLimit;
+                this.greyedOut = up ? ctrl.topIndex <= 0 : ctrl.topIndex >= ctrl._tabCount - ConfigTabController.tabButtonLimit;
                 base.Update();
             }
 

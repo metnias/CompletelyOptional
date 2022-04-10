@@ -135,8 +135,9 @@ namespace CompletelyOptional
             { // Switch Mod
                 if (index != ConfigContainer.activeItfIndex)
                 { ConfigContainer.ChangeActiveMod(index); }
+                return;
             }
-            else if (element is AlphabetButton)
+            if (element is AlphabetButton)
             { // Scroll to Alphabet
                 int target = ConfigContainer.OptItfABC[index];
                 if (target > scrollPos)
@@ -152,8 +153,9 @@ namespace CompletelyOptional
                 ScrollToShow(target);
                 ClampScrollPos();
                 cfgContainer.FocusNewElement(modButtons[ConfigContainer.OptItfABC[index] - 1]);
+                return;
             }
-            else if (element is ListButton)
+            if (element is ListButton)
             {
                 if (index == 0)
                 { // Switch Mod to InternalOI_Stats
@@ -164,6 +166,7 @@ namespace CompletelyOptional
                     scrollPos += index;
                     ClampScrollPos();
                 }
+                return;
             }
         }
 
@@ -524,7 +527,7 @@ namespace CompletelyOptional
 
             public void SignalHold(UIfocusable self)
             {
-                list.Signal(this, (int)role * 2);
+                list.Signal(this, (int)role);
                 PlaySound(SoundID.MENU_Scroll_Tick);
             }
         }
