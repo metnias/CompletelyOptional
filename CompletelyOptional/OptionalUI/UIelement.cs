@@ -326,14 +326,16 @@ namespace OptionalUI
         {
             get
             {
+                bool res;
                 if (this.isRectangular)
                 {
-                    return this.MousePos.x > 0f && this.MousePos.y > 0f && this.MousePos.x < this.size.x && this.MousePos.y < this.size.y;
+                    res = this.MousePos.x > 0f && this.MousePos.y > 0f && this.MousePos.x < this.size.x && this.MousePos.y < this.size.y;
                 }
                 else
                 {
-                    return Custom.DistLess(new Vector2(rad, rad), this.MousePos, rad);
+                    res = Custom.DistLess(new Vector2(rad, rad), this.MousePos, rad);
                 }
+                return res;
             }
         }
 
@@ -345,7 +347,7 @@ namespace OptionalUI
             get
             {
                 Vector2 p = new Vector2(menu.mousePosition.x - ScreenPos.x, menu.mousePosition.y - ScreenPos.y);
-                if (inScrollBox)
+                if (inScrollBox && scrollBox.MouseOver)
                 { p += scrollBox.camPos - (scrollBox.horizontal ? Vector2.right : Vector2.up) * scrollBox.scrollOffset - scrollBox.pos; }
                 if (tab != null) { p -= new Vector2(tab.container.x, tab.container.y); }
                 return p;

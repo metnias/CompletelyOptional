@@ -220,11 +220,12 @@ namespace OptionalUI
 
         public override void Update()
         {
+            if ((greyedOut || isProgress) && held)
+            { held = false; OnClick?.Invoke(this); }
             base.Update();
             if (isRectangular) { this.rect.Update(); this.rectH.Update(); }
             if (greyedOut || isProgress)
             {
-                held = false;
                 filled = 0f;
                 pulse = 0f;
                 bumpBehav.sizeBump = greyedOut ? 0f : 1f;

@@ -125,9 +125,14 @@ namespace OptionalUI
 
         public override void Update()
         {
+            if (greyedOut && held)
+            {
+                held = false;
+                PlaySound(soundClick); OnClick?.Invoke(this);
+            }
             base.Update();
             this.rect.Update(); this.rectH.Update();
-            if (greyedOut) { return; }
+            if (greyedOut) { heldCounter = 0; return; }
 
             if (MenuMouseMode)
             {

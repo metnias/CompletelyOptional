@@ -163,7 +163,6 @@ namespace CompletelyOptional
 
         private void Scroll(bool upward, bool first)
         {
-            menu.ShowAlert($"{topIndex}, {upward}, {first}");
             if (upward)
             {
                 if (topIndex > 0)
@@ -209,6 +208,7 @@ namespace CompletelyOptional
             }
             if (trigger is TabScrollButton)
             {
+                menu.ShowAlert($"{topIndex} + {index}");
                 Scroll(index < 0, System.Math.Abs(index) > 1);
             }
         }
@@ -414,7 +414,6 @@ namespace CompletelyOptional
             protected internal override void Change()
             {
                 base.Change();
-                this.rect.Hide();
                 this._size = new Vector2(30f, 20f);
             }
 
@@ -423,7 +422,7 @@ namespace CompletelyOptional
             public override void GrafUpdate(float timeStacker)
             {
                 base.GrafUpdate(timeStacker);
-                this.rectH.Hide();
+                this.rect.Hide(); this.rectH.Hide();
                 if (Mathf.Abs(ctrl.scrollBump) > Mathf.Abs(ctrl.lastScrollBump))
                 { bumpBehav.flash += 0.6f; }
                 this.sprite.y = 10f + (up ? 1 : -1) * Mathf.Abs(Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker));
