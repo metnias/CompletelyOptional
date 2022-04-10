@@ -13,9 +13,9 @@ namespace OptionalUI
         /// <param name="text">Text you want to have inside the button</param>
         public OpSimpleButton(Vector2 pos, Vector2 size, string text = "") : base(pos, size)
         {
-            this.OnPressInit += new OnSignalHandler(FocusMoveDisallow);
-            this.OnClick += new OnSignalHandler(FocusMoveDisallow);
-            this.OnPressHold += new OnSignalHandler(FocusMoveDisallow);
+            this.OnPressInit += FocusMoveDisallow;
+            this.OnClick += FocusMoveDisallow;
+            this.OnPressHold += FocusMoveDisallow;
             this._size = new Vector2(Mathf.Max(24f, size.x), Mathf.Max(24f, size.y));
 
             this.rect = new DyeableRect(this.myContainer, Vector2.zero, this.size, true);

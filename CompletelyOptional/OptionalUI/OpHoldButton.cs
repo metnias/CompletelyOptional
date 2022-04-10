@@ -15,9 +15,9 @@ namespace OptionalUI
         /// <param name="displayText">Text to be displayed (overriden when it's ProgressButton mode)</param>
         public OpHoldButton(Vector2 pos, string displayText, float fillTime = 80f) : base(pos, 55f)
         {
-            this.OnPressInit += new OnSignalHandler(FocusMoveDisallow);
-            this.OnClick += new OnSignalHandler(FocusMoveDisallow);
-            this.OnPressDone += new OnSignalHandler(FocusMoveDisallow);
+            this.OnPressInit += FocusMoveDisallow;
+            this.OnClick += FocusMoveDisallow;
+            this.OnPressDone += FocusMoveDisallow;
             this.fillTime = Mathf.Max(0f, fillTime);
             fixedRad = 55f;
             _text = displayText;

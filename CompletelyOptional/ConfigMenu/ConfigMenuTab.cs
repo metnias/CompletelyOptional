@@ -20,9 +20,9 @@ namespace CompletelyOptional
             resetButton = new OpHoldButton(new Vector2(770f, 50f), new Vector2(120f, 30f), OptionalText.GetText(OptionalText.ID.ConfigMenuTab_ResetButton_Label))
             { description = OptionalText.GetText(OptionalText.ID.ConfigMenuTab_ResetButton_Desc) };
             this.AddItems(backButton, saveButton, resetButton);
-            backButton.OnClick += new OnSignalHandler(SignalBack);
-            saveButton.OnClick += new OnSignalHandler(SignalSave);
-            resetButton.OnPressDone += new OnSignalHandler(SignalReset);
+            backButton.OnClick += SignalBack;
+            saveButton.OnClick += SignalSave;
+            resetButton.OnPressDone += SignalReset;
             modList = new MenuModList(this);
             tabCtrler = new ConfigTabController(this);
         }

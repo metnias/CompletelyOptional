@@ -234,7 +234,7 @@ namespace CompletelyOptional
 
                 this.list.menuTab.AddItems(this);
                 Change();
-                OnClick += new OnSignalHandler(Signal);
+                OnClick += Signal;
             }
 
             private float MyPos => list.pos.y + 650f - (index - list.floatScrollPos) * height;
@@ -447,17 +447,17 @@ namespace CompletelyOptional
                     case Role.Stat:
                         this._pos = new Vector2(466f, 700f); // x462f : centered
                         this.soundClick = SoundID.MENU_Switch_Arena_Gametype; this.greyedOut = true;
-                        OnClick += new OnSignalHandler(Signal);
+                        OnClick += Signal;
                         description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_Stat); break;
                     case Role.ScrollUp:
                         this._pos = new Vector2(321f, 720f);
                         this.soundClick = SoundID.MENU_First_Scroll_Tick;
-                        OnPressInit += new OnSignalHandler(Signal); OnPressHold += new OnSignalHandler(Signal);
+                        OnPressInit += Signal; OnPressHold += Signal;
                         description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_ScrollUp); break;
                     case Role.ScrollDown:
                         this._pos = new Vector2(321f, 26f); this.sprite.rotation = 180f;
                         this.soundClick = SoundID.MENU_First_Scroll_Tick;
-                        OnPressInit += new OnSignalHandler(Signal); OnPressHold += new OnSignalHandler(Signal);
+                        OnPressInit += Signal; OnPressHold += Signal;
                         description = OptionalText.GetText(OptionalText.ID.MenuModList_ListButton_ScrollDw); break;
                 }
                 Change();
@@ -538,7 +538,7 @@ namespace CompletelyOptional
 
                 this.unused = ConfigContainer.OptItfABC[index] < 0;
                 Change();
-                OnClick += new OnSignalHandler(Signal);
+                OnClick += Signal;
             }
 
             private readonly GlowGradient glow;

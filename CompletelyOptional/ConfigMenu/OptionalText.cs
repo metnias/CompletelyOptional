@@ -49,9 +49,7 @@ namespace CompletelyOptional
             engText[(int)ID.OpScrollBox_MouseTutoSlidebar] = "Use Scroll Wheel or Scrollbar to see more";
             engText[(int)ID.OpScrollBox_NonMouseTuto] = "Press JUMP and use Joystick to see more";
             engText[(int)ID.OpSimpleButton_MouseTuto] = "Click Mouse Button to trigger";
-            engText[(int)ID.OpSimpleButton_MouseTutoHold] = "Press or Hold Mouse Button to trigger";
             engText[(int)ID.OpSimpleButton_NonMouseTuto] = "Press JUMP Button to trigger";
-            engText[(int)ID.OpSimpleButton_NonMouseTutoHold] = "Press or Hold JUMP Button to trigger";
             engText[(int)ID.OpHoldButton_MouseTuto] = "Hold Mouse Button to trigger";
             engText[(int)ID.OpHoldButton_NonMouseTuto] = "Hold JUMP Button to trigger";
 
@@ -116,9 +114,7 @@ namespace CompletelyOptional
             OpScrollBox_MouseTutoSlidebar,
             OpScrollBox_NonMouseTuto,
             OpSimpleButton_MouseTuto,
-            OpSimpleButton_MouseTutoHold,
             OpSimpleButton_NonMouseTuto,
-            OpSimpleButton_NonMouseTutoHold,
             OpHoldButton_MouseTuto,
             OpHoldButton_NonMouseTuto,
 

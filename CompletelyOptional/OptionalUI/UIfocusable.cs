@@ -70,7 +70,7 @@ namespace OptionalUI
         /// Whether this is held or not.
         /// If this is true, other <see cref="UIelement"/> will be frozen.
         /// </summary>
-        protected internal bool held
+        protected internal virtual bool held
         {
             get { return _held; }
             set

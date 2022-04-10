@@ -29,6 +29,7 @@ namespace OptionalUI
             if (!this.cosmetic) { this.defaultValue = GetStringValue(config.DefaultValue); }
             else { this.defaultValue = GetStringValue(cosmeticValue); }
             this._value = this.defaultValue;
+            this._lastValue = this._value;
         }
 
         internal string GetStringValue(object obj)
@@ -78,6 +79,7 @@ namespace OptionalUI
             if (!this.cosmetic) { this.defaultValue = GetStringValue(config.DefaultValue); }
             else { this.defaultValue = GetStringValue(cosmeticValue); }
             this._value = this.defaultValue;
+            this._lastValue = this._value;
         }
 
         /// <summary>
@@ -119,7 +121,7 @@ namespace OptionalUI
 
         /// <summary>
         /// Value in <see cref="string"/> form, which is how it is saved.
-        /// <para>Changing this will automatically call <see cref="ConfigContainer.NotifyConfigChange"/>, <see cref="OnValueChange"/>, then <see cref="UIelement.Change"/> in order.</para>
+        /// <para>Changing this will automatically call <see cref="ConfigContainer.NotifyConfigChange"/>, <see cref="OnValueUpdate"/>, then <see cref="UIelement.Change"/> in order.</para>
         /// When you're overriding this completely, make sure to call <see cref="ConfigContainer.NotifyConfigChange"/> in your override.
         /// See also <seealso cref="ForceValue"/>.
         /// </summary>
@@ -135,17 +137,26 @@ namespace OptionalUI
                 {
                     FocusMoveDisallow();
                     menu.cfgContainer.NotifyConfigChange(this, _value, value);
-                    OnValueChange?.Invoke(this, value, _value);
+                    OnValueUpdate?.Invoke(this, value, _value);
                     _value = value;
                     Change();
+                    if (!Focused()) { OnValueChanged?.Invoke(this, _value, _lastValue); _lastValue = _value; }
                 }
             }
         }
 
         /// <summary>
-        /// Event which happens whenever <see cref="value"/> is changed. This is called just before <see cref="UIelement.OnChange"/>.
+        /// Event which happens whenever <see cref="value"/> is updated. This is called just before <see cref="UIelement.OnChange"/>.
         /// </summary>
-        public event OnValueChangeHandler OnValueChange;
+        public event OnValueChangeHandler OnValueUpdate;
+
+        /// <summary>
+        /// Event which is called when the user finished adjusting this and <see cref="value"/> is changed from before.
+        /// Because of that, this
+        /// </summary>
+        public event OnValueChangeHandler OnValueChanged;
+
+        private string _lastValue;
 
         #endregion Shallow
 
@@ -174,6 +185,23 @@ namespace OptionalUI
         {
             this.held = false;
             base.Deactivate();
+        }
+
+        protected internal override bool held
+        {
+            get => base.held;
+            set
+            {
+                base.held = value;
+                if (!value)
+                {
+                    if (this.Focused())
+                    {
+                        if (_lastValue != _value) { OnValueChanged?.Invoke(this, _value, _lastValue); }
+                    }
+                }
+                _lastValue = _value;
+            }
         }
 
         #endregion Deep

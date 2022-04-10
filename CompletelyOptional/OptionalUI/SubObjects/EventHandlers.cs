@@ -18,7 +18,7 @@
     public delegate void OnSignalHandler(UIfocusable trigger);
 
     /// <summary>
-    /// Event handler for <see cref="UIconfig.OnValueChange"/>.
+    /// Event handler for <see cref="UIconfig.OnValueUpdate"/>.
     /// </summary>
     /// <param name="config"><see cref="UIconfig"/> instance</param>
     /// <param name="value">New value</param>

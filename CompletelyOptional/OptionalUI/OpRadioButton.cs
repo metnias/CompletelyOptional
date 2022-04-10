@@ -164,7 +164,7 @@ namespace OptionalUI
         private float symbolHalfVisible;
 
         /// <summary>
-        /// An event similar to <see cref="UIconfig.OnValueChange"/>.
+        /// An event similar to <see cref="UIconfig.OnValueUpdate"/>.
         /// <para>This is called whenever this button's <see cref="value"/> has changed, just before its <see cref="OpRadioButtonGroup"/>'s value is changed.</para>
         /// </summary>
         public event OnSignalHandler OnValueChange;

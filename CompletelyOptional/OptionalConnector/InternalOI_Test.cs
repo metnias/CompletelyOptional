@@ -172,7 +172,7 @@ namespace CompletelyOptional
 
             sb = new OpScrollBox(Tabs[7], 1000f, true);
             OpHoldButton btnBreak = new OpHoldButton(new Vector2(100f, 100f), "BREAK");
-            btnBreak.OnPressDone += new OnSignalHandler(SignalBreak);
+            btnBreak.OnPressDone += SignalBreak;
             sb.AddItems(btnBreak);
             sb.AddItems(new OpSimpleButton(new Vector2(400f, 100f), new Vector2(80f, 30f), "PRESS"));
             sb.AddItems(new OpSimpleButton(new Vector2(400f, 160f), new Vector2(80f, 30f), "HOLD"));

@@ -222,7 +222,7 @@ namespace CompletelyOptional
                 this.myContainer.AddChild(this.label);
 
                 this.ctrl.menuTab.AddItems(this);
-                OnClick += new OnSignalHandler(Signal);
+                OnClick += Signal;
             }
 
             internal float darken;
@@ -392,8 +392,8 @@ namespace CompletelyOptional
                 this.rect.Hide(); this.rectH.Hide();
                 this.ctrl.menuTab.AddItems(this);
 
-                OnPressInit += new OnSignalHandler(SignalPressInit);
-                OnPressHold += new OnSignalHandler(SignalPressHold);
+                OnPressInit += SignalPressInit;
+                OnPressHold += SignalPressHold;
             }
 
             internal readonly bool up;
