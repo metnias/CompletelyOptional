@@ -347,7 +347,7 @@ namespace OptionalUI
             get
             {
                 Vector2 p = new Vector2(menu.mousePosition.x - ScreenPos.x, menu.mousePosition.y - ScreenPos.y);
-                if (inScrollBox && scrollBox.MouseOver)
+                if (inScrollBox && (scrollBox.MouseOver || (this is UIfocusable && (this as UIfocusable).held)))
                 { p += scrollBox.camPos - (scrollBox.horizontal ? Vector2.right : Vector2.up) * scrollBox.scrollOffset - scrollBox.pos; }
                 if (tab != null) { p -= new Vector2(tab.container.x, tab.container.y); }
                 return p;

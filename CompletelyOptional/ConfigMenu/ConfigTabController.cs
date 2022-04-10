@@ -396,6 +396,8 @@ namespace CompletelyOptional
                 this.sprite.scale = 0.5f;
                 this.sprite.x = 15f;
                 this.soundClick = SoundID.None;
+                glow = new GlowGradient(myContainer, new Vector2(-5f, -10f), new Vector2(40f, 40f));
+                glow.sprite.MoveToBack();
 
                 this.ctrl.menuTab.AddItems(this);
 
@@ -405,6 +407,7 @@ namespace CompletelyOptional
 
             internal readonly bool up;
             private readonly ConfigTabController ctrl;
+            private readonly GlowGradient glow;
 
             protected internal override string DisplayDescription()
             {
@@ -427,6 +430,8 @@ namespace CompletelyOptional
                 { bumpBehav.flash += 0.6f; }
                 this.sprite.y = 10f + (up ? 1 : -1) * Mathf.Abs(Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker));
                 this.sprite.color = bumpBehav.GetColor(Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey));
+                glow.color = sprite.color;
+                glow.alpha = greyedOut ? 0.0f : rectH.sprites[0].alpha * 0.6f; // Use highlight
             }
 
             public override void Update()

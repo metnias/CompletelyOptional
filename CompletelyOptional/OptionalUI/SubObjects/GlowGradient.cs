@@ -59,20 +59,38 @@ namespace OptionalUI
 
         protected readonly FContainer container;
 
-        private readonly FSprite sprite;
+        /// <summary>
+        /// The sprite of this glow.
+        /// </summary>
+        public readonly FSprite sprite;
 
+        /// <summary>
+        /// Horizontal radius
+        /// </summary>
         public float radH
         { get => _radH; set { if (_radH == value) { return; } _radH = value; OnChange(); } }
 
+        /// <summary>
+        /// Vertical radius
+        /// </summary>
         public float radV
         { get => _radV; set { if (_radV == value) { return; } _radV = value; OnChange(); } }
 
+        /// <summary>
+        /// Rectangular size bound to <see cref="radH"/> and <see cref="radV"/>
+        /// </summary>
         public Vector2 size
         { get => new Vector2(_radH, _radV) * 2f; set { _radH = value.x / 2f; _radV = value.y / 2f; OnChange(); } }
 
+        /// <summary>
+        /// alpha of sprite
+        /// </summary>
         public float alpha
         { get => _alpha; set { if (_alpha == value) { return; } _alpha = value; OnChange(); } }
 
+        /// <summary>
+        /// Center position
+        /// </summary>
         public Vector2 centerPos
         { get => _centerPos; set { if (_centerPos == value) { return; } _centerPos = value; OnChange(); } }
 
@@ -82,6 +100,9 @@ namespace OptionalUI
         public Vector2 pos
         { get => _centerPos - new Vector2(_radH, _radV); set { centerPos = value + new Vector2(_radH, _radV); } }
 
+        /// <summary>
+        /// The colour of the sprite
+        /// </summary>
         public Color color
         { get => _color; set { if (_color == value) { return; } _color = value; OnChange(); } }
 

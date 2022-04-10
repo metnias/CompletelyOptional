@@ -191,6 +191,7 @@ namespace CompletelyOptional
                 this.list.menuTab.AddItems(this);
                 this._pos = new Vector2(list.pos.x, MyPos);
                 glow = new GlowGradient(myContainer, Vector2.zero, this.size);
+                glow.sprite.MoveToBack();
 
                 // Get Type
                 if (itf is InternalOI)
@@ -544,6 +545,7 @@ namespace CompletelyOptional
                 this._pos = new Vector2(450f, 150f + (25 - index) * 20f); // x: 480f
                 this.soundClick = SoundID.MENU_First_Scroll_Tick;
                 glow = new GlowGradient(myContainer, -0.5f * size, 2f * size);
+                glow.sprite.MoveToBack();
 
                 this.unused = ConfigContainer.OptItfABC[index] < 0;
                 Change();
