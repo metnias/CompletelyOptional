@@ -100,6 +100,7 @@ namespace OptionalUI
         {
             base.Update();
             this.bumpBehav.Update();
+            if (this.greyedOut) { this.held = false; }
             if (this.held && this.inScrollBox) { this.scrollBox.MarkDirty(0.5f); this.scrollBox.Update(); }
         }
 

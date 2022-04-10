@@ -155,8 +155,8 @@ namespace CompletelyOptional
                 else
                 {
                     if (i >= _tabCount) { this.tabButtons[i].Hide(); }
-                    else if (this.tabButtons[i].isInactive) { this.tabButtons[i].Show(); }
-                    if (!this.tabButtons[i].isInactive) { this.tabButtons[i].Reset(); }
+                    else if (this.tabButtons[i].IsInactive) { this.tabButtons[i].Show(); }
+                    if (!this.tabButtons[i].IsInactive) { this.tabButtons[i].Reset(); }
                 }
             }
         }
@@ -328,7 +328,7 @@ namespace CompletelyOptional
                             {
                                 bool up = menu.mouseScrollWheelMovement < 0;
                                 TabScrollButton scroll = ctrl.scrollButtons[up ? 0 : 1];
-                                if (!scroll.isInactive) { ctrl.Scroll(up, false); }
+                                if (!scroll.IsInactive) { ctrl.Scroll(up, false); }
                                 scrolled = true;
                             }
                         }
@@ -396,7 +396,7 @@ namespace CompletelyOptional
                 this.sprite.scale = 0.5f;
                 this.sprite.x = 15f;
                 this.soundClick = SoundID.None;
-                this.rect.Hide(); this.rectH.Hide();
+
                 this.ctrl.menuTab.AddItems(this);
 
                 OnPressInit += SignalPressInit;
@@ -414,6 +414,7 @@ namespace CompletelyOptional
             protected internal override void Change()
             {
                 base.Change();
+                this.rect.Hide();
                 this._size = new Vector2(30f, 20f);
             }
 
@@ -422,7 +423,7 @@ namespace CompletelyOptional
             public override void GrafUpdate(float timeStacker)
             {
                 base.GrafUpdate(timeStacker);
-                this.rect.Hide(); this.rectH.Hide();
+                this.rectH.Hide();
                 if (Mathf.Abs(ctrl.scrollBump) > Mathf.Abs(ctrl.lastScrollBump))
                 { bumpBehav.flash += 0.6f; }
                 this.sprite.y = 10f + (up ? 1 : -1) * Mathf.Abs(Mathf.Lerp(ctrl.lastScrollBump, ctrl.scrollBump, timeStacker));

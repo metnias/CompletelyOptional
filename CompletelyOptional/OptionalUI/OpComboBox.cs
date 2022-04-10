@@ -380,7 +380,6 @@ namespace OptionalUI
         {
             base.Update();
             if (dTimer > 0) { dTimer--; }
-            if (isInactive) { return; }
             this.rect.Update();
             this.rectList?.Update(); this.rectScroll?.Update();
 

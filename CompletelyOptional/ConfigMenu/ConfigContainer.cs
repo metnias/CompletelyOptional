@@ -385,11 +385,11 @@ namespace CompletelyOptional
         {
             List<UIfocusable> list = new List<UIfocusable>();
             foreach (UIfocusable item in menuTab.focusables)
-            { if (!item.isInactive) { list.Add(item); } }
+            { if (!item.IsInactive) { list.Add(item); } }
             if (activeTab != null)
             {
                 foreach (UIfocusable item in activeTab.focusables)
-                { if (!item.isInactive) { list.Add(item); } }
+                { if (!item.IsInactive) { list.Add(item); } }
             }
 
             List<UIfocusable> res = new List<UIfocusable>();

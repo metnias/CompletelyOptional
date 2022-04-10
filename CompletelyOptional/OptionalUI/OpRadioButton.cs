@@ -112,7 +112,7 @@ namespace OptionalUI
             base.Update();
             this.bumpBehav.greyedOut = this.greyedOut;
             this.bumpBehav.Update();
-            if (greyedOut || isInactive) { return; }
+            if (greyedOut) { return; }
             this.rect.Update();
 
             if (MenuMouseMode)

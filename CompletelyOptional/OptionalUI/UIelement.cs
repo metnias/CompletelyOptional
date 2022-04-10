@@ -71,7 +71,7 @@ namespace OptionalUI
         /// </summary>
         public void Hide()
         {
-            this.hidden = true;
+            this.Hidden = true;
             this.Deactivate();
         }
 
@@ -80,7 +80,7 @@ namespace OptionalUI
         /// </summary>
         public void Show()
         {
-            this.hidden = false;
+            this.Hidden = false;
             this.Reactivate();
         }
 
@@ -192,14 +192,15 @@ namespace OptionalUI
         /// <summary>
         /// Whether the Modder has hide/inactivate this manually.
         /// Use <see cref="Hide"/> and <see cref="Show"/> to manipulate this.
-        /// <para>To check whether this is actually inactive/invisible, use <see cref="isInactive"/></para>
+        /// <para>To check whether this is actually inactive/invisible, use <see cref="IsInactive"/></para>
         /// </summary>
-        public bool hidden { get; private set; } = false;
+        public bool Hidden { get; private set; } = false;
 
         /// <summary>
-        /// Whether this is actually not Active/is hidden. See also <seealso cref="hidden"/>
+        /// Whether this is actually not Active/is hidden. See also <seealso cref="Hidden"/>.
+        /// If this is true, <see cref="Update"/> and <see cref="GrafUpdate(float)"/> will NOT be called.
         /// </summary>
-        public bool isInactive => hidden || this.tab?.isInactive == true || this.scrollBox?.isInactive == true;
+        public bool IsInactive => Hidden || this.tab?.isInactive == true || this.scrollBox?.IsInactive == true;
 
         /// <summary>
         /// Moves this UIelement to the backmost visually.
@@ -514,7 +515,7 @@ namespace OptionalUI
         /// </summary>
         protected internal virtual void Reactivate()
         {
-            if (!this.hidden) { this.myContainer.isVisible = true; }
+            if (!this.Hidden) { this.myContainer.isVisible = true; }
         }
 
         #endregion Internal

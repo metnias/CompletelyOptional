@@ -446,7 +446,7 @@ namespace OptionalUI
         {
             foreach (UIelement e in this.children)
             {
-                if (e.isInactive) { continue; }
+                if (e.IsInactive) { continue; }
                 if (e is UIfocusable && (e as UIfocusable).CurrentlyFocusableMouse && e.MouseOver) { return true; }
             }
             return false;
@@ -578,7 +578,7 @@ namespace OptionalUI
                     { // Focused > (jmp) > !ScrollLocked ? holdElement : focus <- lastFocusedElement
                         if (lastFocusedElement != null)
                         {
-                            if (!lastFocusedElement.isInactive && lastFocusedElement.CurrentlyFocusableNonMouse)
+                            if (!lastFocusedElement.IsInactive && lastFocusedElement.CurrentlyFocusableNonMouse)
                             {
                                 bool CenterInView; // Check if this is in view
                                 if (horizontal) { CenterInView = lastFocusedElement.CenterPos().x > scrollOffset && lastFocusedElement.CenterPos().x < scrollOffset + size.x; }
@@ -598,7 +598,7 @@ namespace OptionalUI
                         UIfocusable cand = null;
                         foreach (UIelement child in this.children)
                         {
-                            if (!child.isInactive && child is UIfocusable candidate && candidate.CurrentlyFocusableNonMouse)
+                            if (!child.IsInactive && child is UIfocusable candidate && candidate.CurrentlyFocusableNonMouse)
                             {
                                 float thisPos = Mathf.Abs(horizontal ? child.CenterPos().x - scrollOffset - size.x / 2f : child.CenterPos().y - scrollOffset + size.y / 2f);
                                 if (candPos > thisPos) { candPos = thisPos; cand = candidate; }
@@ -773,7 +773,7 @@ namespace OptionalUI
 
         private void UpdateCam()
         {
-            if (this.isInactive) { return; }
+            if (this.greyedOut) { return; }
             _cam.aspect = size.x / size.y;
             _cam.orthographic = true;
             _cam.orthographicSize = size.y / 2f;

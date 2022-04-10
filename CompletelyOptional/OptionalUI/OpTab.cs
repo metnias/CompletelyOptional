@@ -144,7 +144,7 @@ namespace OptionalUI
         internal void GrafUpdate(float timeStacker)
         {
             foreach (UIelement item in this.items.ToArray())
-            { if (!item.isInactive) { item.GrafUpdate(timeStacker); } }
+            { if (!item.IsInactive) { item.GrafUpdate(timeStacker); } }
         }
 
         /// <summary>
@@ -153,7 +153,7 @@ namespace OptionalUI
         internal void Update()
         {
             foreach (UIelement item in this.items.ToArray())
-            { if (!item.isInactive) { item.Update(); } }
+            { if (!item.IsInactive) { item.Update(); } }
         }
 
         internal void Deactivate()

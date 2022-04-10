@@ -348,7 +348,7 @@ namespace CompletelyOptional
                     {
                         if (Input.GetMouseButtonDown(1)) // Starred
                         { list.Star(index); }
-                        else if (menu.mouseScrollWheelMovement != 0 && !list.roleButtons[1].isInactive)
+                        else if (menu.mouseScrollWheelMovement != 0 && !list.roleButtons[1].IsInactive)
                         {
                             list.Signal(list.roleButtons[menu.mouseScrollWheelMovement < 0 ? 1 : 2], System.Math.Sign(menu.mouseScrollWheelMovement) * 3);
                             list.PlaySound(SoundID.MENU_Scroll_Tick);
@@ -368,7 +368,7 @@ namespace CompletelyOptional
                             else { scrollCounter++; }
                         }
 
-                        if (list.roleButtons[1].isInactive) { return; }
+                        if (list.roleButtons[1].IsInactive) { return; }
 
                         if (this.index == list.scrollPos + 1 && !list.roleButtons[1].greyedOut)
                         {
