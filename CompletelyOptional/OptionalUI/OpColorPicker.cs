@@ -24,7 +24,6 @@ namespace OptionalUI
         {
             ctor = false; //to prevent OnChange from running before ready
             this.fixedSize = new Vector2(150f, 150f);
-            mode = 0;
             if (!MenuColorEffect.IsStringHexColor(defaultValue))
             { throw new ElementFormatException(this, "OpColorPicker Error: DefaultValue is not a proper value.\nMust be in form of \'FFFFFF\'.", key); }
 
@@ -42,11 +41,11 @@ namespace OptionalUI
             this.colorEdge = grey;
             //lblR/G/B: Displays R/G/B value
             lblB = FLabelCreate(r.ToString()); lblB.alignment = FLabelAlignment.Left;
-            lblB.x = 124f; lblB.y = 40f; myContainer.AddChild(lblB);
+            lblB.x = 124f; lblB.y = 40f; lblB.isVisible = false; myContainer.AddChild(lblB);
             lblG = FLabelCreate(r.ToString()); lblG.alignment = FLabelAlignment.Left;
-            lblG.x = 124f; lblG.y = 80f; myContainer.AddChild(lblG);
+            lblG.x = 124f; lblG.y = 80f; lblG.isVisible = false; myContainer.AddChild(lblG);
             lblR = FLabelCreate(r.ToString()); lblR.alignment = FLabelAlignment.Left;
-            lblR.x = 124f; lblR.y = 120f; myContainer.AddChild(lblR);
+            lblR.x = 124f; lblR.y = 120f; lblR.isVisible = false; myContainer.AddChild(lblR);
             //lblP: Displays Selected Palette Color Name
             lblP = FLabelCreate("X"); FLabelPlaceAtCenter(lblP, 15f, 88f, 120f, 20f);
             lblP.isVisible = false; lblP.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
@@ -65,7 +64,7 @@ namespace OptionalUI
             lblPLT = FLabelCreate("PLT"); FLabelPlaceAtCenter(lblPLT, 100f, 130f, 30f, 15f);
             myContainer.AddChild(lblPLT);
 
-            //Calculate Texture for RGB Slider
+            //Calculate Texture for HSL Plane
             RecalculateTexture();
 
             //Add R/G/B Sliders.
@@ -73,11 +72,12 @@ namespace OptionalUI
             this.myContainer.AddChild(this.ftxr1);
             this.ftxr2 = new FTexture(ttre2, "cpk2" + key);
             this.myContainer.AddChild(this.ftxr2);
-            this.ftxr3 = new FTexture(ttre3, "cpk3" + key);
+            this.ftxr3 = new FTexture(ttre2, "cpk3" + key);
             this.myContainer.AddChild(this.ftxr3);
+            this.ftxr1.SetPosition(new Vector2(60f, 80f));
+            this.ftxr2.SetPosition(new Vector2(135f, 80f));
             this.ftxr3.SetPosition(new Vector2(60f, 40f));
-            this.ftxr2.SetPosition(new Vector2(60f, 80f));
-            this.ftxr1.SetPosition(new Vector2(60f, 120f));
+            this.ftxr3.isVisible = false;
 
             //This displays current color.
             this.cdis0 = new FSprite("pixel", true)
@@ -119,7 +119,7 @@ namespace OptionalUI
         public override void Reset()
         {
             base.Reset();
-            if (this.mode != PickerMode.HSL) { this.SwitchMod(PickerMode.HSL); }
+            if (this.mode != PickerMode.HSL) { this.SwitchMode(PickerMode.HSL); }
         }
 
         private FCursor cursor;
@@ -353,7 +353,7 @@ namespace OptionalUI
             "9", "a", "b", "c", "d", "e", "f"
         };
 
-        private void SwitchMod(PickerMode newmod)
+        private void SwitchMode(PickerMode newmod)
         {
             //Unload current mod
             this.ftxr1.isVisible = false;
@@ -501,7 +501,7 @@ namespace OptionalUI
                 { typed = false; }
                 if (typeHex.Length >= 6)
                 {
-                    if (mode == PickerMode.Palette) { this.SwitchMod(PickerMode.RGB); }
+                    if (mode == PickerMode.Palette) { this.SwitchMode(PickerMode.RGB); }
                     value = typeHex;
                     this.typeMode = false;
                     this.held = false;
@@ -511,7 +511,7 @@ namespace OptionalUI
                 }
                 else if (Input.GetMouseButton(0) && !this.MouseOverHex())
                 {
-                    if (mode == PickerMode.Palette) { this.SwitchMod(PickerMode.RGB); }
+                    if (mode == PickerMode.Palette) { this.SwitchMode(PickerMode.RGB); }
                     lblHex.text = "#" + value;
                     this.typeMode = false;
                     this.held = false;
@@ -537,7 +537,7 @@ namespace OptionalUI
 
                         if (newmod != -1 && mode != (PickerMode)newmod) //Mod is changed!
                         {
-                            this.SwitchMod((PickerMode)newmod);
+                            this.SwitchMode((PickerMode)newmod);
                         }
                         else
                         { //Clicked already chosen mod
@@ -894,7 +894,7 @@ namespace OptionalUI
 
         private void RecalculateTexture()
         {
-            if (mode == 0)
+            if (mode == PickerMode.RGB)
             { //RGB
                 ttre1 = new Texture2D(101, 20);
                 ttre2 = new Texture2D(101, 20);
