@@ -24,7 +24,7 @@ namespace OptionalUI
         {
             ctor = false; //to prevent OnChange from running before ready
             this.fixedSize = new Vector2(150f, 150f);
-            mod = 0;
+            mode = 0;
             if (!MenuColorEffect.IsStringHexColor(defaultValue))
             { throw new ElementFormatException(this, "OpColorPicker Error: DefaultValue is not a proper value.\nMust be in form of \'FFFFFF\'.", key); }
 
@@ -119,7 +119,7 @@ namespace OptionalUI
         public override void Reset()
         {
             base.Reset();
-            if (this.mod != 0) { this.SwitchMod(0); }
+            if (this.mode != PickerMode.HSL) { this.SwitchMod(PickerMode.HSL); }
         }
 
         private FCursor cursor;
@@ -133,15 +133,15 @@ namespace OptionalUI
                 {
                     return InternalTranslator.Translate("Type Hex Code for desired Colour");
                 }
-                switch (mod)
+                switch (mode)
                 {
-                    case 0:
+                    case PickerMode.RGB:
                         return InternalTranslator.Translate("Select Colour with RGB value");
 
-                    case 1:
+                    case PickerMode.Palette:
                         return InternalTranslator.Translate("Select Colour with HSL square");
 
-                    case 2:
+                    case PickerMode.HSL:
                         return InternalTranslator.Translate("Select Colour with Palette");
                 }
                 return "";
@@ -190,7 +190,7 @@ namespace OptionalUI
 
                 RecalculateTexture();
                 this.cdis1.isVisible = false;
-                if (mod == 0)
+                if (mode == 0)
                 { //RGB
                     lblR.color = ctxt; lblG.color = ctxt; lblB.color = ctxt;
                     //Texture Refresh
@@ -210,7 +210,7 @@ namespace OptionalUI
                     this.ftxr2.SetPosition(new Vector2(60f, 80f));
                     this.ftxr1.SetPosition(new Vector2(60f, 120f));
                 }
-                else if (mod == 1)
+                else if (mode == PickerMode.HSL)
                 {
                     this.ttre1 = Grayscale(this.ttre1);
                     this.ttre2 = Grayscale(this.ttre2);
@@ -309,7 +309,7 @@ namespace OptionalUI
                 }
                 else
                 {
-                    if (mod == 0)
+                    if (mode == 0)
                     {
                         //Just change display values
                         if (Input.GetMouseButton(0))
@@ -353,7 +353,7 @@ namespace OptionalUI
             "9", "a", "b", "c", "d", "e", "f"
         };
 
-        private void SwitchMod(int newmod)
+        private void SwitchMod(PickerMode newmod)
         {
             //Unload current mod
             this.ftxr1.isVisible = false;
@@ -364,7 +364,7 @@ namespace OptionalUI
             lblG.isVisible = false;
             lblB.isVisible = false;
             lblP.isVisible = false;
-            if (this.mod == 2)
+            if (this.mode == PickerMode.Palette)
             {
                 this.myContainer.RemoveChild(this.sprPltCover);
                 this.sprPltCover.RemoveFromContainer();
@@ -374,16 +374,16 @@ namespace OptionalUI
             ctor = false;
             string temp = base.value;
             value = "000000";
-            mod = newmod;
+            mode = newmod;
             value = temp;
-            mod = newmod;
+            mode = newmod;
             PlaySound(SoundID.MENU_MultipleChoice_Clicked);
 
             RecalculateTexture();
             //load new mod
-            switch (mod)
+            switch (mode)
             {
-                case 0:
+                case PickerMode.RGB:
                     lblR.isVisible = true;
                     lblG.isVisible = true;
                     lblB.isVisible = true;
@@ -399,7 +399,7 @@ namespace OptionalUI
                     this.ftxr1.SetPosition(new Vector2(60f, 120f));
                     break;
 
-                case 1:
+                case PickerMode.HSL:
                     this.ftxr1.SetTexture(ttre1);
                     this.ftxr2.SetTexture(ttre2);
                     this.ftxr1.isVisible = true;
@@ -409,7 +409,7 @@ namespace OptionalUI
 
                     break;
 
-                case 2:
+                case PickerMode.Palette:
                     int min = 4000; pi = 0;
                     int valr = Convert.ToInt32(temp.Substring(0, 2), 16);
                     int valg = Convert.ToInt32(temp.Substring(2, 2), 16);
@@ -427,7 +427,7 @@ namespace OptionalUI
                     }
                     //ComOptPlugin.LogInfo(string.Concat("value " + _value + "swapped to " + PaletteHex[pi] + " (pi: " + pi.ToString() + "/ min: " + min.ToString() + ")"));
                     value = this.PaletteHex[pi];
-                    mod = 2;
+                    mode = PickerMode.Palette;
 
                     this.ftxr1.SetTexture(ttre1);
                     this.ftxr1.isVisible = true;
@@ -501,7 +501,7 @@ namespace OptionalUI
                 { typed = false; }
                 if (typeHex.Length >= 6)
                 {
-                    if (mod == 2) { this.SwitchMod(0); }
+                    if (mode == PickerMode.Palette) { this.SwitchMod(PickerMode.RGB); }
                     value = typeHex;
                     this.typeMode = false;
                     this.held = false;
@@ -511,7 +511,7 @@ namespace OptionalUI
                 }
                 else if (Input.GetMouseButton(0) && !this.MouseOverHex())
                 {
-                    if (mod == 2) { this.SwitchMod(0); }
+                    if (mode == PickerMode.Palette) { this.SwitchMod(PickerMode.RGB); }
                     lblHex.text = "#" + value;
                     this.typeMode = false;
                     this.held = false;
@@ -535,9 +535,9 @@ namespace OptionalUI
                         else if (this.MousePos.x > 60f && this.MousePos.x < 90f) { newmod = 1; }
                         else if (this.MousePos.x > 100f && this.MousePos.x < 130f) { newmod = 2; }
 
-                        if (newmod != -1 && mod != newmod) //Mod is changed!
+                        if (newmod != -1 && mode != (PickerMode)newmod) //Mod is changed!
                         {
-                            this.SwitchMod(newmod);
+                            this.SwitchMod((PickerMode)newmod);
                         }
                         else
                         { //Clicked already chosen mod
@@ -548,7 +548,7 @@ namespace OptionalUI
                 }
                 else
                 {
-                    switch (mod)
+                    switch (mode)
                     {
                         case 0:
                             //Just change display values
@@ -595,7 +595,7 @@ namespace OptionalUI
 
                             break;
 
-                        case 1:
+                        case PickerMode.HSL:
                             if (this.MousePos.x > 130f && this.MousePos.x < 140f && this.MousePos.y >= 30f && this.MousePos.y <= 130f)
                             { //Lightness
                                 cdis1.color = Custom.HSL2RGB(h / 100f, s / 100f, (this.MousePos.y - 30f) / 100f);
@@ -654,7 +654,7 @@ namespace OptionalUI
 
                             break;
 
-                        case 2:
+                        case PickerMode.Palette:
                             if (this.MousePos.x <= 135f && this.MousePos.x >= 15f && this.MousePos.y >= 32f && this.MousePos.y <= 128f)
                             {
                                 lblP.isVisible = true;
@@ -676,7 +676,7 @@ namespace OptionalUI
                                             PlaySound(SoundID.Mouse_Scurry);
                                         }
                                         this._value = this.PaletteHex[_i];
-                                        mod = 2;
+                                        mode = PickerMode.Palette;
                                         Change();
                                     }
                                     else { this.mouseDown = false; this.held = false; }
@@ -725,15 +725,15 @@ namespace OptionalUI
                 else if (isDirty)
                 { //return the values back to current setting
                     cdis1.isVisible = false;
-                    switch (mod)
+                    switch (mode)
                     {
-                        case 0:
+                        case PickerMode.RGB:
                             lblR.text = r.ToString();
                             lblG.text = g.ToString();
                             lblB.text = b.ToString();
                             break;
 
-                        case 2:
+                        case PickerMode.Palette:
                             lblP.isVisible = false;
                             sprPltCover.isVisible = false;
                             break;
@@ -790,7 +790,7 @@ namespace OptionalUI
         {
             get
             {
-                if (mod == 1)
+                if (mode == PickerMode.HSL)
                 {
                     Color c = Custom.HSL2RGB(h / 100f, s / 100f, l / 100f);
                     r = Mathf.RoundToInt(c.r * 100f);
@@ -805,7 +805,7 @@ namespace OptionalUI
                         this._value = newVal;
                     }
                 }
-                else if (mod == 2) //palette
+                else if (mode == PickerMode.Palette) //palette
                 {
                     string newVal = this.PaletteHex[pi];
                     if (this._value != newVal)
@@ -856,9 +856,9 @@ namespace OptionalUI
 
             RecalculateTexture();
 
-            switch (mod)
+            switch (mode)
             {
-                case 0:
+                case PickerMode.RGB:
                     lblR.text = r.ToString();
                     lblG.text = g.ToString();
                     lblB.text = b.ToString();
@@ -874,7 +874,7 @@ namespace OptionalUI
                     lblHex.text = "#" + value;
                     break;
 
-                case 1:
+                case PickerMode.HSL:
                     cdis0.color = Custom.HSL2RGB(h / 100f, s / 100f, l / 100f);
                     this.ftxr1.SetTexture(ttre1);
                     this.ftxr2.SetTexture(ttre2);
@@ -883,7 +883,7 @@ namespace OptionalUI
                     lblHex.text = "#" + value;
                     break;
 
-                case 2:
+                case PickerMode.Palette:
                     cdis0.color = this.PaletteColor(pi);
                     this.ftxr1.SetTexture(ttre1);
                     this.ftxr1.SetPosition(new Vector2(75f, 80f));
@@ -894,7 +894,7 @@ namespace OptionalUI
 
         private void RecalculateTexture()
         {
-            if (mod == 0)
+            if (mode == 0)
             { //RGB
                 ttre1 = new Texture2D(101, 20);
                 ttre2 = new Texture2D(101, 20);
@@ -915,7 +915,7 @@ namespace OptionalUI
                 ttre2.Apply();
                 ttre3.Apply();
             }
-            else if (mod == 1)
+            else if (mode == PickerMode.HSL)
             { //HSL
                 ttre1 = new Texture2D(100, 101);
                 ttre2 = new Texture2D(10, 101);
@@ -977,7 +977,10 @@ namespace OptionalUI
         /// <summary>
         /// 0: RGB, 1: HSL, 2: Palette
         /// </summary>
-        private int mod = 0;
+        private PickerMode mode = PickerMode.HSL;
+
+        private enum PickerMode
+        { RGB = 0, HSL = 1, Palette = 2 }
 
         protected internal override void Unload()
         {
@@ -988,7 +991,7 @@ namespace OptionalUI
             this.cdis0.RemoveFromContainer();
             this.cdis1.RemoveFromContainer();
 
-            if (this.mod == 2)
+            if (this.mode == PickerMode.Palette)
             {
                 this.myContainer.RemoveChild(this.sprPltCover);
                 this.sprPltCover.RemoveFromContainer();
@@ -997,7 +1000,7 @@ namespace OptionalUI
             this.ftxr2.Destroy();
             this.ftxr3.Destroy();
 
-            mod = 0;
+            mode = 0;
         }
 
         // 40x10 RGBtab 40x10 HSLtab 40x10 Palette Tab
