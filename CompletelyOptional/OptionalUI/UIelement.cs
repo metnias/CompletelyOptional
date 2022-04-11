@@ -408,6 +408,26 @@ namespace OptionalUI
         public Player.InputPackage LastCtlrInput => menu.lastInput;
 
         /// <summary>
+        /// Shortcut to check whether Joystick has been pressed to a certain direction (and not held down)
+        /// </summary>
+        protected bool JoystickPress(IntVector2 direction)
+        {
+            if (direction.x != 0)
+            {
+                if (direction.x != CtlrInput.x) { return false; }
+                if (CtlrInput.x == LastCtlrInput.x) { return false; }
+            }
+            else { if (CtlrInput.x != 0) { return false; } }
+            if (direction.y != 0)
+            {
+                if (direction.y != CtlrInput.y) { return false; }
+                if (CtlrInput.y == LastCtlrInput.y) { return false; }
+            }
+            else { if (CtlrInput.y != 0) { return false; } }
+            return true;
+        }
+
+        /// <summary>
         /// Actual text to display at the bottom of the Mod Config Menu Screen. See also <seealso cref="description"/>.
         /// </summary>
         protected internal virtual string DisplayDescription() => description;

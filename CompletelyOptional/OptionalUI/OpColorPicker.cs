@@ -32,13 +32,13 @@ namespace OptionalUI
 
             this.rect = new DyeableRect(myContainer, Vector2.zero, this.fixedSize.Value, true) { fillAlpha = 0.8f }; //Boundary Rectangle
             this._size = this.fixedSize.Value;
+            this.focusGlow = new GlowGradient(myContainer, Vector2.zero, 8f, 8f, 0.5f) { color = colorText };
+            this.focusGlow.Hide();
 
             r = 0; g = 0; b = 0;
             h = 0; s = 0; l = 0;
             this._value = "000000";
 
-            Color grey = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-            this.colorEdge = grey;
             //lblR/G/B: Displays R/G/B value
             lblB = FLabelCreate(r.ToString()); lblB.alignment = FLabelAlignment.Left;
             lblB.x = 124f; lblB.y = 40f; lblB.isVisible = false; myContainer.AddChild(lblB);
@@ -124,32 +124,26 @@ namespace OptionalUI
 
         private FCursor cursor;
 
-        public new string description
+        protected internal override string DisplayDescription()
         {
-            get
+            if (!string.IsNullOrEmpty(description)) { return description; }
+            if (typeMode)
             {
-                if (!string.IsNullOrEmpty(_description)) { return _description; }
-                if (typeMode)
-                {
-                    return InternalTranslator.Translate("Type Hex Code for desired Colour");
-                }
-                switch (mode)
-                {
-                    case PickerMode.RGB:
-                        return InternalTranslator.Translate("Select Colour with RGB value");
-
-                    case PickerMode.Palette:
-                        return InternalTranslator.Translate("Select Colour with HSL square");
-
-                    case PickerMode.HSL:
-                        return InternalTranslator.Translate("Select Colour with Palette");
-                }
-                return "";
+                return OptionalText.GetText(OptionalText.ID.OpColorPicker_MouseTypeTuto);
             }
-            set { _description = value; }
-        }
+            switch (mode)
+            {
+                case PickerMode.RGB:
+                    return OptionalText.GetText(OptionalText.ID.OpColorPicker_MouseRGBTuto);
 
-        private string _description = "";
+                case PickerMode.HSL:
+                    return OptionalText.GetText(OptionalText.ID.OpColorPicker_MouseHSLTuto);
+
+                case PickerMode.Palette:
+                    return OptionalText.GetText(OptionalText.ID.OpColorPicker_MousePLTTuto);
+            }
+            return "";
+        }
 
         protected internal override void Reactivate()
         {
@@ -184,7 +178,7 @@ namespace OptionalUI
         {
             if (greyTrigger)
             { //Greyout
-                Color ctxt = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.DarkGrey);
+                Color ctxt = MenuColorEffect.Greyscale(MenuColorEffect.MidToDark(colorText));
                 lblHex.color = ctxt; lblRGB.color = ctxt; lblHSL.color = ctxt; lblPLT.color = ctxt;
                 this.rect.colorEdge = ctxt;
 
@@ -194,12 +188,9 @@ namespace OptionalUI
                 { //RGB
                     lblR.color = ctxt; lblG.color = ctxt; lblB.color = ctxt;
                     //Texture Refresh
-                    this.ttre1 = Grayscale(this.ttre1);
-                    this.ttre2 = Grayscale(this.ttre2);
-                    this.ttre3 = Grayscale(this.ttre3);
-                    this.ttre1.Apply();
-                    this.ttre2.Apply();
-                    this.ttre3.Apply();
+                    TextureGreyscale(ref this.ttre1);
+                    TextureGreyscale(ref this.ttre2);
+                    TextureGreyscale(ref this.ttre3);
 
                     //Texture Reload
                     cdis0.color = new Color(r / 100f, g / 100f, b / 100f);
@@ -212,10 +203,8 @@ namespace OptionalUI
                 }
                 else if (mode == PickerMode.HSL)
                 {
-                    this.ttre1 = Grayscale(this.ttre1);
-                    this.ttre2 = Grayscale(this.ttre2);
-                    this.ttre1.Apply();
-                    this.ttre2.Apply();
+                    TextureGreyscale(ref this.ttre1);
+                    TextureGreyscale(ref this.ttre2);
 
                     cdis0.color = Custom.HSL2RGB(h / 100f, s / 100f, l / 100f);
                     this.ftxr1.SetTexture(ttre1);
@@ -229,8 +218,7 @@ namespace OptionalUI
                     this.lblP.isVisible = false;
                     this.sprPltCover.isVisible = false;
 
-                    this.ttre1 = Grayscale(this.ttre1);
-                    this.ttre1.Apply();
+                    TextureGreyscale(ref this.ttre1);
 
                     cdis0.color = PaletteColor(pi);
                     this.ftxr1.SetTexture(ttre1);
@@ -239,51 +227,52 @@ namespace OptionalUI
             }
             else
             { //Revert
-                Color ctxt = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
-                lblHex.color = ctxt; lblRGB.color = ctxt; lblHSL.color = ctxt; lblPLT.color = ctxt;
-                lblR.color = ctxt; lblG.color = ctxt; lblB.color = ctxt; lblP.color = ctxt;
-                this.rect.colorEdge = ctxt;
-
                 RecalculateTexture();
                 Change();
             }
         }
 
-        private static Texture2D Grayscale(Texture2D texture)
+        private static void TextureGreyscale(ref Texture2D texture)
         {
             for (int u = 0; u < texture.width; u++)
             {
                 for (int v = 0; v < texture.height; v++)
                 {
                     Color c = texture.GetPixel(u, v);
-                    float f = c.grayscale;
-                    c = new Color(f, f, f, 1f);
-                    texture.SetPixel(u, v, c);
+                    texture.SetPixel(u, v, MenuColorEffect.Greyscale(c));
                 }
             }
             texture.Apply();
-            return texture;
         }
 
         /// <summary>
         /// Edge Colour of <see cref="DyeableRect"/>. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.
         /// </summary>
-        public Color colorEdge;
+        public Color colorEdge = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
+
+        /// <summary>
+        /// Text Colour of <see cref="DyeableRect"/>. Default is <see cref="Menu.Menu.MenuColors.MediumGrey"/>.
+        /// </summary>
+        public Color colorText = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
+
+        /// <summary>
+        /// Fill Colour of <see cref="DyeableRect"/>. Default is <see cref="Menu.Menu.MenuColors.Black"/>.
+        /// </summary>
+        public Color colorFill = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.Black);
 
         public override void GrafUpdate(float timeStacker)
         { //Visual polish.
-            Color darkgrey = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.DarkGrey);
             if (greyedOut)
             {
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
+                this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
                 this.rect.GrafUpdate(timeStacker);
                 return;
             }
-            Color grey = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.MediumGrey);
             Color white = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
 
-            lblRGB.color = grey; lblHSL.color = grey; lblPLT.color = grey;
-            lblR.color = grey; lblG.color = grey; lblB.color = grey;
+            lblRGB.color = colorText; lblHSL.color = colorText; lblPLT.color = colorText;
+            lblR.color = colorText; lblG.color = colorText; lblB.color = colorText;
             lblP.color = white;
 
             if (this.Focused || this.MouseOver)
@@ -302,9 +291,9 @@ namespace OptionalUI
                     if (flagBump)
                     {
                         if (Input.GetMouseButton(0))
-                        { pick.color = darkgrey; }
+                        { pick.color = MenuColorEffect.MidToDark(colorText); }
                         else
-                        { pick.color = Color.Lerp(grey, white, this.bumpBehav.Sin(10f)); }
+                        { pick.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); }
                     }
                 }
                 else
@@ -316,9 +305,9 @@ namespace OptionalUI
                         {
                             if (this.MousePos.x >= 10f && this.MousePos.y > 30f && this.MousePos.x <= 110f && this.MousePos.y < 130f)
                             {
-                                if (this.MousePos.y < 50f) { lblB.color = Color.Lerp(grey, white, this.bumpBehav.Sin(10f)); }
-                                else if (this.MousePos.y > 70f && this.MousePos.y < 90f) { lblG.color = Color.Lerp(grey, white, this.bumpBehav.Sin(10f)); }
-                                else if (this.MousePos.y > 110f) { lblR.color = Color.Lerp(grey, white, this.bumpBehav.Sin(10f)); }
+                                if (this.MousePos.y < 50f) { lblB.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); }
+                                else if (this.MousePos.y > 70f && this.MousePos.y < 90f) { lblG.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); }
+                                else if (this.MousePos.y > 110f) { lblR.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); }
                             }
                         }
                     }
@@ -327,14 +316,14 @@ namespace OptionalUI
 
             if (this.typeMode)
             {
-                this.lblHex.color = Color.Lerp(white, grey, this.bumpBehav.Sin());
-                this.cursor.color = Color.Lerp(white, grey, this.bumpBehav.Sin());
+                this.lblHex.color = Color.Lerp(white, colorText, this.bumpBehav.Sin());
+                this.cursor.color = Color.Lerp(white, colorText, this.bumpBehav.Sin());
             }
             else
             {
                 if (this.MouseOverHex())
-                { this.lblHex.color = Input.GetMouseButton(0) ? darkgrey : Color.Lerp(white, grey, this.bumpBehav.Sin(10f)); }
-                else { this.lblHex.color = grey; }
+                { this.lblHex.color = Input.GetMouseButton(0) ? MenuColorEffect.MidToDark(colorText) : Color.Lerp(white, colorText, this.bumpBehav.Sin(10f)); }
+                else { this.lblHex.color = colorText; }
             }
 
             this.rect.fillAlpha = Mathf.Lerp(0.6f, 0.8f, this.bumpBehav.col);
@@ -478,10 +467,9 @@ namespace OptionalUI
                 GreyOut();
             }
 
-            if (this.clickDelay > 0) { clickDelay--; }
-            if (this.typeMode)
+            if (this.typeMode) // Type
             {
-                this.held = true;
+                this.held = true; ConfigContainer.ForceMenuMouseMode(true);
                 if (!typed && Input.anyKey)
                 {
                     typed = true;
@@ -522,9 +510,17 @@ namespace OptionalUI
                 return;
             }
 
+            if (MenuMouseMode)
+            { MouseModeUpdate(); }
+            else
+            { NonMouseModeUpdate(); }
+        }
+
+        private void MouseModeUpdate()
+        {
+            if (this.clickDelay > 0) { clickDelay--; }
             if (this.MouseOver)
             {
-                ModConfigMenu.instance.ShowDescription(this.description);
                 if (!isDirty) { PlaySound(SoundID.MENU_Button_Select_Mouse); isDirty = true; }
                 if (this.MousePos.y > 135f)
                 { //mod settings
@@ -746,7 +742,84 @@ namespace OptionalUI
 
         private bool isDirty;
 
-        //public UnityEngine.UI.Image img1;
+        private GlowGradient focusGlow;
+
+        private void NonMouseModeUpdate()
+        {
+            clickDelay = 20;
+            if (!held) { return; }
+            if (curFocus < 0)
+            {
+                if (JoystickPress(new IntVector2(-1, 0)) && curFocus != MiniFocus.ModeRGB)
+                { curFocus = (MiniFocus)((int)curFocus - 1); PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); return; }
+                if (JoystickPress(new IntVector2(1, 0)) && curFocus != MiniFocus.ModePLT)
+                { curFocus = (MiniFocus)((int)curFocus + 1); PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); return; }
+                if (JoystickPress(new IntVector2(0, -1)))
+                {
+                    switch (mode)
+                    {
+                        case PickerMode.RGB: curFocus = MiniFocus.RGB_Red; break;
+                        default:
+                        case PickerMode.HSL: curFocus = MiniFocus.HSL_Hue; break;
+                        case PickerMode.Palette: curFocus = MiniFocus.PLT_Selector; break;
+                    }
+                    PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
+                    return;
+                }
+                if (CtlrInput.jmp && !LastCtlrInput.jmp)
+                {
+                    PickerMode newMode;
+                    switch (curFocus)
+                    {
+                        case MiniFocus.ModeRGB: newMode = PickerMode.RGB; break;
+                        default:
+                        case MiniFocus.ModeHSL: newMode = PickerMode.HSL; break;
+                        case MiniFocus.ModePLT: newMode = PickerMode.Palette; break;
+                    }
+                    if (newMode == mode) { PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked); }
+                    else { SwitchMode(newMode); PlaySound(SoundID.MENU_MultipleChoice_Clicked); }
+                    return;
+                }
+                if (CtlrInput.thrw && !LastCtlrInput.thrw)
+                { this.held = false; }
+                return;
+            }
+            switch (curFocus)
+            {
+                case MiniFocus.RGB_Red:
+                    break;
+            }
+        }
+
+        protected internal override void NonMouseSetHeld(bool newHeld)
+        {
+            base.NonMouseSetHeld(newHeld);
+            if (newHeld)
+            {
+                switch (mode)
+                {
+                    case PickerMode.RGB: curFocus = MiniFocus.RGB_Red; break;
+                    case PickerMode.HSL: curFocus = MiniFocus.HSL_Hue; break;
+                    case PickerMode.Palette: curFocus = MiniFocus.PLT_Selector; break;
+                }
+            }
+        }
+
+        private MiniFocus curFocus;
+
+        private enum MiniFocus : int
+        {
+            ModeRGB = -3,
+            ModeHSL = -2,
+            ModePLT = -1,
+            RGB_Red = 1,
+            RGB_Green = 2,
+            RGB_Blue = 3,
+            HSL_Hue = 11,
+            HSL_Saturation = 12,
+            HSL_Lightness = 13,
+            PLT_Selector = 21
+        }
 
         /// <summary>
         /// Red in RGB (0 ~ 100)

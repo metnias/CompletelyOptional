@@ -44,6 +44,10 @@ namespace CompletelyOptional
             engText[(int)ID.OpTextBox_MouseTutoGrab] = "Click to begin typing";
             engText[(int)ID.OpTextBox_MouseTutoType] = "Use keyboard to type, press Enter to apply";
             engText[(int)ID.OpTextBox_NonMouseTuto] = "This cannot be interacted with a joystick";
+            engText[(int)ID.OpColorPicker_MouseTypeTuto] = "Type hex code with keyboard for desired color";
+            engText[(int)ID.OpColorPicker_MouseRGBTuto] = "Select color with red, green, blue slider";
+            engText[(int)ID.OpColorPicker_MouseHSLTuto] = "Select color with hue saturation square and lightness slider";
+            engText[(int)ID.OpColorPicker_MousePLTTuto] = "Select a color from palette";
 
             engText[(int)ID.OpScrollBox_MouseTuto] = "Use scroll wheel to see more";
             engText[(int)ID.OpScrollBox_MouseTutoSlidebar] = "Use scroll wheel or scrollbar to see more";
@@ -110,6 +114,10 @@ namespace CompletelyOptional
             OpTextBox_MouseTutoGrab,
             OpTextBox_MouseTutoType,
             OpTextBox_NonMouseTuto,
+            OpColorPicker_MouseTypeTuto,
+            OpColorPicker_MouseRGBTuto,
+            OpColorPicker_MouseHSLTuto,
+            OpColorPicker_MousePLTTuto,
 
             OpScrollBox_MouseTuto,
             OpScrollBox_MouseTutoSlidebar,
