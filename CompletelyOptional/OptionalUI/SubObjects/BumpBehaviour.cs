@@ -141,7 +141,7 @@ namespace OptionalUI
 
         /// <summary>
         /// Shortcut to check whether Joystick has been pressed to a certain direction (and not held down).
-        /// See also <seealso cref="JoystickPressAxis"/>, <seealso cref="JoystickHeld"/>.
+        /// See also <seealso cref="JoystickPressAxis"/>, <seealso cref="JoystickHeld(IntVector2, float)"/>.
         /// </summary>
         public bool JoystickPress(IntVector2 direction)
         {
@@ -161,8 +161,14 @@ namespace OptionalUI
         }
 
         /// <summary>
+        /// Shortcut to check whether Joystick has been pressed to a certain direction (and not held down).
+        /// See also <seealso cref="JoystickPressAxis"/>, <seealso cref="JoystickHeld(IntVector2, float)"/>.
+        /// </summary>
+        public bool JoystickPress(int xDir, int yDir) => JoystickPress(new IntVector2(xDir, yDir));
+
+        /// <summary>
         /// Shortcut to check whether Joystick has been pressed by certain axis. Returns 0 when it's not initial press.
-        /// See also <seealso cref="JoystickPress"/>, <seealso cref="JoystickHeldAxis"/>.
+        /// See also <seealso cref="JoystickPress(IntVector2)"/>, <seealso cref="JoystickHeldAxis"/>.
         /// </summary>
         /// <param name="vertical"></param>
         /// <returns></returns>
@@ -179,7 +185,7 @@ namespace OptionalUI
 
         /// <summary>
         /// Shortcut to check whether Joystick has been pressed to a certain direction for long time.
-        /// See also <seealso cref="JoystickHeldAxis"/>, <seealso cref="JoystickPress"/>.
+        /// See also <seealso cref="JoystickHeldAxis"/>, <seealso cref="JoystickPress(IntVector2)"/>.
         /// </summary>
         /// <param name="speed">The higher the speed, the quicker this turns true. If this is 0f, this'll return the value after DASinit is passed.</param>
         public bool JoystickHeld(IntVector2 direction, float speed = 1.0f)
@@ -194,8 +200,15 @@ namespace OptionalUI
         }
 
         /// <summary>
+        /// Shortcut to check whether Joystick has been pressed to a certain direction for long time.
+        /// See also <seealso cref="JoystickHeldAxis"/>, <seealso cref="JoystickPress(IntVector2)"/>.
+        /// </summary>
+        /// <param name="speed">The higher the speed, the quicker this turns true. If this is 0f, this'll return the value after DASinit is passed.</param>
+        public bool JoystickHeld(int xDir, int yDir, float speed = 1.0f) => JoystickHeld(new IntVector2(xDir, yDir), speed);
+
+        /// <summary>
         /// Shortcut to check whether Joystick has been held down by certain axis. Returns 0 when it's not the right timing.
-        /// See also <seealso cref="JoystickHeld"/>, <seealso cref="JoystickPressAxis"/>.
+        /// See also <seealso cref="JoystickHeld(IntVector2, float)"/>, <seealso cref="JoystickPressAxis"/>.
         /// </summary>
         /// <param name="vertical"></param>
         /// <param name="speed">The higher the speed, the quicker this turns value. If this is 0f, this'll return the value after DASinit is passed.</param>
@@ -215,19 +228,19 @@ namespace OptionalUI
             switch (type)
             {
                 default:
-                case ButtonType.Jmp: return owner.CtlrInput.jmp && !owner.LastCtlrInput.jmp;
-                case ButtonType.Mp: return owner.CtlrInput.mp && !owner.LastCtlrInput.mp;
-                case ButtonType.Pckp: return owner.CtlrInput.pckp && !owner.LastCtlrInput.pckp;
-                case ButtonType.Thrw: return owner.CtlrInput.thrw && !owner.LastCtlrInput.thrw;
+                case ButtonType.Jump: return owner.CtlrInput.jmp && !owner.LastCtlrInput.jmp;
+                case ButtonType.Map: return owner.CtlrInput.mp && !owner.LastCtlrInput.mp;
+                case ButtonType.Pickup: return owner.CtlrInput.pckp && !owner.LastCtlrInput.pckp;
+                case ButtonType.Throw: return owner.CtlrInput.thrw && !owner.LastCtlrInput.thrw;
             }
         }
 
         public enum ButtonType
         {
-            Jmp,
-            Mp,
-            Pckp,
-            Thrw
+            Jump,
+            Map,
+            Pickup,
+            Throw
         }
 
         #endregion Joystick

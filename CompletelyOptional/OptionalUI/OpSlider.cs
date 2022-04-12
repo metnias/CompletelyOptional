@@ -102,7 +102,7 @@ namespace OptionalUI
             return OptionalText.GetText(held ? OptionalText.ID.OpSlider_NonMouseAdjustTuto : OptionalText.ID.OpSlider_NonMouseGrabTuto);
         }
 
-        private bool tickSlider => this is OpSliderTick;
+        private bool IsTick => this is OpSliderTick;
 
         /* private bool rangeSlider
         {
@@ -127,7 +127,7 @@ namespace OptionalUI
                 this.lineSprites[2].anchorY = 1f;
                 this.lineSprites[3].scaleY = 2f;
                 this.lineSprites[3].scaleX = 6f;
-                if (!tickSlider) { this.rect = new DyeableRect(myContainer, new Vector2(4f, -8f), new Vector2(24f, 16f), true); }
+                if (!IsTick) { this.rect = new DyeableRect(myContainer, new Vector2(4f, -8f), new Vector2(24f, 16f), true); }
                 //if (rangeSlider) { this.lineSprites[4].scaleX = 2f; this.lineSprites[4].anchorY = 1f; }
             }
             else
@@ -140,10 +140,10 @@ namespace OptionalUI
                 this.lineSprites[2].anchorX = 1f;
                 this.lineSprites[3].scaleX = 2f;
                 this.lineSprites[3].scaleY = 6f;
-                if (!tickSlider) { this.rect = new DyeableRect(myContainer, new Vector2(-8f, 4f), new Vector2(16f, 24f), true); }
+                if (!IsTick) { this.rect = new DyeableRect(myContainer, new Vector2(-8f, 4f), new Vector2(16f, 24f), true); }
                 //if (rangeSlider) { this.lineSprites[4].scaleY = 2f; this.lineSprites[4].anchorX = 1f; }
             }
-            if (!tickSlider)
+            if (!IsTick)
             {
                 this.label = FLabelCreate(this.value);
                 this.label.alpha = 0f;
@@ -192,7 +192,7 @@ namespace OptionalUI
             int valueInt = this.GetValueInt();
             if (!vertical)
             {
-                if (!tickSlider)
+                if (!IsTick)
                 {
                     float p = this.mul * (float)(valueInt - this.min);
                     if (MenuMouseMode && this.held) { p = Mathf.Clamp(MousePos.x, 0f, size.x); }
@@ -230,7 +230,7 @@ namespace OptionalUI
             }
             else
             {
-                if (!tickSlider)
+                if (!IsTick)
                 {
                     float p = this.mul * (float)(valueInt - this.min);
                     if (MenuMouseMode && this.held) { p = Mathf.Clamp(MousePos.y, 0f, size.y); }
@@ -270,7 +270,7 @@ namespace OptionalUI
             if (this.greyedOut)
             {
                 foreach (FSprite s in this.lineSprites) { s.color = this.bumpBehav.GetColor(this.colorLine); }
-                if (tickSlider) return;
+                if (IsTick) return;
                 this.rect.colorFill = this.bumpBehav.GetColor(this.colorFill);
                 this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
                 this.label.color = this.bumpBehav.GetColor(this.colorEdge);
@@ -279,7 +279,7 @@ namespace OptionalUI
                 return;
             }
 
-            if (!tickSlider)
+            if (!IsTick)
             {
                 if (this.held || this.Focused || this.MouseOver)
                 { this.label.alpha = Mathf.Min(this.label.alpha + 0.1f, 1f); }
@@ -295,7 +295,7 @@ namespace OptionalUI
 
             Color color = this.bumpBehav.GetColor(this.colorLine);
             foreach (FSprite l in this.lineSprites) { l.color = color; }
-            if (!tickSlider) { this.label.color = Color.Lerp(this.rect.colorEdge, Color.white, 0.5f); }
+            if (!IsTick) { this.label.color = Color.Lerp(this.rect.colorEdge, Color.white, 0.5f); }
         }
 
         protected virtual void LineVisibility(Vector2 cutPos, Vector2 cutSize)
@@ -319,7 +319,7 @@ namespace OptionalUI
         public override void Update()
         {
             base.Update();
-            if (!tickSlider) { this.rect.Update(); }
+            if (!IsTick) { this.rect.Update(); }
             if (greyedOut) { return; }
 
             if (MenuMouseMode)
@@ -328,8 +328,12 @@ namespace OptionalUI
                 {
                     if (Input.GetMouseButton(0))
                     {
-                        float t = this.vertical ? this.MousePos.y : this.MousePos.x;
-                        this.SetValueInt(Custom.IntClamp(Mathf.RoundToInt(t / this.mul) + this.min, this.min, this.max));
+                        int newVal = Custom.IntClamp(Mathf.RoundToInt((this.vertical ? this.MousePos.y : this.MousePos.x) / this.mul) + this.min, this.min, this.max);
+                        if (newVal != this.GetValueInt())
+                        {
+                            this.SetValueInt(newVal);
+                            PlaySound(SoundID.MENU_Scroll_Tick);
+                        }
                     }
                     else
                     {
@@ -355,69 +359,34 @@ namespace OptionalUI
             {
                 if (this.held)
                 {
-                    if (CtlrInput.jmp && !LastCtlrInput.jmp)
+                    if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jump))
                     {
                         this.held = false;
                         lastVal = this.GetValueInt();
                         PlaySound(SoundID.MENU_Checkbox_Check);
                         return;
                     }
-                    if (CtlrInput.thrw && !LastCtlrInput.thrw)
+                    if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Throw))
                     {
                         this.held = false;
                         this.SetValueInt(lastVal);
                         PlaySound(SoundID.MENU_Checkbox_Uncheck);
                         return;
                     }
-                    int newVal = this.GetValueInt();
-                    bool tick = false;
-                    if (vertical)
-                    {
-                        if (CtlrInput.y != 0 && LastCtlrInput.y != CtlrInput.y)
-                        {
-                            newVal = Custom.IntClamp(newVal + CtlrInput.y, min, max); tick = true;
-                        }
-                        if (CtlrInput.y != 0 && LastCtlrInput.y == CtlrInput.y)
-                        { this.scrollInitDelay++; }
-                        else
-                        { this.scrollInitDelay = 0; }
-                        if (this.scrollInitDelay > ModConfigMenu.DASinit / 2)
-                        {
-                            this.scrollDelay++;
-                            if (this.scrollDelay > ModConfigMenu.DASdelay / 2)
-                            {
-                                this.scrollDelay = 0;
-                                if (CtlrInput.y != 0 && LastCtlrInput.y == CtlrInput.y)
-                                { newVal = Custom.IntClamp(newVal + CtlrInput.y, min, max); tick = true; }
-                            }
-                        }
-                        else { this.scrollDelay = 0; }
-                    }
+                    int tick = bumpBehav.JoystickPressAxis(vertical);
+                    if (tick != 0) { Tick(true); }
                     else
                     {
-                        if (CtlrInput.x != 0 && LastCtlrInput.x != CtlrInput.x)
-                        { newVal = Custom.IntClamp(newVal + CtlrInput.x, min, max); tick = true; }
-                        if (CtlrInput.x != 0 && LastCtlrInput.x == CtlrInput.x)
-                        { this.scrollInitDelay++; }
-                        else
-                        { this.scrollInitDelay = 0; }
-                        if (this.scrollInitDelay > ModConfigMenu.DASinit / 2)
-                        {
-                            this.scrollDelay++;
-                            if (this.scrollDelay > ModConfigMenu.DASdelay / 2)
-                            {
-                                this.scrollDelay = 0;
-                                if (CtlrInput.x != 0 && LastCtlrInput.x == CtlrInput.x)
-                                { newVal = Custom.IntClamp(newVal + CtlrInput.x, min, max); tick = true; }
-                            }
-                        }
-                        else { this.scrollDelay = 0; }
+                        tick = bumpBehav.JoystickHeldAxis(vertical, IsTick ? 1f : 2f);
+                        if (tick != 0) { Tick(false); }
                     }
-                    if (tick)
+
+                    void Tick(bool first)
                     {
+                        int newVal = Custom.IntClamp(this.GetValueInt() + tick, min, max);
                         if (newVal != this.GetValueInt())
-                        { PlaySound(scrollInitDelay > 1 ? SoundID.MENU_Scroll_Tick : SoundID.MENU_First_Scroll_Tick); this.SetValueInt(newVal); }
-                        else { PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard); }
+                        { PlaySound(first ? SoundID.MENU_First_Scroll_Tick : SoundID.MENU_Scroll_Tick); this.SetValueInt(newVal); }
+                        else { PlaySound(first ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.None); }
                     }
                 }
                 else { lastVal = this.GetValueInt(); }
@@ -425,7 +394,6 @@ namespace OptionalUI
         }
 
         private int lastVal;
-        private float scrollInitDelay, scrollDelay;
 
         protected internal override void Change()
         {
@@ -433,11 +401,10 @@ namespace OptionalUI
 
             if (MouseOver || held)
             {
-                PlaySound(SoundID.MENU_Scroll_Tick);
                 this.bumpBehav.flash = Mathf.Min(1f, this.bumpBehav.flash + 0.5f);
                 this.bumpBehav.sizeBump = Mathf.Min(2.5f, this.bumpBehav.sizeBump + 1f);
             }
-            if (!tickSlider) this.label.text = this.value;
+            if (!IsTick) this.label.text = this.value;
 
             /*
             int r = this.span;
@@ -458,7 +425,7 @@ namespace OptionalUI
             int valueInt = this.GetValueInt();
             if (!vertical)
             {
-                if (!tickSlider)
+                if (!IsTick)
                 {
                     float p = this.mul * (float)(valueInt - this.min);
                     this.rect.pos.y = 4f;
@@ -483,7 +450,7 @@ namespace OptionalUI
             }
             else
             {
-                if (!tickSlider)
+                if (!IsTick)
                 {
                     float p = this.mul * (float)(valueInt - this.min);
                     this.rect.pos.x = 4f;

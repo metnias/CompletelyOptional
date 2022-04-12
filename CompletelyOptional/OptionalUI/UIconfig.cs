@@ -136,7 +136,7 @@ namespace OptionalUI
                 if (_value != value)
                 {
                     FocusMoveDisallow();
-                    menu.cfgContainer.NotifyConfigChange(this, _value, value);
+                    menu.cfgContainer?.NotifyConfigChange(this, _value, value);
                     OnValueUpdate?.Invoke(this, value, _value);
                     _value = value;
                     Change();

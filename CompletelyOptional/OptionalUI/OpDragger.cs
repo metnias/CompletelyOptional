@@ -143,7 +143,11 @@ namespace OptionalUI
                 if (this.held)
                 {
                     if (Input.GetMouseButton(0))
-                    { this.SetValueInt(Custom.IntClamp(this.savValue + Mathf.FloorToInt((Input.mousePosition.y - this.savMouse) / 10f), this.min, this.max)); }
+                    {
+                        int newVal = Custom.IntClamp(this.savValue + Mathf.FloorToInt((Input.mousePosition.y - this.savMouse) / 10f), this.min, this.max);
+                        if (this.GetValueInt() != newVal)
+                        { this.SetValueInt(newVal); PlaySound(SoundID.MENU_Scroll_Tick); }
+                    }
                     else
                     { this.held = false; }
                 }
@@ -174,14 +178,14 @@ namespace OptionalUI
             {
                 if (this.held)
                 {
-                    if (CtlrInput.jmp && !LastCtlrInput.jmp)
+                    if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jump))
                     {
                         this.held = false;
                         lastVal = this.GetValueInt();
                         PlaySound(SoundID.MENU_Checkbox_Check);
                         return;
                     }
-                    if (CtlrInput.thrw && !LastCtlrInput.thrw)
+                    if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Throw))
                     {
                         this.held = false;
                         this.SetValueInt(lastVal);
@@ -189,42 +193,35 @@ namespace OptionalUI
                         return;
                     }
 
-                    int newVal = this.GetValueInt(); bool tick = false;
-                    if (CtlrInput.y != 0 && LastCtlrInput.y != CtlrInput.y)
-                    { newVal = Custom.IntClamp(newVal + CtlrInput.y, min, max); tick = true; }
-                    if (CtlrInput.y != 0 && LastCtlrInput.y == CtlrInput.y)
-                    { this.scrollInitDelay++; }
-                    else
-                    { this.scrollInitDelay = 0; }
-                    if (this.scrollInitDelay > ModConfigMenu.DASinit / 2)
+                    if (CtlrInput.y != 0)
                     {
-                        this.scrollDelay++;
-                        if (this.scrollDelay > ModConfigMenu.DASdelay / 2)
+                        int tick = bumpBehav.JoystickPressAxis(true);
+                        if (tick != 0) { TryTick(true); }
+                        else
                         {
-                            this.scrollDelay = 0;
-                            if (CtlrInput.y != 0 && LastCtlrInput.y == CtlrInput.y)
-                            { newVal = Custom.IntClamp(newVal + CtlrInput.y, min, max); tick = true; }
+                            tick = bumpBehav.JoystickHeldAxis(true, 3f);
+                            if (tick != 0) { TryTick(false); }
                         }
-                    }
-                    else { this.scrollDelay = 0; }
-                    if (tick)
-                    {
-                        if (newVal != this.GetValueInt())
-                        { PlaySound(scrollInitDelay > 1 ? SoundID.MENU_Scroll_Tick : SoundID.MENU_First_Scroll_Tick); this.SetValueInt(newVal); }
-                        else { PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard); }
+
+                        void TryTick(bool first)
+                        {
+                            int newVal = Custom.IntClamp(this.GetValueInt() + tick, min, max);
+                            if (newVal != this.GetValueInt())
+                            { PlaySound(first ? SoundID.MENU_First_Scroll_Tick : SoundID.MENU_Scroll_Tick); this.SetValueInt(newVal); }
+                            else { PlaySound(first ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.None); }
+                        }
                     }
                 }
             }
         }
 
-        private int scrollInitDelay = 0, scrollDelay = 0, lastVal;
+        private int lastVal;
 
         protected internal override void Change()
         {
             base.Change();
             if (MouseOver || held)
             {
-                PlaySound(SoundID.MENU_Scroll_Tick);
                 this.bumpBehav.sizeBump = Mathf.Min(2.5f, this.bumpBehav.sizeBump + 1f);
                 this.bumpBehav.flash = Mathf.Min(1f, this.bumpBehav.flash + 0.5f);
             }

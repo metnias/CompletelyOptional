@@ -52,7 +52,7 @@ namespace OptionalUI
             myContainer.AddChild(lblP);
 
             //Hex Value Label
-            lblHex = FLabelCreate(value); lblHex.alignment = FLabelAlignment.Left;
+            lblHex = FLabelCreate(_value); lblHex.alignment = FLabelAlignment.Left;
             lblHex.x = 60f; lblHex.y = 15f; myContainer.AddChild(lblHex);
             //Top Menu RGB mode Button
             lblRGB = FLabelCreate("RGB"); FLabelPlaceAtCenter(lblRGB, 20f, 130f, 30f, 15f);
@@ -275,17 +275,17 @@ namespace OptionalUI
             lblR.color = colorText; lblG.color = colorText; lblB.color = colorText;
             lblP.color = white;
 
-            if (this.Focused || this.MouseOver)
+            if (this.MouseOver)
             {
                 if (this.MousePos.y > 135f)
                 { //mod settings
                     FLabel pick; bool flagBump = true;
                     if (this.MousePos.x > 20f && this.MousePos.x < 50f)
-                    { pick = lblRGB; }
+                    { pick = lblRGB; curFocus = MiniFocus.ModeRGB; }
                     else if (this.MousePos.x > 60f && this.MousePos.x < 90f)
-                    { pick = lblHSL; }
+                    { pick = lblHSL; curFocus = MiniFocus.ModeHSL; }
                     else if (this.MousePos.x > 100f && this.MousePos.x < 130f)
-                    { pick = lblPLT; }
+                    { pick = lblPLT; curFocus = MiniFocus.ModePLT; }
                     else { pick = null; flagBump = false; }
 
                     if (flagBump)
@@ -298,16 +298,16 @@ namespace OptionalUI
                 }
                 else
                 {
-                    if (mode == 0)
+                    if (mode == PickerMode.RGB)
                     {
                         //Just change display values
                         if (Input.GetMouseButton(0))
                         {
                             if (this.MousePos.x >= 10f && this.MousePos.y > 30f && this.MousePos.x <= 110f && this.MousePos.y < 130f)
                             {
-                                if (this.MousePos.y < 50f) { lblB.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); }
-                                else if (this.MousePos.y > 70f && this.MousePos.y < 90f) { lblG.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); }
-                                else if (this.MousePos.y > 110f) { lblR.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); }
+                                if (this.MousePos.y < 50f) { lblB.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); curFocus = MiniFocus.RGB_Blue; }
+                                else if (this.MousePos.y > 70f && this.MousePos.y < 90f) { lblG.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); curFocus = MiniFocus.RGB_Green; }
+                                else if (this.MousePos.y > 110f) { lblR.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); curFocus = MiniFocus.RGB_Red; }
                             }
                         }
                     }
@@ -330,6 +330,69 @@ namespace OptionalUI
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
             this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
             this.rect.GrafUpdate(timeStacker);
+
+            #region focusGlow
+
+            if (curFocus == MiniFocus.None) { focusGlow.Hide(); return; }
+            focusGlow.Show();
+            focusGlow.color = colorText;
+            switch (curFocus)
+            {
+                #region Modes
+
+                case MiniFocus.ModeRGB:
+                    focusGlow.size = new Vector2(40f, 25f);
+                    focusGlow.pos = new Vector2(15f, 125f);
+                    focusGlow.alpha = this.bumpBehav.Sin(10f) * 0.5f + 0.2f;
+                    break;
+
+                case MiniFocus.ModeHSL:
+                    focusGlow.size = new Vector2(40f, 25f);
+                    focusGlow.pos = new Vector2(55f, 125f);
+                    focusGlow.alpha = this.bumpBehav.Sin(10f) * 0.5f + 0.2f;
+                    break;
+
+                case MiniFocus.ModePLT:
+                    focusGlow.size = new Vector2(40f, 25f);
+                    focusGlow.pos = new Vector2(95f, 125f);
+                    focusGlow.alpha = this.bumpBehav.Sin(10f) * 0.5f + 0.2f;
+                    break;
+
+                #endregion Modes
+
+                #region RGB
+
+                case MiniFocus.RGB_Red:
+                    focusGlow.size = new Vector2(40f, 25f);
+                    focusGlow.pos = new Vector2(110f, 105f);
+                    focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
+                    break;
+
+                case MiniFocus.RGB_Green:
+                    focusGlow.size = new Vector2(40f, 25f);
+                    focusGlow.pos = new Vector2(110f, 65f);
+                    focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
+                    break;
+
+                case MiniFocus.RGB_Blue:
+                    focusGlow.size = new Vector2(40f, 25f);
+                    focusGlow.pos = new Vector2(110f, 25f);
+                    focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
+                    break;
+
+                #endregion RGB
+
+                case MiniFocus.HEX:
+                    focusGlow.size = new Vector2(60f, 25f);
+                    focusGlow.pos = new Vector2(60f, 5f);
+                    focusGlow.alpha = 0.5f - this.bumpBehav.Sin(typeMode ? 1f : 10f) * 0.4f;
+                    break;
+
+                default:
+                    focusGlow.Hide(); break;
+            }
+
+            #endregion focusGlow
         }
 
         private bool mouseDown = false;
@@ -366,7 +429,6 @@ namespace OptionalUI
             mode = newmod;
             value = temp;
             mode = newmod;
-            PlaySound(SoundID.MENU_MultipleChoice_Clicked);
 
             RecalculateTexture();
             //load new mod
@@ -469,6 +531,7 @@ namespace OptionalUI
 
             if (this.typeMode) // Type
             {
+                curFocus = MiniFocus.HEX;
                 this.held = true; ConfigContainer.ForceMenuMouseMode(true);
                 if (!typed && Input.anyKey)
                 {
@@ -518,35 +581,45 @@ namespace OptionalUI
 
         private void MouseModeUpdate()
         {
+            curFocus = MiniFocus.None;
             if (this.clickDelay > 0) { clickDelay--; }
             if (this.MouseOver)
             {
                 if (!isDirty) { PlaySound(SoundID.MENU_Button_Select_Mouse); isDirty = true; }
                 if (this.MousePos.y > 135f)
-                { //mod settings
-                    if (Input.GetMouseButtonDown(0))
+                { //mode switch
+                    if (Input.GetMouseButton(0))
                     {
-                        int newmod = -1;
-                        if (this.MousePos.x > 20f && this.MousePos.x < 50f) { newmod = 0; }
-                        else if (this.MousePos.x > 60f && this.MousePos.x < 90f) { newmod = 1; }
-                        else if (this.MousePos.x > 100f && this.MousePos.x < 130f) { newmod = 2; }
-
-                        if (newmod != -1 && mode != (PickerMode)newmod) //Mod is changed!
+                        if (!typed)
                         {
-                            this.SwitchMode((PickerMode)newmod);
+                            int newmod = -1;
+                            if (this.MousePos.x > 20f && this.MousePos.x < 50f) { newmod = 0; }
+                            else if (this.MousePos.x > 60f && this.MousePos.x < 90f) { newmod = 1; }
+                            else if (this.MousePos.x > 100f && this.MousePos.x < 130f) { newmod = 2; }
+                            if (newmod >= 0)
+                            {
+                                if (mode != (PickerMode)newmod) //Mod is changed!
+                                {
+                                    PlaySound(SoundID.MENU_MultipleChoice_Clicked);
+                                    this.SwitchMode((PickerMode)newmod);
+                                }
+                                else
+                                { //Clicked already chosen mod
+                                    PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
+                                }
+                            }
                         }
-                        else
-                        { //Clicked already chosen mod
-                            PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
-                        }
+                        typed = true;
                     }
+                    else { typed = false; }
+
                     return;
                 }
                 else
                 {
                     switch (mode)
                     {
-                        case 0:
+                        case PickerMode.RGB:
                             //Just change display values
                             lblR.text = r.ToString();
                             lblG.text = g.ToString();
@@ -555,9 +628,9 @@ namespace OptionalUI
                             int dr = r; int dg = g; int db = b;
                             if (this.MousePos.x >= 10f && this.MousePos.y > 30f && this.MousePos.x <= 110f && this.MousePos.y < 130f)
                             {
-                                if (this.MousePos.y < 50f) { db = Mathf.RoundToInt(this.MousePos.x - 10f); lblB.text = db.ToString(); cdis1.isVisible = true; }
-                                else if (this.MousePos.y > 70f && this.MousePos.y < 90f) { dg = Mathf.RoundToInt(this.MousePos.x - 10f); lblG.text = dg.ToString(); cdis1.isVisible = true; }
-                                else if (this.MousePos.y > 110f) { dr = Mathf.RoundToInt(this.MousePos.x - 10f); lblR.text = dr.ToString(); cdis1.isVisible = true; }
+                                if (this.MousePos.y < 50f) { db = Mathf.RoundToInt(this.MousePos.x - 10f); lblB.text = db.ToString(); cdis1.isVisible = true; curFocus = MiniFocus.RGB_Blue; }
+                                else if (this.MousePos.y > 70f && this.MousePos.y < 90f) { dg = Mathf.RoundToInt(this.MousePos.x - 10f); lblG.text = dg.ToString(); cdis1.isVisible = true; curFocus = MiniFocus.RGB_Green; }
+                                else if (this.MousePos.y > 110f) { dr = Mathf.RoundToInt(this.MousePos.x - 10f); lblR.text = dr.ToString(); cdis1.isVisible = true; curFocus = MiniFocus.RGB_Red; }
 
                                 //Not Calculating Texture now
                             }
@@ -580,12 +653,11 @@ namespace OptionalUI
                                         g = dg;
                                         b = db;
                                         PlaySound(SoundID.MENU_Scroll_Tick);
-                                        this._value = string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
+                                        this.value = string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
                                             Mathf.RoundToInt(g * 255f / 100f).ToString("X2"),
                                             Mathf.RoundToInt(b * 255f / 100f).ToString("X2"));
                                     }
                                 }
-                                Change();
                             }
                             else { mouseDown = false; this.held = false; }
 
@@ -596,6 +668,7 @@ namespace OptionalUI
                             { //Lightness
                                 cdis1.color = Custom.HSL2RGB(h / 100f, s / 100f, (this.MousePos.y - 30f) / 100f);
                                 cdis1.isVisible = true;
+                                curFocus = MiniFocus.HSL_Lightness;
 
                                 if (Input.GetMouseButton(0))
                                 {
@@ -623,6 +696,7 @@ namespace OptionalUI
                             { //Hue&Satuation
                                 cdis1.color = Custom.HSL2RGB((this.MousePos.x - 10f) / 100f, (this.MousePos.y - 30f) / 100f, l / 100f);
                                 cdis1.isVisible = true;
+                                curFocus = MiniFocus.HSL_Hue;
 
                                 if (Input.GetMouseButton(0))
                                 {
@@ -655,6 +729,7 @@ namespace OptionalUI
                             {
                                 lblP.isVisible = true;
                                 sprPltCover.isVisible = true;
+                                curFocus = MiniFocus.PLT_Selector;
                                 int _i = Mathf.FloorToInt((128f - this.MousePos.y) / 8f) * 15 + Mathf.FloorToInt((this.MousePos.x - 15f) / 8f);
 
                                 if (_i < this.PaletteHex.Length)
@@ -694,23 +769,30 @@ namespace OptionalUI
                     }
                 }
 
-                if (this.MouseOverHex() && Input.GetMouseButton(0) && !typed)
+                if (this.MouseOverHex())
                 {
-                    clickDelay += FrameMultiply(60);
-                    typed = true;
-                    if (clickDelay > FrameMultiply(100))
+                    curFocus = MiniFocus.HEX;
+                    if (Input.GetMouseButton(0))
                     {
-                        this.typeMode = true;
-                        this.clickDelay = 0;
-                        this.typed = true;
-                        this.typeHex = "";
-                        this.lblHex.text = "#";
-                        PlaySound(SoundID.MENU_Player_Join_Game);
-                        this.cursor = new FCursor() { x = 70f, y = 5f };
-                        this.myContainer.AddChild(this.cursor);
+                        if (!typed)
+                        {
+                            clickDelay += FrameMultiply(60);
+                            if (clickDelay > FrameMultiply(100))
+                            {
+                                this.typeMode = true;
+                                this.clickDelay = 0;
+                                this.typed = true;
+                                this.typeHex = "";
+                                this.lblHex.text = "#";
+                                PlaySound(SoundID.MENU_Player_Join_Game);
+                                this.cursor = new FCursor() { x = 70f, y = 5f };
+                                this.myContainer.AddChild(this.cursor);
+                            }
+                        }
+                        typed = true;
                     }
+                    else { typed = false; }
                 }
-                else if (typed && !Input.GetMouseButton(0)) { typed = false; }
             }
             else
             {
@@ -744,17 +826,21 @@ namespace OptionalUI
 
         private GlowGradient focusGlow;
 
+        private string lastVal;
+
         private void NonMouseModeUpdate()
         {
             clickDelay = 20;
-            if (!held) { return; }
+            if (!held) { lastVal = _value; return; }
+            if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Throw))
+            { this.held = false; this.value = lastVal; return; }
             if (curFocus < 0)
             {
-                if (bumpBehav.JoystickPress(new IntVector2(-1, 0)) && curFocus != MiniFocus.ModeRGB)
+                if (bumpBehav.JoystickPress(-1, 0) && curFocus != MiniFocus.ModeRGB)
                 { curFocus = (MiniFocus)((int)curFocus - 1); PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); return; }
-                if (bumpBehav.JoystickPress(new IntVector2(1, 0)) && curFocus != MiniFocus.ModePLT)
+                if (bumpBehav.JoystickPress(1, 0) && curFocus != MiniFocus.ModePLT)
                 { curFocus = (MiniFocus)((int)curFocus + 1); PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); return; }
-                if (bumpBehav.JoystickPress(new IntVector2(0, -1)))
+                if (bumpBehav.JoystickPress(0, -1))
                 {
                     switch (mode)
                     {
@@ -766,7 +852,8 @@ namespace OptionalUI
                     PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                     return;
                 }
-                if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jmp))
+                if (bumpBehav.JoystickPress(0, 1)) { PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard); return; }
+                if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jump))
                 {
                     PickerMode newMode;
                     switch (curFocus)
@@ -780,13 +867,81 @@ namespace OptionalUI
                     else { SwitchMode(newMode); PlaySound(SoundID.MENU_MultipleChoice_Clicked); }
                     return;
                 }
-                if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Thrw))
-                { this.held = false; }
                 return;
             }
-            switch (curFocus)
+            switch (mode)
             {
-                case MiniFocus.RGB_Red:
+                case PickerMode.RGB:
+                    lblR.text = r.ToString();
+                    lblG.text = g.ToString();
+                    lblB.text = b.ToString();
+
+                    int tick = bumpBehav.JoystickPressAxis(false);
+                    if (tick != 0) { RGBTick(true); }
+                    else
+                    {
+                        tick = bumpBehav.JoystickHeldAxis(false, 3f);
+                        if (tick != 0) { RGBTick(false); }
+                    }
+
+                    void RGBTick(bool first)
+                    {
+                        switch (curFocus)
+                        {
+                            case MiniFocus.RGB_Red:
+                                int dr = Custom.IntClamp(r + tick, 0, 100);
+                                if (dr == r) { PlaySound(first ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.None); return; }
+                                r = dr;
+                                break;
+
+                            case MiniFocus.RGB_Green:
+                                int dg = Custom.IntClamp(g + tick, 0, 100);
+                                if (dg == g) { PlaySound(first ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.None); return; }
+                                g = dg; break;
+
+                            case MiniFocus.RGB_Blue:
+                                int db = Custom.IntClamp(b + tick, 0, 100);
+                                if (db == b) { PlaySound(first ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.None); return; }
+                                b = db;
+                                break;
+                        }
+                        PlaySound(first ? SoundID.MENU_First_Scroll_Tick : SoundID.MENU_Scroll_Tick);
+                        this.value = string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
+                                    Mathf.RoundToInt(g * 255f / 100f).ToString("X2"),
+                                    Mathf.RoundToInt(b * 255f / 100f).ToString("X2"));
+                    }
+
+                    switch (curFocus) // Switch Focus
+                    {
+                        case MiniFocus.RGB_Red:
+                            if (bumpBehav.JoystickPress(0, 1))
+                            { curFocus = MiniFocus.ModeRGB; PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); break; }
+                            if (bumpBehav.JoystickPress(0, -1))
+                            { curFocus = MiniFocus.RGB_Green; PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); break; }
+                            break;
+
+                        case MiniFocus.RGB_Green:
+                            if (bumpBehav.JoystickPress(0, 1))
+                            { curFocus = MiniFocus.RGB_Red; PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); break; }
+                            if (bumpBehav.JoystickPress(0, -1))
+                            { curFocus = MiniFocus.RGB_Blue; PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); break; }
+                            break;
+
+                        case MiniFocus.RGB_Blue:
+                            if (bumpBehav.JoystickPress(0, 1))
+                            { curFocus = MiniFocus.RGB_Green; PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); break; }
+                            if (bumpBehav.JoystickPress(0, -1))
+                            { PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard); break; }
+                            break;
+                    }
+                    if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jump))
+                    { lastVal = this._value; this.held = false; return; }
+                    break;
+
+                case PickerMode.HSL:
+                    break;
+
+                case PickerMode.Palette:
                     break;
             }
         }
@@ -809,6 +964,7 @@ namespace OptionalUI
 
         private enum MiniFocus : int
         {
+            None = -99,
             ModeRGB = -3,
             ModeHSL = -2,
             ModePLT = -1,
@@ -818,7 +974,8 @@ namespace OptionalUI
             HSL_Hue = 11,
             HSL_Saturation = 12,
             HSL_Lightness = 13,
-            PLT_Selector = 21
+            PLT_Selector = 21,
+            HEX = 31
         }
 
         /// <summary>
@@ -897,23 +1054,18 @@ namespace OptionalUI
             {
                 if (base.value == value) { return; }
                 if (!MenuColorEffect.IsStringHexColor(value)) { return; }
-                ConfigContainer.instance.NotifyConfigChange(this, base.value, value);
-                this._value = value;
 
                 r = Mathf.RoundToInt(Convert.ToInt32(value.Substring(0, 2), 16) / 255f * 100f);
                 g = Mathf.RoundToInt(Convert.ToInt32(value.Substring(2, 2), 16) / 255f * 100f);
                 b = Mathf.RoundToInt(Convert.ToInt32(value.Substring(4, 2), 16) / 255f * 100f);
 
-                //Vector3 _hsl = FromRGB(r / 100f, g / 100f, b / 100f);
                 RXColorHSL _hsl = RXColor.HSLFromColor(new Color(r / 100f, g / 100f, b / 100f));
+                h = Mathf.RoundToInt(_hsl.h * 100f);
+                s = Mathf.RoundToInt(_hsl.s * 100f);
+                l = Mathf.RoundToInt(_hsl.l * 100f);
 
-                //ComOptPlugin.LogInfo(_value + " / " + _hsl.x.ToString()+ "/" + _hsl.y.ToString()+ "/" + _hsl.z.ToString());
+                base.value = value;
 
-                h = Mathf.FloorToInt(_hsl.h * 100f);
-                s = Mathf.FloorToInt(_hsl.s * 100f);
-                l = Mathf.FloorToInt(_hsl.l * 100f);
-
-                // if (mod == 2) { mod = 0; }
                 Change();
                 if (greyedOut) { GreyOut(); }
             }
@@ -923,7 +1075,6 @@ namespace OptionalUI
 
         protected internal override void Change()
         {
-            this._size = new Vector2(150f, 150f);
             base.Change();
             if (!ctor) { return; }
 
@@ -972,6 +1123,8 @@ namespace OptionalUI
                 ttre1 = new Texture2D(101, 20);
                 ttre2 = new Texture2D(101, 20);
                 ttre3 = new Texture2D(101, 20);
+
+                // Draw colours
                 for (int u = 0; u <= 100; u++)
                 {
                     for (int v = 0; v < 20; v++)
@@ -984,6 +1137,27 @@ namespace OptionalUI
                         ttre3.SetPixel(u, v, c);
                     }
                 }
+                // Draw cursor
+                Color cr = new Color(1f - r / 100f, 1f - g / 100f, 1f - b / 100f);
+                for (int u = Math.Max(0, r - 4); u <= Math.Min(100, r + 4); u++)
+                {
+                    int h = 5 - Math.Abs(r - u);
+                    for (int v = 0; v < h; v++) { ttre1.SetPixel(u, v, cr); }
+                    for (int v = 20 - h; v < 20; v++) { ttre1.SetPixel(u, v, cr); }
+                }
+                for (int u = Math.Max(0, g - 4); u <= Math.Min(100, g + 4); u++)
+                {
+                    int h = 5 - Math.Abs(g - u);
+                    for (int v = 0; v < h; v++) { ttre2.SetPixel(u, v, cr); }
+                    for (int v = 20 - h; v < 20; v++) { ttre2.SetPixel(u, v, cr); }
+                }
+                for (int u = Math.Max(0, b - 4); u <= Math.Min(100, b + 4); u++)
+                {
+                    int h = 5 - Math.Abs(b - u);
+                    for (int v = 0; v < h; v++) { ttre3.SetPixel(u, v, cr); }
+                    for (int v = 20 - h; v < 20; v++) { ttre3.SetPixel(u, v, cr); }
+                }
+
                 ttre1.Apply();
                 ttre2.Apply();
                 ttre3.Apply();

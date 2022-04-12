@@ -547,7 +547,7 @@ namespace OptionalUI
             { // Up/Down: Choose option, Jmp: Select, Thrw: Leave
                 this.bumpList.Focused = true;
                 if (greyedOut) { goto close; }
-                if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Thrw)) { goto close; }
+                if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Throw)) { goto close; }
                 int listSize = this.searchMode ? this.searchList.Count : this.itemList.Length;
                 // UpDown
                 if (CtlrInput.y != 0)
@@ -588,7 +588,7 @@ namespace OptionalUI
                     }
                 }
                 // Jmp
-                if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jmp))
+                if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jump))
                 {
                     string newVal = this.value;
                     if (this.searchMode)

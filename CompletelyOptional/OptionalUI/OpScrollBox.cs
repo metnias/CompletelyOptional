@@ -567,13 +567,13 @@ namespace OptionalUI
             {
                 if (_held)
                 {
-                    if (CtlrInput.thrw && !LastCtlrInput.thrw)
+                    if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Throw))
                     { // Unhold
                         this._held = false;
                         ConfigContainer.holdElement = false;
                         FocusMoveDisallow(this);
                     }
-                    else if (CtlrInput.jmp && !LastCtlrInput.jmp)
+                    else if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jump))
                     { // Focused > (jmp) > !ScrollLocked ? holdElement : focus <- lastFocusedElement
                         if (lastFocusedElement != null)
                         {
@@ -620,8 +620,9 @@ namespace OptionalUI
                         if ((horizontal && CtlrInput.x != 0) || (!horizontal && CtlrInput.y != 0))
                         {
                             // Add input delay here
-                            if (horizontal) { targetScrollOffset -= 40f * Mathf.Sign(CtlrInput.x); }
-                            else { targetScrollOffset -= 40f * Mathf.Sign(CtlrInput.y); }
+                            float tick = isTab ? 40f : 25f;
+                            if (horizontal) { targetScrollOffset -= tick * Mathf.Sign(CtlrInput.x); }
+                            else { targetScrollOffset -= tick * Mathf.Sign(CtlrInput.y); }
                             if (targetScrollOffset != scrollOffset)
                             {
                                 hasMoved = true; this.hasScrolled = true;
