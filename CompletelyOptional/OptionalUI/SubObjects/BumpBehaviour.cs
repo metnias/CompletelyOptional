@@ -1,4 +1,5 @@
-﻿using RWCustom;
+﻿using CompletelyOptional;
+using RWCustom;
 using UnityEngine;
 
 namespace OptionalUI
@@ -99,6 +100,12 @@ namespace OptionalUI
                     this.col = Mathf.Min(1f, this.col + 0.1f * dtMulti);
                     this.extraSizeBump = Mathf.Min(1f, this.extraSizeBump + 0.1f * dtMulti);
                 }
+                if (!owner.MenuMouseMode)
+                {
+                    if (owner.CtlrInput.x != 0 && owner.CtlrInput.x == owner.LastCtlrInput.x) { scrollDelay++; }
+                    else if (owner.CtlrInput.y != 0 && owner.CtlrInput.y == owner.LastCtlrInput.y) { scrollDelay++; }
+                    else { scrollDelay = 0; }
+                }
             }
             else
             {
@@ -124,5 +131,69 @@ namespace OptionalUI
         /// </summary>
         /// <param name="period">Default is 30f. Recommend 10f for fast blinking.</param>
         public float Sin(float period = 30f) => 0.5f - 0.5f * Mathf.Sin(this.sin / period * 3.1416f);
+
+        #region Joystick
+
+        private int scrollDelay = 0;
+
+        /// <summary>
+        /// Shortcut to check whether Joystick has been pressed to a certain direction (and not held down)
+        /// </summary>
+        public bool JoystickPress(IntVector2 direction)
+        {
+            if (direction.x != 0)
+            {
+                if (direction.x != owner.CtlrInput.x) { return false; }
+                if (owner.CtlrInput.x == owner.LastCtlrInput.x) { return false; }
+            }
+            else { if (owner.CtlrInput.x != 0) { return false; } }
+            if (direction.y != 0)
+            {
+                if (direction.y != owner.CtlrInput.y) { return false; }
+                if (owner.CtlrInput.y == owner.LastCtlrInput.y) { return false; }
+            }
+            else { if (owner.CtlrInput.y != 0) { return false; } }
+            return true;
+        }
+
+        /// <summary>
+        /// Shortcut to check whether Joystick has been pressed to a certain direction for long time
+        /// </summary>
+        /// <param name="speed">The higher the speed, the quicker this turns true</param>
+        public bool JoystickHeld(IntVector2 direction, float speed = 1.0f)
+        {
+            if (scrollDelay < ModConfigMenu.DASinit) { return false; }
+            if (scrollDelay % Mathf.RoundToInt(ModConfigMenu.DASdelay / speed) != 1) { return false; }
+            if (direction.x != 0) { if (owner.CtlrInput.x != direction.x) { return false; } }
+            else { if (owner.CtlrInput.x != 0) { return false; } }
+            if (direction.y != 0) { if (owner.CtlrInput.y != direction.y) { return false; } }
+            else { if (owner.CtlrInput.y != 0) { return false; } }
+            return true;
+        }
+
+        /// <summary>
+        /// Shortcut to register a button press
+        /// </summary>
+        public bool ButtonPress(ButtonType type)
+        {
+            switch (type)
+            {
+                default:
+                case ButtonType.Jmp: return owner.CtlrInput.jmp && !owner.LastCtlrInput.jmp;
+                case ButtonType.Mp: return owner.CtlrInput.mp && !owner.LastCtlrInput.mp;
+                case ButtonType.Pckp: return owner.CtlrInput.pckp && !owner.LastCtlrInput.pckp;
+                case ButtonType.Thrw: return owner.CtlrInput.thrw && !owner.LastCtlrInput.thrw;
+            }
+        }
+
+        public enum ButtonType
+        {
+            Jmp,
+            Mp,
+            Pckp,
+            Thrw
+        }
+
+        #endregion Joystick
     }
 }

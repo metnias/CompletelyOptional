@@ -750,11 +750,11 @@ namespace OptionalUI
             if (!held) { return; }
             if (curFocus < 0)
             {
-                if (JoystickPress(new IntVector2(-1, 0)) && curFocus != MiniFocus.ModeRGB)
+                if (bumpBehav.JoystickPress(new IntVector2(-1, 0)) && curFocus != MiniFocus.ModeRGB)
                 { curFocus = (MiniFocus)((int)curFocus - 1); PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); return; }
-                if (JoystickPress(new IntVector2(1, 0)) && curFocus != MiniFocus.ModePLT)
+                if (bumpBehav.JoystickPress(new IntVector2(1, 0)) && curFocus != MiniFocus.ModePLT)
                 { curFocus = (MiniFocus)((int)curFocus + 1); PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); return; }
-                if (JoystickPress(new IntVector2(0, -1)))
+                if (bumpBehav.JoystickPress(new IntVector2(0, -1)))
                 {
                     switch (mode)
                     {
@@ -766,7 +766,7 @@ namespace OptionalUI
                     PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                     return;
                 }
-                if (CtlrInput.jmp && !LastCtlrInput.jmp)
+                if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jmp))
                 {
                     PickerMode newMode;
                     switch (curFocus)
@@ -780,7 +780,7 @@ namespace OptionalUI
                     else { SwitchMode(newMode); PlaySound(SoundID.MENU_MultipleChoice_Clicked); }
                     return;
                 }
-                if (CtlrInput.thrw && !LastCtlrInput.thrw)
+                if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Thrw))
                 { this.held = false; }
                 return;
             }
