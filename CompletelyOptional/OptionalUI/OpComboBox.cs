@@ -540,8 +540,6 @@ namespace OptionalUI
             }
         }
 
-        protected int scrollDelay = 0;
-
         protected virtual void NonMouseModeUpdate()
         {
             this.bumpBehav.Focused = this.Focused && !this.held;
@@ -549,24 +547,23 @@ namespace OptionalUI
             { // Up/Down: Choose option, Jmp: Select, Thrw: Leave
                 this.bumpList.Focused = true;
                 if (greyedOut) { goto close; }
-                if (CtlrInput.thrw && !LastCtlrInput.thrw) { goto close; }
+                if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Thrw)) { goto close; }
                 int listSize = this.searchMode ? this.searchList.Count : this.itemList.Length;
                 // UpDown
                 if (CtlrInput.y != 0)
                 {
-                    if (LastCtlrInput.y != CtlrInput.y)
+                    int dir = bumpBehav.JoystickPressAxis(true);
+                    if (dir != 0) { ScrollTick(true); }
+                    else
                     {
-                        scrollDelay = 0;
-                        ScrollTick(true);
+                        dir = bumpBehav.JoystickHeldAxis(true, 2f);
+                        if (dir != 0) { ScrollTick(false); }
                     }
-                    else { scrollDelay++; }
-                    if (scrollDelay > ModConfigMenu.DASinit && scrollDelay % (ModConfigMenu.DASdelay / 2) == 1)
-                    { ScrollTick(false); }
 
                     void ScrollTick(bool first)
                     {
                         bool scrolled = true;
-                        listHover -= Math.Sign(CtlrInput.y);
+                        listHover -= Math.Sign(dir);
                         if (listHover < 0)
                         {
                             if (listTop > 0)
@@ -590,9 +587,8 @@ namespace OptionalUI
                         if (scrolled) { PlaySound(first ? SoundID.MENU_First_Scroll_Tick : SoundID.MENU_Scroll_Tick); }
                     }
                 }
-
                 // Jmp
-                if (CtlrInput.jmp && !LastCtlrInput.jmp)
+                if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jmp))
                 {
                     string newVal = this.value;
                     if (this.searchMode)

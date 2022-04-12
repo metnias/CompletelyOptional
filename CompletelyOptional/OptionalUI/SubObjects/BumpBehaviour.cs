@@ -100,12 +100,6 @@ namespace OptionalUI
                     this.col = Mathf.Min(1f, this.col + 0.1f * dtMulti);
                     this.extraSizeBump = Mathf.Min(1f, this.extraSizeBump + 0.1f * dtMulti);
                 }
-                if (!owner.MenuMouseMode)
-                {
-                    if (owner.CtlrInput.x != 0 && owner.CtlrInput.x == owner.LastCtlrInput.x) { scrollDelay++; }
-                    else if (owner.CtlrInput.y != 0 && owner.CtlrInput.y == owner.LastCtlrInput.y) { scrollDelay++; }
-                    else { scrollDelay = 0; }
-                }
             }
             else
             {
@@ -113,6 +107,14 @@ namespace OptionalUI
                 this.sizeBump = Custom.LerpAndTick(this.sizeBump, 0f, 0.1f, 0.05f * dtMulti);
                 this.col = Mathf.Max(0f, this.col - 0.03333f * dtMulti);
                 this.extraSizeBump = 0f;
+            }
+            //if (held)
+            {
+                if (owner.CtlrInput.y == 0 && owner.CtlrInput.x != 0 && owner.CtlrInput.x == owner.LastCtlrInput.x) { scrollInitCounter++; }
+                else if (owner.CtlrInput.x == 0 && owner.CtlrInput.y != 0 && owner.CtlrInput.y == owner.LastCtlrInput.y) { scrollInitCounter++; }
+                else { scrollInitCounter = 0; }
+                if (scrollInitCounter > ModConfigMenu.DASinit) { scrollCounter++; }
+                else { scrollCounter = 0; }
             }
         }
 
@@ -134,10 +136,12 @@ namespace OptionalUI
 
         #region Joystick
 
-        private int scrollDelay = 0;
+        private int scrollInitCounter = 0;
+        private int scrollCounter = 0;
 
         /// <summary>
-        /// Shortcut to check whether Joystick has been pressed to a certain direction (and not held down)
+        /// Shortcut to check whether Joystick has been pressed to a certain direction (and not held down).
+        /// See also <seealso cref="JoystickPressAxis"/>, <seealso cref="JoystickHeld"/>.
         /// </summary>
         public bool JoystickPress(IntVector2 direction)
         {
@@ -157,18 +161,50 @@ namespace OptionalUI
         }
 
         /// <summary>
-        /// Shortcut to check whether Joystick has been pressed to a certain direction for long time
+        /// Shortcut to check whether Joystick has been pressed by certain axis. Returns 0 when it's not initial press.
+        /// See also <seealso cref="JoystickPress"/>, <seealso cref="JoystickHeldAxis"/>.
         /// </summary>
-        /// <param name="speed">The higher the speed, the quicker this turns true</param>
+        /// <param name="vertical"></param>
+        /// <returns></returns>
+        public int JoystickPressAxis(bool vertical)
+        {
+            if (vertical)
+            {
+                if (owner.CtlrInput.y != owner.LastCtlrInput.y) { return owner.CtlrInput.y; }
+                return 0;
+            }
+            if (owner.CtlrInput.x != owner.LastCtlrInput.x) { return owner.CtlrInput.x; }
+            return 0;
+        }
+
+        /// <summary>
+        /// Shortcut to check whether Joystick has been pressed to a certain direction for long time.
+        /// See also <seealso cref="JoystickHeldAxis"/>, <seealso cref="JoystickPress"/>.
+        /// </summary>
+        /// <param name="speed">The higher the speed, the quicker this turns true. If this is 0f, this'll return the value after DASinit is passed.</param>
         public bool JoystickHeld(IntVector2 direction, float speed = 1.0f)
         {
-            if (scrollDelay < ModConfigMenu.DASinit) { return false; }
-            if (scrollDelay % Mathf.RoundToInt(ModConfigMenu.DASdelay / speed) != 1) { return false; }
+            if (speed > 0f && scrollCounter < Mathf.CeilToInt(ModConfigMenu.DASdelay / speed)) { return false; }
             if (direction.x != 0) { if (owner.CtlrInput.x != direction.x) { return false; } }
             else { if (owner.CtlrInput.x != 0) { return false; } }
             if (direction.y != 0) { if (owner.CtlrInput.y != direction.y) { return false; } }
             else { if (owner.CtlrInput.y != 0) { return false; } }
+            scrollCounter = 0;
             return true;
+        }
+
+        /// <summary>
+        /// Shortcut to check whether Joystick has been held down by certain axis. Returns 0 when it's not the right timing.
+        /// See also <seealso cref="JoystickHeld"/>, <seealso cref="JoystickPressAxis"/>.
+        /// </summary>
+        /// <param name="vertical"></param>
+        /// <param name="speed">The higher the speed, the quicker this turns value. If this is 0f, this'll return the value after DASinit is passed.</param>
+        /// <returns></returns>
+        public int JoystickHeldAxis(bool vertical, float speed = 1.0f)
+        {
+            if (speed > 0f && scrollCounter < Mathf.CeilToInt(ModConfigMenu.DASdelay / speed)) { return 0; }
+            scrollCounter = 0;
+            return vertical ? owner.CtlrInput.y : owner.CtlrInput.x;
         }
 
         /// <summary>

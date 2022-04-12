@@ -482,7 +482,6 @@ namespace OptionalUI
             // Todo: scrollbox focus > uielement lastfocused
 
             rectBack?.Update(); rectSlidebar?.Update();
-            this.bumpBehav.Update();
 
             #region CheckRedraw
 

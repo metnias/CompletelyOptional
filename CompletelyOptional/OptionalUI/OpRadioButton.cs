@@ -110,8 +110,6 @@ namespace OptionalUI
         public override void Update()
         {
             base.Update();
-            this.bumpBehav.greyedOut = this.greyedOut;
-            this.bumpBehav.Update();
             if (greyedOut) { return; }
             this.rect.Update();
 
