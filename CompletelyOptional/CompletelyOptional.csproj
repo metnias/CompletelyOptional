@@ -94,7 +94,7 @@
     <Compile Include="OptionalUI\SubObjects\BumpBehaviour.cs" />
     <Compile Include="OptionalUI\SubObjects\FTexture.cs" />
     <Compile Include="OptionalUI\SubObjects\MenuColorEffect.cs" />
-    <Compile Include="OptionalUI\SubObjects\Playlist.cs" />
+    <Compile Include="OptionalUI\SubObjects\OptionalPlaylist.cs" />
     <Compile Include="OptionalConnector\MachineConnector.cs" />
     <Compile Include="OptionalConnector\OptionInterface_DataAPI.cs" />
     <Compile Include="OptionalConnector\OptionInterface_Translator.cs" />

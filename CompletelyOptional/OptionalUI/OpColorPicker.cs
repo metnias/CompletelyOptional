@@ -893,7 +893,7 @@ namespace OptionalUI
             clickDelay = 20;
             if (!held) { lastVal = _value; return; }
             if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Throw))
-            { this.held = false; this.value = lastVal; return; }
+            { this.held = false; this.value = lastVal; PlaySound(SoundID.MENU_Checkbox_Uncheck); return; }
             if (curFocus < 0)
             {
                 if (bumpBehav.JoystickPress(-1, 0) && curFocus != MiniFocus.ModeRGB)
@@ -995,7 +995,7 @@ namespace OptionalUI
                             break;
                     }
                     if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jump))
-                    { lastVal = this._value; this.held = false; return; }
+                    { lastVal = this._value; this.held = false; PlaySound(SoundID.MENU_Checkbox_Check); return; }
                     break;
 
                 case PickerMode.HSL:
@@ -1060,7 +1060,7 @@ namespace OptionalUI
                             break;
                     }
                     if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jump))
-                    { lastVal = this._value; this.held = false; return; }
+                    { lastVal = this._value; this.held = false; PlaySound(SoundID.MENU_Checkbox_Check); return; }
                     break;
 
                 case PickerMode.Palette:
@@ -1084,8 +1084,21 @@ namespace OptionalUI
 
                     void PLTTick(bool first)
                     {
+                        int df = PLTFocus + tick2;
+                        if (df < 0 || df >= PaletteHex.Length)
+                        { PlaySound(first ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.None); return; }
+                        PLTFocus = df;
+                        PlaySound(first ? SoundID.MENU_First_Scroll_Tick : SoundID.MENU_Scroll_Tick);
                     }
 
+                    if (PLTFocus < 12 && bumpBehav.JoystickPress(0, 1))
+                    { curFocus = MiniFocus.ModePLT; PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); break; }
+
+                    if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jump))
+                    {
+                        if (pi == PLTFocus) { lastVal = this._value; this.held = false; PlaySound(SoundID.MENU_Checkbox_Check); return; }
+                        else { pi = PLTFocus; this.value = this.PaletteHex[pi]; PlaySound(SoundID.MENU_MultipleChoice_Clicked); }
+                    }
                     break;
             }
         }
@@ -1166,19 +1179,6 @@ namespace OptionalUI
         {
             get
             {
-                if (mode == PickerMode.Palette) //palette
-                {
-                    string newVal = this.PaletteHex[pi];
-                    if (this._value != newVal)
-                    {
-                        ConfigContainer.instance.NotifyConfigChange(this, this._value, newVal);
-                        this._value = newVal;
-                    }
-                    return this.PaletteHex[pi];
-                }
-
-                //RGBtoHEX
-
                 return base.value;
             }
             set

@@ -15,6 +15,7 @@ namespace OptionalUI
         /// <param name="salt">Additional salt (No need to be unique)</param>
         public FTexture(Texture2D texture, string salt = "")
         {
+            texture.wrapMode = TextureWrapMode.Clamp;
             this._salt = salt;
             this.even = false;
             do { _seed = Mathf.FloorToInt(UnityEngine.Random.value * (string.IsNullOrEmpty(salt) ? 100000 : 1000)); }
@@ -37,6 +38,7 @@ namespace OptionalUI
         /// <param name="salt">Additional salt (No need to be unique)</param>
         public FTexture(Texture texture, string salt = "")
         {
+            texture.wrapMode = TextureWrapMode.Clamp;
             this._salt = salt;
             this.even = false;
             do { _seed = Mathf.FloorToInt(UnityEngine.Random.value * (string.IsNullOrEmpty(salt) ? 100000 : 1000)); }

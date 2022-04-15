@@ -1,6 +1,6 @@
 ﻿namespace OptionalUI
 {
-    public static class Playlist
+    public static class OptionalPlaylist
     {
         public static readonly string[] playlistMoody =
         {

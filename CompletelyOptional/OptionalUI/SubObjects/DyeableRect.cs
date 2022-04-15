@@ -76,6 +76,8 @@ namespace OptionalUI
             }
         }
 
+        private TriangleMesh testMesh; // to test Rect's centering
+
         /// <summary>
         /// <see cref="FSprite"/>s of this rect
         /// </summary>
