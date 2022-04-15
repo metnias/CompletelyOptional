@@ -76,8 +76,6 @@ namespace OptionalUI
             }
         }
 
-        private TriangleMesh testMesh; // to test Rect's centering
-
         /// <summary>
         /// <see cref="FSprite"/>s of this rect
         /// </summary>
@@ -193,10 +191,10 @@ namespace OptionalUI
 
             #region RoundedRect
 
-            Vector2 drawPos = -Vector2.Lerp(this.lastAddSize, this.addSize, timeStacker) / 2f;
+            Vector2 drawPos = Vector2.Lerp(this.lastAddSize, this.addSize, timeStacker) * -0.5f;
             Vector2 drawSize = size + Vector2.Lerp(this.lastAddSize, this.addSize, timeStacker);
-            drawPos.x = Mathf.Floor(drawPos.x) + 0.41f;
-            drawPos.y = Mathf.Floor(drawPos.y) + 0.41f;
+            //drawPos.x = Mathf.Floor(drawPos.x) + 0.41f;
+            //drawPos.y = Mathf.Floor(drawPos.y) + 0.41f;
             this.sprites[this.SideSprite(0)].x = drawPos.x + 1f; // Left
             this.sprites[this.SideSprite(0)].y = drawPos.y + 7f;
             this.sprites[this.SideSprite(0)].scaleY = drawSize.y - 14f;
@@ -217,11 +215,10 @@ namespace OptionalUI
             this.sprites[this.CornerSprite(2)].y = drawPos.y + drawSize.y - 3.5f;
             this.sprites[this.CornerSprite(3)].x = drawPos.x + drawSize.x - 3.5f; // BottomRight
             this.sprites[this.CornerSprite(3)].y = drawPos.y + 3.5f;
-            Color color = new Color(1f, 1f, 1f);
             for (int i = 0; i < 4; i++)
             {
-                this.sprites[this.SideSprite(i)].color = color;
-                this.sprites[this.CornerSprite(i)].color = color;
+                this.sprites[this.SideSprite(i)].color = this.colorEdge;
+                this.sprites[this.CornerSprite(i)].color = this.colorEdge;
             }
             if (this.filled)
             {
@@ -253,6 +250,13 @@ namespace OptionalUI
                 {
                     this.sprites[j].alpha = Mathf.Lerp(this.lastFillAlpha, this.fillAlpha, timeStacker);
                 }
+                // Dye
+                this.sprites[MainFillSprite].color = this.colorFill;
+                for (int i = 0; i < 4; i++)
+                {
+                    this.sprites[this.FillSideSprite(i)].color = this.colorFill;
+                    this.sprites[this.FillCornerSprite(i)].color = this.colorFill;
+                }
             }
 
             #endregion RoundedRect
@@ -263,25 +267,6 @@ namespace OptionalUI
                 for (int i = 0; i < hide.Length; i++)
                 { this.sprites[hide[i]].isVisible = false; }
             }
-
-            #region Dye
-
-            for (int i = 0; i < 4; i++)
-            {
-                this.sprites[this.SideSprite(i)].color = this.colorEdge;
-                this.sprites[this.CornerSprite(i)].color = this.colorEdge;
-            }
-            if (this.filled)
-            {
-                this.sprites[MainFillSprite].color = this.colorFill;
-                for (int i = 0; i < 4; i++)
-                {
-                    this.sprites[this.FillSideSprite(i)].color = this.colorFill;
-                    this.sprites[this.FillCornerSprite(i)].color = this.colorFill;
-                }
-            }
-
-            #endregion Dye
         }
 
         public bool hidden { get; private set; } = false;
