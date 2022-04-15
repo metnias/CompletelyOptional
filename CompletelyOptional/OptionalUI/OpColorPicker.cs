@@ -39,13 +39,13 @@ namespace OptionalUI
             h = 0; s = 0; l = 0;
             this._value = "000000";
 
-            //lblR/G/B: Displays R/G/B value
-            lblB = FLabelCreate(r.ToString()); lblB.alignment = FLabelAlignment.Left;
-            lblB.x = 124f; lblB.y = 40f; lblB.isVisible = false; myContainer.AddChild(lblB);
-            lblG = FLabelCreate(r.ToString()); lblG.alignment = FLabelAlignment.Left;
-            lblG.x = 124f; lblG.y = 80f; lblG.isVisible = false; myContainer.AddChild(lblG);
-            lblR = FLabelCreate(r.ToString()); lblR.alignment = FLabelAlignment.Left;
-            lblR.x = 124f; lblR.y = 120f; lblR.isVisible = false; myContainer.AddChild(lblR);
+            //lblR/G/B: Displays R/G/B or H/S/L value
+            lblB = FLabelCreate(r.ToString()); lblB.alignment = FLabelAlignment.Right;
+            lblB.x = 130f; lblB.y = 40f; myContainer.AddChild(lblB);
+            lblG = FLabelCreate(r.ToString()); lblG.alignment = FLabelAlignment.Right;
+            lblG.x = 130f; lblG.y = 80f; myContainer.AddChild(lblG);
+            lblR = FLabelCreate(r.ToString()); lblR.alignment = FLabelAlignment.Right;
+            lblR.x = 130f; lblR.y = 120f; myContainer.AddChild(lblR);
             //lblP: Displays Selected Palette Color Name
             lblP = FLabelCreate("X"); FLabelPlaceAtCenter(lblP, 15f, 88f, 120f, 20f);
             lblP.isVisible = false; lblP.color = Menu.Menu.MenuRGB(Menu.Menu.MenuColors.White);
@@ -75,7 +75,7 @@ namespace OptionalUI
             this.ftxr3 = new FTexture(ttre2, "cpk3" + key);
             this.myContainer.AddChild(this.ftxr3);
             this.ftxr1.SetPosition(new Vector2(60f, 80f));
-            this.ftxr2.SetPosition(new Vector2(135f, 80f));
+            this.ftxr2.SetPosition(new Vector2(140f, 80f));
             this.ftxr3.SetPosition(new Vector2(60f, 40f));
             this.ftxr3.isVisible = false;
 
@@ -208,6 +208,7 @@ namespace OptionalUI
                 }
                 else if (mode == PickerMode.HSL)
                 {
+                    lblR.color = ctxt; lblG.color = ctxt; lblB.color = ctxt;
                     TextureGreyscale(ref this.ttre1);
                     TextureGreyscale(ref this.ttre2);
 
@@ -215,7 +216,7 @@ namespace OptionalUI
                     this.ftxr1.SetTexture(ttre1);
                     this.ftxr2.SetTexture(ttre2);
                     this.ftxr1.SetPosition(new Vector2(60f, 80f));
-                    this.ftxr2.SetPosition(new Vector2(135f, 80f));
+                    this.ftxr2.SetPosition(new Vector2(140f, 80f));
                     lblHex.text = "#" + value.ToString();
                 }
                 else
@@ -387,6 +388,34 @@ namespace OptionalUI
 
                 #endregion RGB
 
+                #region HSL
+
+                case MiniFocus.HSL_Hue:
+                    focusGlow.size = new Vector2(40f, 25f);
+                    focusGlow.pos = new Vector2(104f, 105f);
+                    focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
+                    break;
+
+                case MiniFocus.HSL_Saturation:
+                    focusGlow.size = new Vector2(40f, 25f);
+                    focusGlow.pos = new Vector2(104f, 65f);
+                    focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
+                    break;
+
+                case MiniFocus.HSL_Lightness:
+                    focusGlow.size = new Vector2(40f, 25f);
+                    focusGlow.pos = new Vector2(104f, 25f);
+                    focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
+                    break;
+
+                #endregion HSL
+
+                case MiniFocus.PLT_Selector:
+                    focusGlow.size = new Vector2(130f, 116f);
+                    focusGlow.centerPos = new Vector2(75, 80f);
+                    focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
+                    break;
+
                 case MiniFocus.HEX:
                     focusGlow.size = new Vector2(60f, 25f);
                     focusGlow.pos = new Vector2(60f, 5f);
@@ -443,6 +472,7 @@ namespace OptionalUI
                     lblR.isVisible = true;
                     lblG.isVisible = true;
                     lblB.isVisible = true;
+                    lblB.x = 136f; lblG.x = 136f; lblR.x = 136f;
 
                     this.ftxr1.SetTexture(ttre1);
                     this.ftxr2.SetTexture(ttre2);
@@ -456,12 +486,17 @@ namespace OptionalUI
                     break;
 
                 case PickerMode.HSL:
+                    lblR.isVisible = true;
+                    lblG.isVisible = true;
+                    lblB.isVisible = true;
+                    lblB.x = 130f; lblG.x = 130f; lblR.x = 130f;
+
                     this.ftxr1.SetTexture(ttre1);
                     this.ftxr2.SetTexture(ttre2);
                     this.ftxr1.isVisible = true;
                     this.ftxr2.isVisible = true;
                     this.ftxr1.SetPosition(new Vector2(60f, 80f));
-                    this.ftxr2.SetPosition(new Vector2(135f, 80f));
+                    this.ftxr2.SetPosition(new Vector2(140f, 80f));
 
                     break;
 
@@ -584,9 +619,20 @@ namespace OptionalUI
             { NonMouseModeUpdate(); }
         }
 
+        private void HSLSetValue()
+        {
+            Color c = Custom.HSL2RGB(h / 100f, s / 100f, l / 100f);
+            r = Mathf.RoundToInt(c.r * 100f);
+            g = Mathf.RoundToInt(c.g * 100f);
+            b = Mathf.RoundToInt(c.b * 100f);
+            this.value = string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
+               Mathf.RoundToInt(g * 255f / 100f).ToString("X2"),
+               Mathf.RoundToInt(b * 255f / 100f).ToString("X2"));
+        }
+
         private void MouseModeUpdate()
         {
-            curFocus = MiniFocus.None;
+            if (!held) { curFocus = MiniFocus.None; }
             if (this.clickDelay > 0) { clickDelay--; }
             if (this.MouseOver)
             {
@@ -669,17 +715,20 @@ namespace OptionalUI
                             break;
 
                         case PickerMode.HSL:
-                            if (this.MousePos.x > 130f && this.MousePos.x < 140f && this.MousePos.y >= 30f && this.MousePos.y <= 130f)
+                            lblR.text = h.ToString();
+                            lblG.text = s.ToString();
+                            lblB.text = l.ToString();
+
+                            if (this.MousePos.x > 135f && this.MousePos.x < 145f && this.MousePos.y >= 30f && this.MousePos.y <= 130f)
                             { //Lightness
-                                cdis1.color = Custom.HSL2RGB(h / 100f, s / 100f, (this.MousePos.y - 30f) / 100f);
+                                int dl = Mathf.RoundToInt(this.MousePos.y - 30f);
+                                lblB.text = dl.ToString();
+                                cdis1.color = Custom.HSL2RGB(h / 100f, s / 100f, dl / 100f);
                                 cdis1.isVisible = true;
                                 curFocus = MiniFocus.HSL_Lightness;
 
                                 if (Input.GetMouseButton(0))
                                 {
-                                    int lastL = l;
-                                    l = Mathf.RoundToInt(this.MousePos.y - 30f);
-
                                     if (!mouseDown)
                                     {
                                         this.held = true;
@@ -688,27 +737,26 @@ namespace OptionalUI
                                     }
                                     else
                                     {
-                                        if (l != lastL)
+                                        if (l != dl)
                                         {
+                                            l = dl;
                                             PlaySound(SoundID.MENU_Scroll_Tick);
+                                            HSLSetValue();
                                         }
                                     }
-                                    Change();
                                 }
                                 else { mouseDown = false; this.held = false; }
                             }
                             else if (this.MousePos.x <= 110f && this.MousePos.x >= 10f && this.MousePos.y >= 30f && this.MousePos.y <= 130f)
                             { //Hue&Satuation
-                                cdis1.color = Custom.HSL2RGB((this.MousePos.x - 10f) / 100f, (this.MousePos.y - 30f) / 100f, l / 100f);
+                                int dh = Mathf.RoundToInt(this.MousePos.x - 10f), ds = Mathf.RoundToInt(this.MousePos.y - 30f);
+                                lblR.text = dh.ToString(); lblG.text = ds.ToString();
+                                cdis1.color = Custom.HSL2RGB(dh / 100f, ds / 100f, l / 100f);
                                 cdis1.isVisible = true;
                                 curFocus = MiniFocus.HSL_Hue;
 
                                 if (Input.GetMouseButton(0))
                                 {
-                                    int lastH = h; int lastS = s;
-                                    h = Mathf.RoundToInt(this.MousePos.x - 10f);
-                                    s = Mathf.RoundToInt(this.MousePos.y - 30f);
-
                                     if (!mouseDown)
                                     {
                                         this.held = true;
@@ -717,12 +765,13 @@ namespace OptionalUI
                                     }
                                     else
                                     {
-                                        if (lastH != h || lastS != s)
+                                        if (h != dh || s != ds)
                                         {
+                                            h = dh; s = ds;
                                             PlaySound(SoundID.MENU_Scroll_Tick);
+                                            HSLSetValue();
                                         }
                                     }
-                                    Change();
                                 }
                                 else { mouseDown = false; this.held = false; }
                             }
@@ -816,6 +865,12 @@ namespace OptionalUI
                             lblB.text = b.ToString();
                             break;
 
+                        case PickerMode.HSL:
+                            lblR.text = h.ToString();
+                            lblG.text = s.ToString();
+                            lblB.text = l.ToString();
+                            break;
+
                         case PickerMode.Palette:
                             lblP.isVisible = false;
                             sprPltCover.isVisible = false;
@@ -852,7 +907,7 @@ namespace OptionalUI
                         case PickerMode.RGB: curFocus = MiniFocus.RGB_Red; break;
                         default:
                         case PickerMode.HSL: curFocus = MiniFocus.HSL_Hue; break;
-                        case PickerMode.Palette: curFocus = MiniFocus.PLT_Selector; break;
+                        case PickerMode.Palette: curFocus = MiniFocus.PLT_Selector; PLTFocus = 0; break;
                     }
                     PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard);
                     return;
@@ -881,12 +936,12 @@ namespace OptionalUI
                     lblG.text = g.ToString();
                     lblB.text = b.ToString();
 
-                    int tick = bumpBehav.JoystickPressAxis(false);
-                    if (tick != 0) { RGBTick(true); }
+                    int tick0 = bumpBehav.JoystickPressAxis(false);
+                    if (tick0 != 0) { RGBTick(true); }
                     else
                     {
-                        tick = bumpBehav.JoystickHeldAxis(false, 3f);
-                        if (tick != 0) { RGBTick(false); }
+                        tick0 = bumpBehav.JoystickHeldAxis(false, 3f);
+                        if (tick0 != 0) { RGBTick(false); }
                     }
 
                     void RGBTick(bool first)
@@ -894,18 +949,18 @@ namespace OptionalUI
                         switch (curFocus)
                         {
                             case MiniFocus.RGB_Red:
-                                int dr = Custom.IntClamp(r + tick, 0, 100);
+                                int dr = Custom.IntClamp(r + tick0, 0, 100);
                                 if (dr == r) { PlaySound(first ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.None); return; }
                                 r = dr;
                                 break;
 
                             case MiniFocus.RGB_Green:
-                                int dg = Custom.IntClamp(g + tick, 0, 100);
+                                int dg = Custom.IntClamp(g + tick0, 0, 100);
                                 if (dg == g) { PlaySound(first ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.None); return; }
                                 g = dg; break;
 
                             case MiniFocus.RGB_Blue:
-                                int db = Custom.IntClamp(b + tick, 0, 100);
+                                int db = Custom.IntClamp(b + tick0, 0, 100);
                                 if (db == b) { PlaySound(first ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.None); return; }
                                 b = db;
                                 break;
@@ -944,12 +999,98 @@ namespace OptionalUI
                     break;
 
                 case PickerMode.HSL:
+                    lblR.text = h.ToString();
+                    lblG.text = s.ToString();
+                    lblB.text = l.ToString();
+
+                    int tick1 = bumpBehav.JoystickPressAxis(false);
+                    if (tick1 != 0) { HSLTick(true); }
+                    else
+                    {
+                        tick1 = bumpBehav.JoystickHeldAxis(false, 3f);
+                        if (tick1 != 0) { HSLTick(false); }
+                    }
+
+                    void HSLTick(bool first)
+                    {
+                        switch (curFocus)
+                        {
+                            case MiniFocus.HSL_Hue:
+                                int dh = Custom.IntClamp(h + tick1, 0, 100);
+                                if (dh == h) { PlaySound(first ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.None); return; }
+                                h = dh;
+                                break;
+
+                            case MiniFocus.HSL_Saturation:
+                                int ds = Custom.IntClamp(s + tick1, 0, 100);
+                                if (ds == s) { PlaySound(first ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.None); return; }
+                                s = ds;
+                                break;
+
+                            case MiniFocus.HSL_Lightness:
+                                int dl = Custom.IntClamp(l + tick1, 0, 100);
+                                if (dl == l) { PlaySound(first ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.None); return; }
+                                l = dl;
+                                break;
+                        }
+                        PlaySound(first ? SoundID.MENU_First_Scroll_Tick : SoundID.MENU_Scroll_Tick);
+                        HSLSetValue();
+                    }
+                    switch (curFocus) // Switch Focus
+                    {
+                        case MiniFocus.HSL_Hue:
+                            if (bumpBehav.JoystickPress(0, 1))
+                            { curFocus = MiniFocus.ModeHSL; PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); break; }
+                            if (bumpBehav.JoystickPress(0, -1))
+                            { curFocus = MiniFocus.HSL_Saturation; PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); break; }
+                            break;
+
+                        case MiniFocus.HSL_Saturation:
+                            if (bumpBehav.JoystickPress(0, 1))
+                            { curFocus = MiniFocus.HSL_Hue; PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); break; }
+                            if (bumpBehav.JoystickPress(0, -1))
+                            { curFocus = MiniFocus.HSL_Lightness; PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); break; }
+                            break;
+
+                        case MiniFocus.HSL_Lightness:
+                            if (bumpBehav.JoystickPress(0, 1))
+                            { curFocus = MiniFocus.HSL_Saturation; PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); break; }
+                            if (bumpBehav.JoystickPress(0, -1))
+                            { PlaySound(SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard); break; }
+                            break;
+                    }
+                    if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jump))
+                    { lastVal = this._value; this.held = false; return; }
                     break;
 
                 case PickerMode.Palette:
+                    int tick2 = bumpBehav.JoystickPressAxis(true);
+                    if (tick2 != 0) { tick2 *= 12; PLTTick(true); }
+                    else
+                    {
+                        tick2 = bumpBehav.JoystickHeldAxis(true, 2f);
+                        if (tick2 != 0) { tick2 *= 12; PLTTick(false); }
+                    }
+                    if (tick2 == 0)
+                    {
+                        tick2 = bumpBehav.JoystickPressAxis(false);
+                        if (tick2 != 0) { PLTTick(true); }
+                        else
+                        {
+                            tick2 = bumpBehav.JoystickHeldAxis(false, 2f);
+                            if (tick2 != 0) { PLTTick(false); }
+                        }
+                    }
+
+                    void PLTTick(bool first)
+                    {
+                    }
+
                     break;
             }
         }
+
+        private int PLTFocus;
 
         protected internal override void NonMouseSetHeld(bool newHeld)
         {
@@ -960,7 +1101,7 @@ namespace OptionalUI
                 {
                     case PickerMode.RGB: curFocus = MiniFocus.RGB_Red; break;
                     case PickerMode.HSL: curFocus = MiniFocus.HSL_Hue; break;
-                    case PickerMode.Palette: curFocus = MiniFocus.PLT_Selector; break;
+                    case PickerMode.Palette: curFocus = MiniFocus.PLT_Selector; PLTFocus = 0; break;
                 }
             }
         }
@@ -1025,22 +1166,7 @@ namespace OptionalUI
         {
             get
             {
-                if (mode == PickerMode.HSL)
-                {
-                    Color c = Custom.HSL2RGB(h / 100f, s / 100f, l / 100f);
-                    r = Mathf.RoundToInt(c.r * 100f);
-                    g = Mathf.RoundToInt(c.g * 100f);
-                    b = Mathf.RoundToInt(c.b * 100f);
-                    string newVal = string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
-                        Mathf.RoundToInt(g * 255f / 100f).ToString("X2"),
-                        Mathf.RoundToInt(b * 255f / 100f).ToString("X2"));
-                    if (this._value != newVal)
-                    {
-                        ConfigContainer.instance.NotifyConfigChange(this, this._value, newVal);
-                        this._value = newVal;
-                    }
-                }
-                else if (mode == PickerMode.Palette) //palette
+                if (mode == PickerMode.Palette) //palette
                 {
                     string newVal = this.PaletteHex[pi];
                     if (this._value != newVal)
@@ -1096,26 +1222,23 @@ namespace OptionalUI
                     this.ftxr1.SetTexture(ttre1);
                     this.ftxr2.SetTexture(ttre2);
                     this.ftxr3.SetTexture(ttre3);
-
-                    this.ftxr3.SetPosition(new Vector2(60f, 40f));
-                    this.ftxr2.SetPosition(new Vector2(60f, 80f));
-                    this.ftxr1.SetPosition(new Vector2(60f, 120f));
                     lblHex.text = "#" + value;
                     break;
 
                 case PickerMode.HSL:
+                    lblR.text = h.ToString();
+                    lblG.text = s.ToString();
+                    lblB.text = l.ToString();
+
                     cdis0.color = Custom.HSL2RGB(h / 100f, s / 100f, l / 100f);
                     this.ftxr1.SetTexture(ttre1);
                     this.ftxr2.SetTexture(ttre2);
-                    this.ftxr1.SetPosition(new Vector2(60f, 80f));
-                    this.ftxr2.SetPosition(new Vector2(135f, 80f));
                     lblHex.text = "#" + value;
                     break;
 
                 case PickerMode.Palette:
                     cdis0.color = this.PaletteColor(pi);
                     this.ftxr1.SetTexture(ttre1);
-                    this.ftxr1.SetPosition(new Vector2(75f, 80f));
                     lblHex.text = "#" + this.PaletteHex[pi];
                     break;
             }
@@ -1125,9 +1248,9 @@ namespace OptionalUI
         {
             if (mode == PickerMode.RGB)
             { //RGB
-                ttre1 = new Texture2D(101, 20);
-                ttre2 = new Texture2D(101, 20);
-                ttre3 = new Texture2D(101, 20);
+                ttre1 = new Texture2D(101, 20) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Point };
+                ttre2 = new Texture2D(101, 20) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Point };
+                ttre3 = new Texture2D(101, 20) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Point };
 
                 // Draw colours
                 for (int u = 0; u <= 100; u++)
@@ -1170,8 +1293,8 @@ namespace OptionalUI
             }
             else if (mode == PickerMode.HSL)
             { //HSL
-                ttre1 = new Texture2D(100, 101);
-                ttre2 = new Texture2D(10, 101);
+                ttre1 = new Texture2D(100, 101) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Point };
+                ttre2 = new Texture2D(10, 101) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Point };
 
                 // Draw colours
                 for (int v = 0; v <= 100; v++)
@@ -1216,7 +1339,7 @@ namespace OptionalUI
             }
             else
             {   //Palette
-                ttre1 = new Texture2D(120, 96);
+                ttre1 = new Texture2D(120, 96) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Point };
                 for (int y = 0; y < 12; y++)
                 {
                     for (int x = 0; x < 15; x++)
@@ -1228,16 +1351,16 @@ namespace OptionalUI
                             {
                                 if (u == 7 || v == 7)
                                 {
-                                    ttre1.SetPixel(x * 8 + u, 96 - (y * 8 + v), new Color(0f, 0f, 0f));
+                                    ttre1.SetPixel(x * 8 + u, 95 - (y * 8 + v), new Color(0f, 0f, 0f));
                                     continue;
                                 }
                                 if (_i < this.PaletteHex.Length)
                                 {
-                                    ttre1.SetPixel(x * 8 + u, 96 - (y * 8 + v), PaletteColor(_i));
+                                    ttre1.SetPixel(x * 8 + u, 95 - (y * 8 + v), PaletteColor(_i));
                                 }
                                 else
                                 {
-                                    ttre1.SetPixel(x * 8 + u, 96 - (y * 8 + v), new Color(0f, 0f, 0f));
+                                    ttre1.SetPixel(x * 8 + u, 95 - (y * 8 + v), new Color(0f, 0f, 0f));
                                 }
                             }
                         }
