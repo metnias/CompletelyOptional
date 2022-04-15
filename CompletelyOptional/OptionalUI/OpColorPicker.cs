@@ -131,17 +131,22 @@ namespace OptionalUI
             {
                 return OptionalText.GetText(OptionalText.ID.OpColorPicker_MouseTypeTuto);
             }
-            switch (mode)
+            if (MenuMouseMode)
             {
-                case PickerMode.RGB:
-                    return OptionalText.GetText(OptionalText.ID.OpColorPicker_MouseRGBTuto);
+                switch (mode)
+                {
+                    case PickerMode.RGB:
+                        return OptionalText.GetText(OptionalText.ID.OpColorPicker_MouseRGBTuto);
 
-                case PickerMode.HSL:
-                    return OptionalText.GetText(OptionalText.ID.OpColorPicker_MouseHSLTuto);
+                    case PickerMode.HSL:
+                        return OptionalText.GetText(OptionalText.ID.OpColorPicker_MouseHSLTuto);
 
-                case PickerMode.Palette:
-                    return OptionalText.GetText(OptionalText.ID.OpColorPicker_MousePLTTuto);
+                    case PickerMode.Palette:
+                        return OptionalText.GetText(OptionalText.ID.OpColorPicker_MousePLTTuto);
+                }
             }
+            if ((int)curFocus < 0) { return OptionalText.GetText(OptionalText.ID.OpColorPicker_NonMouseModeSelect); }
+            if ((int)curFocus < 10) { return OptionalText.GetText(OptionalText.ID.OpColorPicker_NonMouseRGBSliders); }
             return "";
         }
 
@@ -964,7 +969,6 @@ namespace OptionalUI
 
         private enum MiniFocus : int
         {
-            None = -99,
             ModeRGB = -3,
             ModeHSL = -2,
             ModePLT = -1,
@@ -975,7 +979,8 @@ namespace OptionalUI
             HSL_Saturation = 12,
             HSL_Lightness = 13,
             PLT_Selector = 21,
-            HEX = 31
+            HEX = 31,
+            None = 99
         }
 
         /// <summary>
@@ -1139,23 +1144,24 @@ namespace OptionalUI
                 }
                 // Draw cursor
                 Color cr = new Color(1f - r / 100f, 1f - g / 100f, 1f - b / 100f);
+                cr = Color.Lerp(Color.white, cr, Mathf.Pow(Mathf.Abs(cr.grayscale - 0.5f) * 2f, 0.3f));
                 for (int u = Math.Max(0, r - 4); u <= Math.Min(100, r + 4); u++)
                 {
-                    int h = 5 - Math.Abs(r - u);
-                    for (int v = 0; v < h; v++) { ttre1.SetPixel(u, v, cr); }
-                    for (int v = 20 - h; v < 20; v++) { ttre1.SetPixel(u, v, cr); }
+                    int hg = 5 - Math.Abs(r - u);
+                    for (int v = 0; v < hg; v++) { ttre1.SetPixel(u, v, cr); }
+                    for (int v = 20 - hg; v < 20; v++) { ttre1.SetPixel(u, v, cr); }
                 }
                 for (int u = Math.Max(0, g - 4); u <= Math.Min(100, g + 4); u++)
                 {
-                    int h = 5 - Math.Abs(g - u);
-                    for (int v = 0; v < h; v++) { ttre2.SetPixel(u, v, cr); }
-                    for (int v = 20 - h; v < 20; v++) { ttre2.SetPixel(u, v, cr); }
+                    int hg = 5 - Math.Abs(g - u);
+                    for (int v = 0; v < hg; v++) { ttre2.SetPixel(u, v, cr); }
+                    for (int v = 20 - hg; v < 20; v++) { ttre2.SetPixel(u, v, cr); }
                 }
                 for (int u = Math.Max(0, b - 4); u <= Math.Min(100, b + 4); u++)
                 {
-                    int h = 5 - Math.Abs(b - u);
-                    for (int v = 0; v < h; v++) { ttre3.SetPixel(u, v, cr); }
-                    for (int v = 20 - h; v < 20; v++) { ttre3.SetPixel(u, v, cr); }
+                    int hg = 5 - Math.Abs(b - u);
+                    for (int v = 0; v < hg; v++) { ttre3.SetPixel(u, v, cr); }
+                    for (int v = 20 - hg; v < 20; v++) { ttre3.SetPixel(u, v, cr); }
                 }
 
                 ttre1.Apply();
@@ -1166,6 +1172,8 @@ namespace OptionalUI
             { //HSL
                 ttre1 = new Texture2D(100, 101);
                 ttre2 = new Texture2D(10, 101);
+
+                // Draw colours
                 for (int v = 0; v <= 100; v++)
                 {
                     Color c;
@@ -1180,10 +1188,28 @@ namespace OptionalUI
                         ttre2.SetPixel(u, v, c);
                     }
                 }
-                ttre2.SetPixel(0, 50, new Color(1f, 1f, 1f));
-                ttre2.SetPixel(2, 50, new Color(1f, 1f, 1f));
-                ttre2.SetPixel(8, 50, new Color(1f, 1f, 1f));
-                ttre2.SetPixel(9, 50, new Color(1f, 1f, 1f));
+
+                // Draw cursor
+                Color cr = new Color(1f - r / 100f, 1f - g / 100f, 1f - b / 100f);
+                cr = Color.Lerp(Color.white, cr, Mathf.Pow(Mathf.Abs(cr.grayscale - 0.5f) * 2f, 0.3f));
+                for (int u = Math.Max(0, h - 4); u <= Math.Min(100, h + 4); u++)
+                {
+                    int hg = 5 - Math.Abs(h - u);
+                    if (s > 50) { for (int v = 0; v < hg; v++) { ttre1.SetPixel(u, v, cr); } }
+                    else { for (int v = 101 - hg; v < 101; v++) { ttre1.SetPixel(u, v, cr); } }
+                }
+                for (int u = Math.Max(0, s - 4); u <= Math.Min(100, s + 4); u++)
+                {
+                    int hg = 5 - Math.Abs(s - u);
+                    if (h > 50) { for (int v = 0; v < hg; v++) { ttre1.SetPixel(v, u, cr); } }
+                    else { for (int v = 101 - hg; v < 101; v++) { ttre1.SetPixel(v, u, cr); } }
+                }
+
+                for (int u = Math.Max(0, l - 4); u <= Math.Min(100, l + 4); u++)
+                {
+                    int hg = 5 - Math.Abs(l - u);
+                    for (int v = 0; v < hg; v++) { ttre2.SetPixel(v, u, cr); }
+                }
 
                 ttre1.Apply();
                 ttre2.Apply();
@@ -1217,6 +1243,7 @@ namespace OptionalUI
                         }
                     }
                 }
+
                 ttre1.Apply();
             }
         }

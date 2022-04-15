@@ -48,6 +48,8 @@ namespace CompletelyOptional
             engText[(int)ID.OpColorPicker_MouseRGBTuto] = "Select color with red, green, blue slider";
             engText[(int)ID.OpColorPicker_MouseHSLTuto] = "Select color with hue saturation square and lightness slider";
             engText[(int)ID.OpColorPicker_MousePLTTuto] = "Select a color from palette";
+            engText[(int)ID.OpColorPicker_NonMouseModeSelect] = "Press JUMP to select mode";
+            engText[(int)ID.OpColorPicker_NonMouseRGBSliders] = "With joystick, up or down to choose, left or right to adjust RGB. Press JUMP to apply";
 
             engText[(int)ID.OpScrollBox_MouseTuto] = "Use scroll wheel to see more";
             engText[(int)ID.OpScrollBox_MouseTutoSlidebar] = "Use scroll wheel or scrollbar to see more";
@@ -118,6 +120,8 @@ namespace CompletelyOptional
             OpColorPicker_MouseRGBTuto,
             OpColorPicker_MouseHSLTuto,
             OpColorPicker_MousePLTTuto,
+            OpColorPicker_NonMouseModeSelect,
+            OpColorPicker_NonMouseRGBSliders,
 
             OpScrollBox_MouseTuto,
             OpScrollBox_MouseTutoSlidebar,
