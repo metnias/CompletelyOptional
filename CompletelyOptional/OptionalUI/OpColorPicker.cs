@@ -284,45 +284,6 @@ namespace OptionalUI
             lblR.color = colorText; lblG.color = colorText; lblB.color = colorText;
             lblP.color = white;
 
-            if (this.MouseOver)
-            {
-                if (this.MousePos.y > 135f)
-                { //mod settings
-                    FLabel pick; bool flagBump = true;
-                    if (this.MousePos.x > 20f && this.MousePos.x < 50f)
-                    { pick = lblRGB; curFocus = MiniFocus.ModeRGB; }
-                    else if (this.MousePos.x > 60f && this.MousePos.x < 90f)
-                    { pick = lblHSL; curFocus = MiniFocus.ModeHSL; }
-                    else if (this.MousePos.x > 100f && this.MousePos.x < 130f)
-                    { pick = lblPLT; curFocus = MiniFocus.ModePLT; }
-                    else { pick = null; flagBump = false; }
-
-                    if (flagBump)
-                    {
-                        if (Input.GetMouseButton(0))
-                        { pick.color = MenuColorEffect.MidToDark(colorText); }
-                        else
-                        { pick.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); }
-                    }
-                }
-                else
-                {
-                    if (mode == PickerMode.RGB)
-                    {
-                        //Just change display values
-                        if (Input.GetMouseButton(0))
-                        {
-                            if (this.MousePos.x >= 10f && this.MousePos.y > 30f && this.MousePos.x <= 110f && this.MousePos.y < 130f)
-                            {
-                                if (this.MousePos.y < 50f) { lblB.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); curFocus = MiniFocus.RGB_Blue; }
-                                else if (this.MousePos.y > 70f && this.MousePos.y < 90f) { lblG.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); curFocus = MiniFocus.RGB_Green; }
-                                else if (this.MousePos.y > 110f) { lblR.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); curFocus = MiniFocus.RGB_Red; }
-                            }
-                        }
-                    }
-                }
-            }
-
             if (this.typeMode)
             {
                 this.lblHex.color = Color.Lerp(white, colorText, this.bumpBehav.Sin());
@@ -337,6 +298,7 @@ namespace OptionalUI
 
             this.rect.fillAlpha = Mathf.Lerp(0.6f, 0.8f, this.bumpBehav.col);
             this.rect.addSize = new Vector2(4f, 4f) * this.bumpBehav.AddSize;
+            if (MenuMouseMode && held && !MouseOver) { this.rect.addSize += new Vector2(4f, 4f) * this.bumpBehav.Sin(10f); }
             this.rect.colorEdge = this.bumpBehav.GetColor(this.colorEdge);
             this.rect.GrafUpdate(timeStacker);
 
@@ -350,18 +312,24 @@ namespace OptionalUI
                 #region Modes
 
                 case MiniFocus.ModeRGB:
+                    if (Input.GetMouseButton(0)) { lblRGB.color = MenuColorEffect.MidToDark(colorText); }
+                    else { lblRGB.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); }
                     focusGlow.size = new Vector2(40f, 25f);
                     focusGlow.pos = new Vector2(15f, 125f);
                     focusGlow.alpha = this.bumpBehav.Sin(10f) * 0.5f + 0.2f;
                     break;
 
                 case MiniFocus.ModeHSL:
+                    if (Input.GetMouseButton(0)) { lblHSL.color = MenuColorEffect.MidToDark(colorText); }
+                    else { lblHSL.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); }
                     focusGlow.size = new Vector2(40f, 25f);
                     focusGlow.pos = new Vector2(55f, 125f);
                     focusGlow.alpha = this.bumpBehav.Sin(10f) * 0.5f + 0.2f;
                     break;
 
                 case MiniFocus.ModePLT:
+                    if (Input.GetMouseButton(0)) { lblPLT.color = MenuColorEffect.MidToDark(colorText); }
+                    else { lblPLT.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f)); }
                     focusGlow.size = new Vector2(40f, 25f);
                     focusGlow.pos = new Vector2(95f, 125f);
                     focusGlow.alpha = this.bumpBehav.Sin(10f) * 0.5f + 0.2f;
@@ -372,18 +340,21 @@ namespace OptionalUI
                 #region RGB
 
                 case MiniFocus.RGB_Red:
+                    lblR.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f));
                     focusGlow.size = new Vector2(40f, 25f);
                     focusGlow.pos = new Vector2(110f, 105f);
                     focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
                     break;
 
                 case MiniFocus.RGB_Green:
+                    lblG.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f));
                     focusGlow.size = new Vector2(40f, 25f);
                     focusGlow.pos = new Vector2(110f, 65f);
                     focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
                     break;
 
                 case MiniFocus.RGB_Blue:
+                    lblB.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f));
                     focusGlow.size = new Vector2(40f, 25f);
                     focusGlow.pos = new Vector2(110f, 25f);
                     focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
@@ -394,18 +365,22 @@ namespace OptionalUI
                 #region HSL
 
                 case MiniFocus.HSL_Hue:
+                    lblR.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f));
+                    if (MenuMouseMode) { lblG.color = lblR.color; }
                     focusGlow.size = new Vector2(40f, 25f);
                     focusGlow.pos = new Vector2(104f, 105f);
                     focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
                     break;
 
                 case MiniFocus.HSL_Saturation:
+                    lblG.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f));
                     focusGlow.size = new Vector2(40f, 25f);
                     focusGlow.pos = new Vector2(104f, 65f);
                     focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
                     break;
 
                 case MiniFocus.HSL_Lightness:
+                    lblB.color = Color.Lerp(colorText, white, this.bumpBehav.Sin(10f));
                     focusGlow.size = new Vector2(40f, 25f);
                     focusGlow.pos = new Vector2(104f, 25f);
                     focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
@@ -414,7 +389,7 @@ namespace OptionalUI
                 #endregion HSL
 
                 case MiniFocus.PLT_Selector:
-                    focusGlow.size = new Vector2(130f, 116f);
+                    focusGlow.size = new Vector2(140f, 126f);
                     focusGlow.centerPos = new Vector2(75, 80f);
                     focusGlow.alpha = this.bumpBehav.Sin() * 0.4f + 0.1f;
                     break;
@@ -432,7 +407,6 @@ namespace OptionalUI
             #endregion focusGlow
         }
 
-        private bool mouseDown = false;
         private bool typeMode = false; private bool typed;
         private string typeHex;
 
@@ -639,38 +613,157 @@ namespace OptionalUI
 
         private void MouseModeUpdate()
         {
-            if (!held) { curFocus = MiniFocus.None; }
             if (this.clickDelay > 0) { clickDelay--; }
+            if (!held) { curFocus = MiniFocus.None; }
+            else
+            {
+                void TrySwitchMode(PickerMode newMode)
+                {
+                    if (mode != newMode)
+                    {
+                        PlaySound(SoundID.MENU_MultipleChoice_Clicked);
+                        this.SwitchMode(newMode);
+                    }
+                    else
+                    { //Clicked already chosen mod
+                        PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
+                    }
+                }
+
+                void RGBSetValue()
+                {
+                    PlaySound(SoundID.MENU_Scroll_Tick);
+                    this.value = string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
+                        Mathf.RoundToInt(g * 255f / 100f).ToString("X2"),
+                        Mathf.RoundToInt(b * 255f / 100f).ToString("X2"));
+                }
+
+                switch (curFocus)
+                {
+                    case MiniFocus.ModeRGB:
+                        if (!Input.GetMouseButton(0))
+                        {
+                            if (this.MousePos.y > 135f && this.MousePos.y < 150f &&
+                                this.MousePos.x > 20f && this.MousePos.x < 50f)
+                            { TrySwitchMode(PickerMode.RGB); }
+                            this.held = false;
+                        }
+                        break;
+
+                    case MiniFocus.ModeHSL:
+                        if (!Input.GetMouseButton(0))
+                        {
+                            if (this.MousePos.y > 135f && this.MousePos.y < 150f &&
+                                this.MousePos.x > 60f && this.MousePos.x < 90f)
+                            { TrySwitchMode(PickerMode.HSL); }
+                            this.held = false;
+                        }
+                        break;
+
+                    case MiniFocus.ModePLT:
+                        if (!Input.GetMouseButton(0))
+                        {
+                            if (this.MousePos.y > 135f && this.MousePos.y < 150f &&
+                               this.MousePos.x > 100f && this.MousePos.x < 130f)
+                            { TrySwitchMode(PickerMode.Palette); }
+                            this.held = false;
+                        }
+                        break;
+
+                    case MiniFocus.RGB_Red:
+                        if (!Input.GetMouseButton(0)) { this.held = false; break; }
+                        int dr = Mathf.RoundToInt(Mathf.Clamp(this.MousePos.x - 10f, 0f, 100f));
+                        cdis1.color = new Color(dr / 100f, g / 100f, b / 100f); cdis1.isVisible = true;
+                        if (r != dr) { r = dr; RGBSetValue(); }
+                        break;
+
+                    case MiniFocus.RGB_Green:
+                        if (!Input.GetMouseButton(0)) { this.held = false; break; }
+                        int dg = Mathf.RoundToInt(Mathf.Clamp(this.MousePos.x - 10f, 0f, 100f));
+                        cdis1.color = new Color(r / 100f, dg / 100f, b / 100f); cdis1.isVisible = true;
+                        if (g != dg) { g = dg; RGBSetValue(); }
+                        break;
+
+                    case MiniFocus.RGB_Blue:
+                        if (!Input.GetMouseButton(0)) { this.held = false; break; }
+                        int db = Mathf.RoundToInt(Mathf.Clamp(this.MousePos.x - 10f, 0f, 100f));
+                        cdis1.color = new Color(r / 100f, g / 100f, db / 100f); cdis1.isVisible = true;
+                        if (b != db) { b = db; RGBSetValue(); }
+                        break;
+
+                    case MiniFocus.HSL_Hue:
+                    case MiniFocus.HSL_Saturation:
+                        if (!Input.GetMouseButton(0)) { this.held = false; break; }
+                        int dh = Mathf.RoundToInt(Mathf.Clamp(this.MousePos.x - 10f, 0f, 99f)),
+                            ds = Mathf.RoundToInt(Mathf.Clamp(this.MousePos.y - 30f, 0f, 100f));
+                        lblR.text = dh.ToString(); lblG.text = ds.ToString();
+                        cdis1.color = Custom.HSL2RGB(dh / 100f, ds / 100f, l / 100f);
+                        cdis1.isVisible = true;
+                        if (h != dh || s != ds)
+                        {
+                            h = dh; s = ds;
+                            PlaySound(SoundID.MENU_Scroll_Tick);
+                            HSLSetValue();
+                        }
+                        break;
+
+                    case MiniFocus.HSL_Lightness:
+                        if (!Input.GetMouseButton(0)) { this.held = false; break; }
+                        int dl = Mathf.RoundToInt(Mathf.Clamp(this.MousePos.y - 30f, 0f, 100f));
+                        lblB.text = dl.ToString();
+                        cdis1.color = Custom.HSL2RGB(h / 100f, s / 100f, dl / 100f);
+                        cdis1.isVisible = true;
+                        if (l != dl)
+                        {
+                            l = dl;
+                            PlaySound(SoundID.MENU_Scroll_Tick);
+                            HSLSetValue();
+                        }
+                        break;
+
+                    case MiniFocus.PLT_Selector:
+                        if (!Input.GetMouseButton(0)) { this.held = false; break; }
+                        lblP.isVisible = true;
+                        sprPltCover.isVisible = true;
+                        PLTFocus = Custom.IntClamp(Mathf.FloorToInt((128f - this.MousePos.y) / 8f), 0, 12) * 15
+                            + Custom.IntClamp(Mathf.FloorToInt((this.MousePos.x - 15f) / 8f), 0, 14);
+
+                        if (PLTFocus < this.PaletteHex.Length)
+                        {
+                            ftxr3.isVisible = true; ftxr3.SetPosition(GetPICenterPos(PLTFocus));
+                            lblP.text = this.PaletteName[PLTFocus];
+                            cdis1.color = this.PaletteColor(PLTFocus);
+                            cdis1.isVisible = true;
+
+                            if (pi != PLTFocus)
+                            {
+                                pi = PLTFocus;
+                                PlaySound(SoundID.Mouse_Scurry);
+                                this.value = this.PaletteHex[pi];
+                            }
+                        }
+                        else { ftxr3.isVisible = false; lblP.text = ""; }
+
+                        FLabelPlaceAtCenter(lblP, 15f, this.MousePos.y < 80f ? 88f : 52f, 120f, 20f);
+                        sprPltCover.x = 75f; sprPltCover.y = this.MousePos.y < 80f ? 104f : 56f;
+                        sprPltCover.MoveToFront();
+                        lblP.MoveToFront();
+                        break;
+
+                    default: held = false; break; // temp
+                }
+                return;
+            }
             if (this.MouseOver)
             {
                 if (!isDirty) { PlaySound(SoundID.MENU_Button_Select_Mouse); isDirty = true; }
                 if (this.MousePos.y > 135f)
                 { //mode switch
-                    if (Input.GetMouseButton(0))
-                    {
-                        if (!typed)
-                        {
-                            int newmod = -1;
-                            if (this.MousePos.x > 20f && this.MousePos.x < 50f) { newmod = 0; }
-                            else if (this.MousePos.x > 60f && this.MousePos.x < 90f) { newmod = 1; }
-                            else if (this.MousePos.x > 100f && this.MousePos.x < 130f) { newmod = 2; }
-                            if (newmod >= 0)
-                            {
-                                if (mode != (PickerMode)newmod) //Mod is changed!
-                                {
-                                    PlaySound(SoundID.MENU_MultipleChoice_Clicked);
-                                    this.SwitchMode((PickerMode)newmod);
-                                }
-                                else
-                                { //Clicked already chosen mod
-                                    PlaySound(SoundID.MENY_Already_Selected_MultipleChoice_Clicked);
-                                }
-                            }
-                        }
-                        typed = true;
-                    }
-                    else { typed = false; }
-
+                    if (this.MousePos.x > 20f && this.MousePos.x < 50f) { curFocus = MiniFocus.ModeRGB; }
+                    else if (this.MousePos.x > 60f && this.MousePos.x < 90f) { curFocus = MiniFocus.ModeHSL; }
+                    else if (this.MousePos.x > 100f && this.MousePos.x < 130f) { curFocus = MiniFocus.ModePLT; }
+                    if (Input.GetMouseButton(0) && curFocus != MiniFocus.None)
+                    { this.held = true; }
                     return;
                 }
                 else
@@ -695,29 +788,11 @@ namespace OptionalUI
                             cdis1.color = new Color(dr / 100f, dg / 100f, db / 100f);
 
                             //ComOptPlugin.LogInfo(dr.ToString() + " " + dg.ToString() + " " + db.ToString() + " ");
-                            if (Input.GetMouseButton(0))
+                            if (Input.GetMouseButton(0) && curFocus != MiniFocus.None)
                             {
-                                if (!mouseDown)
-                                {
-                                    this.held = true;
-                                    mouseDown = true;
-                                    PlaySound(SoundID.MENU_First_Scroll_Tick);
-                                }
-                                else
-                                {
-                                    if (r != dr || g != dg || b != db)
-                                    {
-                                        r = dr;
-                                        g = dg;
-                                        b = db;
-                                        PlaySound(SoundID.MENU_Scroll_Tick);
-                                        this.value = string.Concat(Mathf.RoundToInt(r * 255f / 100f).ToString("X2"),
-                                            Mathf.RoundToInt(g * 255f / 100f).ToString("X2"),
-                                            Mathf.RoundToInt(b * 255f / 100f).ToString("X2"));
-                                    }
-                                }
+                                this.held = true;
+                                PlaySound(SoundID.MENU_First_Scroll_Tick);
                             }
-                            else { mouseDown = false; this.held = false; }
 
                             break;
 
@@ -728,59 +803,31 @@ namespace OptionalUI
 
                             if (this.MousePos.x > 135f && this.MousePos.x < 145f && this.MousePos.y >= 30f && this.MousePos.y <= 130f)
                             { //Lightness
+                                curFocus = MiniFocus.HSL_Lightness;
                                 int dl = Mathf.RoundToInt(this.MousePos.y - 30f);
                                 lblB.text = dl.ToString();
                                 cdis1.color = Custom.HSL2RGB(h / 100f, s / 100f, dl / 100f);
                                 cdis1.isVisible = true;
-                                curFocus = MiniFocus.HSL_Lightness;
 
                                 if (Input.GetMouseButton(0))
                                 {
-                                    if (!mouseDown)
-                                    {
-                                        this.held = true;
-                                        mouseDown = true;
-                                        PlaySound(SoundID.MENU_First_Scroll_Tick);
-                                    }
-                                    else
-                                    {
-                                        if (l != dl)
-                                        {
-                                            l = dl;
-                                            PlaySound(SoundID.MENU_Scroll_Tick);
-                                            HSLSetValue();
-                                        }
-                                    }
+                                    this.held = true;
+                                    PlaySound(SoundID.MENU_First_Scroll_Tick);
                                 }
-                                else { mouseDown = false; this.held = false; }
                             }
                             else if (this.MousePos.x <= 110f && this.MousePos.x >= 10f && this.MousePos.y >= 30f && this.MousePos.y <= 130f)
                             { //Hue&Satuation
+                                curFocus = MiniFocus.HSL_Hue;
                                 int dh = Mathf.RoundToInt(this.MousePos.x - 10f), ds = Mathf.RoundToInt(this.MousePos.y - 30f);
                                 lblR.text = dh.ToString(); lblG.text = ds.ToString();
                                 cdis1.color = Custom.HSL2RGB(dh / 100f, ds / 100f, l / 100f);
                                 cdis1.isVisible = true;
-                                curFocus = MiniFocus.HSL_Hue;
 
                                 if (Input.GetMouseButton(0))
                                 {
-                                    if (!mouseDown)
-                                    {
-                                        this.held = true;
-                                        mouseDown = true;
-                                        PlaySound(SoundID.MENU_First_Scroll_Tick);
-                                    }
-                                    else
-                                    {
-                                        if (h != dh || s != ds)
-                                        {
-                                            h = dh; s = ds;
-                                            PlaySound(SoundID.MENU_Scroll_Tick);
-                                            HSLSetValue();
-                                        }
-                                    }
+                                    this.held = true;
+                                    PlaySound(SoundID.MENU_First_Scroll_Tick);
                                 }
-                                else { mouseDown = false; this.held = false; }
                             }
 
                             break;
@@ -788,9 +835,9 @@ namespace OptionalUI
                         case PickerMode.Palette:
                             if (this.MousePos.x <= 135f && this.MousePos.x >= 15f && this.MousePos.y >= 32f && this.MousePos.y <= 128f)
                             {
+                                curFocus = MiniFocus.PLT_Selector;
                                 lblP.isVisible = true;
                                 sprPltCover.isVisible = true;
-                                curFocus = MiniFocus.PLT_Selector;
                                 PLTFocus = Custom.IntClamp(Mathf.FloorToInt((128f - this.MousePos.y) / 8f), 0, 12) * 15
                                     + Custom.IntClamp(Mathf.FloorToInt((this.MousePos.x - 15f) / 8f), 0, 14);
 
@@ -803,15 +850,8 @@ namespace OptionalUI
 
                                     if (Input.GetMouseButton(0))
                                     {
-                                        this.mouseDown = true; this.held = true;
-                                        if (pi != PLTFocus)
-                                        {
-                                            pi = PLTFocus;
-                                            PlaySound(SoundID.Mouse_Scurry);
-                                            this.value = this.PaletteHex[pi];
-                                        }
+                                        this.held = true;
                                     }
-                                    else { this.mouseDown = false; this.held = false; }
                                 }
                                 else { ftxr3.isVisible = false; lblP.text = ""; }
 
@@ -858,11 +898,7 @@ namespace OptionalUI
             }
             else
             {
-                if (this.held)
-                {
-                    if (!Input.GetMouseButton(0)) this.held = false;
-                }
-                else if (isDirty)
+                if (isDirty)
                 { //return the values back to current setting
                     cdis1.isVisible = false;
                     switch (mode)
