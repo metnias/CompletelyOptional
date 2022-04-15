@@ -225,10 +225,13 @@ namespace OptionalUI
                     this.sprPltCover.isVisible = false;
 
                     TextureGreyscale(ref this.ttre1);
+                    TextureGreyscale(ref this.ttre2);
 
                     cdis0.color = PaletteColor(pi);
                     this.ftxr1.SetTexture(ttre1);
                     this.ftxr1.SetPosition(new Vector2(75f, 80f));
+                    this.ftxr2.SetTexture(ttre2);
+                    this.ftxr2.SetPosition(GetPICenterPos(pi));
                 }
             }
             else
@@ -501,7 +504,7 @@ namespace OptionalUI
                     break;
 
                 case PickerMode.Palette:
-                    int min = 4000; pi = 0;
+                    int min = int.MaxValue; pi = 0;
                     int valr = Convert.ToInt32(temp.Substring(0, 2), 16);
                     int valg = Convert.ToInt32(temp.Substring(2, 2), 16);
                     int valb = Convert.ToInt32(temp.Substring(4, 2), 16);
@@ -517,30 +520,34 @@ namespace OptionalUI
                         }
                     }
                     //ComOptPlugin.LogInfo(string.Concat("value " + _value + "swapped to " + PaletteHex[pi] + " (pi: " + pi.ToString() + "/ min: " + min.ToString() + ")"));
-                    value = this.PaletteHex[pi];
-                    mode = PickerMode.Palette;
+                    // value = this.PaletteHex[pi];
 
                     this.ftxr1.SetTexture(ttre1);
                     this.ftxr1.isVisible = true;
                     this.ftxr1.SetPosition(new Vector2(75f, 80f));
                     this.sprPltCover = new FSprite("pixel", true)
                     {
-                        color = new Color(0f, 0f, 0f),
+                        color = colorFill,
                         scaleX = 120f,
                         scaleY = 48f,
-                        alpha = 0.5f,
+                        alpha = 0.7f,
                         isVisible = false
                     };
                     this.sprPltCover.SetPosition(new Vector2(75f, 56f));
                     this.myContainer.AddChild(this.sprPltCover);
+                    this.ftxr2.SetTexture(ttre2);
+                    this.ftxr3.SetTexture(ttre2);
+                    this.ftxr2.isVisible = true;
+                    this.ftxr2.SetPosition(GetPICenterPos(pi));
                     this.cdis1.isVisible = false;
-                    this.lblP.isVisible = false;
                     break;
             }
 
             ctor = true;
             Change();
         }
+
+        private static Vector2 GetPICenterPos(int pi) => new Vector2((pi % 15) * 8f + 19f, 125f - Mathf.FloorToInt(pi / 15) * 8f);
 
         protected bool MouseOverHex()
         {
@@ -784,29 +791,29 @@ namespace OptionalUI
                                 lblP.isVisible = true;
                                 sprPltCover.isVisible = true;
                                 curFocus = MiniFocus.PLT_Selector;
-                                int _i = Mathf.FloorToInt((128f - this.MousePos.y) / 8f) * 15 + Mathf.FloorToInt((this.MousePos.x - 15f) / 8f);
+                                PLTFocus = Custom.IntClamp(Mathf.FloorToInt((128f - this.MousePos.y) / 8f), 0, 12) * 15
+                                    + Custom.IntClamp(Mathf.FloorToInt((this.MousePos.x - 15f) / 8f), 0, 14);
 
-                                if (_i < this.PaletteHex.Length)
+                                if (PLTFocus < this.PaletteHex.Length)
                                 {
-                                    lblP.text = this.PaletteName[_i];
-                                    cdis1.color = this.PaletteColor(_i);
+                                    ftxr3.isVisible = true; ftxr3.SetPosition(GetPICenterPos(PLTFocus));
+                                    lblP.text = this.PaletteName[PLTFocus];
+                                    cdis1.color = this.PaletteColor(PLTFocus);
                                     cdis1.isVisible = true;
 
                                     if (Input.GetMouseButton(0))
                                     {
                                         this.mouseDown = true; this.held = true;
-                                        if (pi != _i)
+                                        if (pi != PLTFocus)
                                         {
-                                            pi = _i;
+                                            pi = PLTFocus;
                                             PlaySound(SoundID.Mouse_Scurry);
+                                            this.value = this.PaletteHex[pi];
                                         }
-                                        this._value = this.PaletteHex[_i];
-                                        mode = PickerMode.Palette;
-                                        Change();
                                     }
                                     else { this.mouseDown = false; this.held = false; }
                                 }
-                                else { lblP.text = ""; }
+                                else { ftxr3.isVisible = false; lblP.text = ""; }
 
                                 FLabelPlaceAtCenter(lblP, 15f, this.MousePos.y < 80f ? 88f : 52f, 120f, 20f);
                                 sprPltCover.x = 75f; sprPltCover.y = this.MousePos.y < 80f ? 104f : 56f;
@@ -815,6 +822,7 @@ namespace OptionalUI
                             }
                             else
                             {
+                                ftxr3.isVisible = false;
                                 cdis1.isVisible = false;
                                 lblP.isVisible = false;
                                 sprPltCover.isVisible = false;
@@ -891,6 +899,8 @@ namespace OptionalUI
         private void NonMouseModeUpdate()
         {
             clickDelay = 20;
+            lblP.isVisible = false;
+            if (mode == PickerMode.Palette) { ftxr3.isVisible = false; sprPltCover.isVisible = false; }
             if (!held) { lastVal = _value; return; }
             if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Throw))
             { this.held = false; this.value = lastVal; PlaySound(SoundID.MENU_Checkbox_Uncheck); return; }
@@ -1064,12 +1074,12 @@ namespace OptionalUI
                     break;
 
                 case PickerMode.Palette:
-                    int tick2 = bumpBehav.JoystickPressAxis(true);
-                    if (tick2 != 0) { tick2 *= 12; PLTTick(true); }
+                    int tick2 = -bumpBehav.JoystickPressAxis(true);
+                    if (tick2 != 0) { tick2 *= 15; PLTTick(true); }
                     else
                     {
-                        tick2 = bumpBehav.JoystickHeldAxis(true, 2f);
-                        if (tick2 != 0) { tick2 *= 12; PLTTick(false); }
+                        tick2 = -bumpBehav.JoystickHeldAxis(true, 2f);
+                        if (tick2 != 0) { tick2 *= 15; PLTTick(false); }
                     }
                     if (tick2 == 0)
                     {
@@ -1088,10 +1098,19 @@ namespace OptionalUI
                         if (df < 0 || df >= PaletteHex.Length)
                         { PlaySound(first ? SoundID.MENU_Greyed_Out_Button_Select_Gamepad_Or_Keyboard : SoundID.None); return; }
                         PLTFocus = df;
-                        PlaySound(first ? SoundID.MENU_First_Scroll_Tick : SoundID.MENU_Scroll_Tick);
+                        PlaySound(first ? SoundID.Mouse_Scurry : SoundID.MENU_Scroll_Tick);
                     }
 
-                    if (PLTFocus < 12 && bumpBehav.JoystickPress(0, 1))
+                    ftxr3.isVisible = true; ftxr3.SetPosition(GetPICenterPos(PLTFocus));
+                    lblP.text = this.PaletteName[PLTFocus];
+                    cdis1.color = this.PaletteColor(PLTFocus);
+                    cdis1.isVisible = true;
+                    FLabelPlaceAtCenter(lblP, 15f, PLTFocus >= 90 ? 88f : 52f, 120f, 20f);
+                    sprPltCover.x = 75f; sprPltCover.y = PLTFocus >= 90 ? 104f : 56f;
+                    sprPltCover.isVisible = true; lblP.isVisible = true;
+                    sprPltCover.MoveToFront(); lblP.MoveToFront();
+
+                    if (PLTFocus < 15 && bumpBehav.JoystickPress(0, 1))
                     { curFocus = MiniFocus.ModePLT; PlaySound(SoundID.MENU_Button_Select_Gamepad_Or_Keyboard); break; }
 
                     if (bumpBehav.ButtonPress(BumpBehaviour.ButtonType.Jump))
@@ -1238,8 +1257,8 @@ namespace OptionalUI
 
                 case PickerMode.Palette:
                     cdis0.color = this.PaletteColor(pi);
-                    this.ftxr1.SetTexture(ttre1);
                     lblHex.text = "#" + this.PaletteHex[pi];
+                    this.ftxr2.SetPosition(GetPICenterPos(pi));
                     break;
             }
         }
@@ -1366,8 +1385,23 @@ namespace OptionalUI
                         }
                     }
                 }
-
                 ttre1.Apply();
+
+                // Cursor
+                ttre2 = new Texture2D(11, 11) { wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Point };
+                for (int u = 0; u < 11; u++)
+                {
+                    for (int v = 0; v < 11; v++)
+                    {
+                        if (u < 2 || u > 7 || v < 2 || v > 7)
+                        {
+                            ttre1.SetPixel(u, v, colorText);
+                            continue;
+                        }
+                        ttre2.SetPixel(u, v, Color.clear);
+                    }
+                }
+                ttre2.Apply();
             }
         }
 

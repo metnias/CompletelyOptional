@@ -216,8 +216,9 @@ namespace OptionalUI
         public int JoystickHeldAxis(bool vertical, float speed = 1.0f)
         {
             if (speed > 0f && scrollCounter < Mathf.CeilToInt(ModConfigMenu.DASdelay / speed)) { return 0; }
-            scrollCounter = 0;
-            return vertical ? owner.CtlrInput.y : owner.CtlrInput.x;
+            if (vertical && owner.CtlrInput.y != 0) { scrollCounter = 0; return owner.CtlrInput.y; }
+            else if (!vertical && owner.CtlrInput.x != 0) { scrollCounter = 0; return owner.CtlrInput.x; }
+            return 0;
         }
 
         /// <summary>
